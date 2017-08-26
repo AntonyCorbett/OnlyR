@@ -1,0 +1,82 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:OnlyR"
+    xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter">
+
+    <Style x:Key="LevelRectStyle" TargetType="{x:Type Rectangle}">
+        <Setter Property="Margin" Value="0,2,0,0" />
+    </Style>
+
+    <Style x:Key="RedLevelRectStyle" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource LevelRectStyle}">
+        <Setter Property="Fill" Value="Red" />
+    </Style>
+
+    <Style x:Key="YellowLevelRectStyle" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource LevelRectStyle}">
+        <Setter Property="Fill" Value="Yellow" />
+    </Style>
+
+    <Style x:Key="GreenLevelRectStyle" TargetType="{x:Type Rectangle}" BasedOn="{StaticResource LevelRectStyle}">
+        <Setter Property="Fill" Value="GreenYellow" />
+    </Style>
+
+
+    <Style TargetType="{x:Type volumeMeter:VduControl}">
+        <Setter Property="VolumeLevel" Value="{Binding VolumeLevel, RelativeSource={RelativeSource TemplatedParent}}">
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type volumeMeter:VduControl}">
+                    <Border Background="White"
+                            BorderBrush="Black"
+                            Padding="2"
+                            BorderThickness="1">
+                        
+                    <Border x:Name="InnerBorder" Background="Black"
+                            BorderBrush="Black"
+                            Padding="4"
+                            BorderThickness="1">
+                        
+                        <Image x:Name="VolumeImage" VerticalAlignment="Bottom" Stretch="Fill"/>
+                       
+                        <!--<Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+
+                            <Rectangle x:Name="level14" Style="{StaticResource RedLevelRectStyle}" Grid.Row="0" />
+                            <Rectangle x:Name="level13" Style="{StaticResource RedLevelRectStyle}" Grid.Row="1" />
+                            <Rectangle x:Name="level12" Style="{StaticResource YellowLevelRectStyle}" Grid.Row="2" />
+                            <Rectangle x:Name="level11" Style="{StaticResource YellowLevelRectStyle}" Grid.Row="3" />
+                            <Rectangle x:Name="level10" Style="{StaticResource YellowLevelRectStyle}" Grid.Row="4" />
+                            <Rectangle x:Name="level9" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="5" />
+                            <Rectangle x:Name="level8" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="6" />
+                            <Rectangle x:Name="level7" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="7" />
+                            <Rectangle x:Name="level6" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="8" />
+                            <Rectangle x:Name="level5" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="9" />
+                            <Rectangle x:Name="level4" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="10" />
+                            <Rectangle x:Name="level3" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="11" />
+                            <Rectangle x:Name="level2" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="12" />
+                            <Rectangle x:Name="level1" Style="{StaticResource GreenLevelRectStyle}" Grid.Row="13" />
+                        </Grid>-->
+                        
+                    </Border>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
