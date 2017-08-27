@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
@@ -12,6 +8,7 @@ using Serilog;
 
 namespace OnlyR.Services.RecordingDestination
 {
+    // ReSharper disable once UnusedMember.Global
     public class RecordingDestinationService : IRecordingDestinationService
     {
         /// <summary>
@@ -27,22 +24,29 @@ namespace OnlyR.Services.RecordingDestination
             string commandLineIdentifier)
         {
             var destFolder = FileUtils.GetDestinationFolder(dt, commandLineIdentifier);
+            PathAndTrackNumber finalPathAndTrack = GetNextAvailableFile(optionsService, destFolder, dt);
 
             var result = new RecordingCandidate
             {
+                RecordingDate = dt,
+                TrackNumber = finalPathAndTrack.TrackNumber,
                 TempPath = GetTempRecordingFile(),
-                FinalPath = GetNextAvailableFile(optionsService, destFolder, dt)
+                FinalPath = finalPathAndTrack.FilePath
             };
 
             Log.Logger.Information("New candidate = {@Candidate}", result);
             return result;
         }
 
-        private string GetNextAvailableFile(IOptionsService optionsService, string folder, DateTime dt)
+        private static PathAndTrackNumber GetNextAvailableFile(IOptionsService optionsService, string folder, DateTime dt)
         {
-            string result = Directory.Exists(folder) ? null : GenerateCandidateFilePath(folder, dt, 1);
-
-            if (result == null)
+            PathAndTrackNumber result = null;
+            var path = Directory.Exists(folder) ? null : GenerateCandidateFilePath(folder, dt, 1);
+            if(path != null)
+            {
+                result = new PathAndTrackNumber { FilePath = path, TrackNumber = 1 };
+            }
+            else
             {
                 int maxFileCount = optionsService.Options.MaxRecordingsInOneFolder;
 
@@ -51,7 +55,7 @@ namespace OnlyR.Services.RecordingDestination
                     string candidateFile = GenerateCandidateFilePath(folder, dt, increment);
                     if (!File.Exists(candidateFile))
                     {
-                        result = candidateFile;
+                        result = new PathAndTrackNumber { FilePath = candidateFile, TrackNumber = increment };
                     }
                 }
             }
@@ -59,7 +63,7 @@ namespace OnlyR.Services.RecordingDestination
             return result;
         }
 
-        private string GenerateCandidateFilePath(string folder, DateTime dt, int increment)
+        private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment)
         {
             return Path.Combine(folder,
                $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.mp3");
@@ -69,7 +73,7 @@ namespace OnlyR.Services.RecordingDestination
         /// Gets a file name that can be used to temporarily store recording data
         /// </summary>
         /// <returns>File name (full path)</returns>
-        public string GetTempRecordingFile()
+        private static string GetTempRecordingFile()
         {
             string folder = FileUtils.GetTempRecordingFolder();
             string file = string.Concat(Guid.NewGuid().ToString("N"), ".mp3");

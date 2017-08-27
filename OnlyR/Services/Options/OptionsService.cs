@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Newtonsoft.Json;
 using OnlyR.Utils;
+using Serilog;
 
 namespace OnlyR.Services.Options
 {
+    // todo: UI for setting and saving options
+
+    // ReSharper disable once UnusedMember.Global
     public class OptionsService : IOptionsService
     {
         private Options _options;
@@ -29,19 +28,51 @@ namespace OnlyR.Services.Options
         {
             if (_options == null)
             {
-                string commandLineIdentifier = CommandLineParser.Instance.GetId();
-                _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
-                ReadOptions();
+                try
+                {
+                    string commandLineIdentifier = CommandLineParser.Instance.GetId();
+                    _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
+                    var path = Path.GetDirectoryName(_optionsFilePath);
+                    if (path != null)
+                    {
+                        Directory.CreateDirectory(path);
+                        ReadOptions();
+                    }
+
+                    if (_options == null)
+                    {
+                        _options = new Options();
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Log.Logger.Error(ex, "Could not read options file");
+                    _options = new Options();
+                }
             }
         }
 
         private void ReadOptions()
         {
-            using (StreamReader file = File.OpenText(_optionsFilePath))
+            if (!File.Exists(_optionsFilePath))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                _options = (Options)serializer.Deserialize(file, typeof(Options));
+                WriteDefaultOptions();
             }
+            else
+            {
+                using (StreamReader file = File.OpenText(_optionsFilePath))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    _options = (Options) serializer.Deserialize(file, typeof(Options));
+                    _options.Sanitize();
+                }
+            }
+        }
+
+        private void WriteDefaultOptions()
+        {
+            _options = new Options();
+            WriteOptions();
         }
 
         private void WriteOptions()

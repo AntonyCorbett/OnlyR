@@ -1,30 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Recorder;
 using OnlyR.Model;
+using OnlyR.Services.Options;
+using Serilog;
 
 namespace OnlyR.Services.Audio
 {
+    // ReSharper disable once UnusedMember.Global
     public sealed class AudioService : IAudioService, IDisposable
     {
         private AudioRecorder _audioRecorder;
+        private RecordingCandidate _currentRecording;
 
         public event EventHandler StartedEvent;
         public event EventHandler StoppedEvent;
         public event EventHandler StopRequested;
+        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
         public AudioService()
         {
             _audioRecorder = new AudioRecorder();
-            _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeEvent;
+            _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
+            _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
         }
 
-        private void AudioRecorderOnRecordingStatusChangeEvent(object sender, RecordingStatusChangeEventArgs recordingStatusChangeEventArgs)
+        private void AudioRecorderOnProgressHandler(object sender, RecordingProgressEventArgs e)
+        {
+            OnRecordingProgressEvent(e);
+        }
+
+        private void AudioRecorderOnRecordingStatusChangeHandler(object sender, RecordingStatusChangeEventArgs recordingStatusChangeEventArgs)
         {
             switch(recordingStatusChangeEventArgs.RecordingStatus)
             {
@@ -37,12 +45,42 @@ namespace OnlyR.Services.Audio
                 case RecordingStatus.StopRequested:
                     OnStopRequested();
                     break;
+
+                // ReSharper disable once RedundantCaseLabel
+                case RecordingStatus.Unknown:
+                default:
+                    break;
             }
         }
 
-        public void StartRecording(RecordingCandidate candidateFile)
+        public void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService)
         {
-            _audioRecorder.Start(candidateFile.TempPath);
+            _currentRecording = candidateFile;
+
+            RecordingConfig recordingConfig = new RecordingConfig
+            {
+                RecordingDate = candidateFile.RecordingDate,
+                TrackNumber = candidateFile.TrackNumber,
+                DestFilePath = candidateFile.TempPath,
+                SampleRate = optionsService.Options.SampleRate,
+                ChannelCount = optionsService.Options.ChannelCount,
+                Mp3BitRate = optionsService.Options.Mp3BitRate,
+                TrackTitle = GetTrackTitle(candidateFile),
+                AlbumName = GetAlbumName(candidateFile),
+                Genre = optionsService.Options.Genre
+            };
+
+            _audioRecorder.Start(recordingConfig);
+        }
+
+        private static string GetAlbumName(RecordingCandidate candidate)
+        {
+            return candidate.RecordingDate.ToString("MMM yyyy");
+        }
+
+        private static string GetTrackTitle(RecordingCandidate candidate)
+        {
+            return Path.GetFileNameWithoutExtension(candidate.FinalPath);
         }
 
         public void StopRecording()
@@ -58,6 +96,19 @@ namespace OnlyR.Services.Audio
         private void OnStoppedEvent()
         {
             StoppedEvent?.Invoke(this, EventArgs.Empty);
+            CopyFileToFinalDestination();
+            _currentRecording = null;
+        }
+
+        private void CopyFileToFinalDestination()
+        {
+            Log.Logger.Information("Copying {Source} to {Target}", _currentRecording.TempPath, _currentRecording.FinalPath);
+            var path = Path.GetDirectoryName(_currentRecording.FinalPath);
+            if (path != null)
+            {
+                Directory.CreateDirectory(path);
+                File.Move(_currentRecording.TempPath, _currentRecording.FinalPath);
+            }
         }
 
         private void OnStopRequested()
@@ -69,6 +120,11 @@ namespace OnlyR.Services.Audio
         {
             _audioRecorder.Dispose();
             _audioRecorder = null;
+        }
+
+        private void OnRecordingProgressEvent(RecordingProgressEventArgs e)
+        {
+            RecordingProgressEvent?.Invoke(this, e);
         }
     }
 }

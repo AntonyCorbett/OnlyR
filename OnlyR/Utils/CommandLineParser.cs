@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlyR.Utils
 {
-    class CommandLineParser
+    internal class CommandLineParser
     {
         private readonly List<string> _rawItems;
         private readonly List<string> _switches;
@@ -33,7 +32,7 @@ namespace OnlyR.Utils
             return GetParamValue(ID_KEY);
         }
 
-        private CommandLineParser(string[] args = null)
+        private CommandLineParser(IEnumerable<string> args = null)
         {
             _rawItems = args?.ToList() ?? Environment.GetCommandLineArgs().ToList();
             _switches = new List<string>();
@@ -58,6 +57,7 @@ namespace OnlyR.Utils
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public bool IsSwitchSet(string key)
         {
             return Switches.Contains(key);

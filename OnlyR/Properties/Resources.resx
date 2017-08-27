@@ -126,11 +126,17 @@
   <data name="ERROR_STOP" xml:space="preserve">
     <value>Could not stop recording</value>
   </data>
+  <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
+    <value>Insufficient free space to record</value>
+  </data>
   <data name="NOT_RECORDING" xml:space="preserve">
     <value>Not recording</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>
+  </data>
+  <data name="SPEECH" xml:space="preserve">
+    <value>Speech</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
     <value>Stopping</value>

@@ -88,6 +88,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insufficient free space to record.
+        /// </summary>
+        internal static string INSUFFICIENT_FREE_SPACE {
+            get {
+                return ResourceManager.GetString("INSUFFICIENT_FREE_SPACE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not recording.
         /// </summary>
         internal static string NOT_RECORDING {
@@ -102,6 +111,15 @@ namespace OnlyR.Properties {
         internal static string RECORDING {
             get {
                 return ResourceManager.GetString("RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speech.
+        /// </summary>
+        internal static string SPEECH {
+            get {
+                return ResourceManager.GetString("SPEECH", resourceCulture);
             }
         }
         

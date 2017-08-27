@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
 
 namespace OnlyR.Utils
 {
     public static class FileUtils
     {
         private static readonly string _appNamePathSegment = "OnlyR";
+        private static readonly string _optionsFileName = "options.json";
 
         /// <summary>
         /// Creates directory if it doesn't exist. Throws if cannot be created
@@ -45,6 +41,7 @@ namespace OnlyR.Utils
         /// <param name="folderName">A reference folder</param>
         /// <param name="freespace">Free space in bytes</param>
         /// <returns>True if the space could be calculated</returns>
+        // ReSharper disable once UnusedMember.Global
         public static bool DriveFreeBytes(string folderName, out ulong freespace)
         {
             freespace = 0;
@@ -63,17 +60,24 @@ namespace OnlyR.Utils
             return false;
         }
 
+        public static string GetLogFolder()
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                _appNamePathSegment,
+                "Logs");
+        }
+
         public static string GetDestinationFolder(DateTime dt, string commandLineIdentifier)
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 _appNamePathSegment,
-                commandLineIdentifier,
+                commandLineIdentifier ?? string.Empty,
                 dt.ToString("yyyy"), dt.ToString("MM"), dt.ToString("yyyy-MM-dd"));
         }
 
         public static string GetTempRecordingFolder()
         {
-            string folder = Path.Combine(FileUtils.GetSystemTempFolder(), _appNamePathSegment, "Recordings");
+            string folder = Path.Combine(GetSystemTempFolder(), _appNamePathSegment, "Recordings");
             CreateDirectory(folder);
             return folder;
         }
@@ -82,8 +86,9 @@ namespace OnlyR.Utils
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 _appNamePathSegment,
-                commandLineIdentifier,
-                optionsVersion.ToString());
+                commandLineIdentifier ?? string.Empty,
+                optionsVersion.ToString(),
+                _optionsFileName);
         }
 
     }

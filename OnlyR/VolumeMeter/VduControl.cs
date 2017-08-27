@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace OnlyR.VolumeMeter
 {
@@ -28,7 +20,7 @@ namespace OnlyR.VolumeMeter
 
         private List<RenderTargetBitmap> _bitmaps;
         private readonly DrawingVisual _drawingVisual;
-
+        
 
         static VduControl()
         {
@@ -85,11 +77,11 @@ namespace OnlyR.VolumeMeter
         {
             if(d is VduControl c)
             {
-                c.OnVolumeChanged((int)e.OldValue, (int)e.NewValue);
+                c.OnVolumeChanged();
             }
         }
 
-        private void OnVolumeChanged(int oldValue, int newValue)
+        private void OnVolumeChanged()
         {
             Refresh();
         }
@@ -97,30 +89,28 @@ namespace OnlyR.VolumeMeter
         public int VolumeLevel
         {
             // wrapper (no additional code in here!)
+
+            // ReSharper disable once PossibleNullReferenceException
             get => (int) GetValue(VolumeLevelProperty);
             set => SetValue(VolumeLevelProperty, value);
         }
 
         private void Refresh()
         {
-            int numBlocksLit = (VolumeLevel * _levelsCount) / 100;
+            int numBlocksLit = VolumeLevel * _levelsCount / 100;
             RenderTargetBitmap bmp = _bitmaps[numBlocksLit] ?? CreateBitmap(numBlocksLit);
             _image.Source = bmp;
         }
 
         private RenderTargetBitmap CreateBitmap(int numBlocksLit)
         {
-            var w = _innerBorder.RenderSize.Height;
-            int bmpHeight = (int)(_innerBorder.ActualHeight);
+            int bmpHeight = (int)_innerBorder.ActualHeight;
             int ySpaceBetweenBlocks = Math.Max(bmpHeight / 40, 1);
 
             int overallBlockHeight = bmpHeight / _levelsCount;
             int blockHeight = overallBlockHeight - ySpaceBetweenBlocks;
 
-            // recalc...
-            //bmpHeight = (overallBlockHeight * _levelsCount) - ySpaceBetweenBlocks;
-
-            int bmpWidth = (int) (_innerBorder.ActualWidth);
+            int bmpWidth = (int) _innerBorder.ActualWidth;
             int blockWidth = bmpWidth;
             
             _bitmaps[numBlocksLit] = new RenderTargetBitmap(bmpWidth, bmpHeight, 96, 96, PixelFormats.Pbgra32);
@@ -147,7 +137,7 @@ namespace OnlyR.VolumeMeter
                     
                     dc.DrawRectangle(b, null, new Rect(
                         0, 
-                        bmpHeight - ((n+1) * (blockHeight + ySpaceBetweenBlocks)), 
+                        bmpHeight - (n+1) * (blockHeight + ySpaceBetweenBlocks), 
                         blockWidth, 
                         blockHeight));
                 }

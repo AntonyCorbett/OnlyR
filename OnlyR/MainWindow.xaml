@@ -3,25 +3,53 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OnlyR"
         xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter"
-        xmlns:viewModel="clr-namespace:OnlyR.ViewModel"
         x:Class="OnlyR.MainWindow"
         mc:Ignorable="d"
         DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Button Content="Start" 
-                IsEnabled="{Binding IsStartEnabled}"
-                Command="{Binding StartRecordingCommand}" HorizontalAlignment="Left" Margin="96,37,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Stop" 
-                IsEnabled="{Binding IsStopEnabled}"
-                Command="{Binding StopRecordingCommand}" HorizontalAlignment="Left" Margin="212,57,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBlock HorizontalAlignment="Left" Margin="67,132,0,0" TextWrapping="Wrap" Text="{Binding StatusStr}" VerticalAlignment="Top" Width="371"/>
+        Title="O N L Y - R" Height="292" Width="268" ResizeMode="CanMinimize" Closing="Window_Closing">
 
-        <volumeMeter:VduControl Margin="10,10,450,85" VolumeLevel="{Binding VolumeLevelAsPercentage}"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="232,193,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        
-        <TextBlock HorizontalAlignment="Left" Margin="117,244,0,0" TextWrapping="Wrap" Text="{Binding VolumeLevelAsPercentage}" VerticalAlignment="Top"/>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="RecorderBtnStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Height" Value="85" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="10,10,10,0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="86*"/>
+            <ColumnDefinition Width="235*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button Style="{StaticResource RecorderBtnStyle}" 
+                Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
+                Command="{Binding StartRecordingCommand}" >
+            <Image Source="Images\StartButton3.ico" Margin="10"></Image>
+        </Button>
+
+        <!-- ReSharper disable once Xaml.MissingGridIndex -->
+        <Button Style="{StaticResource RecorderBtnStyle}" 
+                Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
+                Command="{Binding StopRecordingCommand}" >
+            <Image Source="Images\StopButton3.ico" Margin="10"></Image>
+        </Button>
+
+        <volumeMeter:VduControl Margin="10" Grid.Column="0" Grid.Row="0" 
+                                VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}"/>
+
+        <Border Grid.Column="1" BorderThickness="2" BorderBrush="#FFF19C7C" Margin="10,100,10,10" Padding="4">
+            <StackPanel Orientation="Vertical">
+                <TextBlock TextWrapping="Wrap" Text="{Binding StatusStr}" Foreground="CadetBlue"/>
+                <TextBlock TextWrapping="Wrap" Text="{Binding ElapsedTimeStr}" FontSize="32"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

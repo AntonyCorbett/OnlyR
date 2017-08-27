@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 
 namespace OnlyR.Utils
 {
-    public static class EnumExtensions
+    // ReSharper disable once UnusedMember.Global
+    internal static class EnumExtensions
     {
+        // ReSharper disable once UnusedMember.Global
         public static string GetDescriptiveText(this RecordingStatus value)
         {
             switch (value)
@@ -21,6 +19,8 @@ namespace OnlyR.Utils
                     return Properties.Resources.STOPPING;
 
                 default:
+                // ReSharper disable once RedundantCaseLabel
+                case RecordingStatus.Unknown:
                     throw new ArgumentException(nameof(value));
             }
         }

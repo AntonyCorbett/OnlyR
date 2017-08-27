@@ -1,14 +1,16 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using OnlyR.Model;
-using OnlyR.Services;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Core.Enums;
 using OnlyR.Utils;
 using Serilog;
+using System.IO;
 
 namespace OnlyR.ViewModel
 {
@@ -25,6 +27,9 @@ namespace OnlyR.ViewModel
         private IRecordingDestinationService _destinationService;
         private IOptionsService _optionsService;
         private string _commandLineIdentifier;
+        private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
+        private Stopwatch _stopwatch;
+        private DateTime _lastCheckedTimeLimit;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -35,39 +40,78 @@ namespace OnlyR.ViewModel
            IRecordingDestinationService destinationService)
         {
             _commandLineIdentifier = CommandLineParser.Instance.GetId();
-            
+
+            _lastCheckedTimeLimit = DateTime.Now;
+            _stopwatch = new Stopwatch();
+
             _audioService = audioService;
             _audioService.StartedEvent += AudioStartedHandler;
             _audioService.StoppedEvent += AudioStoppedHandler;
             _audioService.StopRequested += AudioStopRequestedHandler;
-            
+            _audioService.RecordingProgressEvent += AudioProgressHandler;
+
             _optionsService = optionsService;
             _destinationService = destinationService;
             _recordingStatus = RecordingStatus.NotRecording;
 
-            _statusStr = "All ok";
+            _statusStr = Properties.Resources.NOT_RECORDING;
 
             // bind commands...
-            StartRecordingCommand = new RelayCommand(StartRecording);
-            StopRecordingCommand = new RelayCommand(StopRecording);
+            StartRecordingCommand = new RelayCommand(StartRecording, CanExecuteStart);
+            StopRecordingCommand = new RelayCommand(StopRecording, CanExecuteStop);
+        }
+
+        private bool CanExecuteStop()
+        {
+            return RecordingStatus == RecordingStatus.Recording;
+        }
+
+        private bool CanExecuteStart()
+        {
+            return RecordingStatus == RecordingStatus.NotRecording;
+        }
+
+        private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
+        {
+            VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
+            RaisePropertyChanged(nameof(ElapsedTimeStr));
+
+            if(_optionsService.Options.MaxRecordingTimeMins > 0 && 
+                ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+            {
+                AutoStopRecording();
+            }
+        }
+
+        private void AutoStopRecording()
+        {
+            Log.Logger.Information("Automatically stopped recording having reached the {Limit} min limit", 
+                _optionsService.Options.MaxRecordingTimeMins);
+
+            StopRecordingCommand.Execute(null);
         }
 
         private void AudioStopRequestedHandler(object sender, EventArgs e)
         {
             Log.Logger.Information("Stop requested");
             RecordingStatus = RecordingStatus.StopRequested;
+            RefreshRelayCommands();
         }
 
         private void AudioStoppedHandler(object sender, EventArgs e)
         {
             Log.Logger.Information("Stopped recording");
             RecordingStatus = RecordingStatus.NotRecording;
+            VolumeLevelAsPercentage = 0;
+            _stopwatch.Stop();
+            RefreshRelayCommands();
         }
 
         private void AudioStartedHandler(object sender, EventArgs e)
         {
             Log.Logger.Information("Started recording");
             RecordingStatus = RecordingStatus.Recording;
+            RefreshRelayCommands();
         }
 
         private RecordingStatus _recordingStatus;
@@ -82,8 +126,8 @@ namespace OnlyR.ViewModel
                     StatusStr = value.GetDescriptiveText();
 
                     RaisePropertyChanged(nameof(RecordingStatus));
-                    RaisePropertyChanged(nameof(IsStartEnabled));
-                    RaisePropertyChanged(nameof(IsStopEnabled));
+                    RaisePropertyChanged(nameof(IsNotRecording));
+                    RaisePropertyChanged(nameof(IsRecordingOrStopping));
                 }
             }
         }
@@ -122,15 +166,54 @@ namespace OnlyR.ViewModel
             {
                 ClearErrorMsg();
                 Log.Logger.Information("Start requested");
-
+                
                 DateTime recordingDate = DateTime.Today;
                 var candidateFile = _destinationService.GetRecordingFileCandidate(_optionsService, recordingDate, _commandLineIdentifier);
-                _audioService.StartRecording(candidateFile);
+
+                CheckDiskSpace(candidateFile);
+
+                _audioService.StartRecording(candidateFile, _optionsService);
+                _stopwatch.Restart();
             }
             catch(Exception ex)
             {
                 ErrorMsg = Properties.Resources.ERROR_START;
                 Log.Logger.Error(ex, ErrorMsg);
+            }
+        }
+
+        private TimeSpan ElapsedTime
+        {
+            get
+            {
+                if (_stopwatch != null && _stopwatch.IsRunning)
+                {
+                    return _stopwatch.Elapsed;
+                }
+                return TimeSpan.Zero;
+            }
+        }
+
+        public string ElapsedTimeStr
+        {
+            get { return ElapsedTime.ToString("hh\\:mm\\:ss"); }
+        }
+
+        private void CheckDiskSpace(RecordingCandidate candidate)
+        {
+            CheckDiskSpace(candidate.TempPath);
+            CheckDiskSpace(candidate.FinalPath);
+        }
+
+        private void CheckDiskSpace(string filePath)
+        { 
+            if (FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree))
+            {
+                if (bytesFree < _safeMinBytesFree)
+                {
+                    // "Insufficient free space to record"
+                    throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+                }
             }
         }
 
@@ -141,11 +224,17 @@ namespace OnlyR.ViewModel
                 ClearErrorMsg();
                 _audioService.StopRecording();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorMsg = Properties.Resources.ERROR_STOP;
                 Log.Logger.Error(ex, ErrorMsg);
             }
+        }
+
+        private void RefreshRelayCommands()
+        {
+            StartRecordingCommand.RaiseCanExecuteChanged();
+            StopRecordingCommand.RaiseCanExecuteChanged();
         }
 
         private void ClearErrorMsg()
@@ -166,10 +255,17 @@ namespace OnlyR.ViewModel
                 }
             }
         }
+        
+        public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
 
-        public bool IsStartEnabled => RecordingStatus == RecordingStatus.NotRecording;
-        public bool IsStopEnabled => RecordingStatus == RecordingStatus.Recording;
+        public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
+                                             RecordingStatus == RecordingStatus.StopRequested;
 
+        public void Closing(object sender, CancelEventArgs e)
+        {
+            // prevent window closing when recording...
+            e.Cancel = (RecordingStatus != RecordingStatus.NotRecording);
+        }
 
         // Commands (bound in ctor)...
         public RelayCommand StartRecordingCommand { get; set; }

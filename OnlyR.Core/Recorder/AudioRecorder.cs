@@ -1,18 +1,26 @@
 ﻿using System;
-using System.Runtime.Remoting.Messaging;
+using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
+using OnlyR.Core.Samples;
 
 namespace OnlyR.Core.Recorder
 {
     public sealed class AudioRecorder : IDisposable
     {
-        private WaveFileWriter _waveWriter;
+        private LameMP3FileWriter _mp3Writer;
         private WaveIn _waveSource;
+        private SampleAggregator _sampleAggregator;
 
-        private readonly int _sampleRate = 44100;
-        private readonly int _channelCount = 1;
+        private int _dampedLevel;
+
+        // use these 2 together. Experiment to get the best VU display...
+        private readonly int _requiredReportingIntervalMs = 40;
+        private readonly int _vuSpeed = 5;  
+        
+
+        public event EventHandler<RecordingProgressEventArgs> ProgressEvent;
 
         public AudioRecorder()
         {
@@ -22,6 +30,7 @@ namespace OnlyR.Core.Recorder
         private RecordingStatus _recordingStatus;
         public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_mp3Writer")]
         public void Dispose()
         {
             Cleanup();
@@ -32,33 +41,81 @@ namespace OnlyR.Core.Recorder
             _waveSource?.Dispose();
             _waveSource = null;
 
-            _waveWriter?.Dispose();
-            _waveWriter = null;
+            _mp3Writer?.Dispose();
+            _mp3Writer = null;
         }
 
-        public void Start(string destFilePath)
+        private static ID3TagData CreateTag(RecordingConfig recordingConfig)
+        {
+            return new ID3TagData
+            {
+                Title = recordingConfig.TrackTitle,
+                Album = recordingConfig.AlbumName,
+                Track = recordingConfig.TrackNumber.ToString(),
+                Genre = recordingConfig.Genre,
+                Year = recordingConfig.RecordingDate.Year.ToString(),
+                UserDefinedTags = new string []{}     // fix bug in naudio.lame
+            };
+        }
+
+        public void Start(RecordingConfig recordingConfig)
         {
             if (_recordingStatus == RecordingStatus.NotRecording)
             {
-                _waveSource = new WaveIn {WaveFormat = new WaveFormat(_sampleRate, _channelCount)};
-                _waveSource.DataAvailable += WaveSourceOnDataAvailable;
-                _waveSource.RecordingStopped += WaveSourceOnRecordingStopped;
+                InitAggregator(recordingConfig.SampleRate);
 
-                _waveWriter = new WaveFileWriter(destFilePath, _waveSource.WaveFormat);
+                _waveSource = new WaveIn
+                {
+                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount)
+                };
+
+                _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
+                _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+                
+                _mp3Writer = new LameMP3FileWriter(recordingConfig.DestFilePath, _waveSource.WaveFormat,
+                    recordingConfig.Mp3BitRate, CreateTag(recordingConfig));
+
                 _waveSource.StartRecording();
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
             }
         }
 
-        private void WaveSourceOnRecordingStopped(object sender, StoppedEventArgs e)
+        private void InitAggregator(int sampleRate)
+        {
+            if (_sampleAggregator != null)
+            {
+                _sampleAggregator.ReportEvent -= AggregatorReportHandler;
+            }
+
+            _sampleAggregator = new SampleAggregator(sampleRate, _requiredReportingIntervalMs);
+            _sampleAggregator.ReportEvent += AggregatorReportHandler;
+        }
+
+        private void AggregatorReportHandler(object sender, SamplesReportEventArgs e)
+        {
+            float value = Math.Max(e.MaxSample, Math.Abs(e.MinSample)) * 100;
+            OnProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = GetDampedVolumeLevel(value) });
+        }
+
+        private void WaveSourceRecordingStoppedHandler(object sender, StoppedEventArgs e)
         {
             Cleanup();
             OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.NotRecording));
         }
 
-        private void WaveSourceOnDataAvailable(object sender, WaveInEventArgs waveInEventArgs)
+        private void WaveSourceDataAvailableHandler(object sender, WaveInEventArgs waveInEventArgs)
         {
-            _waveWriter.Write(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
+            byte[] buffer = waveInEventArgs.Buffer;
+            int bytesRecorded = waveInEventArgs.BytesRecorded;
+
+            for (int index = 0; index < bytesRecorded; index += 2)
+            {
+                short sample = (short)((buffer[index + 1] << 8) | buffer[index + 0]);
+                float sample32 = sample / 32768f;
+                _sampleAggregator.Add(sample32);
+            }
+
+            _mp3Writer.Write(buffer, 0, bytesRecorded);
         }
 
         public void Stop()
@@ -75,5 +132,27 @@ namespace OnlyR.Core.Recorder
             _recordingStatus = e.RecordingStatus;
             RecordingStatusChangeEvent?.Invoke(this, e);
         }
+
+        private void OnProgressEvent(RecordingProgressEventArgs e)
+        {
+            ProgressEvent?.Invoke(this, e);
+        }
+
+        private int GetDampedVolumeLevel(float volLevel)
+        {
+            if (volLevel > _dampedLevel)
+            {
+                _dampedLevel = (int)(volLevel + _vuSpeed);
+            }
+
+            _dampedLevel -= _vuSpeed;
+            if (_dampedLevel < 0)
+            {
+                _dampedLevel = 0;
+            }
+
+            return _dampedLevel;
+        }
+
     }
 }

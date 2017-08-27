@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlyR.Model
 {
-   public class RecordingCandidate
-   {
-      public string TempPath { get; set; }
-      public string FinalPath { get; set; }
-   }
+    public class RecordingCandidate
+    {
+        public DateTime RecordingDate { get; set; }
+        public int TrackNumber { get; set; }
+        public string TempPath { get; set; }
+        public string FinalPath { get; set; }
+    }
 }
