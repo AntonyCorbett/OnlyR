@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="EventArgs\SamplesReportEventArgs.cs" />
     <Compile Include="EventArgs\RecordingProgressEventArgs.cs" />
     <Compile Include="Models\RecordingDeviceInfo.cs" />

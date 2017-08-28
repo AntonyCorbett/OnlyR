@@ -8,8 +8,6 @@ using Serilog;
 
 namespace OnlyR.Services.Options
 {
-    // todo: UI for setting and saving options
-
     // ReSharper disable once UnusedMember.Global
     public class OptionsService : IOptionsService
     {
