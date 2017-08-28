@@ -15,6 +15,7 @@ namespace OnlyR.Core.Recorder
         private LameMP3FileWriter _mp3Writer;
         private WaveIn _waveSource;
         private SampleAggregator _sampleAggregator;
+        private VolumeFader _fader;
 
         private int _dampedLevel;
 
@@ -28,6 +29,11 @@ namespace OnlyR.Core.Recorder
         public AudioRecorder()
         {
             _recordingStatus = RecordingStatus.NotRecording;
+        }
+
+        private void FadeCompleteHandler(object sender, System.EventArgs e)
+        {
+            _waveSource.StopRecording();
         }
 
         private RecordingStatus _recordingStatus;
@@ -67,7 +73,8 @@ namespace OnlyR.Core.Recorder
             {
                 InitAggregator(recordingConfig.SampleRate);
                 CheckRecordingDevice(recordingConfig);
-
+                InitFader(recordingConfig.SampleRate);
+                
                 _waveSource = new WaveIn
                 {
                     WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
@@ -83,6 +90,12 @@ namespace OnlyR.Core.Recorder
                 _waveSource.StartRecording();
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
             }
+        }
+
+        private void InitFader(int sampleRate)
+        {
+            _fader = new VolumeFader(sampleRate);
+            _fader.FadeComplete += FadeCompleteHandler;
         }
 
         private static void CheckRecordingDevice(RecordingConfig recordingConfig)
@@ -120,6 +133,7 @@ namespace OnlyR.Core.Recorder
         {
             Cleanup();
             OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.NotRecording));
+            _fader = null;
         }
 
         private void WaveSourceDataAvailableHandler(object sender, WaveInEventArgs waveInEventArgs)
@@ -127,22 +141,35 @@ namespace OnlyR.Core.Recorder
             byte[] buffer = waveInEventArgs.Buffer;
             int bytesRecorded = waveInEventArgs.BytesRecorded;
 
+            if(_fader != null && _fader.Active)
+            {
+                _fader.FadeBuffer(buffer, bytesRecorded);
+            }
+
             for (int index = 0; index < bytesRecorded; index += 2)
             {
                 short sample = (short)((buffer[index + 1] << 8) | buffer[index + 0]);
-                float sample32 = sample / 32768f;
+                float sample32 = sample / 32768F;
                 _sampleAggregator.Add(sample32);
             }
 
             _mp3Writer.Write(buffer, 0, bytesRecorded);
         }
 
-        public void Stop()
+        public void Stop(bool fadeOut)
         {
             if (_recordingStatus == RecordingStatus.Recording)
             {
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested));
-                _waveSource.StopRecording();
+
+                if (fadeOut)
+                {
+                    _fader.Start();
+                }
+                else
+                {
+                    _waveSource.StopRecording();
+                }
             }
         }
 

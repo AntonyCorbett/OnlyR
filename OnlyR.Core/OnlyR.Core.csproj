@@ -58,6 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recorder\NoDevicesException.cs" />
     <Compile Include="Recorder\RecordingConfig.cs" />
+    <Compile Include="Recorder\VolumeFader.cs" />
     <Compile Include="Samples\SampleAggregator.cs" />
   </ItemGroup>
   <ItemGroup>

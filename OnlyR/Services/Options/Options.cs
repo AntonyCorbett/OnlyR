@@ -27,6 +27,7 @@ namespace OnlyR.Services.Options
         public string Genre { get; set; }
         public int MaxRecordingTimeMins { get; set; }
         public int RecordingDevice { get; set; }
+        public bool FadeOut { get; set; }
 
         public Options()
         {

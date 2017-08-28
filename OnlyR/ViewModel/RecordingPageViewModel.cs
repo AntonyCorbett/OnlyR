@@ -234,7 +234,7 @@ namespace OnlyR.ViewModel
             try
             {
                 ClearErrorMsg();
-                _audioService.StopRecording();
+                _audioService.StopRecording(_optionsService.Options.FadeOut);
             }
             catch (Exception ex)
             {

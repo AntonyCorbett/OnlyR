@@ -61,6 +61,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version: {0}.
+        /// </summary>
+        internal static string APP_VER {
+            get {
+                return ResourceManager.GetString("APP_VER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not create folder {0}.
         /// </summary>
         internal static string CREATE_FOLDER_ERROR {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -58,6 +59,14 @@ namespace OnlyR.ViewModel
             }
             
             Process.Start(folder);
+        }
+
+        public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
+
+        private string GetVersionString()
+        {
+            var ver = Assembly.GetExecutingAssembly().GetName().Version;
+            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
         }
 
         // Recording Device...
@@ -166,6 +175,20 @@ namespace OnlyR.ViewModel
                 if (_optionsService.Options.MaxRecordingTimeMins != value)
                 {
                     _optionsService.Options.MaxRecordingTimeMins = value;
+                    _optionsService.Save();
+                }
+            }
+        }
+
+        // Fade...
+        public bool ShouldFadeRecordings
+        {
+            get => _optionsService.Options.FadeOut;
+            set
+            {
+                if(_optionsService.Options.FadeOut != value)
+                {
+                    _optionsService.Options.FadeOut = value;
                     _optionsService.Save();
                 }
             }

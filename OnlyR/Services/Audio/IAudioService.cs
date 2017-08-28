@@ -20,6 +20,6 @@ namespace OnlyR.Services.Audio
         IEnumerable<RecordingDeviceItem> GetRecordingDeviceList();
 
         void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
-        void StopRecording();
+        void StopRecording(bool fadeOut);
     }
 }

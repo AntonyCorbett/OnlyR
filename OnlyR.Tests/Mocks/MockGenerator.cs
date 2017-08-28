@@ -19,7 +19,10 @@ namespace OnlyR.Tests.Mocks
 
         public static Mock<IOptionsService> CreateOptionsService()
         {
-            return new Mock<IOptionsService>();
+            var m = new Mock<IOptionsService>();
+            m.Setup(o => o.Options).Returns(new Options());
+
+            return m;
         }
 
         public static Mock<IRecordingDestinationService> CreateRecordingsDestinationService()

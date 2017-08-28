@@ -58,7 +58,7 @@ namespace OnlyR.Tests.Mocks
             }
         }
 
-        public void StopRecording()
+        public void StopRecording(bool fadeOut)
         {
             _status = RecordingStatus.StopRequested;
             OnStopRequested();

@@ -86,9 +86,9 @@ namespace OnlyR.Services.Audio
             return Path.GetFileNameWithoutExtension(candidate.FinalPath);
         }
 
-        public void StopRecording()
+        public void StopRecording(bool fadeOut)
         {
-            _audioRecorder.Stop();
+            _audioRecorder.Stop(fadeOut);
         }
 
         private void OnStartedEvent()
