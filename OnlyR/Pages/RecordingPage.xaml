@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="OnlyR.Pages.RecordingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="RecorderBtnStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Height" Value="85" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="10,10,10,0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
+        <Style x:Key="SettingsBtnStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="55" />
+            <Setter Property="Width" Value="55" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard>
+                <Storyboard >
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="86*"/>
+            <ColumnDefinition Width="235*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button Style="{StaticResource RecorderBtnStyle}" 
+                Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
+                Command="{Binding StartRecordingCommand}" >
+            <Image Source="..\Images\StartButton3.ico" Margin="10"></Image>
+        </Button>
+
+        <!-- ReSharper disable once Xaml.MissingGridIndex -->
+        <Button Style="{StaticResource RecorderBtnStyle}" 
+                Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
+                Command="{Binding StopRecordingCommand}" >
+            <Image Source="..\Images\StopButton3.ico" Margin="10"></Image>
+        </Button>
+
+        <volumeMeter:VduControl Margin="10,10,0,10" Grid.Column="0" Grid.Row="0" 
+                                VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}"/>
+
+        <Border Grid.Column="1" BorderThickness="2" BorderBrush="#FFF19C7C" Margin="10,100,10,10" Padding="4">
+            <DockPanel>
+                <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding StatusStr}" Foreground="CadetBlue"/>
+                <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ElapsedTimeStr}" FontSize="32"/>
+
+                <Button Style="{StaticResource SettingsBtnStyle}" 
+                        Command="{Binding NavigateSettingsCommand}" >
+                    <Image Source="..\Images\SettingsButton.ico" Margin="0"></Image>
+                </Button>
+
+            </DockPanel>
+        </Border>
+
+    </Grid>
+</UserControl>

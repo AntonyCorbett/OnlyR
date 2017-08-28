@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using NAudio.CoreAudioApi;
 using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
+using OnlyR.Core.Models;
 using OnlyR.Core.Samples;
 
 namespace OnlyR.Core.Recorder
@@ -63,10 +66,12 @@ namespace OnlyR.Core.Recorder
             if (_recordingStatus == RecordingStatus.NotRecording)
             {
                 InitAggregator(recordingConfig.SampleRate);
+                CheckRecordingDevice(recordingConfig);
 
                 _waveSource = new WaveIn
                 {
-                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount)
+                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
+                    DeviceNumber = recordingConfig.RecordingDevice
                 };
 
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
@@ -77,6 +82,20 @@ namespace OnlyR.Core.Recorder
 
                 _waveSource.StartRecording();
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
+            }
+        }
+
+        private static void CheckRecordingDevice(RecordingConfig recordingConfig)
+        {
+            int deviceCount = WaveIn.DeviceCount;
+            if(deviceCount == 0)
+            {
+                throw new NoDevicesException();
+            }
+
+            if(recordingConfig.RecordingDevice >= deviceCount)
+            {
+                recordingConfig.RecordingDevice = 0;
             }
         }
 
@@ -154,5 +173,18 @@ namespace OnlyR.Core.Recorder
             return _dampedLevel;
         }
 
+        public static IEnumerable<RecordingDeviceInfo> GetRecordingDeviceList()
+        {
+            List<RecordingDeviceInfo> result = new List<RecordingDeviceInfo>();
+
+            int count = WaveIn.DeviceCount;
+            for(int n=0; n<count; ++n)
+            {
+                var caps = WaveIn.GetCapabilities(n);
+                result.Add(new RecordingDeviceInfo { Id = n, Name = caps.ProductName });
+            }
+
+            return result;
+        }
     }
 }

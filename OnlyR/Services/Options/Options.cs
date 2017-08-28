@@ -1,20 +1,24 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OnlyR.Services.Options
 {
     public class Options
     {
-        private readonly int _defaultMaxRecordings = 100;
+        private static readonly int _defaultMaxRecordings = 100;
 
-        private readonly int[] _validSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
-        private readonly int _defaultSampleRate = 44100;
+        private static readonly int[] _validSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
+        private static readonly int _defaultSampleRate = 44100;
 
-        private readonly int[] _validChannelCounts = { 1, 2 };
-        private readonly int _defaultChannelCount = 1;
+        private static readonly int[] _validChannelCounts = { 1, 2 };
+        private static readonly int _defaultChannelCount = 1;
 
-        private readonly int[] _validMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
-        private readonly int _defaultMp3BitRate = 96;
+        private static readonly int[] _validMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
+        private static readonly int _defaultMp3BitRate = 96;
+
+        private static readonly int _defaultRecordingDevice = 0;
+        private static readonly int _defaultMaxRecordingMins = 0;  // no limit
 
         public int MaxRecordingsInOneFolder { get; set; }
         public int SampleRate { get; set; }
@@ -22,6 +26,7 @@ namespace OnlyR.Services.Options
         public int Mp3BitRate { get; set; }
         public string Genre { get; set; }
         public int MaxRecordingTimeMins { get; set; }
+        public int RecordingDevice { get; set; }
 
         public Options()
         {
@@ -30,8 +35,25 @@ namespace OnlyR.Services.Options
             ChannelCount = _defaultChannelCount;
             Mp3BitRate = _defaultMp3BitRate;
             Genre = Properties.Resources.SPEECH;
-            MaxRecordingTimeMins = 0;
+            MaxRecordingTimeMins = _defaultMaxRecordingMins;
+            RecordingDevice = _defaultRecordingDevice;
         }
+
+        public static IEnumerable<int> GetSupportedSampleRates()
+        {
+            return _validSampleRates;
+        }
+
+        public static IEnumerable<int> GetSupportedChannels()
+        {
+            return _validChannelCounts;
+        }
+
+        public static IEnumerable<int> GetSupportedMp3BitRates()
+        {
+            return _validMp3BitRates;
+        }
+
 
         public void Sanitize()
         {
@@ -66,7 +88,12 @@ namespace OnlyR.Services.Options
 
             if(MaxRecordingTimeMins < 0)
             {
-                MaxRecordingTimeMins = 0;   // infinite
+                MaxRecordingTimeMins = _defaultMaxRecordingMins;
+            }
+
+            if(RecordingDevice < 0)
+            {
+                RecordingDevice = _defaultRecordingDevice;
             }
         }
 

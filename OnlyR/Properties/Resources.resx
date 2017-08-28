@@ -129,8 +129,20 @@
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Insufficient free space to record</value>
   </data>
+  <data name="MONO" xml:space="preserve">
+    <value>Mono</value>
+  </data>
   <data name="NOT_RECORDING" xml:space="preserve">
     <value>Not recording</value>
+  </data>
+  <data name="NO_LIMIT" xml:space="preserve">
+    <value>No limit</value>
+  </data>
+  <data name="ONE_HOUR" xml:space="preserve">
+    <value>1 hour</value>
+  </data>
+  <data name="ONE_MIN" xml:space="preserve">
+    <value>1 minute</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>
@@ -138,7 +150,16 @@
   <data name="SPEECH" xml:space="preserve">
     <value>Speech</value>
   </data>
+  <data name="STEREO" xml:space="preserve">
+    <value>Stereo</value>
+  </data>
   <data name="STOPPING" xml:space="preserve">
     <value>Stopping</value>
+  </data>
+  <data name="X_HOURS" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="X_MINS" xml:space="preserve">
+    <value>{0} minutes</value>
   </data>
 </root>

@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="OnlyR.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="388">
+
+    <UserControl.Resources>
+        <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+            <Setter Property="Margin" Value="-5,0,0,0" />
+        </Style>
+
+
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard>
+                <Storyboard >
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="326*"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+
+        <Button Command="{Binding NavigateRecordingCommand}" >
+            <Image Source="..\Images\BackButton.ico" Margin="2"></Image>
+        </Button>
+
+        <ScrollViewer Grid.Column="0" Grid.Row="1" Padding="5,0,5,10">
+            <StackPanel Orientation="Vertical">
+
+                <Label Style="{StaticResource LabelStyle}">Recording device:</Label>
+                <ComboBox ItemsSource="{Binding RecordingDevices}" 
+                          DisplayMemberPath="DeviceName" 
+                          SelectedValuePath="DeviceId" 
+                          SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
+
+                <Label Style="{StaticResource LabelStyle}">Sample rate:</Label>
+                <ComboBox ItemsSource="{Binding SampleRates}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="ActualSampleRate" 
+                          SelectedValue="{Binding SampleRate, Mode=TwoWay}"/>
+
+                <Label Style="{StaticResource LabelStyle}">Channels:</Label>
+                <ComboBox ItemsSource="{Binding Channels}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="ChannelCount" 
+                          SelectedValue="{Binding Channel, Mode=TwoWay}"/>
+
+                <Label Style="{StaticResource LabelStyle}">MP3 bit-rate:</Label>
+                <ComboBox ItemsSource="{Binding BitRates}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="ActualBitRate" 
+                          SelectedValue="{Binding BitRate, Mode=TwoWay}"/>
+
+                <Label Style="{StaticResource LabelStyle}">Max recording time:</Label>
+                <ComboBox ItemsSource="{Binding MaxRecordingTimes}" 
+                          DisplayMemberPath="Name" 
+                          SelectedValuePath="ActualMinutes" 
+                          SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"/>
+
+                <Label Style="{StaticResource LabelStyle}">Genre (in MP3 tag):</Label>
+                <TextBox Text="{Binding Genre, Mode=TwoWay}"></TextBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button Grid.Row="2" 
+                Command="{Binding ShowRecordingsCommand}">Recordings...</Button>
+
+
+    </Grid>
+</UserControl>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using OnlyR.Core.EventArgs;
+using OnlyR.Core.Models;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 
@@ -14,6 +16,8 @@ namespace OnlyR.Services.Audio
         event EventHandler StoppedEvent;
         event EventHandler StopRequested;
         event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
+
+        IEnumerable<RecordingDeviceItem> GetRecordingDeviceList();
 
         void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
         void StopRecording();

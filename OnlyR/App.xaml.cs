@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows;
+using AutoMapper;
+using OnlyR.Model;
 using OnlyR.Utils;
 using Serilog;
 
@@ -30,7 +33,17 @@ namespace OnlyR
                     .CreateLogger();
 
                 Log.Logger.Information("==== Launched ====");
+
+                ConfigureAutoMapper();
             }
+        }
+
+        private static void ConfigureAutoMapper()
+        {
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<ObjectMappingProfile>();
+            });
         }
 
         private bool AnotherInstanceRunning()
@@ -41,7 +54,9 @@ namespace OnlyR
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _appMutex?.Dispose();
             Log.Logger.Information("==== Exit ====");
         }
+
     }
 }

@@ -97,11 +97,47 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mono.
+        /// </summary>
+        internal static string MONO {
+            get {
+                return ResourceManager.GetString("MONO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No limit.
+        /// </summary>
+        internal static string NO_LIMIT {
+            get {
+                return ResourceManager.GetString("NO_LIMIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not recording.
         /// </summary>
         internal static string NOT_RECORDING {
             get {
                 return ResourceManager.GetString("NOT_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 hour.
+        /// </summary>
+        internal static string ONE_HOUR {
+            get {
+                return ResourceManager.GetString("ONE_HOUR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 minute.
+        /// </summary>
+        internal static string ONE_MIN {
+            get {
+                return ResourceManager.GetString("ONE_MIN", resourceCulture);
             }
         }
         
@@ -124,11 +160,38 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stereo.
+        /// </summary>
+        internal static string STEREO {
+            get {
+                return ResourceManager.GetString("STEREO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stopping.
         /// </summary>
         internal static string STOPPING {
             get {
                 return ResourceManager.GetString("STOPPING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hours.
+        /// </summary>
+        internal static string X_HOURS {
+            get {
+                return ResourceManager.GetString("X_HOURS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} minutes.
+        /// </summary>
+        internal static string X_MINS {
+            get {
+                return ResourceManager.GetString("X_MINS", resourceCulture);
             }
         }
     }

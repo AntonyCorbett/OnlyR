@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using OnlyR.Model;
 using OnlyR.Utils;
 using Serilog;
 
@@ -85,6 +87,63 @@ namespace OnlyR.Services.Options
                     serializer.Serialize(file, _options);
                 }
             }
+        }
+
+        public IEnumerable<BitRateItem> GetSupportedMp3BitRates()
+        {
+            var result = new List<BitRateItem>();
+
+            var validBitRates = Options.GetSupportedMp3BitRates();
+            foreach (var rate in validBitRates)
+            {
+                result.Add(new BitRateItem { Name = rate.ToString(), ActualBitRate = rate });
+            }
+
+            return result;
+        }
+
+        public IEnumerable<SampleRateItem> GetSupportedSampleRates()
+        {
+            var result = new List<SampleRateItem>();
+
+            var validSampleRates = Options.GetSupportedSampleRates();
+            foreach(var rate in validSampleRates)
+            {
+                result.Add(new SampleRateItem { Name = rate.ToString(), ActualSampleRate = rate });
+            }
+
+            return result;
+        }
+
+        public IEnumerable<ChannelItem> GetSupportedChannels()
+        {
+            var result = new List<ChannelItem>();
+
+            var channels = Options.GetSupportedChannels();
+            foreach(var c in channels)
+            {
+                result.Add(new ChannelItem { Name = GetChannelName(c), ChannelCount = c });
+            }
+
+            return result;
+        }
+
+        private static string GetChannelName(int channelsCount)
+        {
+            switch (channelsCount)
+            {
+                case 1:
+                    return Properties.Resources.MONO;
+                case 2:
+                    return Properties.Resources.STEREO;
+                default:
+                    return "Unknown";
+            }
+        }
+
+        public void Save()
+        {
+            WriteOptions();
         }
     }
 }

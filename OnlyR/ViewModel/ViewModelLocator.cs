@@ -21,6 +21,7 @@ using OnlyR.Services;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
+using AutoMapper;
 
 namespace OnlyR.ViewModel
 {
@@ -47,7 +48,7 @@ namespace OnlyR.ViewModel
             ////    // Create run time view services and models
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
-
+            
             SimpleIoc.Default.Register<IOptionsService, OptionsService>();
             SimpleIoc.Default.Register<IRecordingDestinationService, RecordingDestinationService>();
             SimpleIoc.Default.Register<IAudioService, AudioService>();

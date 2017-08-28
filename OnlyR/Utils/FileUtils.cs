@@ -75,6 +75,21 @@ namespace OnlyR.Utils
                 dt.ToString("yyyy"), dt.ToString("MM"), dt.ToString("yyyy-MM-dd"));
         }
 
+        public static string GetMonthlyDestinationFolder(DateTime dt, string commandLineIdentifier)
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                _appNamePathSegment,
+                commandLineIdentifier ?? string.Empty,
+                dt.ToString("yyyy"), dt.ToString("MM"));
+        }
+
+        public static string GetRootDestinationFolder(string commandLineIdentifier)
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                _appNamePathSegment,
+                commandLineIdentifier ?? string.Empty);
+        }
+
         public static string GetTempRecordingFolder()
         {
             string folder = Path.Combine(GetSystemTempFolder(), _appNamePathSegment, "Recordings");

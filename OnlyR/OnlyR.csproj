@@ -73,6 +73,9 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=6.1.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -122,7 +125,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\BitRateItem.cs" />
+    <Compile Include="Model\ChannelItem.cs" />
+    <Compile Include="Model\MaxRecordingTimeItem.cs" />
+    <Compile Include="Model\ObjectMappingProfile.cs" />
     <Compile Include="Model\RecordingCandidate.cs" />
+    <Compile Include="Model\RecordingDeviceItem.cs" />
+    <Compile Include="Model\SampleRateItem.cs" />
+    <Compile Include="Pages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\IPage.cs" />
+    <Compile Include="Pages\RecordingPage.xaml.cs">
+      <DependentUpon>RecordingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\Audio\AudioService.cs" />
     <Compile Include="Services\Audio\IAudioService.cs" />
     <Compile Include="Services\Options\IOptionsService.cs" />
@@ -136,6 +152,10 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\Messages\NavigateMessage.cs" />
+    <Compile Include="ViewModel\RecordingPageViewModel.cs" />
+    <Compile Include="ViewModel\Messages\ShutDownMessage.cs" />
+    <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="VolumeMeter\VduControl.cs" />
     <Page Include="MainWindow.xaml">
@@ -150,6 +170,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\RecordingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -207,6 +235,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SettingsButton.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BackButton.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

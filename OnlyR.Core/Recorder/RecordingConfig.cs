@@ -4,6 +4,7 @@ namespace OnlyR.Core.Recorder
 {
     public class RecordingConfig
     {
+        public int RecordingDevice { get; set; }
         public DateTime RecordingDate { get; set; }
         public int TrackNumber { get; set; }
         public string DestFilePath { get; set; }

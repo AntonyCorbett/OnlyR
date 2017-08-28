@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
+using OnlyR.Core.Models;
 using OnlyR.Core.Recorder;
 using OnlyR.Model;
 using OnlyR.Services.Options;
@@ -59,6 +61,7 @@ namespace OnlyR.Services.Audio
 
             RecordingConfig recordingConfig = new RecordingConfig
             {
+                RecordingDevice = optionsService.Options.RecordingDevice,
                 RecordingDate = candidateFile.RecordingDate,
                 TrackNumber = candidateFile.TrackNumber,
                 DestFilePath = candidateFile.TempPath,
@@ -125,6 +128,12 @@ namespace OnlyR.Services.Audio
         private void OnRecordingProgressEvent(RecordingProgressEventArgs e)
         {
             RecordingProgressEvent?.Invoke(this, e);
+        }
+
+        public IEnumerable<RecordingDeviceItem> GetRecordingDeviceList()
+        {
+            var devices = AudioRecorder.GetRecordingDeviceList();
+            return AutoMapper.Mapper.Map<List<RecordingDeviceItem>>(devices);
         }
     }
 }
