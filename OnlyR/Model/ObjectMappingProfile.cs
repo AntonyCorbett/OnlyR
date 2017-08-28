@@ -12,7 +12,7 @@ namespace OnlyR.Model
     /// that we use to map models between layers
     /// </summary>
 
-    internal class ObjectMappingProfile : AutoMapper.Profile
+    public class ObjectMappingProfile : AutoMapper.Profile
     {
         public ObjectMappingProfile()
         {

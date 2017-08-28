@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OnlyR.Utils
 {
-    internal class CommandLineParser
+    public class CommandLineParser
     {
         private readonly List<string> _rawItems;
         private readonly List<string> _switches;
@@ -32,7 +32,7 @@ namespace OnlyR.Utils
             return GetParamValue(ID_KEY);
         }
 
-        private CommandLineParser(IEnumerable<string> args = null)
+        public CommandLineParser(IEnumerable<string> args = null)
         {
             _rawItems = args?.ToList() ?? Environment.GetCommandLineArgs().ToList();
             _switches = new List<string>();

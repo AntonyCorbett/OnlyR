@@ -4,7 +4,7 @@ using OnlyR.Core.Enums;
 namespace OnlyR.Utils
 {
     // ReSharper disable once UnusedMember.Global
-    internal static class EnumExtensions
+    public static class EnumExtensions
     {
         // ReSharper disable once UnusedMember.Global
         public static string GetDescriptiveText(this RecordingStatus value)

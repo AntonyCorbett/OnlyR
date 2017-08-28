@@ -44,7 +44,8 @@ namespace OnlyR.ViewModel
             SetupPage(SettingsPageViewModel.PageName, new SettingsPage(), 
                 new SettingsPageViewModel(audioService, optionsService));
 
-            Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, null));
+            var state = new RecordingPageNavigationState {ShowSplash = true};
+            Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, state));
         }
 
         private void SetupPage(string pageName, FrameworkElement page, ViewModelBase pageModel)

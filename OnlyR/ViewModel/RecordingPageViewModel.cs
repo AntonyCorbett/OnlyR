@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -16,6 +17,7 @@ using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
+using OnlyR.VolumeMeter;
 using Serilog;
 
 namespace OnlyR.ViewModel
@@ -28,6 +30,7 @@ namespace OnlyR.ViewModel
         private readonly string _commandLineIdentifier;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
+        private DispatcherTimer _splashTimer;
 
         public RecordingPageViewModel(
             IAudioService audioService,
@@ -204,18 +207,24 @@ namespace OnlyR.ViewModel
 
         private void CheckDiskSpace(RecordingCandidate candidate)
         {
-            CheckDiskSpace(candidate.TempPath);
-            CheckDiskSpace(candidate.FinalPath);
+            if (candidate != null)
+            {
+                CheckDiskSpace(candidate.TempPath);
+                CheckDiskSpace(candidate.FinalPath);
+            }
         }
 
         private void CheckDiskSpace(string filePath)
         {
-            if (FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree))
+            if (!string.IsNullOrEmpty(filePath))
             {
-                if (bytesFree < _safeMinBytesFree)
+                if (FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree))
                 {
-                    // "Insufficient free space to record"
-                    throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+                    if (bytesFree < _safeMinBytesFree)
+                    {
+                        // "Insufficient free space to record"
+                        throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+                    }
                 }
             }
         }
@@ -282,6 +291,39 @@ namespace OnlyR.ViewModel
         public void Activated(object state)
         {
             // on display of page...
+            var stateObj = (RecordingPageNavigationState) state;
+            if(stateObj != null && stateObj.ShowSplash)
+            {
+                DoSplash();
+            }
+        }
+
+        private void DoSplash()
+        {
+            if (_splashTimer == null)
+            {
+                _splashTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(25)};
+                _splashTimer.Tick += SplashTimerTick;
+            }
+
+            VolumeLevelAsPercentage = 100;
+            _splashTimer.Start();
+        }
+
+        private void SplashTimerTick(object sender, EventArgs e)
+        {
+            if (IsNotRecording)
+            {
+                VolumeLevelAsPercentage -= 6;
+                if(VolumeLevelAsPercentage <= 0)
+                {
+                    _splashTimer.Stop();
+                }
+            }
+            else
+            {
+                _splashTimer.Stop();
+            }
         }
     }
 

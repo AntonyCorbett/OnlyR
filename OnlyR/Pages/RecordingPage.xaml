@@ -62,7 +62,7 @@
             <Image Source="..\Images\StopButton3.ico" Margin="10"></Image>
         </Button>
 
-        <volumeMeter:VduControl Margin="10,10,0,10" Grid.Column="0" Grid.Row="0" 
+        <volumeMeter:VduControl Margin="10,10,0,10" Grid.Column="0" Grid.Row="0" x:Name="VduControl"
                                 VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}"/>
 
         <Border Grid.Column="1" BorderThickness="2" BorderBrush="#FFF19C7C" Margin="10,100,10,10" Padding="4">

@@ -16,7 +16,7 @@ using OnlyR.ViewModel.Messages;
 
 namespace OnlyR.ViewModel
 {
-    internal class SettingsPageViewModel : ViewModelBase, IPage
+    public class SettingsPageViewModel : ViewModelBase, IPage
     {
         public static string PageName => "SettingsPage";
 

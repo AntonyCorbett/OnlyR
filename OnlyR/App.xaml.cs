@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using AutoMapper;
 using OnlyR.Model;
 using OnlyR.Utils;
@@ -35,6 +37,12 @@ namespace OnlyR
                 Log.Logger.Information("==== Launched ====");
 
                 ConfigureAutoMapper();
+            }
+
+            if (CommandLineParser.Instance.IsSwitchSet("-nogpu"))
+            {
+                // disable hardware (GPU) rendering so that it's all done by the CPU...
+                RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
         }
 

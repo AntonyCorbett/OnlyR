@@ -134,6 +134,7 @@
     <Compile Include="Model\ObjectMappingProfile.cs" />
     <Compile Include="Model\RecordingCandidate.cs" />
     <Compile Include="Model\RecordingDeviceItem.cs" />
+    <Compile Include="Model\RecordingPageNavigationState.cs" />
     <Compile Include="Model\SampleRateItem.cs" />
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
