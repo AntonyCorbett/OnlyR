@@ -15,7 +15,7 @@
                             BorderThickness="1">
 
                         <Border x:Name="InnerBorder" Background="Black"
-                            BorderBrush="LightBlue"
+                            BorderBrush="#FFF19C7C"
                             Padding="4"
                             BorderThickness="1">
 
