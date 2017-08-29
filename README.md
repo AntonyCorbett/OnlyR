@@ -10,4 +10,4 @@ See Installer/Output for a setup file.
 
 ### License, etc
 
-OnlyR is Copyright &copy; 2017 Antony Corbett and other contributors under the [MIT license](LICENSE.txt).
+OnlyR is Copyright &copy; 2017 Antony Corbett and other contributors under the [MIT license](LICENSE).
