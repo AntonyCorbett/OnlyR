@@ -4,4 +4,13 @@ Windows audio recorder using C#, WPF, NAudio, NAudio.Lame, AutoMapper, GalaSoft 
 
 <img src="http://cv8.org.uk/soundbox/OnlyR/Images/OnlyR01.png" alt="OnlyR"> 
 
+### Download
+
 See Installer/Output for a setup file.
+
+### License, etc
+
+This project has adopted the code of conduct defined by the Contributor Covenant to clarify expected behavior in our community.
+For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct). 
+
+OnlyR is Copyright &copy; 2017 Antony Corbett and other contributors under the [MIT license](LICENSE.txt).
