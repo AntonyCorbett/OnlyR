@@ -23,7 +23,7 @@ namespace OnlyR.Services.RecordingDestination
             DateTime dt, 
             string commandLineIdentifier)
         {
-            var destFolder = FileUtils.GetDestinationFolder(dt, commandLineIdentifier);
+            var destFolder = FileUtils.GetDestinationFolder(dt, commandLineIdentifier, optionsService.Options.DestinationFolder);
             PathAndTrackNumber finalPathAndTrack = GetNextAvailableFile(optionsService, destFolder, dt);
 
             var result = new RecordingCandidate

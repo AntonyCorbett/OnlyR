@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
+using Serilog;
 
 namespace OnlyR.ViewModel
 {
@@ -23,6 +26,7 @@ namespace OnlyR.ViewModel
 
         private readonly IOptionsService _optionsService;
         
+
         public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
         {
             _optionsService = optionsService;
@@ -35,30 +39,70 @@ namespace OnlyR.ViewModel
 
             NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
+            SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
         }
 
-        private static void ShowRecordings()
+        private void SelectDestinationFolder()
         {
-            DateTime today = DateTime.Today;
-            string commandLineIdentifier = CommandLineParser.Instance.GetId();
-
-            // first try today's folder...
-            var folder = FileUtils.GetDestinationFolder(today, commandLineIdentifier);
-            if(!Directory.Exists(folder))
+            CommonOpenFileDialog d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true};
+            CommonFileDialogResult result = d.ShowDialog();
+            if(result == CommonFileDialogResult.Ok)
             {
-                // try this month's folder...
-                folder = FileUtils.GetMonthlyDestinationFolder(today, commandLineIdentifier);
+                DestinationFolder = d.FileName;
+            }
+        }
+
+        private void ShowRecordings()
+        {
+            Process.Start(FindSuitableRecordingFolderToShow());
+        }
+
+        private string FindSuitableRecordingFolderToShow()
+        {
+            string folder = null;
+
+            try
+            {
+                DateTime today = DateTime.Today;
+                string commandLineIdentifier = CommandLineParser.Instance.GetId();
+
+                // first try today's folder...
+                folder = FileUtils.GetDestinationFolder(today, commandLineIdentifier,
+                    _optionsService.Options.DestinationFolder);
                 if (!Directory.Exists(folder))
                 {
-                    folder = FileUtils.GetRootDestinationFolder(commandLineIdentifier);
-                    if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
+                    // try this month's folder...
+                    folder = FileUtils.GetMonthlyDestinationFolder(today, commandLineIdentifier,
+                        _optionsService.Options.DestinationFolder);
+                    if (!Directory.Exists(folder))
                     {
-                        folder = FileUtils.GetRootDestinationFolder(string.Empty);
+                        folder = FileUtils.GetRootDestinationFolder(commandLineIdentifier,
+                            _optionsService.Options.DestinationFolder);
+                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
+                        {
+                            folder = FileUtils.GetRootDestinationFolder(string.Empty,
+                                _optionsService.Options.DestinationFolder);
+
+                            if (!Directory.Exists(folder))
+                            {
+                                Directory.CreateDirectory(folder);
+                            }
+                        }
                     }
                 }
             }
-            
-            Process.Start(folder);
+            catch(Exception ex)
+            {
+                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
+            }
+
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                folder = FileUtils.GetDefaultMyDocsDestinationFolder();
+                Directory.CreateDirectory(folder);
+            }
+
+            return folder;
         }
 
         public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
@@ -81,7 +125,6 @@ namespace OnlyR.ViewModel
                 if (_optionsService.Options.RecordingDevice != value)
                 {
                     _optionsService.Options.RecordingDevice = value;
-                    _optionsService.Save();
                 }
             }
         }
@@ -99,7 +142,6 @@ namespace OnlyR.ViewModel
                 if(_optionsService.Options.SampleRate != value)
                 {
                     _optionsService.Options.SampleRate = value;
-                    _optionsService.Save();
                 }
             }
         }
@@ -116,7 +158,6 @@ namespace OnlyR.ViewModel
                 if(_optionsService.Options.ChannelCount != value)
                 {
                     _optionsService.Options.ChannelCount = value;
-                    _optionsService.Save();
                 }
             }
         }
@@ -133,7 +174,6 @@ namespace OnlyR.ViewModel
                 if (_optionsService.Options.Mp3BitRate != value)
                 {
                     _optionsService.Options.Mp3BitRate = value;
-                    _optionsService.Save();
                 }
             }
         }
@@ -175,7 +215,6 @@ namespace OnlyR.ViewModel
                 if (_optionsService.Options.MaxRecordingTimeMins != value)
                 {
                     _optionsService.Options.MaxRecordingTimeMins = value;
-                    _optionsService.Save();
                 }
             }
         }
@@ -189,33 +228,51 @@ namespace OnlyR.ViewModel
                 if(_optionsService.Options.FadeOut != value)
                 {
                     _optionsService.Options.FadeOut = value;
-                    _optionsService.Save();
                 }
             }
         }
 
         // Genre...
-        public string Genre {
+        public string Genre
+        {
             get => _optionsService.Options.Genre;
             set
             {
                 if(_optionsService.Options.Genre != value)
                 {
                     _optionsService.Options.Genre = value;
-                    _optionsService.Save();
                 }
             }
         } 
 
+        // Destination folder...
+        public string DestinationFolder
+        {
+            get => _optionsService.Options.DestinationFolder;
+            set
+            {
+                if(_optionsService.Options.DestinationFolder != value)
+                {
+                    _optionsService.Options.DestinationFolder = value;
+                    RaisePropertyChanged(nameof(DestinationFolder));
+                }
+            }
+        }
 
         private static bool CanExecuteNavigateRecording()
         {
             return true;
         }
 
-        private static void NavigateRecording()
+        private void NavigateRecording()
         {
+            Save();
             Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, null));
+        }
+
+        private void Save()
+        {
+            _optionsService.Save();
         }
 
         public void Activated(object state)
@@ -226,6 +283,7 @@ namespace OnlyR.ViewModel
         // Commands (bound in ctor)...
         public RelayCommand NavigateRecordingCommand { get; set; }
         public RelayCommand ShowRecordingsCommand { get; set; }
+        public RelayCommand SelectDestinationFolderCommand { get; set; }
         //...
 
     }

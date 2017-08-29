@@ -150,6 +150,9 @@
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>
   </data>
+  <data name="SELECT_DEST_FOLDER" xml:space="preserve">
+    <value>Select Recording Folder</value>
+  </data>
   <data name="SPEECH" xml:space="preserve">
     <value>Speech</value>
   </data>

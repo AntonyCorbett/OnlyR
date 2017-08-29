@@ -67,26 +67,56 @@ namespace OnlyR.Utils
                 "Logs");
         }
 
-        public static string GetDestinationFolder(DateTime dt, string commandLineIdentifier)
+        private static string GetRecordingFolderRoot(string rootFromOptions)
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                _appNamePathSegment,
-                commandLineIdentifier ?? string.Empty,
-                dt.ToString("yyyy"), dt.ToString("MM"), dt.ToString("yyyy-MM-dd"));
+            if(DirectoryIsAvailable(rootFromOptions))
+            {
+                return rootFromOptions;
+            }
+            
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), _appNamePathSegment);
         }
 
-        public static string GetMonthlyDestinationFolder(DateTime dt, string commandLineIdentifier)
+        private static bool DirectoryIsAvailable(string dir)
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                _appNamePathSegment,
-                commandLineIdentifier ?? string.Empty,
-                dt.ToString("yyyy"), dt.ToString("MM"));
+            if(string.IsNullOrEmpty(dir))
+            {
+                return false;
+            }
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                return Directory.Exists(dir);
+            }
+
+            return true;
         }
 
-        public static string GetRootDestinationFolder(string commandLineIdentifier)
+        public static string GetDefaultMyDocsDestinationFolder()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                _appNamePathSegment,
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), _appNamePathSegment);
+        }
+
+        public static string GetDestinationFolder(DateTime dt, string commandLineIdentifier, string rootFromOptions)
+        {
+            return Path.Combine(
+                GetMonthlyDestinationFolder(dt, commandLineIdentifier, rootFromOptions),
+                dt.ToString("yyyy-MM-dd"));
+        }
+
+        public static string GetMonthlyDestinationFolder(DateTime dt, string commandLineIdentifier, string rootFromOptions)
+        {
+            return Path.Combine(
+                GetRootDestinationFolder(commandLineIdentifier, rootFromOptions),
+                dt.ToString("yyyy"), 
+                dt.ToString("MM"));
+        }
+
+        public static string GetRootDestinationFolder(string commandLineIdentifier, string rootFromOptions)
+        {
+            return Path.Combine(
+                GetRecordingFolderRoot(rootFromOptions),
                 commandLineIdentifier ?? string.Empty);
         }
 

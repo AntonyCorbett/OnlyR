@@ -160,6 +160,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select Recording Folder.
+        /// </summary>
+        internal static string SELECT_DEST_FOLDER {
+            get {
+                return ResourceManager.GetString("SELECT_DEST_FOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Speech.
         /// </summary>
         internal static string SPEECH {

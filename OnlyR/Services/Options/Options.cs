@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using OnlyR.Utils;
 
 namespace OnlyR.Services.Options
 {
@@ -28,6 +30,7 @@ namespace OnlyR.Services.Options
         public int MaxRecordingTimeMins { get; set; }
         public int RecordingDevice { get; set; }
         public bool FadeOut { get; set; }
+        public string DestinationFolder { get; set; }
 
         public Options()
         {
@@ -38,6 +41,7 @@ namespace OnlyR.Services.Options
             Genre = Properties.Resources.SPEECH;
             MaxRecordingTimeMins = _defaultMaxRecordingMins;
             RecordingDevice = _defaultRecordingDevice;
+            DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
         }
 
         public static IEnumerable<int> GetSupportedSampleRates()

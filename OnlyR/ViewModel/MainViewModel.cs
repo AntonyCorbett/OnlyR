@@ -30,12 +30,15 @@ namespace OnlyR.ViewModel
     {
         private Dictionary<string, FrameworkElement> _pages;
         private string _currentPageName;
+        private IOptionsService _optionsService;
 
         public MainViewModel(IAudioService audioService, IOptionsService optionsService, 
             IRecordingDestinationService destService)
         {
             Messenger.Default.Register<NavigateMessage>(this, (message) => OnNavigate(message));
             _pages = new Dictionary<string, FrameworkElement>();
+
+            _optionsService = optionsService;
 
             // set up pages...
             SetupPage(RecordingPageViewModel.PageName, new RecordingPage(), 
@@ -87,8 +90,13 @@ namespace OnlyR.ViewModel
         public void Closing(object sender, CancelEventArgs e)
         {
             // prevent window closing when recording...
-            var recordingPage = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
-            recordingPage.Closing(sender, e);
+            var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
+            recordingPageModel.Closing(sender, e);
+
+            if(!e.Cancel)
+            {
+                _optionsService.Save();
+            }
         }
 
 

@@ -14,6 +14,7 @@ namespace OnlyR.Services.Options
         private Options _options;
         private readonly int _optionsVersion = 1;
         private string _optionsFilePath;
+        private string _originalOptionsSignature;
 
         public Options Options
         {
@@ -43,6 +44,8 @@ namespace OnlyR.Services.Options
                     {
                         _options = new Options();
                     }
+
+                    _originalOptionsSignature = GetOptionsSignature(_options);
                 }
                 catch(Exception ex)
                 {
@@ -50,6 +53,12 @@ namespace OnlyR.Services.Options
                     _options = new Options();
                 }
             }
+        }
+
+        private string GetOptionsSignature(Options options)
+        {
+            // config data is small so simple solution is best...
+            return JsonConvert.SerializeObject(options);
         }
 
         private void ReadOptions()
@@ -83,6 +92,8 @@ namespace OnlyR.Services.Options
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, _options);
+
+                    _originalOptionsSignature = GetOptionsSignature(_options);
                 }
             }
         }
@@ -141,7 +152,13 @@ namespace OnlyR.Services.Options
 
         public void Save()
         {
-            WriteOptions();
+            var newSignature = GetOptionsSignature(_options);
+            if (_originalOptionsSignature != newSignature)
+            {
+                // changed...
+                WriteOptions();
+                Log.Logger.Information("Settings changed and saved");
+            }
         }
     }
 }
