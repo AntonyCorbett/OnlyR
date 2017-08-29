@@ -6,7 +6,9 @@ Windows audio recorder using C#, WPF, NAudio, NAudio.Lame, AutoMapper, GalaSoft 
 
 ### Download
 
-See Installer/Output for a setup file.
+If you just want to install the application, please download the OnlyRSetup file from here:
+
+https://github.com/AntonyCorbett/OnlyR/releases/latest
 
 ### License, etc
 
