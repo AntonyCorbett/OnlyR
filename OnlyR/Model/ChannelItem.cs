@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyR.Model
+﻿namespace OnlyR.Model
 {
-    public class ChannelItem
-    {
-        public string Name { get; set; }
-        public int ChannelCount { get; set; }
-    }
+   /// <summary>
+   /// Model for "Channels" combo in Settings page
+   /// </summary>
+   public class ChannelItem
+   {
+      public string Name { get; set; }
+      public int ChannelCount { get; set; }
+   }
 }

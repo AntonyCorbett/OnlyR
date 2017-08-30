@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyR.Model
+﻿namespace OnlyR.Model
 {
-    public class SampleRateItem
-    {
-        public string Name { get; set; }
-        public int ActualSampleRate { get; set; }
-    }
+   /// <summary>
+   /// Model for the "MP3 Sample rate" combo in Settings page
+   /// </summary>
+   public class SampleRateItem
+   {
+      public string Name { get; set; }
+      public int ActualSampleRate { get; set; }
+   }
 }

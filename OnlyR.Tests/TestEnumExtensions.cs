@@ -9,19 +9,19 @@ using OnlyR.Utils;
 
 namespace OnlyR.Tests
 {
-    [TestClass]
-    public class TestEnumExtensions
-    {
-        [TestMethod]
-        public void ValidDescriptions()
-        {
-            foreach (RecordingStatus status in Enum.GetValues(typeof(RecordingStatus)))
+   [TestClass]
+   public class TestEnumExtensions
+   {
+      [TestMethod]
+      public void ValidDescriptions()
+      {
+         foreach (RecordingStatus status in Enum.GetValues(typeof(RecordingStatus)))
+         {
+            if (status != RecordingStatus.Unknown)
             {
-                if(status != RecordingStatus.Unknown)
-                {
-                    status.GetDescriptiveText();
-                }
+               status.GetDescriptiveText();
             }
-        }
-    }
+         }
+      }
+   }
 }

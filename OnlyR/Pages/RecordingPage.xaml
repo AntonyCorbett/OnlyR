@@ -69,6 +69,7 @@
             <DockPanel>
                 <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding StatusStr}" Foreground="CadetBlue"/>
                 <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ElapsedTimeStr}" FontSize="32"/>
+                <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ErrorMsg}" Foreground="Crimson" />
 
                 <Button Style="{StaticResource SettingsBtnStyle}" 
                         Command="{Binding NavigateSettingsCommand}" >

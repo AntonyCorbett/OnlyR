@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyR.Model
+﻿namespace OnlyR.Model
 {
-    public class MaxRecordingTimeItem
-    {
-        public string Name { get; set; }
-        public int ActualMinutes { get; set; }
-    }
+   /// <summary>
+   /// Model for "Max recording time" combo in Settings page
+   /// </summary>
+   public class MaxRecordingTimeItem
+   {
+      public string Name { get; set; }
+      public int ActualMinutes { get; set; }
+   }
 }
