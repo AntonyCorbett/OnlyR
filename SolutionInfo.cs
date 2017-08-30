@@ -11,4 +11,4 @@ using System.Windows;
 [assembly: AssemblyCulture("")]
 
 
-[assembly: AssemblyVersion("1.0.0.10")]
+[assembly: AssemblyVersion("1.0.0.11")]
