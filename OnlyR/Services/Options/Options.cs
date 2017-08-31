@@ -12,7 +12,7 @@ namespace OnlyR.Services.Options
    /// </summary>
    public class Options
    {
-      private static readonly int _defaultMaxRecordings = 100;
+      private static readonly int _defaultMaxRecordings = 999;
 
       private static readonly int[] _validSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
       private static readonly int _defaultSampleRate = 44100;
@@ -62,9 +62,14 @@ namespace OnlyR.Services.Options
       public int RecordingDevice { get; set; }
 
       /// <summary>
-      /// Whether the recordinmg should be automatically faded out
+      /// Whether the recording should be automatically faded out
       /// </summary>
       public bool FadeOut { get; set; }
+
+      /// <summary>
+      /// Whether the recording should start automatically on launch
+      /// </summary>
+      public bool StartRecordingOnLaunch { get; set; }
 
       /// <summary>
       /// The final recording folder (leave empt for default).

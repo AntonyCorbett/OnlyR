@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignWidth="268" d:DesignHeight="488">
+             mc:Ignorable="d" d:DesignWidth="268" d:DesignHeight="588">
 
     <UserControl.Resources>
         <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
@@ -71,6 +71,9 @@
                 
                 <CheckBox Margin="0,10,0,0" 
                           IsChecked="{Binding ShouldFadeRecordings, Mode=TwoWay}">Fade out recordings</CheckBox>
+
+                <CheckBox Margin="0,10,0,0" 
+                          IsChecked="{Binding StartRecordingOnLaunch, Mode=TwoWay}">Start recording on launch</CheckBox>
 
                 <Label Style="{StaticResource LabelStyle}">Genre (in MP3 tag):</Label>
                 <TextBox Text="{Binding Genre, Mode=TwoWay}"></TextBox>

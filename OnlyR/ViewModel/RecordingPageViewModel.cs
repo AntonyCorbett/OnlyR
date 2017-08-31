@@ -321,9 +321,16 @@ namespace OnlyR.ViewModel
       {
          // on display of page...
          var stateObj = (RecordingPageNavigationState)state;
-         if (stateObj != null && stateObj.ShowSplash)
+         if (stateObj != null)
          {
-            DoSplash();
+            if (stateObj.StartRecording)
+            {
+               StartRecording();
+            }
+            else if (stateObj.ShowSplash)
+            {
+               DoSplash();
+            }
          }
       }
 

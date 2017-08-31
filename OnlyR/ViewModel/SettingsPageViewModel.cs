@@ -267,6 +267,21 @@ namespace OnlyR.ViewModel
       }
 
       /// <summary>
+      /// Whether recording should begin on launch
+      /// </summary>
+      public bool StartRecordingOnLaunch
+      {
+         get => _optionsService.Options.StartRecordingOnLaunch;
+         set
+         {
+            if (_optionsService.Options.StartRecordingOnLaunch != value)
+            {
+               _optionsService.Options.StartRecordingOnLaunch = value;
+            }
+         }
+      }
+
+      /// <summary>
       /// The Genre of the recording. This is stored in the MP3 Id3 tag data 
       /// (i.e. within the MP3 file itself)
       /// </summary>

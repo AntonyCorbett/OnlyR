@@ -7,5 +7,6 @@
    class RecordingPageNavigationState
    {
       public bool ShowSplash { get; set; }
+      public bool StartRecording { get; set; }
    }
 }
