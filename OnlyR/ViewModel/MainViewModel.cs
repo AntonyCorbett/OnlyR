@@ -30,16 +30,18 @@ namespace OnlyR.ViewModel
       private Dictionary<string, FrameworkElement> _pages;
       private string _currentPageName;
       private IOptionsService _optionsService;
+      private IAudioService _audioService;
 
       public MainViewModel(
          IAudioService audioService,
          IOptionsService optionsService,
          IRecordingDestinationService destService)
       {
-         Messenger.Default.Register<NavigateMessage>(this, (message) => OnNavigate(message));
+         Messenger.Default.Register<NavigateMessage>(this, OnNavigate);
          _pages = new Dictionary<string, FrameworkElement>();
 
          _optionsService = optionsService;
+         _audioService = audioService;
 
          // set up pages...
          SetupPage(RecordingPageViewModel.PageName, new RecordingPage(),
@@ -87,23 +89,14 @@ namespace OnlyR.ViewModel
          }
       }
 
-      public override void Cleanup()
-      {
-         Messenger.Default.Send(new ShutDownMessage(_currentPageName));
-         base.Cleanup();
-      }
-
       public void Closing(object sender, CancelEventArgs e)
       {
          // prevent window closing when recording...
          var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
          recordingPageModel.Closing(sender, e);
-
-         if (!e.Cancel)
-         {
-            // save options before closing...
-            _optionsService.Save();
-         }
+         
+         Messenger.Default.Send(new ShutDownMessage(_currentPageName));
+         (_audioService as IDisposable)?.Dispose();
       }
    }
 }

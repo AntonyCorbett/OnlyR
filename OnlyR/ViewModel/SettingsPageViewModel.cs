@@ -38,6 +38,7 @@ namespace OnlyR.ViewModel
 
       public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
       {
+         Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
          _optionsService = optionsService;
 
          _recordingDevices = audioService.GetRecordingDeviceList().ToList();
@@ -49,6 +50,11 @@ namespace OnlyR.ViewModel
          NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
          ShowRecordingsCommand = new RelayCommand(ShowRecordings);
          SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
+      }
+
+      private void OnShutDown(ShutDownMessage obj)
+      {
+         Save();
       }
 
       private void SelectDestinationFolder()
@@ -331,7 +337,7 @@ namespace OnlyR.ViewModel
 
       public void Activated(object state)
       {
-
+         // nothing to do
       }
 
       // Commands (bound in ctor)...

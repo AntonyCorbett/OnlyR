@@ -47,6 +47,8 @@ namespace OnlyR.ViewModel
           IOptionsService optionsService,
           IRecordingDestinationService destinationService)
       {
+         Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
+
          _commandLineIdentifier = CommandLineParser.Instance.GetId();
          _stopwatch = new Stopwatch();
 
@@ -66,6 +68,11 @@ namespace OnlyR.ViewModel
          StartRecordingCommand = new RelayCommand(StartRecording, CanExecuteStart);
          StopRecordingCommand = new RelayCommand(StopRecording, CanExecuteStop);
          NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
+      }
+
+      private void OnShutDown(ShutDownMessage message)
+      {
+         // nothing to do
       }
 
       public static string PageName => "RecordingPage";
