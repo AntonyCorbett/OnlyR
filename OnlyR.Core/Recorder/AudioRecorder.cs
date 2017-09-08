@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using NAudio.CoreAudioApi;
 using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;

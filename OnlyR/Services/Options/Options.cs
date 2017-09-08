@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using OnlyR.Utils;
 
@@ -75,6 +74,8 @@ namespace OnlyR.Services.Options
       /// The final recording folder (leave empt for default).
       /// </summary>
       public string DestinationFolder { get; set; }
+
+      public string AppWindowPlacement { get; set; }
 
       public Options()
       {

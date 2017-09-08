@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
-using Moq;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Model;

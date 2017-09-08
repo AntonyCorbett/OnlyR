@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlyR.Core.Models
+﻿namespace OnlyR.Core.Models
 {
    /// <summary>
    /// Represents a Windows recording device

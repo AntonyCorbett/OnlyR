@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -17,7 +13,6 @@ using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
-using OnlyR.VolumeMeter;
 using Serilog;
 
 namespace OnlyR.ViewModel

@@ -148,6 +148,7 @@
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\WindowPlacement.cs" />
     <Compile Include="ViewModel\IPage.cs" />
     <Compile Include="Pages\RecordingPage.xaml.cs">
       <DependentUpon>RecordingPage.xaml</DependentUpon>
