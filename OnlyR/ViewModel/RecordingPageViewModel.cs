@@ -347,7 +347,7 @@ namespace OnlyR.ViewModel
 
          if (_splashTimer == null)
          {
-            _splashTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) };
+            _splashTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(25) };
             _splashTimer.Tick += SplashTimerTick;
          }
 
