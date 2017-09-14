@@ -23,7 +23,7 @@ namespace OnlyR.ViewModel
    {
       private readonly Dictionary<string, FrameworkElement> _pages;
       private string _currentPageName;
-      private IOptionsService _optionsService;
+      private readonly IOptionsService _optionsService;
       private readonly IAudioService _audioService;
 
       public MainViewModel(
@@ -31,7 +31,10 @@ namespace OnlyR.ViewModel
          IOptionsService optionsService,
          IRecordingDestinationService destService)
       {
+         // subscriptions...
          Messenger.Default.Register<NavigateMessage>(this, OnNavigate);
+         Messenger.Default.Register<AlwaysOnTopChanged>(this, OnAlwaysOnTopChanged);
+
          _pages = new Dictionary<string, FrameworkElement>();
 
          _optionsService = optionsService;
@@ -53,6 +56,12 @@ namespace OnlyR.ViewModel
          Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, state));
       }
 
+      private void OnAlwaysOnTopChanged(AlwaysOnTopChanged obj)
+      {
+         RaisePropertyChanged(nameof(AlwaysOnTop));
+      }
+
+      public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
 
       private void SetupPage(string pageName, FrameworkElement page, ViewModelBase pageModel)
       {

@@ -284,6 +284,19 @@ namespace OnlyR.ViewModel
          }
       }
 
+      public bool AlwaysOnTop
+      {
+         get => _optionsService.Options.AlwaysOnTop;
+         set
+         {
+            if (_optionsService.Options.AlwaysOnTop != value)
+            {
+               _optionsService.Options.AlwaysOnTop = value;
+               Messenger.Default.Send(new AlwaysOnTopChanged());
+            }
+         }
+      }
+
       /// <summary>
       /// The Genre of the recording. This is stored in the MP3 Id3 tag data 
       /// (i.e. within the MP3 file itself)

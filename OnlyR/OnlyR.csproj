@@ -166,6 +166,7 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\Messages\AlwaysOnTopChanged.cs" />
     <Compile Include="ViewModel\Messages\NavigateMessage.cs" />
     <Compile Include="ViewModel\RecordingPageViewModel.cs" />
     <Compile Include="ViewModel\Messages\ShutDownMessage.cs" />

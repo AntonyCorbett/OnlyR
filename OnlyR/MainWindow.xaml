@@ -6,6 +6,7 @@
         x:Class="OnlyR.MainWindow"
         mc:Ignorable="d"
         DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
+        Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
         Title="O N L Y - R" Height="286" Width="268" ResizeMode="CanMinimize" Closing="Window_Closing">
     
     <ContentControl Content="{Binding CurrentPage}" />
