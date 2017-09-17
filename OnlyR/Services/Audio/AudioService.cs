@@ -128,7 +128,7 @@ namespace OnlyR.Services.Audio
 
       public void Dispose()
       {
-         _audioRecorder.Dispose();
+         _audioRecorder?.Dispose();
          _audioRecorder = null;
       }
 

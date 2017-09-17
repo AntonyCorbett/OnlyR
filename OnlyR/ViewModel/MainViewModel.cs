@@ -95,9 +95,12 @@ namespace OnlyR.ViewModel
          // prevent window closing when recording...
          var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
          recordingPageModel.Closing(sender, e);
-         
-         Messenger.Default.Send(new ShutDownMessage(_currentPageName));
-         (_audioService as IDisposable)?.Dispose();
+
+         if (!e.Cancel)
+         {
+            Messenger.Default.Send(new ShutDownMessage(_currentPageName));
+            (_audioService as IDisposable)?.Dispose();
+         }
       }
    }
 }
