@@ -66,7 +66,7 @@ namespace OnlyR.Utils
       private const int SW_SHOWNORMAL = 1;
       private const int SW_SHOWMINIMIZED = 2;
 
-      private static void SetPlacement(IntPtr windowHandle, string placementXml)
+      private static void SetPlacement(IntPtr windowHandle, string placementXml, double width, double height)
       {
          if (!string.IsNullOrEmpty(placementXml))
          {
@@ -82,6 +82,9 @@ namespace OnlyR.Utils
                placement.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
                placement.flags = 0;
                placement.showCmd = (placement.showCmd == SW_SHOWMINIMIZED ? SW_SHOWNORMAL : placement.showCmd);
+               placement.normalPosition.Right = placement.normalPosition.Left + (int)width;
+               placement.normalPosition.Bottom = placement.normalPosition.Top + (int)height;
+
                NativeMethods.SetWindowPlacement(windowHandle, ref placement);
             }
             catch (InvalidOperationException)
@@ -106,7 +109,7 @@ namespace OnlyR.Utils
 
       public static void SetPlacement(this Window window, string placementXml)
       {
-         SetPlacement(new WindowInteropHelper(window).Handle, placementXml);
+         SetPlacement(new WindowInteropHelper(window).Handle, placementXml, window.Width, window.Height);
       }
 
       public static string GetPlacement(this Window window)
