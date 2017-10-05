@@ -17,344 +17,344 @@ using Serilog;
 
 namespace OnlyR.ViewModel
 {
-   /// <summary>
-   /// View model for Settings page. Contains properties that the Settings page 
-   /// can data bind to, i.e. it has everything that is needed by the user during 
-   /// interaction with the Settings page
-   /// </summary>
-   public class SettingsPageViewModel : ViewModelBase, IPage
-   {
-      public static string PageName => "SettingsPage";
+    /// <summary>
+    /// View model for Settings page. Contains properties that the Settings page 
+    /// can data bind to, i.e. it has everything that is needed by the user during 
+    /// interaction with the Settings page
+    /// </summary>
+    public class SettingsPageViewModel : ViewModelBase, IPage
+    {
+        public static string PageName => "SettingsPage";
 
-      private readonly IOptionsService _optionsService;
-      private readonly List<RecordingDeviceItem> _recordingDevices;
-      private readonly List<SampleRateItem> _sampleRates;
-      private readonly List<ChannelItem> _channels;
-      private readonly List<BitRateItem> _bitRates;
-      private readonly List<MaxRecordingTimeItem> _maxRecordingTimes;
+        private readonly IOptionsService _optionsService;
+        private readonly List<RecordingDeviceItem> _recordingDevices;
+        private readonly List<SampleRateItem> _sampleRates;
+        private readonly List<ChannelItem> _channels;
+        private readonly List<BitRateItem> _bitRates;
+        private readonly List<MaxRecordingTimeItem> _maxRecordingTimes;
 
-      public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
-      {
-         Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
-         _optionsService = optionsService;
+        public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
+        {
+            Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
+            _optionsService = optionsService;
 
-         _recordingDevices = audioService.GetRecordingDeviceList().ToList();
-         _sampleRates = optionsService.GetSupportedSampleRates().ToList();
-         _channels = optionsService.GetSupportedChannels().ToList();
-         _bitRates = optionsService.GetSupportedMp3BitRates().ToList();
-         _maxRecordingTimes = GenerateMaxRecordingTimeItems();
+            _recordingDevices = audioService.GetRecordingDeviceList().ToList();
+            _sampleRates = optionsService.GetSupportedSampleRates().ToList();
+            _channels = optionsService.GetSupportedChannels().ToList();
+            _bitRates = optionsService.GetSupportedMp3BitRates().ToList();
+            _maxRecordingTimes = GenerateMaxRecordingTimeItems();
 
-         NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
-         ShowRecordingsCommand = new RelayCommand(ShowRecordings);
-         SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
-      }
+            NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
+            ShowRecordingsCommand = new RelayCommand(ShowRecordings);
+            SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
+        }
 
-      private void OnShutDown(ShutDownMessage obj)
-      {
-         Save();
-      }
+        private void OnShutDown(ShutDownMessage obj)
+        {
+            Save();
+        }
 
-      private void SelectDestinationFolder()
-      {
-         CommonOpenFileDialog d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
-         CommonFileDialogResult result = d.ShowDialog();
-         if (result == CommonFileDialogResult.Ok)
-         {
-            DestinationFolder = d.FileName;
-         }
-      }
-
-      private void ShowRecordings()
-      {
-         Process.Start(FindSuitableRecordingFolderToShow());
-      }
-
-      private string FindSuitableRecordingFolderToShow()
-      {
-         string folder = null;
-
-         try
-         {
-            DateTime today = DateTime.Today;
-            string commandLineIdentifier = CommandLineParser.Instance.GetId();
-
-            // first try today's folder...
-            folder = FileUtils.GetDestinationFolder(today, commandLineIdentifier,
-                _optionsService.Options.DestinationFolder);
-            if (!Directory.Exists(folder))
+        private void SelectDestinationFolder()
+        {
+            CommonOpenFileDialog d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
+            CommonFileDialogResult result = d.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
             {
-               // try this month's folder...
-               folder = FileUtils.GetMonthlyDestinationFolder(today, commandLineIdentifier,
-                   _optionsService.Options.DestinationFolder);
-               if (!Directory.Exists(folder))
-               {
-                  folder = FileUtils.GetRootDestinationFolder(commandLineIdentifier,
-                      _optionsService.Options.DestinationFolder);
-                  if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
-                  {
-                     folder = FileUtils.GetRootDestinationFolder(string.Empty,
-                         _optionsService.Options.DestinationFolder);
-
-                     if (!Directory.Exists(folder))
-                     {
-                        Directory.CreateDirectory(folder);
-                     }
-                  }
-               }
+                DestinationFolder = d.FileName;
             }
-         }
-         catch (Exception ex)
-         {
-            Log.Logger.Error(ex, $"Could not find destination folder {folder}");
-         }
+        }
 
-         if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
-         {
-            folder = FileUtils.GetDefaultMyDocsDestinationFolder();
-            Directory.CreateDirectory(folder);
-         }
+        private void ShowRecordings()
+        {
+            Process.Start(FindSuitableRecordingFolderToShow());
+        }
 
-         return folder;
-      }
+        private string FindSuitableRecordingFolderToShow()
+        {
+            string folder = null;
 
-      /// <summary>
-      /// Application version number (see SolutionInfo.cs)
-      /// </summary>
-      public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
-
-      private string GetVersionString()
-      {
-         var ver = Assembly.GetExecutingAssembly().GetName().Version;
-         return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
-      }
-
-      /// <summary>
-      /// Collection of Windows recording devices
-      /// </summary>
-      public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
-
-      /// <summary>
-      /// Selected recording device Id
-      /// </summary>
-      public int RecordingDeviceId
-      {
-         get => _optionsService.Options.RecordingDevice;
-         set
-         {
-            if (_optionsService.Options.RecordingDevice != value)
+            try
             {
-               _optionsService.Options.RecordingDevice = value;
-            }
-         }
-      }
-     
-      /// <summary>
-      /// Collection of possible sample rates
-      /// </summary>
-      public IEnumerable<SampleRateItem> SampleRates => _sampleRates;
+                DateTime today = DateTime.Today;
+                string commandLineIdentifier = CommandLineParser.Instance.GetId();
 
-      /// <summary>
-      /// Selected sample rate
-      /// </summary>
-      public int SampleRate
-      {
-         get => _optionsService.Options.SampleRate;
-         set
-         {
-            if (_optionsService.Options.SampleRate != value)
+                // first try today's folder...
+                folder = FileUtils.GetDestinationFolder(today, commandLineIdentifier,
+                    _optionsService.Options.DestinationFolder);
+                if (!Directory.Exists(folder))
+                {
+                    // try this month's folder...
+                    folder = FileUtils.GetMonthlyDestinationFolder(today, commandLineIdentifier,
+                        _optionsService.Options.DestinationFolder);
+                    if (!Directory.Exists(folder))
+                    {
+                        folder = FileUtils.GetRootDestinationFolder(commandLineIdentifier,
+                            _optionsService.Options.DestinationFolder);
+                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
+                        {
+                            folder = FileUtils.GetRootDestinationFolder(string.Empty,
+                                _optionsService.Options.DestinationFolder);
+
+                            if (!Directory.Exists(folder))
+                            {
+                                Directory.CreateDirectory(folder);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
             {
-               _optionsService.Options.SampleRate = value;
+                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
             }
-         }
-      }
 
-      /// <summary>
-      /// Collection of valid channel count values
-      /// </summary>
-      public IEnumerable<ChannelItem> Channels => _channels;
-
-      /// <summary>
-      /// Selected channel count
-      /// </summary>
-      public int Channel
-      {
-         get => _optionsService.Options.ChannelCount;
-         set
-         {
-            if (_optionsService.Options.ChannelCount != value)
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
             {
-               _optionsService.Options.ChannelCount = value;
+                folder = FileUtils.GetDefaultMyDocsDestinationFolder();
+                Directory.CreateDirectory(folder);
             }
-         }
-      }
 
-      
-      /// <summary>
-      /// Collection of supported MP3 encoding bit rates
-      /// </summary>
-      public IEnumerable<BitRateItem> BitRates => _bitRates;
+            return folder;
+        }
 
-      /// <summary>
-      /// Selected MP3 bit rate
-      /// </summary>
-      public int BitRate
-      {
-         get => _optionsService.Options.Mp3BitRate;
-         set
-         {
-            if (_optionsService.Options.Mp3BitRate != value)
+        /// <summary>
+        /// Application version number (see SolutionInfo.cs)
+        /// </summary>
+        public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
+
+        private string GetVersionString()
+        {
+            var ver = Assembly.GetExecutingAssembly().GetName().Version;
+            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+        }
+
+        /// <summary>
+        /// Collection of Windows recording devices
+        /// </summary>
+        public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
+
+        /// <summary>
+        /// Selected recording device Id
+        /// </summary>
+        public int RecordingDeviceId
+        {
+            get => _optionsService.Options.RecordingDevice;
+            set
             {
-               _optionsService.Options.Mp3BitRate = value;
+                if (_optionsService.Options.RecordingDevice != value)
+                {
+                    _optionsService.Options.RecordingDevice = value;
+                }
             }
-         }
-      }
+        }
 
-      private static List<MaxRecordingTimeItem> GenerateMaxRecordingTimeItems()
-      {
-         var result = new List<MaxRecordingTimeItem>();
+        /// <summary>
+        /// Collection of possible sample rates
+        /// </summary>
+        public IEnumerable<SampleRateItem> SampleRates => _sampleRates;
 
-         AddMaxRecordingItem(result, Properties.Resources.NO_LIMIT, 0);
-
-         AddMaxRecordingItem(result, Properties.Resources.ONE_MIN, 1);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 2), 2);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 5), 5);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 15), 15);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 30), 30);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 45), 45);
-
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.ONE_HOUR, 1), 60);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_HOURS, 2), 120);
-         AddMaxRecordingItem(result, string.Format(Properties.Resources.X_HOURS, 3), 180);
-
-         return result;
-      }
-
-      private static void AddMaxRecordingItem(ICollection<MaxRecordingTimeItem> result, string name, int timeInMins)
-      {
-         result.Add(new MaxRecordingTimeItem { Name = name, ActualMinutes = timeInMins });
-      }
-
-      /// <summary>
-      /// Collection of supported "max recording" times
-      /// </summary>
-      public IEnumerable<MaxRecordingTimeItem> MaxRecordingTimes => _maxRecordingTimes;
-
-      /// <summary>
-      /// Selected max recording time
-      /// </summary>
-      public int MaxRecordingTime
-      {
-         get => _optionsService.Options.MaxRecordingTimeMins;
-         set
-         {
-            if (_optionsService.Options.MaxRecordingTimeMins != value)
+        /// <summary>
+        /// Selected sample rate
+        /// </summary>
+        public int SampleRate
+        {
+            get => _optionsService.Options.SampleRate;
+            set
             {
-               _optionsService.Options.MaxRecordingTimeMins = value;
+                if (_optionsService.Options.SampleRate != value)
+                {
+                    _optionsService.Options.SampleRate = value;
+                }
             }
-         }
-      }
+        }
 
-      /// <summary>
-      /// Whether the audio should be faded to zero when the user stops recording
-      /// </summary>
-      public bool ShouldFadeRecordings
-      {
-         get => _optionsService.Options.FadeOut;
-         set
-         {
-            if (_optionsService.Options.FadeOut != value)
+        /// <summary>
+        /// Collection of valid channel count values
+        /// </summary>
+        public IEnumerable<ChannelItem> Channels => _channels;
+
+        /// <summary>
+        /// Selected channel count
+        /// </summary>
+        public int Channel
+        {
+            get => _optionsService.Options.ChannelCount;
+            set
             {
-               _optionsService.Options.FadeOut = value;
+                if (_optionsService.Options.ChannelCount != value)
+                {
+                    _optionsService.Options.ChannelCount = value;
+                }
             }
-         }
-      }
+        }
 
-      /// <summary>
-      /// Whether recording should begin on launch
-      /// </summary>
-      public bool StartRecordingOnLaunch
-      {
-         get => _optionsService.Options.StartRecordingOnLaunch;
-         set
-         {
-            if (_optionsService.Options.StartRecordingOnLaunch != value)
+
+        /// <summary>
+        /// Collection of supported MP3 encoding bit rates
+        /// </summary>
+        public IEnumerable<BitRateItem> BitRates => _bitRates;
+
+        /// <summary>
+        /// Selected MP3 bit rate
+        /// </summary>
+        public int BitRate
+        {
+            get => _optionsService.Options.Mp3BitRate;
+            set
             {
-               _optionsService.Options.StartRecordingOnLaunch = value;
+                if (_optionsService.Options.Mp3BitRate != value)
+                {
+                    _optionsService.Options.Mp3BitRate = value;
+                }
             }
-         }
-      }
+        }
 
-      public bool AlwaysOnTop
-      {
-         get => _optionsService.Options.AlwaysOnTop;
-         set
-         {
-            if (_optionsService.Options.AlwaysOnTop != value)
+        private static List<MaxRecordingTimeItem> GenerateMaxRecordingTimeItems()
+        {
+            var result = new List<MaxRecordingTimeItem>();
+
+            AddMaxRecordingItem(result, Properties.Resources.NO_LIMIT, 0);
+
+            AddMaxRecordingItem(result, Properties.Resources.ONE_MIN, 1);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 2), 2);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 5), 5);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 15), 15);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 30), 30);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_MINS, 45), 45);
+
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.ONE_HOUR, 1), 60);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_HOURS, 2), 120);
+            AddMaxRecordingItem(result, string.Format(Properties.Resources.X_HOURS, 3), 180);
+
+            return result;
+        }
+
+        private static void AddMaxRecordingItem(ICollection<MaxRecordingTimeItem> result, string name, int timeInMins)
+        {
+            result.Add(new MaxRecordingTimeItem { Name = name, ActualMinutes = timeInMins });
+        }
+
+        /// <summary>
+        /// Collection of supported "max recording" times
+        /// </summary>
+        public IEnumerable<MaxRecordingTimeItem> MaxRecordingTimes => _maxRecordingTimes;
+
+        /// <summary>
+        /// Selected max recording time
+        /// </summary>
+        public int MaxRecordingTime
+        {
+            get => _optionsService.Options.MaxRecordingTimeMins;
+            set
             {
-               _optionsService.Options.AlwaysOnTop = value;
-               Messenger.Default.Send(new AlwaysOnTopChanged());
+                if (_optionsService.Options.MaxRecordingTimeMins != value)
+                {
+                    _optionsService.Options.MaxRecordingTimeMins = value;
+                }
             }
-         }
-      }
+        }
 
-      /// <summary>
-      /// The Genre of the recording. This is stored in the MP3 Id3 tag data 
-      /// (i.e. within the MP3 file itself)
-      /// </summary>
-      public string Genre
-      {
-         get => _optionsService.Options.Genre;
-         set
-         {
-            if (_optionsService.Options.Genre != value)
+        /// <summary>
+        /// Whether the audio should be faded to zero when the user stops recording
+        /// </summary>
+        public bool ShouldFadeRecordings
+        {
+            get => _optionsService.Options.FadeOut;
+            set
             {
-               _optionsService.Options.Genre = value;
+                if (_optionsService.Options.FadeOut != value)
+                {
+                    _optionsService.Options.FadeOut = value;
+                }
             }
-         }
-      }
+        }
 
-      /// <summary>
-      /// The root destination folder for recordings
-      /// </summary>
-      public string DestinationFolder
-      {
-         get => _optionsService.Options.DestinationFolder;
-         set
-         {
-            if (_optionsService.Options.DestinationFolder != value)
+        /// <summary>
+        /// Whether recording should begin on launch
+        /// </summary>
+        public bool StartRecordingOnLaunch
+        {
+            get => _optionsService.Options.StartRecordingOnLaunch;
+            set
             {
-               _optionsService.Options.DestinationFolder = value;
-               RaisePropertyChanged(nameof(DestinationFolder));
+                if (_optionsService.Options.StartRecordingOnLaunch != value)
+                {
+                    _optionsService.Options.StartRecordingOnLaunch = value;
+                }
             }
-         }
-      }
+        }
 
-      private static bool CanExecuteNavigateRecording()
-      {
-         return true;
-      }
+        public bool AlwaysOnTop
+        {
+            get => _optionsService.Options.AlwaysOnTop;
+            set
+            {
+                if (_optionsService.Options.AlwaysOnTop != value)
+                {
+                    _optionsService.Options.AlwaysOnTop = value;
+                    Messenger.Default.Send(new AlwaysOnTopChanged());
+                }
+            }
+        }
 
-      private void NavigateRecording()
-      {
-         Save();
-         Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, null));
-      }
+        /// <summary>
+        /// The Genre of the recording. This is stored in the MP3 Id3 tag data 
+        /// (i.e. within the MP3 file itself)
+        /// </summary>
+        public string Genre
+        {
+            get => _optionsService.Options.Genre;
+            set
+            {
+                if (_optionsService.Options.Genre != value)
+                {
+                    _optionsService.Options.Genre = value;
+                }
+            }
+        }
 
-      private void Save()
-      {
-         _optionsService.Save();
-      }
+        /// <summary>
+        /// The root destination folder for recordings
+        /// </summary>
+        public string DestinationFolder
+        {
+            get => _optionsService.Options.DestinationFolder;
+            set
+            {
+                if (_optionsService.Options.DestinationFolder != value)
+                {
+                    _optionsService.Options.DestinationFolder = value;
+                    RaisePropertyChanged(nameof(DestinationFolder));
+                }
+            }
+        }
 
-      public void Activated(object state)
-      {
-         // nothing to do
-      }
+        private static bool CanExecuteNavigateRecording()
+        {
+            return true;
+        }
 
-      // Commands (bound in ctor)...
-      public RelayCommand NavigateRecordingCommand { get; set; }
-      public RelayCommand ShowRecordingsCommand { get; set; }
-      public RelayCommand SelectDestinationFolderCommand { get; set; }
-      //...
+        private void NavigateRecording()
+        {
+            Save();
+            Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, null));
+        }
 
-   }
+        private void Save()
+        {
+            _optionsService.Save();
+        }
+
+        public void Activated(object state)
+        {
+            // nothing to do
+        }
+
+        // Commands (bound in ctor)...
+        public RelayCommand NavigateRecordingCommand { get; set; }
+        public RelayCommand ShowRecordingsCommand { get; set; }
+        public RelayCommand SelectDestinationFolderCommand { get; set; }
+        //...
+
+    }
 }

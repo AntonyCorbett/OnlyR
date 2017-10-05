@@ -1,11 +1,11 @@
 ﻿namespace OnlyR.Model
 {
-   /// <summary>
-   /// Model for "Max recording time" combo in Settings page
-   /// </summary>
-   public class MaxRecordingTimeItem
-   {
-      public string Name { get; set; }
-      public int ActualMinutes { get; set; }
-   }
+    /// <summary>
+    /// Model for "Max recording time" combo in Settings page
+    /// </summary>
+    public class MaxRecordingTimeItem
+    {
+        public string Name { get; set; }
+        public int ActualMinutes { get; set; }
+    }
 }

@@ -9,16 +9,16 @@ using OnlyR.Services.Options;
 
 namespace OnlyR.Services.Audio
 {
-   public interface IAudioService
-   {
-      event EventHandler StartedEvent;
-      event EventHandler StoppedEvent;
-      event EventHandler StopRequested;
-      event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
+    public interface IAudioService
+    {
+        event EventHandler StartedEvent;
+        event EventHandler StoppedEvent;
+        event EventHandler StopRequested;
+        event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
-      IEnumerable<RecordingDeviceItem> GetRecordingDeviceList();
+        IEnumerable<RecordingDeviceItem> GetRecordingDeviceList();
 
-      void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
-      void StopRecording(bool fadeOut);
-   }
+        void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
+        void StopRecording(bool fadeOut);
+    }
 }
