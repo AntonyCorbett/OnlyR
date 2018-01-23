@@ -42,7 +42,7 @@ namespace OnlyR.ViewModel
             IOptionsService optionsService,
             IRecordingDestinationService destinationService)
         {
-            Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
+            Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
             _commandLineIdentifier = CommandLineParser.Instance.GetId();
             _stopwatch = new Stopwatch();
@@ -65,7 +65,7 @@ namespace OnlyR.ViewModel
             NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
         }
 
-        private void OnShutDown(ShutDownMessage message)
+        private void OnShutDown(BeforeShutDownMessage message)
         {
             // nothing to do
         }
@@ -294,6 +294,8 @@ namespace OnlyR.ViewModel
         /// status == NotRecording?
         /// </summary>
         public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
+
+        public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
 
         /// <summary>
         /// status == Recording or Stopping

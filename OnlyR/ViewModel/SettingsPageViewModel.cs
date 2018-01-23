@@ -35,7 +35,7 @@ namespace OnlyR.ViewModel
 
         public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
         {
-            Messenger.Default.Register<ShutDownMessage>(this, OnShutDown);
+            Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
             _optionsService = optionsService;
 
             _recordingDevices = audioService.GetRecordingDeviceList().ToList();
@@ -49,7 +49,7 @@ namespace OnlyR.ViewModel
             SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
         }
 
-        private void OnShutDown(ShutDownMessage obj)
+        private void OnShutDown(BeforeShutDownMessage obj)
         {
             Save();
         }
@@ -297,6 +297,18 @@ namespace OnlyR.ViewModel
             }
         }
 
+        public bool AllowCloseWhenRecording
+        {
+            get => _optionsService.Options.AllowCloseWhenRecording;
+            set
+            {
+                if (_optionsService.Options.AllowCloseWhenRecording != value)
+                {
+                    _optionsService.Options.AllowCloseWhenRecording = value;
+                }
+            }
+        }
+        
         /// <summary>
         /// The Genre of the recording. This is stored in the MP3 Id3 tag data 
         /// (i.e. within the MP3 file itself)

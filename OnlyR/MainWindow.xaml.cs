@@ -1,8 +1,10 @@
 ﻿using System;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
+using OnlyR.ViewModel.Messages;
 
 namespace OnlyR
 {
@@ -14,6 +16,13 @@ namespace OnlyR
         public MainWindow()
         {
             InitializeComponent();
+
+            Messenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
+        }
+
+        private void OnShutDownApplication(ShutDownApplicationMessage obj)
+        {
+            Close();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -37,6 +46,5 @@ namespace OnlyR
             var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
             optionsService.Options.AppWindowPlacement = this.GetPlacement();
         }
-
     }
 }

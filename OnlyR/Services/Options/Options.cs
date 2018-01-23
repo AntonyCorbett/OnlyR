@@ -78,6 +78,8 @@ namespace OnlyR.Services.Options
         public string AppWindowPlacement { get; set; }
 
         public bool AlwaysOnTop { get; set; }
+        
+        public bool AllowCloseWhenRecording { get; set; }
 
         public Options()
         {

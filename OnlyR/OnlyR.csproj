@@ -168,8 +168,9 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Messages\AlwaysOnTopChanged.cs" />
     <Compile Include="ViewModel\Messages\NavigateMessage.cs" />
+    <Compile Include="ViewModel\Messages\ShutDownApplicationMessage.cs" />
     <Compile Include="ViewModel\RecordingPageViewModel.cs" />
-    <Compile Include="ViewModel\Messages\ShutDownMessage.cs" />
+    <Compile Include="ViewModel\Messages\BeforeShutDownMessage.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="VolumeMeter\VduControl.cs" />

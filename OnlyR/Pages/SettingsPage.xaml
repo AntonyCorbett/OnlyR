@@ -78,6 +78,9 @@
                 <CheckBox Margin="0,10,0,0" 
                           IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}">Always on top</CheckBox>
 
+                <CheckBox Margin="0,10,0,0" 
+                          IsChecked="{Binding AllowCloseWhenRecording, Mode=TwoWay}">Allow close when recording</CheckBox>
+
                 <Label Style="{StaticResource LabelStyle}">Genre (in MP3 tag):</Label>
                 <TextBox Text="{Binding Genre, Mode=TwoWay}"></TextBox>
 

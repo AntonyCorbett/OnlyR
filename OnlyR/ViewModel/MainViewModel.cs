@@ -39,7 +39,7 @@ namespace OnlyR.ViewModel
 
             _optionsService = optionsService;
             _audioService = audioService;
-
+            
             // set up pages...
             SetupPage(RecordingPageViewModel.PageName, new RecordingPage(),
                 new RecordingPageViewModel(audioService, optionsService, destService));
@@ -92,15 +92,33 @@ namespace OnlyR.ViewModel
 
         public void Closing(object sender, CancelEventArgs e)
         {
-            // prevent window closing when recording...
             var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
-            recordingPageModel.Closing(sender, e);
 
-            if (!e.Cancel)
+            if (_optionsService.Options.AllowCloseWhenRecording)
             {
-                Messenger.Default.Send(new ShutDownMessage(_currentPageName));
-                (_audioService as IDisposable)?.Dispose();
+                if (recordingPageModel.IsRecordingOrStopping)
+                {
+                    e.Cancel = true;
+                    _audioService.StoppedEvent += RecordingStoppedDuringAppClose;
+                    _audioService.StopRecording(_optionsService.Options.FadeOut);
+                }
             }
+            else
+            {
+                // prevent window closing when recording...
+                recordingPageModel.Closing(sender, e);
+
+                if (!e.Cancel)
+                {
+                    Messenger.Default.Send(new BeforeShutDownMessage(_currentPageName));
+                    (_audioService as IDisposable)?.Dispose();
+                }
+            }
+        }
+
+        private void RecordingStoppedDuringAppClose(object sender, EventArgs e)
+        {
+            Messenger.Default.Send(new ShutDownApplicationMessage());
         }
     }
 }
