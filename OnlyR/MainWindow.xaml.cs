@@ -1,6 +1,6 @@
 ﻿using System;
+using CommonServiceLocator;
 using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
@@ -37,8 +37,7 @@ namespace OnlyR
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             SaveWindowPos();
-            MainViewModel m = (MainViewModel)DataContext;
-            m.Closing(sender, e);
+            ((MainViewModel)DataContext).Closing(sender, e);
         }
 
         private void SaveWindowPos()

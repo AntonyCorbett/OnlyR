@@ -39,7 +39,7 @@ namespace OnlyR.ViewModel
 
             _optionsService = optionsService;
             _audioService = audioService;
-            
+
             // set up pages...
             SetupPage(RecordingPageViewModel.PageName, new RecordingPage(),
                 new RecordingPageViewModel(audioService, optionsService, destService));

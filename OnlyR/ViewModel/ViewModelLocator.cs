@@ -1,5 +1,5 @@
+using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;

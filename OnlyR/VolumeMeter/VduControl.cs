@@ -165,6 +165,5 @@ namespace OnlyR.VolumeMeter
             _bitmaps[numBlocksLit].Render(_drawingVisual);
             return _bitmaps[numBlocksLit];
         }
-
     }
 }
