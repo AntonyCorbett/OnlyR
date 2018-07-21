@@ -6,6 +6,7 @@
     public class SampleRateItem
     {
         public string Name { get; set; }
+
         public int ActualSampleRate { get; set; }
     }
 }

@@ -6,6 +6,7 @@
     public class MaxRecordingTimeItem
     {
         public string Name { get; set; }
+
         public int ActualMinutes { get; set; }
     }
 }

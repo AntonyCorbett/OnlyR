@@ -4,9 +4,10 @@
     /// <summary>
     /// State object optionally passed to Recording page on navigation
     /// </summary>
-    class RecordingPageNavigationState
+    internal class RecordingPageNavigationState
     {
         public bool ShowSplash { get; set; }
+
         public bool StartRecording { get; set; }
     }
 }

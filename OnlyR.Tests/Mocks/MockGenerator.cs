@@ -1,10 +1,10 @@
-﻿using Moq;
-using OnlyR.Services.Audio;
-using OnlyR.Services.Options;
-using OnlyR.Services.RecordingDestination;
-
-namespace OnlyR.Tests.Mocks
+﻿namespace OnlyR.Tests.Mocks
 {
+    using Moq;
+    using Services.Audio;
+    using Services.Options;
+    using Services.RecordingDestination;
+
     public static class MockGenerator
     {
         public static IAudioService CreateAudioService()
@@ -23,6 +23,11 @@ namespace OnlyR.Tests.Mocks
         public static Mock<IRecordingDestinationService> CreateRecordingsDestinationService()
         {
             return new Mock<IRecordingDestinationService>();
+        }
+
+        public static Mock<ICommandLineService> CreateCommandLineService()
+        {
+            return new Mock<ICommandLineService>();
         }
     }
 }

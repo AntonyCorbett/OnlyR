@@ -1,15 +1,16 @@
-﻿using System;
-using System.IO;
-
-namespace OnlyR.Utils
+﻿namespace OnlyR.Utils
 {
+    using System;
+    using System.IO;
+
     /// <summary>
     /// General file / folder utilities
     /// </summary>
     public static class FileUtils
     {
-        private static readonly string _appNamePathSegment = "OnlyR";
-        private static readonly string _optionsFileName = "options.json";
+        private const string AppNamePathSegment = "OnlyR";
+
+        private const string OptionsFileName = "options.json";
 
         /// <summary>
         /// Creates directory if it doesn't exist. Throws if cannot be created
@@ -36,7 +37,6 @@ namespace OnlyR.Utils
         {
             return Path.GetTempPath();
         }
-
 
         /// <summary>
         /// Gets number of free bytes available on the drive on which folderName resides
@@ -69,35 +69,10 @@ namespace OnlyR.Utils
         /// <returns>Log folder</returns>
         public static string GetLogFolder()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                _appNamePathSegment,
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                AppNamePathSegment,
                 "Logs");
-        }
-
-        private static string GetRecordingFolderRoot(string rootFromOptions)
-        {
-            if (DirectoryIsAvailable(rootFromOptions))
-            {
-                return rootFromOptions;
-            }
-
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), _appNamePathSegment);
-        }
-
-        private static bool DirectoryIsAvailable(string dir)
-        {
-            if (string.IsNullOrEmpty(dir))
-            {
-                return false;
-            }
-
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-                return Directory.Exists(dir);
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -106,7 +81,7 @@ namespace OnlyR.Utils
         /// <returns>Folder path</returns>
         public static string GetDefaultMyDocsDestinationFolder()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), _appNamePathSegment);
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppNamePathSegment);
         }
 
         /// <summary>
@@ -123,7 +98,6 @@ namespace OnlyR.Utils
                 dt.ToString("yyyy-MM-dd"));
         }
 
-
         /// <summary>
         /// Gets the recording destination folder for the month
         /// </summary>
@@ -138,7 +112,6 @@ namespace OnlyR.Utils
                 dt.ToString("yyyy"),
                 dt.ToString("MM"));
         }
-
 
         /// <summary>
         /// Gets the recording destination folder
@@ -159,7 +132,7 @@ namespace OnlyR.Utils
         /// <returns>Folder path</returns>
         public static string GetTempRecordingFolder()
         {
-            string folder = Path.Combine(GetSystemTempFolder(), _appNamePathSegment, "Recordings");
+            var folder = Path.Combine(GetSystemTempFolder(), AppNamePathSegment, "Recordings");
             CreateDirectory(folder);
             return folder;
         }
@@ -169,15 +142,38 @@ namespace OnlyR.Utils
         /// </summary>
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="optionsVersion">The options schema version</param>
-        /// <returns></returns>
+        /// <returns>Options file path.</returns>
         public static string GetUserOptionsFilePath(string commandLineIdentifier, int optionsVersion)
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                _appNamePathSegment,
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                AppNamePathSegment,
                 commandLineIdentifier ?? string.Empty,
                 optionsVersion.ToString(),
-                _optionsFileName);
+                OptionsFileName);
         }
 
+        private static string GetRecordingFolderRoot(string rootFromOptions)
+        {
+            return DirectoryIsAvailable(rootFromOptions) 
+                ? rootFromOptions 
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppNamePathSegment);
+        }
+
+        private static bool DirectoryIsAvailable(string dir)
+        {
+            if (string.IsNullOrEmpty(dir))
+            {
+                return false;
+            }
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+                return Directory.Exists(dir);
+            }
+
+            return true;
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace OnlyR.Core.Recorder
+﻿namespace OnlyR.Core.Recorder
 {
+    using System;
+
     /// <summary>
     /// Configuration of a reording
     /// </summary>

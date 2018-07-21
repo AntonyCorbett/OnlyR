@@ -6,6 +6,7 @@
     public class BitRateItem
     {
         public string Name { get; set; }
+
         public int ActualBitRate { get; set; }
     }
 }

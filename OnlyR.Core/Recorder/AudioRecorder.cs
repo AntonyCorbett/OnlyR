@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using NAudio.Lame;
-using NAudio.Wave;
-using OnlyR.Core.Enums;
-using OnlyR.Core.EventArgs;
-using OnlyR.Core.Models;
-using OnlyR.Core.Samples;
-
-namespace OnlyR.Core.Recorder
+﻿namespace OnlyR.Core.Recorder
 {
+    using System;
+    using System.Collections.Generic;
+    using Enums;
+    using EventArgs;
+    using Models;
+    using NAudio.Lame;
+    using NAudio.Wave;
+    using Samples;
+
     /// <summary>
     /// The audio recorder. Uses NAudio for the heavy lifting, but it's isolated in this class
     /// so if we need to replace NAudio with another library we just need to modify this part
@@ -16,17 +16,16 @@ namespace OnlyR.Core.Recorder
     /// </summary>
     public sealed class AudioRecorder : IDisposable
     {
+        // use these 2 together. Experiment to get the best VU display...
+        private const int RequiredReportingIntervalMs = 40;
+        private const int VuSpeed = 5;
+
         private LameMP3FileWriter _mp3Writer;
         private WaveIn _waveSource;
         private SampleAggregator _sampleAggregator;
         private VolumeFader _fader;
 
         private int _dampedLevel;
-
-        // use these 2 together. Experiment to get the best VU display...
-        private readonly int _requiredReportingIntervalMs = 40;
-        private readonly int _vuSpeed = 5;
-
 
         public event EventHandler<RecordingProgressEventArgs> ProgressEvent;
 
@@ -35,42 +34,28 @@ namespace OnlyR.Core.Recorder
             _recordingStatus = RecordingStatus.NotRecording;
         }
 
-        private void FadeCompleteHandler(object sender, System.EventArgs e)
+        /// <summary>
+        /// Gets a list of Windows recording devices
+        /// </summary>
+        /// <returns>Collection of devices</returns>
+        public static IEnumerable<RecordingDeviceInfo> GetRecordingDeviceList()
         {
-            _waveSource.StopRecording();
+            var result = new List<RecordingDeviceInfo>();
+
+            int count = WaveIn.DeviceCount;
+            for (int n = 0; n < count; ++n)
+            {
+                var caps = WaveIn.GetCapabilities(n);
+                result.Add(new RecordingDeviceInfo { Id = n, Name = caps.ProductName });
+            }
+
+            return result;
         }
 
-        private RecordingStatus _recordingStatus;
-        public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_mp3Writer")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_mp3Writer", Justification = "See Cleanup()")]
         public void Dispose()
         {
             Cleanup();
-        }
-
-        private void Cleanup()
-        {
-            _waveSource?.Dispose();
-            _waveSource = null;
-
-            _mp3Writer?.Dispose();
-            _mp3Writer = null;
-        }
-
-        private static ID3TagData CreateTag(RecordingConfig recordingConfig)
-        {
-            // tag is embeded as MP3 metadata
-
-            return new ID3TagData
-            {
-                Title = recordingConfig.TrackTitle,
-                Album = recordingConfig.AlbumName,
-                Track = recordingConfig.TrackNumber.ToString(),
-                Genre = recordingConfig.Genre,
-                Year = recordingConfig.RecordingDate.Year.ToString(),
-                UserDefinedTags = new string[] { }     // fix bug in naudio.lame
-            };
         }
 
         /// <summary>
@@ -94,19 +79,54 @@ namespace OnlyR.Core.Recorder
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
                 _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
 
-                _mp3Writer = new LameMP3FileWriter(recordingConfig.DestFilePath, _waveSource.WaveFormat,
-                    recordingConfig.Mp3BitRate, CreateTag(recordingConfig));
+                _mp3Writer = new LameMP3FileWriter(
+                    recordingConfig.DestFilePath, 
+                    _waveSource.WaveFormat,
+                    recordingConfig.Mp3BitRate, 
+                    CreateTag(recordingConfig));
 
                 _waveSource.StartRecording();
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
             }
         }
 
-        private void InitFader(int sampleRate)
+        /// <summary>
+        /// Stop recording
+        /// </summary>
+        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately</param>
+        public void Stop(bool fadeOut)
         {
-            // used to optionally fade out a recording
-            _fader = new VolumeFader(sampleRate);
-            _fader.FadeComplete += FadeCompleteHandler;
+            if (_recordingStatus == RecordingStatus.Recording)
+            {
+                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested));
+
+                if (fadeOut)
+                {
+                    _fader.Start();
+                }
+                else
+                {
+                    _waveSource.StopRecording();
+                }
+            }
+        }
+
+        private RecordingStatus _recordingStatus;
+
+        public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
+
+        private static ID3TagData CreateTag(RecordingConfig recordingConfig)
+        {
+            // tag is embeded as MP3 metadata
+            return new ID3TagData
+            {
+                Title = recordingConfig.TrackTitle,
+                Album = recordingConfig.AlbumName,
+                Track = recordingConfig.TrackNumber.ToString(),
+                Genre = recordingConfig.Genre,
+                Year = recordingConfig.RecordingDate.Year.ToString(),
+                UserDefinedTags = new string[] { }  // fix bug in naudio.lame
+            };
         }
 
         private static void CheckRecordingDevice(RecordingConfig recordingConfig)
@@ -133,7 +153,7 @@ namespace OnlyR.Core.Recorder
                 _sampleAggregator.ReportEvent -= AggregatorReportHandler;
             }
 
-            _sampleAggregator = new SampleAggregator(sampleRate, _requiredReportingIntervalMs);
+            _sampleAggregator = new SampleAggregator(sampleRate, RequiredReportingIntervalMs);
             _sampleAggregator.ReportEvent += AggregatorReportHandler;
         }
 
@@ -154,8 +174,7 @@ namespace OnlyR.Core.Recorder
         {
             // as audio samples are provided by WaveIn, we hook in here 
             // and write them to disk, encoding to MP3 on the fly 
-            // using the _mp3Writer...
-
+            // using the _mp3Writer.
             byte[] buffer = waveInEventArgs.Buffer;
             int bytesRecorded = waveInEventArgs.BytesRecorded;
 
@@ -175,27 +194,6 @@ namespace OnlyR.Core.Recorder
             _mp3Writer.Write(buffer, 0, bytesRecorded);
         }
 
-        /// <summary>
-        /// Stop recording
-        /// </summary>
-        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately</param>
-        public void Stop(bool fadeOut)
-        {
-            if (_recordingStatus == RecordingStatus.Recording)
-            {
-                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested));
-
-                if (fadeOut)
-                {
-                    _fader.Start();
-                }
-                else
-                {
-                    _waveSource.StopRecording();
-                }
-            }
-        }
-
         private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
         {
             _recordingStatus = e.RecordingStatus;
@@ -209,14 +207,13 @@ namespace OnlyR.Core.Recorder
 
         private int GetDampedVolumeLevel(float volLevel)
         {
-            // provide some "damping" of the volume meter
-
+            // provide some "damping" of the volume meter.
             if (volLevel > _dampedLevel)
             {
-                _dampedLevel = (int)(volLevel + _vuSpeed);
+                _dampedLevel = (int)(volLevel + VuSpeed);
             }
 
-            _dampedLevel -= _vuSpeed;
+            _dampedLevel -= VuSpeed;
             if (_dampedLevel < 0)
             {
                 _dampedLevel = 0;
@@ -225,22 +222,25 @@ namespace OnlyR.Core.Recorder
             return _dampedLevel;
         }
 
-        /// <summary>
-        /// Gets a list of Windows recording devices
-        /// </summary>
-        /// <returns>Collection of devices</returns>
-        public static IEnumerable<RecordingDeviceInfo> GetRecordingDeviceList()
+        private void FadeCompleteHandler(object sender, EventArgs e)
         {
-            List<RecordingDeviceInfo> result = new List<RecordingDeviceInfo>();
+            _waveSource.StopRecording();
+        }
 
-            int count = WaveIn.DeviceCount;
-            for (int n = 0; n < count; ++n)
-            {
-                var caps = WaveIn.GetCapabilities(n);
-                result.Add(new RecordingDeviceInfo { Id = n, Name = caps.ProductName });
-            }
+        private void Cleanup()
+        {
+            _waveSource?.Dispose();
+            _waveSource = null;
 
-            return result;
+            _mp3Writer?.Dispose();
+            _mp3Writer = null;
+        }
+
+        private void InitFader(int sampleRate)
+        {
+            // used to optionally fade out a recording
+            _fader = new VolumeFader(sampleRate);
+            _fader.FadeComplete += FadeCompleteHandler;
         }
     }
 }

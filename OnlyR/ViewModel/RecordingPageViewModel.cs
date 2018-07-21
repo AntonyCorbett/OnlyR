@@ -1,22 +1,22 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Threading;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using OnlyR.Core.Enums;
-using OnlyR.Model;
-using OnlyR.Services.Audio;
-using OnlyR.Services.Options;
-using OnlyR.Services.RecordingDestination;
-using OnlyR.Utils;
-using OnlyR.ViewModel.Messages;
-using Serilog;
-
-namespace OnlyR.ViewModel
+﻿namespace OnlyR.ViewModel
 {
+    using System;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Windows.Threading;
+    using Core.Enums;
+    using GalaSoft.MvvmLight;
+    using GalaSoft.MvvmLight.Command;
+    using GalaSoft.MvvmLight.Messaging;
+    using Messages;
+    using Model;
+    using Serilog;
+    using Services.Audio;
+    using Services.Options;
+    using Services.RecordingDestination;
+    using Utils;
+
     /// <summary>
     /// View model for Recording page. Contains properties that the Recording page 
     /// can data bind to, i.e. it has everything that is needed by the user during 
@@ -36,15 +36,15 @@ namespace OnlyR.ViewModel
         private string _statusStr;
         private string _errorMsg;
 
-
         public RecordingPageViewModel(
             IAudioService audioService,
             IOptionsService optionsService,
+            ICommandLineService commandLineService,
             IRecordingDestinationService destinationService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
-            _commandLineIdentifier = CommandLineParser.Instance.GetId();
+            _commandLineIdentifier = commandLineService.OptionsIdentifier;
             _stopwatch = new Stopwatch();
 
             _audioService = audioService;
@@ -65,6 +65,38 @@ namespace OnlyR.ViewModel
             NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
         }
 
+        /// <summary>
+        /// Responds to activation
+        /// </summary>
+        /// <param name="state">RecordingPageNavigationState object (or null)</param>
+        public void Activated(object state)
+        {
+            // on display of page...
+            var stateObj = (RecordingPageNavigationState)state;
+            if (stateObj != null)
+            {
+                if (stateObj.StartRecording)
+                {
+                    StartRecording();
+                }
+                else if (stateObj.ShowSplash)
+                {
+                    DoSplash();
+                }
+            }
+        }
+
+        public void Closing(object sender, CancelEventArgs e)
+        {
+            // prevent window closing when recording...
+            e.Cancel = RecordingStatus != RecordingStatus.NotRecording;
+        }
+
+        private static void NavigateSettings()
+        {
+            Messenger.Default.Send(new NavigateMessage(SettingsPageViewModel.PageName, null));
+        }
+
         private void OnShutDown(BeforeShutDownMessage message)
         {
             // nothing to do
@@ -75,11 +107,6 @@ namespace OnlyR.ViewModel
         private bool CanExecuteNavigateSettings()
         {
             return RecordingStatus == RecordingStatus.NotRecording;
-        }
-
-        private static void NavigateSettings()
-        {
-            Messenger.Default.Send(new NavigateMessage(SettingsPageViewModel.PageName, null));
         }
 
         private bool CanExecuteStop()
@@ -106,7 +133,8 @@ namespace OnlyR.ViewModel
 
         private void AutoStopRecording()
         {
-            Log.Logger.Information("Automatically stopped recording having reached the {Limit} min limit",
+            Log.Logger.Information(
+                "Automatically stopped recording having reached the {Limit} min limit",
                 _optionsService.Options.MaxRecordingTimeMins);
 
             StopRecordingCommand.Execute(null);
@@ -217,6 +245,7 @@ namespace OnlyR.ViewModel
                 {
                     return _stopwatch.Elapsed;
                 }
+
                 return TimeSpan.Zero;
             }
         }
@@ -277,6 +306,7 @@ namespace OnlyR.ViewModel
         }
 
         private int _volumeLevel;
+
         public int VolumeLevelAsPercentage
         {
             get => _volumeLevel;
@@ -303,41 +333,13 @@ namespace OnlyR.ViewModel
         public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
                                              RecordingStatus == RecordingStatus.StopRequested;
 
-        // ReSharper disable once UnusedMember.Global
-        // ReSharper disable once UnusedParameter.Global
-        public void Closing(object sender, CancelEventArgs e)
-        {
-            // prevent window closing when recording...
-            e.Cancel = RecordingStatus != RecordingStatus.NotRecording;
-        }
-
         // Commands (bound in ctor)...
         public RelayCommand StartRecordingCommand { get; set; }
+
         public RelayCommand StopRecordingCommand { get; set; }
+
         public RelayCommand NavigateSettingsCommand { get; set; }
-        //...
-
-        /// <summary>
-        /// Responds to activation
-        /// </summary>
-        /// <param name="state">RecordingPageNavigationState object (or null)</param>
-        public void Activated(object state)
-        {
-            // on display of page...
-            var stateObj = (RecordingPageNavigationState)state;
-            if (stateObj != null)
-            {
-                if (stateObj.StartRecording)
-                {
-                    StartRecording();
-                }
-                else if (stateObj.ShowSplash)
-                {
-                    DoSplash();
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Show brief animation
         /// </summary>
@@ -346,7 +348,6 @@ namespace OnlyR.ViewModel
             // "Splash" is a graphical effect rendered in the volume meter
             // when the Recording page loads for the first time. It's designed
             // to show that all is working, and OnlyR is ready to record!
-
             if (_splashTimer == null)
             {
                 _splashTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(25) };
@@ -373,6 +374,4 @@ namespace OnlyR.ViewModel
             }
         }
     }
-
-
 }

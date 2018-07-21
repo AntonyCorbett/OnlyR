@@ -1,29 +1,30 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using OnlyR.Utils;
-
-namespace OnlyR.Services.Options
+﻿namespace OnlyR.Services.Options
 {
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using Utils;
+
     /// <summary>
     /// All program options. The full structure is written to disk in JSON format on change
     /// of data, and read from disk during app startup
     /// </summary>
     public class Options
     {
-        private static readonly int _defaultMaxRecordings = 999;
+        private const int DefaultMaxRecordings = 999;
 
-        private static readonly int[] _validSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
-        private static readonly int _defaultSampleRate = 44100;
+        private const int DefaultRecordingDevice = 0;
 
-        private static readonly int[] _validChannelCounts = { 1, 2 };
-        private static readonly int _defaultChannelCount = 1;
+        private static readonly int[] ValidSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
+        private static readonly int DefaultSampleRate = 44100;
 
-        private static readonly int[] _validMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
-        private static readonly int _defaultMp3BitRate = 96;
+        private static readonly int[] ValidChannelCounts = { 1, 2 };
+        private static readonly int DefaultChannelCount = 1;
 
-        private static readonly int _defaultRecordingDevice = 0;
-        private static readonly int _defaultMaxRecordingMins = 0;  // no limit
+        private static readonly int[] ValidMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
+        private static readonly int DefaultMp3BitRate = 96;
+
+        private static readonly int DefaultMaxRecordingMins = 0;  // no limit
 
         /// <summary>
         /// Maximum recordings in a single folder
@@ -78,64 +79,63 @@ namespace OnlyR.Services.Options
         public string AppWindowPlacement { get; set; }
 
         public bool AlwaysOnTop { get; set; }
-        
+
         public bool AllowCloseWhenRecording { get; set; }
 
         public Options()
         {
-            MaxRecordingsInOneFolder = _defaultMaxRecordings;
-            SampleRate = _defaultSampleRate;
-            ChannelCount = _defaultChannelCount;
-            Mp3BitRate = _defaultMp3BitRate;
+            MaxRecordingsInOneFolder = DefaultMaxRecordings;
+            SampleRate = DefaultSampleRate;
+            ChannelCount = DefaultChannelCount;
+            Mp3BitRate = DefaultMp3BitRate;
             Genre = Properties.Resources.SPEECH;
-            MaxRecordingTimeMins = _defaultMaxRecordingMins;
-            RecordingDevice = _defaultRecordingDevice;
+            MaxRecordingTimeMins = DefaultMaxRecordingMins;
+            RecordingDevice = DefaultRecordingDevice;
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
         }
 
         public static IEnumerable<int> GetSupportedSampleRates()
         {
-            return _validSampleRates;
+            return ValidSampleRates;
         }
 
         public static IEnumerable<int> GetSupportedChannels()
         {
-            return _validChannelCounts;
+            return ValidChannelCounts;
         }
 
         public static IEnumerable<int> GetSupportedMp3BitRates()
         {
-            return _validMp3BitRates;
+            return ValidMp3BitRates;
         }
-
 
         /// <summary>
         /// Validates the data, correcting automatically as required
         /// </summary>
         public void Sanitize()
         {
-            Debug.Assert(_validChannelCounts.Contains(_defaultChannelCount));
-            Debug.Assert(_validSampleRates.Contains(_defaultSampleRate));
-            Debug.Assert(_validMp3BitRates.Contains(_defaultMp3BitRate));
+            Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount), "ValidChannelCounts.Contains(DefaultChannelCount)");
+            Debug.Assert(ValidSampleRates.Contains(DefaultSampleRate), "ValidSampleRates.Contains(DefaultSampleRate)");
+            Debug.Assert(ValidMp3BitRates.Contains(DefaultMp3BitRate), "ValidMp3BitRates.Contains(DefaultMp3BitRate)");
 
             if (MaxRecordingsInOneFolder < 10 || MaxRecordingsInOneFolder > 500)
             {
-                MaxRecordingsInOneFolder = _defaultMaxRecordings;
+                MaxRecordingsInOneFolder = DefaultMaxRecordings;
             }
 
-            if (!_validSampleRates.Contains(SampleRate))
+            if (!ValidSampleRates.Contains(SampleRate))
             {
-                SampleRate = _defaultSampleRate;
+                SampleRate = DefaultSampleRate;
             }
 
-            if (!_validChannelCounts.Contains(ChannelCount))
+            if (!ValidChannelCounts.Contains(ChannelCount))
             {
-                ChannelCount = _defaultChannelCount;
+                ChannelCount = DefaultChannelCount;
             }
 
-            if (!_validMp3BitRates.Contains(Mp3BitRate))
+            if (!ValidMp3BitRates.Contains(Mp3BitRate))
             {
-                Mp3BitRate = _defaultMp3BitRate;
+                Mp3BitRate = DefaultMp3BitRate;
             }
 
             if (string.IsNullOrEmpty(Genre))
@@ -145,14 +145,13 @@ namespace OnlyR.Services.Options
 
             if (MaxRecordingTimeMins < 0)
             {
-                MaxRecordingTimeMins = _defaultMaxRecordingMins;
+                MaxRecordingTimeMins = DefaultMaxRecordingMins;
             }
 
             if (RecordingDevice < 0)
             {
-                RecordingDevice = _defaultRecordingDevice;
+                RecordingDevice = DefaultRecordingDevice;
             }
         }
-
     }
 }

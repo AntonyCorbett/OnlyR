@@ -1,5 +1,5 @@
 <StyleCopSettings Version="105">
   <GlobalSettings>
-    <BooleanProperty Name="RulesEnabledByDefault">False</BooleanProperty>
+    <BooleanProperty Name="RulesEnabledByDefault">True</BooleanProperty>
   </GlobalSettings>
 </StyleCopSettings>

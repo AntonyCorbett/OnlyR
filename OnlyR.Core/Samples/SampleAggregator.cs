@@ -1,18 +1,19 @@
-﻿using System;
-using OnlyR.Core.EventArgs;
-
-namespace OnlyR.Core.Samples
+﻿namespace OnlyR.Core.Samples
 {
+    using System;
+    using EventArgs;
+
     /// <summary>
     /// Aggregator of audio samples. Based on Mark Heath's work in NAudio sample applications
     /// </summary>
     public sealed class SampleAggregator
     {
+        private readonly int _reportCount;
+        private readonly int _minReportingIntervalMs = 20;
+
         private float _maxValue;
         private float _minValue;
         private int _count;
-        private readonly int _reportCount;
-        private readonly int _minReportingIntervalMs = 20;
 
         public event EventHandler<SamplesReportEventArgs> ReportEvent;
 
@@ -29,12 +30,6 @@ namespace OnlyR.Core.Samples
             {
                 _reportCount = 10;
             }
-        }
-
-        private void Reset()
-        {
-            _count = 0;
-            _maxValue = _minValue = 0.0F;
         }
 
         public void Add(float value)
@@ -54,6 +49,12 @@ namespace OnlyR.Core.Samples
         private void OnReportEvent(SamplesReportEventArgs e)
         {
             ReportEvent?.Invoke(this, e);
+        }
+
+        private void Reset()
+        {
+            _count = 0;
+            _maxValue = _minValue = 0.0F;
         }
     }
 }

@@ -1,21 +1,20 @@
-﻿using System;
-
-namespace OnlyR.Core.Recorder
+﻿namespace OnlyR.Core.Recorder
 {
+    using System;
+
     /// <summary>
     /// Controls optional volume fading at end of a recording
     /// </summary>
     internal sealed class VolumeFader
     {
         public event EventHandler FadeComplete;
-        private readonly int _sampleRate;
 
+        private readonly int _sampleRate;
         private readonly int _fadeTimeSecs = 4;
-        private bool _active;
         private int _sampleCountToModify;
         private int _sampleCountModified;
 
-        public bool Active => _active;
+        public bool Active { get; private set; }
 
         public VolumeFader(int sampleRate)
         {
@@ -29,13 +28,7 @@ namespace OnlyR.Core.Recorder
         {
             _sampleCountToModify = _fadeTimeSecs * _sampleRate; // num samples to modify in order to fade over _fadeTimeSecs
             _sampleCountModified = 0;
-            _active = true;
-        }
-
-        private void OnFadeComplete()
-        {
-            FadeComplete?.Invoke(this, System.EventArgs.Empty);
-            _active = false;
+            Active = true;
         }
 
         /// <summary>
@@ -46,7 +39,7 @@ namespace OnlyR.Core.Recorder
         public void FadeBuffer(byte[] buffer, int bytesInBuffer)
         {
             _sampleCountModified += bytesInBuffer;
-            float volumeAdjustmentFraction = 1 - (float)_sampleCountModified / _sampleCountToModify;
+            float volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
 
             for (int index = 0; index < bytesInBuffer; index += 2)
             {
@@ -61,6 +54,12 @@ namespace OnlyR.Core.Recorder
             {
                 OnFadeComplete();
             }
+        }
+
+        private void OnFadeComplete()
+        {
+            FadeComplete?.Invoke(this, EventArgs.Empty);
+            Active = false;
         }
     }
 }

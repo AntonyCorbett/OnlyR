@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using OnlyR.Model;
-using OnlyR.Services.Audio;
-using OnlyR.Services.Options;
-using OnlyR.Utils;
-using OnlyR.ViewModel.Messages;
-using Serilog;
-
-namespace OnlyR.ViewModel
+﻿namespace OnlyR.ViewModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using GalaSoft.MvvmLight;
+    using GalaSoft.MvvmLight.Command;
+    using GalaSoft.MvvmLight.Messaging;
+    using Messages;
+    using Microsoft.WindowsAPICodePack.Dialogs;
+    using Model;
+    using Serilog;
+    using Services.Audio;
+    using Services.Options;
+    using Utils;
+
     /// <summary>
     /// View model for Settings page. Contains properties that the Settings page 
     /// can data bind to, i.e. it has everything that is needed by the user during 
@@ -32,11 +32,17 @@ namespace OnlyR.ViewModel
         private readonly List<ChannelItem> _channels;
         private readonly List<BitRateItem> _bitRates;
         private readonly List<MaxRecordingTimeItem> _maxRecordingTimes;
+        private readonly ICommandLineService _commandLineService;
 
-        public SettingsPageViewModel(IAudioService audioService, IOptionsService optionsService)
+        public SettingsPageViewModel(
+            IAudioService audioService, 
+            IOptionsService optionsService, 
+            ICommandLineService commandLineService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
             _optionsService = optionsService;
+
+            _commandLineService = commandLineService;
 
             _recordingDevices = audioService.GetRecordingDeviceList().ToList();
             _sampleRates = optionsService.GetSupportedSampleRates().ToList();
@@ -49,84 +55,15 @@ namespace OnlyR.ViewModel
             SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
         }
 
-        private void OnShutDown(BeforeShutDownMessage obj)
+        public void Activated(object state)
         {
-            Save();
-        }
-
-        private void SelectDestinationFolder()
-        {
-            CommonOpenFileDialog d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
-            CommonFileDialogResult result = d.ShowDialog();
-            if (result == CommonFileDialogResult.Ok)
-            {
-                DestinationFolder = d.FileName;
-            }
-        }
-
-        private void ShowRecordings()
-        {
-            Process.Start(FindSuitableRecordingFolderToShow());
-        }
-
-        private string FindSuitableRecordingFolderToShow()
-        {
-            string folder = null;
-
-            try
-            {
-                DateTime today = DateTime.Today;
-                string commandLineIdentifier = CommandLineParser.Instance.GetId();
-
-                // first try today's folder...
-                folder = FileUtils.GetDestinationFolder(today, commandLineIdentifier,
-                    _optionsService.Options.DestinationFolder);
-                if (!Directory.Exists(folder))
-                {
-                    // try this month's folder...
-                    folder = FileUtils.GetMonthlyDestinationFolder(today, commandLineIdentifier,
-                        _optionsService.Options.DestinationFolder);
-                    if (!Directory.Exists(folder))
-                    {
-                        folder = FileUtils.GetRootDestinationFolder(commandLineIdentifier,
-                            _optionsService.Options.DestinationFolder);
-                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
-                        {
-                            folder = FileUtils.GetRootDestinationFolder(string.Empty,
-                                _optionsService.Options.DestinationFolder);
-
-                            if (!Directory.Exists(folder))
-                            {
-                                Directory.CreateDirectory(folder);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
-            }
-
-            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
-            {
-                folder = FileUtils.GetDefaultMyDocsDestinationFolder();
-                Directory.CreateDirectory(folder);
-            }
-
-            return folder;
+            // nothing to do
         }
 
         /// <summary>
         /// Application version number (see SolutionInfo.cs)
         /// </summary>
         public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
-
-        private string GetVersionString()
-        {
-            var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
-        }
 
         /// <summary>
         /// Collection of Windows recording devices
@@ -187,7 +124,6 @@ namespace OnlyR.ViewModel
                 }
             }
         }
-
 
         /// <summary>
         /// Collection of supported MP3 encoding bit rates
@@ -357,16 +293,89 @@ namespace OnlyR.ViewModel
             _optionsService.Save();
         }
 
-        public void Activated(object state)
-        {
-            // nothing to do
-        }
-
         // Commands (bound in ctor)...
         public RelayCommand NavigateRecordingCommand { get; set; }
-        public RelayCommand ShowRecordingsCommand { get; set; }
-        public RelayCommand SelectDestinationFolderCommand { get; set; }
-        //...
 
+        public RelayCommand ShowRecordingsCommand { get; set; }
+
+        public RelayCommand SelectDestinationFolderCommand { get; set; }
+
+
+        private string GetVersionString()
+        {
+            var ver = Assembly.GetExecutingAssembly().GetName().Version;
+            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+        }
+
+        private void OnShutDown(BeforeShutDownMessage obj)
+        {
+            Save();
+        }
+
+        private void SelectDestinationFolder()
+        {
+            CommonOpenFileDialog d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
+            CommonFileDialogResult result = d.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                DestinationFolder = d.FileName;
+            }
+        }
+
+        private void ShowRecordings()
+        {
+            Process.Start(FindSuitableRecordingFolderToShow());
+        }
+
+        private string FindSuitableRecordingFolderToShow()
+        {
+            string folder = null;
+
+            try
+            {
+                DateTime today = DateTime.Today;
+                string commandLineIdentifier = _commandLineService.OptionsIdentifier;
+
+                // first try today's folder...
+                folder = FileUtils.GetDestinationFolder(
+                    today, commandLineIdentifier, _optionsService.Options.DestinationFolder);
+
+                if (!Directory.Exists(folder))
+                {
+                    // try this month's folder...
+                    folder = FileUtils.GetMonthlyDestinationFolder(
+                        today, commandLineIdentifier, _optionsService.Options.DestinationFolder);
+
+                    if (!Directory.Exists(folder))
+                    {
+                        folder = FileUtils.GetRootDestinationFolder(
+                            commandLineIdentifier, _optionsService.Options.DestinationFolder);
+
+                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
+                        {
+                            folder = FileUtils.GetRootDestinationFolder(
+                                string.Empty, _optionsService.Options.DestinationFolder);
+
+                            if (!Directory.Exists(folder))
+                            {
+                                Directory.CreateDirectory(folder);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
+            }
+
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                folder = FileUtils.GetDefaultMyDocsDestinationFolder();
+                Directory.CreateDirectory(folder);
+            }
+
+            return folder;
+        }
     }
 }

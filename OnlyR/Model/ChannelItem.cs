@@ -6,6 +6,7 @@
     public class ChannelItem
     {
         public string Name { get; set; }
+
         public int ChannelCount { get; set; }
     }
 }

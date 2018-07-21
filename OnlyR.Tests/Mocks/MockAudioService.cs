@@ -1,28 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Threading;
-using OnlyR.Core.Enums;
-using OnlyR.Core.EventArgs;
-using OnlyR.Model;
-using OnlyR.Services.Audio;
-using OnlyR.Services.Options;
-
-namespace OnlyR.Tests.Mocks
+﻿namespace OnlyR.Tests.Mocks
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Windows.Threading;
+    using Core.Enums;
+    using Core.EventArgs;
+    using Model;
+    using Services.Audio;
+    using Services.Options;
+
     /// <summary>
     /// A mock audio service
     /// </summary>
-    class MockAudioService : IAudioService
+    internal class MockAudioService : IAudioService
     {
-        private RecordingStatus _status;
         private readonly DispatcherTimer _timer;
         private readonly Random _random;
+        private RecordingStatus _status;
 
         public event EventHandler StartedEvent;
-        public event EventHandler StoppedEvent;
-        public event EventHandler StopRequested;
-        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
+        public event EventHandler StoppedEvent;
+
+        public event EventHandler StopRequested;
+
+        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
         public MockAudioService()
         {
@@ -33,17 +35,12 @@ namespace OnlyR.Tests.Mocks
             _timer.Tick += RecordingTimer;
         }
 
-        private void RecordingTimer(object sender, EventArgs e)
-        {
-            OnRecordingProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = _random.Next(0, 101) });
-        }
-
         public IEnumerable<RecordingDeviceItem> GetRecordingDeviceList()
         {
             return new List<RecordingDeviceItem>
             {
-                new RecordingDeviceItem {DeviceName = "Dev1", DeviceId = 1},
-                new RecordingDeviceItem {DeviceName = "Dev1", DeviceId = 2}
+                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 1 },
+                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 2 }
             };
         }
 
@@ -66,24 +63,29 @@ namespace OnlyR.Tests.Mocks
             OnStoppedEvent();
         }
 
-        protected virtual void OnStartedEvent()
+        private void OnStartedEvent()
         {
             StartedEvent?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnStopRequested()
+        private void OnStopRequested()
         {
             StopRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnStoppedEvent()
+        private void OnStoppedEvent()
         {
             StoppedEvent?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual void OnRecordingProgressEvent(RecordingProgressEventArgs e)
+        private void OnRecordingProgressEvent(RecordingProgressEventArgs e)
         {
             RecordingProgressEvent?.Invoke(this, e);
+        }
+
+        private void RecordingTimer(object sender, EventArgs e)
+        {
+            OnRecordingProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = _random.Next(0, 101) });
         }
     }
 }

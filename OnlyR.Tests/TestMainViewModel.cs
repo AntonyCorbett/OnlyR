@@ -1,28 +1,27 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OnlyR.Core.Enums;
-using OnlyR.Tests.Mocks;
-using OnlyR.ViewModel;
-
-namespace OnlyR.Tests
+﻿namespace OnlyR.Tests
 {
+    using System;
+    using System.Windows;
+    using Core.Enums;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Mocks;
+    using ViewModel;
+
     [TestClass]
     public class TestMainViewModel
     {
-        private MainViewModel CreateMainViewModel()
+        [ClassInitialize]
+        public static void ClassInit(TestContext ctx)
         {
-            var audioService = MockGenerator.CreateAudioService();
-            var optionsService = MockGenerator.CreateOptionsService();
-            var destService = MockGenerator.CreateRecordingsDestinationService();
-
-            return new MainViewModel(audioService, optionsService.Object, destService.Object);
+            Application.LoadComponent(
+                new Uri("/OnlyR;component/App.xaml", UriKind.Relative));
         }
 
         [TestMethod]
         public void OpenOnRecordingPage()
         {
             // open on recording page...
-            MainViewModel vm = CreateMainViewModel();
+            var vm = CreateMainViewModel();
 
             Assert.IsTrue(vm.CurrentPage != null);
             Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
@@ -32,9 +31,9 @@ namespace OnlyR.Tests
         [TestMethod]
         public void NavToOptionsPage()
         {
-            MainViewModel vm = CreateMainViewModel();
+            var vm = CreateMainViewModel();
 
-            RecordingPageViewModel rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+            var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
             rvm.NavigateSettingsCommand.Execute(null);
 
             Assert.IsTrue(vm.CurrentPage is Pages.SettingsPage);
@@ -70,6 +69,20 @@ namespace OnlyR.Tests
 
             rvm.StopRecordingCommand.Execute(null);
             Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
+        }
+
+        private MainViewModel CreateMainViewModel()
+        {
+            var audioService = MockGenerator.CreateAudioService();
+            var optionsService = MockGenerator.CreateOptionsService();
+            var destService = MockGenerator.CreateRecordingsDestinationService();
+            var commandLineService = MockGenerator.CreateCommandLineService();
+
+            return new MainViewModel(
+                audioService,
+                optionsService.Object,
+                commandLineService.Object,
+                destService.Object);
         }
     }
 }

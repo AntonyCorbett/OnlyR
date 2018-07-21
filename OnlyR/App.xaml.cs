@@ -1,22 +1,20 @@
-﻿using System.IO;
-using System.Threading;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
-using AutoMapper;
-using OnlyR.Model;
-using OnlyR.Utils;
-using Serilog;
-
-namespace OnlyR
+﻿namespace OnlyR
 {
+    using System.IO;
+    using System.Threading;
+    using System.Windows;
+    using AutoMapper;
+    using Model;
+    using Serilog;
+    using Utils;
+
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App
     {
-        private Mutex _appMutex;
         private readonly string _appString = "OnlyRAudioRecording";
+        private Mutex _appMutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -29,24 +27,12 @@ namespace OnlyR
                 ConfigureLogger();
                 ConfigureAutoMapper();
             }
-
-            if (CommandLineParser.Instance.IsSwitchSet("-nogpu"))
-            {
-                // disable hardware (GPU) rendering so that it's all done by the CPU...
-                RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-            }
         }
 
-        private void ConfigureLogger()
+        protected override void OnExit(ExitEventArgs e)
         {
-            string logsDirectory = FileUtils.GetLogFolder();
-
-            Log.Logger = new LoggerConfiguration()
-               .MinimumLevel.Information()
-               .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
-               .CreateLogger();
-
-            Log.Logger.Information("==== Launched ====");
+            _appMutex?.Dispose();
+            Log.Logger.Information("==== Exit ====");
         }
 
         private static void ConfigureAutoMapper()
@@ -57,17 +43,22 @@ namespace OnlyR
             });
         }
 
+        private void ConfigureLogger()
+        {
+            string logsDirectory = FileUtils.GetLogFolder();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .CreateLogger();
+
+            Log.Logger.Information("==== Launched ====");
+        }
+
         private bool AnotherInstanceRunning()
         {
             _appMutex = new Mutex(true, _appString, out var newInstance);
             return !newInstance;
         }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            _appMutex?.Dispose();
-            Log.Logger.Information("==== Exit ====");
-        }
-
     }
 }

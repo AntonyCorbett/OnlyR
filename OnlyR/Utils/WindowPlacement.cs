@@ -1,15 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
-using System.Windows.Interop;
-using System.Xml;
-using System.Xml.Serialization;
-
-namespace OnlyR.Utils
+﻿namespace OnlyR.Utils
 {
+    // ReSharper disable InconsistentNaming
+    // ReSharper disable FieldCanBeMadeReadOnly.Global
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable StyleCop.SA1307
+    using System;
+    using System.IO;
     using System.Reflection;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Windows;
+    using System.Windows.Interop;
+    using System.Xml;
+    using System.Xml.Serialization;
 
     // adapted from david Rickard's Tech Blog
 
@@ -23,6 +26,7 @@ namespace OnlyR.Utils
         public int Right;
         public int Bottom;
 
+        // ReSharper disable once UnusedMember.Global
         public RECT(int left, int top, int right, int bottom)
         {
             Left = left;
@@ -40,6 +44,7 @@ namespace OnlyR.Utils
         public int X;
         public int Y;
 
+        // ReSharper disable once UnusedMember.Global
         public POINT(int x, int y)
         {
             X = x;
@@ -62,30 +67,40 @@ namespace OnlyR.Utils
 
     public static class WindowPlacement
     {
-        private static readonly Encoding encoding = new UTF8Encoding();
-        private static readonly XmlSerializer serializer = new XmlSerializer(typeof(WINDOWPLACEMENT));
+        private const int SwShowNormal = 1;
+        private const int SwShowMinimized = 2;
 
-        private const int SW_SHOWNORMAL = 1;
-        private const int SW_SHOWMINIMIZED = 2;
+        private static readonly Encoding Encoding = new UTF8Encoding();
+        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(WINDOWPLACEMENT));
+
+        public static void SetPlacement(this Window window, string placementJson)
+        {
+            SetPlacement(new WindowInteropHelper(window).Handle, placementJson, window.Width, window.Height);
+        }
+
+        public static string GetPlacement(this Window window)
+        {
+            return GetPlacement(new WindowInteropHelper(window).Handle);
+        }
 
         private static void SetPlacement(IntPtr windowHandle, string placementJson, double width, double height)
         {
             if (!string.IsNullOrEmpty(placementJson))
             {
-                byte[] xmlBytes = encoding.GetBytes(placementJson);
+                byte[] xmlBytes = Encoding.GetBytes(placementJson);
                 try
                 {
                     WINDOWPLACEMENT placement;
                     using (MemoryStream memoryStream = new MemoryStream(xmlBytes))
                     {
-                        placement = (WINDOWPLACEMENT)serializer.Deserialize(memoryStream);
+                        placement = (WINDOWPLACEMENT)Serializer.Deserialize(memoryStream);
                     }
 
                     var adjustedDimensions = GetAdjustedWidthAndHeight(width, height);
 
                     placement.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
                     placement.flags = 0;
-                    placement.showCmd = (placement.showCmd == SW_SHOWMINIMIZED ? SW_SHOWNORMAL : placement.showCmd);
+                    placement.showCmd = placement.showCmd == SwShowMinimized ? SwShowNormal : placement.showCmd;
                     placement.normalPosition.Right = placement.normalPosition.Left + (int)adjustedDimensions.Item1;
                     placement.normalPosition.Bottom = placement.normalPosition.Top + (int)adjustedDimensions.Item2;
                     NativeMethods.SetWindowPlacement(windowHandle, ref placement);
@@ -114,28 +129,20 @@ namespace OnlyR.Utils
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
-                serializer.Serialize(xmlTextWriter, placement);
+                Serializer.Serialize(xmlTextWriter, placement);
                 byte[] xmlBytes = memoryStream.ToArray();
-                return encoding.GetString(xmlBytes);
+                return Encoding.GetString(xmlBytes);
             }
-        }
-
-        public static void SetPlacement(this Window window, string placementJson)
-        {
-            SetPlacement(new WindowInteropHelper(window).Handle, placementJson, window.Width, window.Height);
-        }
-
-        public static string GetPlacement(this Window window)
-        {
-            return GetPlacement(new WindowInteropHelper(window).Handle);
         }
 
         private static Tuple<int, int> GetDpiSettings()
         {
             var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
             var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
-
-            return new Tuple<int, int>((int)dpiXProperty.GetValue(null, null), (int)dpiYProperty.GetValue(null, null));
+            
+            return new Tuple<int, int>(
+                (int)(dpiXProperty?.GetValue(null, null) ?? 0), 
+                (int)(dpiYProperty?.GetValue(null, null) ?? 0));
         }
     }
 }

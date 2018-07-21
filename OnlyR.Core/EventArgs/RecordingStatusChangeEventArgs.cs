@@ -1,7 +1,7 @@
-﻿using OnlyR.Core.Enums;
-
-namespace OnlyR.Core.EventArgs
+﻿namespace OnlyR.Core.EventArgs
 {
+    using Enums;
+
     /// <summary>
     /// Used to notify clients of a change in recording status
     /// </summary>

@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OnlyR.Model;
-
-namespace OnlyR.Tests
+﻿namespace OnlyR.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Model;
+
     [TestClass]
     public class TestMappings
     {
@@ -16,6 +16,5 @@ namespace OnlyR.Tests
 
             AutoMapper.Mapper.AssertConfigurationIsValid();
         }
-
     }
 }

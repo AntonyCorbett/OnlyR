@@ -1,13 +1,13 @@
-﻿using System;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Messaging;
-using OnlyR.Services.Options;
-using OnlyR.Utils;
-using OnlyR.ViewModel;
-using OnlyR.ViewModel.Messages;
-
-namespace OnlyR
+﻿namespace OnlyR
 {
+    using System;
+    using CommonServiceLocator;
+    using GalaSoft.MvvmLight.Messaging;
+    using Services.Options;
+    using Utils;
+    using ViewModel;
+    using ViewModel.Messages;
+
     /// <summary>
     /// MainWindow.xaml code-behind
     /// </summary>
@@ -16,13 +16,8 @@ namespace OnlyR
         public MainWindow()
         {
             InitializeComponent();
-
+            
             Messenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
-        }
-
-        private void OnShutDownApplication(ShutDownApplicationMessage obj)
-        {
-            Close();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -32,6 +27,11 @@ namespace OnlyR
             {
                 this.SetPlacement(optionsService.Options.AppWindowPlacement);
             }
+        }
+
+        private void OnShutDownApplication(ShutDownApplicationMessage obj)
+        {
+            Close();
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)

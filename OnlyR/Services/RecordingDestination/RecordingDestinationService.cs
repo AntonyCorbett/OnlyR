@@ -1,17 +1,17 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using OnlyR.Model;
-using OnlyR.Services.Options;
-using OnlyR.Utils;
-using Serilog;
-
-namespace OnlyR.Services.RecordingDestination
+﻿namespace OnlyR.Services.RecordingDestination
 {
+    using System;
+    using System.Globalization;
+    using System.IO;
+    using Model;
+    using Options;
+    using Serilog;
+    using Utils;
+
     /// <summary>
     /// Service to analyse recording destinate folder and generate a recording candidate
     /// </summary>
-    // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class RecordingDestinationService : IRecordingDestinationService
     {
         /// <summary>
@@ -27,7 +27,7 @@ namespace OnlyR.Services.RecordingDestination
             string commandLineIdentifier)
         {
             var destFolder = FileUtils.GetDestinationFolder(dt, commandLineIdentifier, optionsService.Options.DestinationFolder);
-            PathAndTrackNumber finalPathAndTrack = GetNextAvailableFile(optionsService, destFolder, dt);
+            var finalPathAndTrack = GetNextAvailableFile(optionsService, destFolder, dt);
 
             var result = new RecordingCandidate
             {
@@ -68,8 +68,9 @@ namespace OnlyR.Services.RecordingDestination
 
         private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment)
         {
-            return Path.Combine(folder,
-               $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.mp3");
+            return Path.Combine(
+                folder,
+                $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.mp3");
         }
 
         /// <summary>
@@ -82,6 +83,5 @@ namespace OnlyR.Services.RecordingDestination
             string file = string.Concat(Guid.NewGuid().ToString("N"), ".mp3");
             return Path.Combine(folder, file);
         }
-
     }
 }

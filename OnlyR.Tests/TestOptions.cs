@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OnlyR.Services.Options;
-
-namespace OnlyR.Tests
+﻿namespace OnlyR.Tests
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Services.Options;
+
     [TestClass]
     public class TestOptions
     {
@@ -30,6 +30,5 @@ namespace OnlyR.Tests
             Assert.AreNotEqual(options.RecordingDevice, _badIntValue);
             Assert.AreNotEqual(options.SampleRate, _badIntValue);
         }
-
     }
 }

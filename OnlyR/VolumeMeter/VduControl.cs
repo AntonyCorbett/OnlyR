@@ -1,21 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-namespace OnlyR.VolumeMeter
+﻿namespace OnlyR.VolumeMeter
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+
     /// <summary>
     /// Volume meter custom control using bitmaps on a DrawingVisual.
     /// See also Themes\Generic.xanl
     /// </summary>
     public class VduControl : Control
     {
+        /// <summary>
+        /// VolumeLevel DP (value range 0 - 100)
+        /// </summary>
+        public static readonly DependencyProperty VolumeLevelProperty =
+            DependencyProperty.Register(
+                "VolumeLevel", typeof(int), typeof(VduControl), new PropertyMetadata(0, OnVolumeChanged));
+
         // change number of levels to add or remove display "blocks"
         private readonly int _levelsCount = 14;
+        private readonly DrawingVisual _drawingVisual;
 
         private Image _image;
         private Border _innerBorder;
@@ -25,41 +33,21 @@ namespace OnlyR.VolumeMeter
         private SolidColorBrush _redBrush;
 
         private List<RenderTargetBitmap> _bitmaps;
-        private readonly DrawingVisual _drawingVisual;
-
 
         static VduControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(VduControl),
-                new FrameworkPropertyMetadata(typeof(VduControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(
+                typeof(VduControl), new FrameworkPropertyMetadata(typeof(VduControl)));
         }
 
         public VduControl()
         {
-            Debug.Assert(_levelsCount >= 7);
+            Debug.Assert(_levelsCount >= 7, "_levelsCount >= 7");
 
             InitBitmaps();
             InitBrushes();
 
             _drawingVisual = new DrawingVisual();
-        }
-
-        private void InitBrushes()
-        {
-            _backBrush = new SolidColorBrush { Color = Colors.Black };
-            _lightGreenBrush = new SolidColorBrush { Color = Colors.GreenYellow };
-            _yellowBrush = new SolidColorBrush { Color = Colors.Yellow };
-            _redBrush = new SolidColorBrush { Color = Colors.Red };
-        }
-
-        private void InitBitmaps()
-        {
-            _bitmaps = new List<RenderTargetBitmap>();
-
-            for (int n = 0; n < _levelsCount + 1; ++n)
-            {
-                _bitmaps.Add(null);
-            }
         }
 
         public override void OnApplyTemplate()
@@ -76,13 +64,6 @@ namespace OnlyR.VolumeMeter
                 _innerBorder = border;
             }
         }
-
-        /// <summary>
-        /// VolumeLevel DP (value range 0 - 100)
-        /// </summary>
-        public static readonly DependencyProperty VolumeLevelProperty =
-            DependencyProperty.Register("VolumeLevel", typeof(int), typeof(VduControl),
-                new PropertyMetadata(0, OnVolumeChanged));
 
         private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -154,9 +135,12 @@ namespace OnlyR.VolumeMeter
                         b = _lightGreenBrush;
                     }
 
-                    dc.DrawRectangle(b, null, new Rect(
+                    dc.DrawRectangle(
+                        b, 
+                        null, 
+                        new Rect(
                         0,
-                        bmpHeight - (n + 1) * (blockHeight + ySpaceBetweenBlocks),
+                        bmpHeight - ((n + 1) * (blockHeight + ySpaceBetweenBlocks)),
                         blockWidth,
                         blockHeight));
                 }
@@ -164,6 +148,24 @@ namespace OnlyR.VolumeMeter
 
             _bitmaps[numBlocksLit].Render(_drawingVisual);
             return _bitmaps[numBlocksLit];
+        }
+
+        private void InitBrushes()
+        {
+            _backBrush = new SolidColorBrush { Color = Colors.Black };
+            _lightGreenBrush = new SolidColorBrush { Color = Colors.GreenYellow };
+            _yellowBrush = new SolidColorBrush { Color = Colors.Yellow };
+            _redBrush = new SolidColorBrush { Color = Colors.Red };
+        }
+
+        private void InitBitmaps()
+        {
+            _bitmaps = new List<RenderTargetBitmap>();
+
+            for (int n = 0; n < _levelsCount + 1; ++n)
+            {
+                _bitmaps.Add(null);
+            }
         }
     }
 }

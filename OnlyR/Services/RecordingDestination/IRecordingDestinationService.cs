@@ -1,9 +1,9 @@
-﻿using OnlyR.Services.Options;
-using System;
-using OnlyR.Model;
-
-namespace OnlyR.Services.RecordingDestination
+﻿namespace OnlyR.Services.RecordingDestination
 {
+    using System;
+    using Model;
+    using Options;
+
     public interface IRecordingDestinationService
     {
         // ReSharper disable once UnusedMember.Global

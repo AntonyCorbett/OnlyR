@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-using OnlyR.Model;
-using OnlyR.Utils;
-using Serilog;
-
-namespace OnlyR.Services.Options
+﻿namespace OnlyR.Services.Options
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Model;
+    using Newtonsoft.Json;
+    using Serilog;
+    using Utils;
+
     /// <summary>
     /// The Option service is used to store and retrieve program settings
     /// </summary>
-    // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class OptionsService : IOptionsService
     {
-        private Options _options;
+        private readonly ICommandLineService _commandLineService;
         private readonly int _optionsVersion = 1;
+        private Options _options;
         private string _optionsFilePath;
         private string _originalOptionsSignature;
+
+        public OptionsService(ICommandLineService commandLineService)
+        {
+            _commandLineService = commandLineService;
+        }
 
         public Options Options
         {
@@ -28,13 +34,98 @@ namespace OnlyR.Services.Options
             }
         }
 
+        /// <summary>
+        /// Gets a list of supported MP3 bit rates
+        /// </summary>
+        /// <returns>Collection of BitRateItem</returns>
+        public IEnumerable<BitRateItem> GetSupportedMp3BitRates()
+        {
+            var result = new List<BitRateItem>();
+
+            var validBitRates = Options.GetSupportedMp3BitRates();
+            foreach (var rate in validBitRates)
+            {
+                result.Add(new BitRateItem { Name = rate.ToString(), ActualBitRate = rate });
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a list of supported sample rates (for recording)
+        /// </summary>
+        /// <returns>Collection of SampleRateItem</returns>
+        public IEnumerable<SampleRateItem> GetSupportedSampleRates()
+        {
+            var result = new List<SampleRateItem>();
+
+            var validSampleRates = Options.GetSupportedSampleRates();
+            foreach (var rate in validSampleRates)
+            {
+                result.Add(new SampleRateItem { Name = rate.ToString(), ActualSampleRate = rate });
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a list of supported channel counts
+        /// </summary>
+        /// <returns>Collection of ChannelItem</returns>
+        public IEnumerable<ChannelItem> GetSupportedChannels()
+        {
+            var result = new List<ChannelItem>();
+
+            var channels = Options.GetSupportedChannels();
+            foreach (var c in channels)
+            {
+                result.Add(new ChannelItem { Name = GetChannelName(c), ChannelCount = c });
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Saves the settings (if they have changed since they were last read)
+        /// </summary>
+        public void Save()
+        {
+            try
+            {
+                var newSignature = GetOptionsSignature(_options);
+                if (_originalOptionsSignature != newSignature)
+                {
+                    // changed...
+                    WriteOptions();
+                    Log.Logger.Information("Settings changed and saved");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Could not save settings");
+            }
+        }
+
+        private static string GetChannelName(int channelsCount)
+        {
+            switch (channelsCount)
+            {
+                case 1:
+                    return Properties.Resources.MONO;
+                case 2:
+                    return Properties.Resources.STEREO;
+                default:
+                    return "Unknown";
+            }
+        }
+
         private void Init()
         {
             if (_options == null)
             {
                 try
                 {
-                    string commandLineIdentifier = CommandLineParser.Instance.GetId();
+                    string commandLineIdentifier = _commandLineService.OptionsIdentifier;
                     _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
                     var path = Path.GetDirectoryName(_optionsFilePath);
                     if (path != null)
@@ -100,92 +191,6 @@ namespace OnlyR.Services.Options
 
                     _originalOptionsSignature = GetOptionsSignature(_options);
                 }
-            }
-        }
-
-
-        /// <summary>
-        /// Gets a list of supported MP3 bit rates
-        /// </summary>
-        /// <returns>Collection of BitRateItem</returns>
-        public IEnumerable<BitRateItem> GetSupportedMp3BitRates()
-        {
-            var result = new List<BitRateItem>();
-
-            var validBitRates = Options.GetSupportedMp3BitRates();
-            foreach (var rate in validBitRates)
-            {
-                result.Add(new BitRateItem { Name = rate.ToString(), ActualBitRate = rate });
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a list of supported sample rates (for recording)
-        /// </summary>
-        /// <returns>Collection of SampleRateItem</returns>
-        public IEnumerable<SampleRateItem> GetSupportedSampleRates()
-        {
-            var result = new List<SampleRateItem>();
-
-            var validSampleRates = Options.GetSupportedSampleRates();
-            foreach (var rate in validSampleRates)
-            {
-                result.Add(new SampleRateItem { Name = rate.ToString(), ActualSampleRate = rate });
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a list of supported channel counts
-        /// </summary>
-        /// <returns>Collection of ChannelItem</returns>
-        public IEnumerable<ChannelItem> GetSupportedChannels()
-        {
-            var result = new List<ChannelItem>();
-
-            var channels = Options.GetSupportedChannels();
-            foreach (var c in channels)
-            {
-                result.Add(new ChannelItem { Name = GetChannelName(c), ChannelCount = c });
-            }
-
-            return result;
-        }
-
-        private static string GetChannelName(int channelsCount)
-        {
-            switch (channelsCount)
-            {
-                case 1:
-                    return Properties.Resources.MONO;
-                case 2:
-                    return Properties.Resources.STEREO;
-                default:
-                    return "Unknown";
-            }
-        }
-
-        /// <summary>
-        /// Saves the settings (if they have changed since they were last read)
-        /// </summary>
-        public void Save()
-        {
-            try
-            {
-                var newSignature = GetOptionsSignature(_options);
-                if (_originalOptionsSignature != newSignature)
-                {
-                    // changed...
-                    WriteOptions();
-                    Log.Logger.Information("Settings changed and saved");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, "Could not save settings");
             }
         }
     }

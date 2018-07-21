@@ -1,8 +1,8 @@
-﻿using System;
-using OnlyR.Core.Enums;
-
-namespace OnlyR.Utils
+﻿namespace OnlyR.Utils
 {
+    using System;
+    using Core.Enums;
+
     // ReSharper disable once UnusedMember.Global
     public static class EnumExtensions
     {
@@ -29,6 +29,5 @@ namespace OnlyR.Utils
                     throw new ArgumentException(nameof(value));
             }
         }
-
     }
 }
