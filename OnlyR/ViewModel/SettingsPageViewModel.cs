@@ -329,53 +329,9 @@
 
         private string FindSuitableRecordingFolderToShow()
         {
-            string folder = null;
-
-            try
-            {
-                DateTime today = DateTime.Today;
-                string commandLineIdentifier = _commandLineService.OptionsIdentifier;
-
-                // first try today's folder...
-                folder = FileUtils.GetDestinationFolder(
-                    today, commandLineIdentifier, _optionsService.Options.DestinationFolder);
-
-                if (!Directory.Exists(folder))
-                {
-                    // try this month's folder...
-                    folder = FileUtils.GetMonthlyDestinationFolder(
-                        today, commandLineIdentifier, _optionsService.Options.DestinationFolder);
-
-                    if (!Directory.Exists(folder))
-                    {
-                        folder = FileUtils.GetRootDestinationFolder(
-                            commandLineIdentifier, _optionsService.Options.DestinationFolder);
-
-                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
-                        {
-                            folder = FileUtils.GetRootDestinationFolder(
-                                string.Empty, _optionsService.Options.DestinationFolder);
-
-                            if (!Directory.Exists(folder))
-                            {
-                                Directory.CreateDirectory(folder);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
-            }
-
-            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
-            {
-                folder = FileUtils.GetDefaultMyDocsDestinationFolder();
-                Directory.CreateDirectory(folder);
-            }
-
-            return folder;
+            return FileUtils.FindSuitableRecordingFolderToShow(
+                _commandLineService.OptionsIdentifier,
+                _optionsService.Options.DestinationFolder);
         }
     }
 }

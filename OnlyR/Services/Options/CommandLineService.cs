@@ -16,11 +16,21 @@
             p.Setup<string>("id")
                 .Callback(s => { OptionsIdentifier = s; }).SetDefault(null);
 
+            p.Setup<bool>("nosettings")
+                .Callback(s => { NoSettings = s; }).SetDefault(false);
+
+            p.Setup<bool>("nofolder")
+                .Callback(s => { NoFolder = s; }).SetDefault(false);
+
             p.Parse(Environment.GetCommandLineArgs());
         }
 
         public bool NoGpu { get; set; }
 
         public string OptionsIdentifier { get; set; }
+
+        public bool NoSettings { get; set; }
+
+        public bool NoFolder { get; set; }
     }
 }

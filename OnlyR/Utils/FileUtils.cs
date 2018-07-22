@@ -1,4 +1,6 @@
-﻿namespace OnlyR.Utils
+﻿using Serilog;
+
+namespace OnlyR.Utils
 {
     using System;
     using System.IO;
@@ -152,6 +154,53 @@
                 optionsVersion.ToString(),
                 OptionsFileName);
         }
+
+        public static string FindSuitableRecordingFolderToShow(string commandLineIdentifier, string destFolder)
+        {
+            string folder = null;
+
+            try
+            {
+                DateTime today = DateTime.Today;
+                
+                // first try today's folder...
+                folder = GetDestinationFolder(today, commandLineIdentifier, destFolder);
+
+                if (!Directory.Exists(folder))
+                {
+                    // try this month's folder...
+                    folder = GetMonthlyDestinationFolder(today, commandLineIdentifier, destFolder);
+
+                    if (!Directory.Exists(folder))
+                    {
+                        folder = GetRootDestinationFolder(commandLineIdentifier, destFolder);
+
+                        if (!Directory.Exists(folder) && !string.IsNullOrEmpty(commandLineIdentifier))
+                        {
+                            folder = GetRootDestinationFolder(string.Empty, destFolder);
+
+                            if (!Directory.Exists(folder))
+                            {
+                                Directory.CreateDirectory(folder);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
+            }
+
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                folder = GetDefaultMyDocsDestinationFolder();
+                Directory.CreateDirectory(folder);
+            }
+
+            return folder;
+        }
+
 
         private static string GetRecordingFolderRoot(string rootFromOptions)
         {

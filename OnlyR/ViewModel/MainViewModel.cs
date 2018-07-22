@@ -107,7 +107,7 @@ namespace OnlyR.ViewModel
             page.DataContext = pageModel;
             _pages.Add(pageName, page);
         }
-
+        
         private void OnNavigate(NavigateMessage message)
         {
             CurrentPage = _pages[message.TargetPage];

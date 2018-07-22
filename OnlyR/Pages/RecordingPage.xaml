@@ -37,7 +37,6 @@
         </Style>
 
         <Style x:Key="SettingsBtnStyle" BasedOn="{StaticResource MaterialDesignFloatingActionLightButton}" TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="0,0,5,5" />
             <Setter Property="Height" Value="36" />
             <Setter Property="Width" Value="36" />
             <Setter Property="Grid.Column" Value="1" />
@@ -98,13 +97,25 @@
                     <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ElapsedTimeStr}" FontSize="32"/>
                     <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ErrorMsg}" Foreground="Crimson" />
 
-                    <Button Style="{StaticResource SettingsBtnStyle}" 
-                            Command="{Binding NavigateSettingsCommand}" >
-                        <materialDesign:PackIcon
-                            Kind="Settings"
-                            Height="28"
-                            Width="28" />
-                    </Button>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource SettingsBtnStyle}" 
+                                Margin="0,0,10,0"
+                                Visibility="{Binding Path=NoFolder, Converter={StaticResource InverseBoolToVisConverter}}"
+                                Command="{Binding ShowRecordingsCommand}" >
+                            <materialDesign:PackIcon
+                                Kind="Folder"
+                                Height="22"
+                                Width="22" />
+                        </Button>
+                        <Button Style="{StaticResource SettingsBtnStyle}" 
+                                Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}"
+                                Command="{Binding NavigateSettingsCommand}" >
+                            <materialDesign:PackIcon
+                                Kind="Settings"
+                                Height="22"
+                                Width="22" />
+                        </Button>
+                    </StackPanel>
 
                 </DockPanel>
             </materialDesign:Card>

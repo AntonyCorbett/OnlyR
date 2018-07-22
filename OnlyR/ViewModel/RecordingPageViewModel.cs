@@ -27,7 +27,7 @@
         private readonly IAudioService _audioService;
         private readonly IRecordingDestinationService _destinationService;
         private readonly IOptionsService _optionsService;
-        private readonly string _commandLineIdentifier;
+        private readonly ICommandLineService _commandLineService;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
         private DispatcherTimer _splashTimer;
@@ -44,7 +44,7 @@
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
-            _commandLineIdentifier = commandLineService.OptionsIdentifier;
+            _commandLineService = commandLineService;
             _stopwatch = new Stopwatch();
 
             _audioService = audioService;
@@ -63,6 +63,7 @@
             StartRecordingCommand = new RelayCommand(StartRecording, CanExecuteStart);
             StopRecordingCommand = new RelayCommand(StopRecording, CanExecuteStop);
             NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
+            ShowRecordingsCommand = new RelayCommand(ShowRecordings);
         }
 
         /// <summary>
@@ -163,6 +164,11 @@
             RefreshRelayCommands();
         }
 
+        public bool NoSettings => _commandLineService.NoSettings;
+
+        public bool NoFolder => _commandLineService.NoFolder;
+
+
         /// <summary>
         /// Recording status
         /// </summary>
@@ -223,7 +229,8 @@
                 Log.Logger.Information("Start requested");
 
                 DateTime recordingDate = DateTime.Today;
-                var candidateFile = _destinationService.GetRecordingFileCandidate(_optionsService, recordingDate, _commandLineIdentifier);
+                var candidateFile = _destinationService.GetRecordingFileCandidate(
+                    _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
 
                 CheckDiskSpace(candidateFile);
 
@@ -339,7 +346,9 @@
         public RelayCommand StopRecordingCommand { get; set; }
 
         public RelayCommand NavigateSettingsCommand { get; set; }
-        
+
+        public RelayCommand ShowRecordingsCommand { get; set; }
+
         /// <summary>
         /// Show brief animation
         /// </summary>
@@ -372,6 +381,18 @@
             {
                 _splashTimer.Stop();
             }
+        }
+
+        private void ShowRecordings()
+        {
+            Process.Start(FindSuitableRecordingFolderToShow());
+        }
+
+        private string FindSuitableRecordingFolderToShow()
+        {
+            return FileUtils.FindSuitableRecordingFolderToShow(
+                _commandLineService.OptionsIdentifier,
+                _optionsService.Options.DestinationFolder);
         }
     }
 }
