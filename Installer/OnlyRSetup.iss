@@ -37,24 +37,29 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\OnlyR.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\OnlyR.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\OnlyR.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\AutoMapper.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\FluentCommandLineParser.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.Practices.ServiceLocation.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\NAudio.Lame.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\libmp3lame.32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\libmp3lame.64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\NAudio.Lame.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "d:\ProjectsPersonal\OnlyR\OnlyR\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
