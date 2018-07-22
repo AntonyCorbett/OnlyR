@@ -73,8 +73,9 @@
             </Grid.RowDefinitions>
 
             <Button Style="{StaticResource StartRecordingBtnStyle}" 
-                   Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
-                   Command="{Binding StartRecordingCommand}" >
+                    Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
+                    ToolTip="Start recording"
+                    Command="{Binding StartRecordingCommand}" >
                 <materialDesign:PackIcon
                    Kind="Microphone"
                    Height="56"
@@ -83,8 +84,9 @@
 
             <!-- ReSharper disable once Xaml.MissingGridIndex -->
             <Button Style="{StaticResource StopRecordingBtnStyle}" 
-                   Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
-                   Command="{Binding StopRecordingCommand}" >
+                    ToolTip="Stop recording"
+                    Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
+                    Command="{Binding StopRecordingCommand}" >
                 <materialDesign:PackIcon
                    Kind="Stop"
                    Height="56"
@@ -100,6 +102,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Style="{StaticResource SettingsBtnStyle}" 
                                 Margin="0,0,10,0"
+                                ToolTip="Recordings folder"
                                 Visibility="{Binding Path=NoFolder, Converter={StaticResource InverseBoolToVisConverter}}"
                                 Command="{Binding ShowRecordingsCommand}" >
                             <materialDesign:PackIcon
@@ -108,6 +111,7 @@
                                 Width="22" />
                         </Button>
                         <Button Style="{StaticResource SettingsBtnStyle}" 
+                                ToolTip="Settings"
                                 Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}"
                                 Command="{Binding NavigateSettingsCommand}" >
                             <materialDesign:PackIcon
