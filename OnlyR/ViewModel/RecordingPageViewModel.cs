@@ -64,6 +64,7 @@
             StopRecordingCommand = new RelayCommand(StopRecording, CanExecuteStop);
             NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
+            SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrive);
         }
 
         /// <summary>
@@ -168,6 +169,8 @@
 
         public bool NoFolder => _commandLineService.NoFolder;
 
+        public bool NoSave => _commandLineService.NoSave;
+
 
         /// <summary>
         /// Recording status
@@ -219,6 +222,11 @@
                     RaisePropertyChanged(nameof(ErrorMsg));
                 }
             }
+        }
+
+        public string SaveHint
+        {
+            get { return "Save to drive"; }
         }
 
         private void StartRecording()
@@ -349,6 +357,8 @@
 
         public RelayCommand ShowRecordingsCommand { get; set; }
 
+        public RelayCommand SaveToRemovableDriveCommand { get; set; }
+
         /// <summary>
         /// Show brief animation
         /// </summary>
@@ -393,6 +403,11 @@
             return FileUtils.FindSuitableRecordingFolderToShow(
                 _commandLineService.OptionsIdentifier,
                 _optionsService.Options.DestinationFolder);
+        }
+
+        private void SaveToRemovableDrive()
+        {
+            // todo:
         }
     }
 }

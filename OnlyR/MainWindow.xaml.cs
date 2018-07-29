@@ -1,6 +1,8 @@
 ﻿namespace OnlyR
 {
     using System;
+    using System.Windows;
+    using System.Windows.Interop;
     using CommonServiceLocator;
     using GalaSoft.MvvmLight.Messaging;
     using Services.Options;
@@ -22,11 +24,22 @@
 
         protected override void OnSourceInitialized(EventArgs e)
         {
+            base.OnSourceInitialized(e);
+
             var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
             if (!string.IsNullOrEmpty(optionsService.Options.AppWindowPlacement))
             {
                 this.SetPlacement(optionsService.Options.AppWindowPlacement);
             }
+
+            var source = PresentationSource.FromVisual(this) as HwndSource;
+            source?.AddHook(WndProc);
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        {
+            RemovableDriveDetectionNativeMethods.WndProc(msg, wparam, lparam);
+            return IntPtr.Zero;
         }
 
         private void OnShutDownApplication(ShutDownApplicationMessage obj)

@@ -45,6 +45,15 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <Style x:Key="SaveBtnStyle" BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}" TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -100,6 +109,17 @@
                     <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ErrorMsg}" Foreground="Crimson" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource SaveBtnStyle}" 
+                                Margin="0,0,10,0"
+                                ToolTip="{Binding SaveHint}"
+                                Visibility="{Binding Path=NoSave, Converter={StaticResource InverseBoolToVisConverter}}"
+                                Command="{Binding SaveToRemovableDriveCommand}" >
+                            <materialDesign:PackIcon
+                                Kind="ContentSave"
+                                Height="22"
+                                Width="22" />
+                        </Button>
+
                         <Button Style="{StaticResource SettingsBtnStyle}" 
                                 Margin="0,0,10,0"
                                 ToolTip="Recordings folder"

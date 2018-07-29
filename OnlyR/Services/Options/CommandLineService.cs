@@ -22,6 +22,9 @@
             p.Setup<bool>("nofolder")
                 .Callback(s => { NoFolder = s; }).SetDefault(false);
 
+            p.Setup<bool>("nosave")
+                .Callback(s => { NoSave = s; }).SetDefault(false);
+
             p.Parse(Environment.GetCommandLineArgs());
         }
 
@@ -32,5 +35,7 @@
         public bool NoSettings { get; set; }
 
         public bool NoFolder { get; set; }
+
+        public bool NoSave { get; set; }
     }
 }

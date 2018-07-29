@@ -162,6 +162,7 @@
     </Compile>
     <Compile Include="Services\Options\CommandLineService.cs" />
     <Compile Include="Services\Options\ICommandLineService.cs" />
+    <Compile Include="Utils\RemovableDriveDetectionNativeMethods.cs" />
     <Compile Include="Utils\WindowPlacement.cs" />
     <Compile Include="ViewModel\IPage.cs" />
     <Compile Include="Pages\RecordingPage.xaml.cs">
@@ -181,6 +182,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\Messages\AlwaysOnTopChanged.cs" />
     <Compile Include="ViewModel\Messages\NavigateMessage.cs" />
+    <Compile Include="ViewModel\Messages\RemovableDriveMessage.cs" />
     <Compile Include="ViewModel\Messages\ShutDownApplicationMessage.cs" />
     <Compile Include="ViewModel\RecordingPageViewModel.cs" />
     <Compile Include="ViewModel\Messages\BeforeShutDownMessage.cs" />
