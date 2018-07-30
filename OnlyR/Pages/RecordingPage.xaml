@@ -52,6 +52,21 @@
             <Setter Property="Grid.Row" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Style.Triggers>
+                <Trigger Property="Visibility" Value="Visible">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </Style.Triggers>
+
         </Style>
 
     </UserControl.Resources>
@@ -84,6 +99,7 @@
             <Button Style="{StaticResource StartRecordingBtnStyle}" 
                     Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
                     ToolTip="Start recording"
+                    IsEnabled="{Binding IsNotRecording}"
                     Command="{Binding StartRecordingCommand}" >
                 <materialDesign:PackIcon
                    Kind="Microphone"
@@ -94,6 +110,7 @@
             <!-- ReSharper disable once Xaml.MissingGridIndex -->
             <Button Style="{StaticResource StopRecordingBtnStyle}" 
                     ToolTip="Stop recording"
+                    IsEnabled="{Binding IsRecording}"
                     Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
                     Command="{Binding StopRecordingCommand}" >
                 <materialDesign:PackIcon
@@ -112,8 +129,12 @@
                         <Button Style="{StaticResource SaveBtnStyle}" 
                                 Margin="0,0,10,0"
                                 ToolTip="{Binding SaveHint}"
-                                Visibility="{Binding Path=NoSave, Converter={StaticResource InverseBoolToVisConverter}}"
-                                Command="{Binding SaveToRemovableDriveCommand}" >
+                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsCopying}"
+                                materialDesign:ButtonProgressAssist.Value="-1"
+                                materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsCopying}"                                
+                                IsEnabled="{Binding IsSaveEnabled}"
+                                Visibility="{Binding IsSaveVisible, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding SaveToRemovableDriveCommand}">
                             <materialDesign:PackIcon
                                 Kind="ContentSave"
                                 Height="22"
@@ -132,6 +153,7 @@
                         </Button>
                         <Button Style="{StaticResource SettingsBtnStyle}" 
                                 ToolTip="Settings"
+                                IsEnabled="{Binding IsNotRecording}"
                                 Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}"
                                 Command="{Binding NavigateSettingsCommand}" >
                             <materialDesign:PackIcon

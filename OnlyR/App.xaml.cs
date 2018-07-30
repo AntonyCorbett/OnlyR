@@ -1,4 +1,6 @@
-﻿namespace OnlyR
+﻿using GalaSoft.MvvmLight.Threading;
+
+namespace OnlyR
 {
     using System.IO;
     using System.Threading;
@@ -15,6 +17,11 @@
     {
         private readonly string _appString = "OnlyRAudioRecording";
         private Mutex _appMutex;
+
+        public App()
+        {
+            DispatcherHelper.Initialize();
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {

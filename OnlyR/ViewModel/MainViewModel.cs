@@ -1,3 +1,5 @@
+using OnlyR.Services.RecordingCopies;
+
 namespace OnlyR.ViewModel
 {
     using System;
@@ -32,7 +34,8 @@ namespace OnlyR.ViewModel
            IAudioService audioService,
            IOptionsService optionsService,
            ICommandLineService commandLineService,
-           IRecordingDestinationService destService)
+           IRecordingDestinationService destService,
+           ICopyRecordingsService copyRecordingsService)
         {
             if (commandLineService.NoGpu)
             {
@@ -53,7 +56,7 @@ namespace OnlyR.ViewModel
             SetupPage(
                 RecordingPageViewModel.PageName, 
                 new RecordingPage(),
-                new RecordingPageViewModel(audioService, optionsService, commandLineService, destService));
+                new RecordingPageViewModel(audioService, optionsService, commandLineService, destService, copyRecordingsService));
 
             SetupPage(
                 SettingsPageViewModel.PageName, 

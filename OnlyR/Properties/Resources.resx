@@ -150,6 +150,12 @@
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>
   </data>
+  <data name="SAVE_TO_DRIVE" xml:space="preserve">
+    <value>Save today's recordings to drive {0}</value>
+  </data>
+  <data name="SAVE_TO_DRIVES" xml:space="preserve">
+    <value>Save today's recordings to drives {0}</value>
+  </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Select Recording Folder</value>
   </data>

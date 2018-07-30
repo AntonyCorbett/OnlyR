@@ -160,6 +160,24 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save today&apos;s recordings to drive {0}.
+        /// </summary>
+        internal static string SAVE_TO_DRIVE {
+            get {
+                return ResourceManager.GetString("SAVE_TO_DRIVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save today&apos;s recordings to drives {0}.
+        /// </summary>
+        internal static string SAVE_TO_DRIVES {
+            get {
+                return ResourceManager.GetString("SAVE_TO_DRIVES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Recording Folder.
         /// </summary>
         internal static string SELECT_DEST_FOLDER {

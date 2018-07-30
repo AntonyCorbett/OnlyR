@@ -1,19 +1,24 @@
 ﻿namespace OnlyR.ViewModel
 {
     using System;
+    using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows.Threading;
     using Core.Enums;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Command;
     using GalaSoft.MvvmLight.Messaging;
+    using GalaSoft.MvvmLight.Threading;
     using Messages;
     using Model;
     using Serilog;
     using Services.Audio;
     using Services.Options;
+    using Services.RecordingCopies;
     using Services.RecordingDestination;
     using Utils;
 
@@ -27,9 +32,11 @@
         private readonly IAudioService _audioService;
         private readonly IRecordingDestinationService _destinationService;
         private readonly IOptionsService _optionsService;
+        private readonly ICopyRecordingsService _copyRecordingsService;
         private readonly ICommandLineService _commandLineService;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
+        private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new ConcurrentDictionary<char, DateTime>();
         private DispatcherTimer _splashTimer;
 
         private RecordingStatus _recordingStatus;
@@ -40,11 +47,14 @@
             IAudioService audioService,
             IOptionsService optionsService,
             ICommandLineService commandLineService,
-            IRecordingDestinationService destinationService)
+            IRecordingDestinationService destinationService,
+            ICopyRecordingsService copyRecordingsService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
             _commandLineService = commandLineService;
+            _copyRecordingsService = copyRecordingsService;
+
             _stopwatch = new Stopwatch();
 
             _audioService = audioService;
@@ -60,11 +70,13 @@
             _statusStr = Properties.Resources.NOT_RECORDING;
 
             // bind commands...
-            StartRecordingCommand = new RelayCommand(StartRecording, CanExecuteStart);
-            StopRecordingCommand = new RelayCommand(StopRecording, CanExecuteStop);
-            NavigateSettingsCommand = new RelayCommand(NavigateSettings, CanExecuteNavigateSettings);
+            StartRecordingCommand = new RelayCommand(StartRecording);
+            StopRecordingCommand = new RelayCommand(StopRecording);
+            NavigateSettingsCommand = new RelayCommand(NavigateSettings);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
-            SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrive);
+            SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
+
+            Messenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
         }
 
         /// <summary>
@@ -106,20 +118,15 @@
 
         public static string PageName => "RecordingPage";
 
-        private bool CanExecuteNavigateSettings()
-        {
-            return RecordingStatus == RecordingStatus.NotRecording;
-        }
+        //private bool CanExecuteStop()
+        //{
+        //    return RecordingStatus == RecordingStatus.Recording;
+        //}
 
-        private bool CanExecuteStop()
-        {
-            return RecordingStatus == RecordingStatus.Recording;
-        }
-
-        private bool CanExecuteStart()
-        {
-            return RecordingStatus == RecordingStatus.NotRecording;
-        }
+        //private bool CanExecuteStart()
+        //{
+        //    return RecordingStatus == RecordingStatus.NotRecording;
+        //}
 
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
@@ -146,7 +153,6 @@
         {
             Log.Logger.Information("Stop requested");
             RecordingStatus = RecordingStatus.StopRequested;
-            RefreshRelayCommands();
         }
 
         private void AudioStoppedHandler(object sender, EventArgs e)
@@ -155,14 +161,12 @@
             RecordingStatus = RecordingStatus.NotRecording;
             VolumeLevelAsPercentage = 0;
             _stopwatch.Stop();
-            RefreshRelayCommands();
         }
 
         private void AudioStartedHandler(object sender, EventArgs e)
         {
             Log.Logger.Information("Started recording");
             RecordingStatus = RecordingStatus.Recording;
-            RefreshRelayCommands();
         }
 
         public bool NoSettings => _commandLineService.NoSettings;
@@ -171,6 +175,9 @@
 
         public bool NoSave => _commandLineService.NoSave;
 
+        public bool IsSaveVisible => !NoSave && _removableDrives.Any();
+
+        public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
 
         /// <summary>
         /// Recording status
@@ -187,7 +194,9 @@
 
                     RaisePropertyChanged(nameof(RecordingStatus));
                     RaisePropertyChanged(nameof(IsNotRecording));
+                    RaisePropertyChanged(nameof(IsRecording));
                     RaisePropertyChanged(nameof(IsRecordingOrStopping));
+                    RaisePropertyChanged(nameof(IsSaveEnabled));
                 }
             }
         }
@@ -226,7 +235,22 @@
 
         public string SaveHint
         {
-            get { return "Save to drive"; }
+            get
+            {
+                var driveLetterList = string.Join(", ", _removableDrives.Keys);
+
+                if (string.IsNullOrEmpty(driveLetterList))
+                {
+                    return string.Empty;
+                }
+
+                if (driveLetterList.Contains(","))
+                { 
+                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
+                }
+
+                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
+            }
         }
 
         private void StartRecording()
@@ -308,13 +332,6 @@
             }
         }
 
-        private void RefreshRelayCommands()
-        {
-            StartRecordingCommand.RaiseCanExecuteChanged();
-            StopRecordingCommand.RaiseCanExecuteChanged();
-            NavigateSettingsCommand.RaiseCanExecuteChanged();
-        }
-
         private void ClearErrorMsg()
         {
             ErrorMsg = null;
@@ -341,6 +358,22 @@
         public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
 
         public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
+
+        private bool _isCopying;
+
+        public bool IsCopying
+        {
+            get => _isCopying;
+            set
+            {
+                if (_isCopying != value)
+                {
+                    _isCopying = value;
+                    RaisePropertyChanged(nameof(IsCopying));
+                    RaisePropertyChanged(nameof(IsSaveEnabled));
+                }
+            }
+        }
 
         /// <summary>
         /// status == Recording or Stopping
@@ -405,9 +438,34 @@
                 _optionsService.Options.DestinationFolder);
         }
 
-        private void SaveToRemovableDrive()
+        private void SaveToRemovableDrives()
         {
-            // todo:
+            IsCopying = true;
+            
+            Task.Run(() =>
+            {
+                _copyRecordingsService.Copy(_removableDrives.Keys.ToArray());
+
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    IsCopying = false;
+                });
+            });
+        }
+
+        private void OnRemovableDriveMessage(RemovableDriveMessage messsage)
+        {
+            if (messsage.Added)
+            {
+                _removableDrives[messsage.DriveLetter] = DateTime.UtcNow;
+            }
+            else
+            {
+                _removableDrives.TryRemove(messsage.DriveLetter, out var _);
+            }
+
+            RaisePropertyChanged(nameof(IsSaveVisible));
+            RaisePropertyChanged(nameof(SaveHint));
         }
     }
 }

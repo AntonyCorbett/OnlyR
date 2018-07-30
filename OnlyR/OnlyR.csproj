@@ -162,6 +162,8 @@
     </Compile>
     <Compile Include="Services\Options\CommandLineService.cs" />
     <Compile Include="Services\Options\ICommandLineService.cs" />
+    <Compile Include="Services\RecordingCopies\CopyRecordingsService.cs" />
+    <Compile Include="Services\RecordingCopies\ICopyRecordingsService.cs" />
     <Compile Include="Utils\RemovableDriveDetectionNativeMethods.cs" />
     <Compile Include="Utils\WindowPlacement.cs" />
     <Compile Include="ViewModel\IPage.cs" />

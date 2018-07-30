@@ -77,12 +77,14 @@
             var optionsService = MockGenerator.CreateOptionsService();
             var destService = MockGenerator.CreateRecordingsDestinationService();
             var commandLineService = MockGenerator.CreateCommandLineService();
+            var copyService = MockGenerator.CreateCopyRecordingsService();
 
             return new MainViewModel(
                 audioService,
                 optionsService.Object,
                 commandLineService.Object,
-                destService.Object);
+                destService.Object,
+                copyService.Object);
         }
     }
 }

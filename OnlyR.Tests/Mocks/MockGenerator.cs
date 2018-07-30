@@ -1,4 +1,6 @@
-﻿namespace OnlyR.Tests.Mocks
+﻿using OnlyR.Services.RecordingCopies;
+
+namespace OnlyR.Tests.Mocks
 {
     using Moq;
     using Services.Audio;
@@ -28,6 +30,11 @@
         public static Mock<ICommandLineService> CreateCommandLineService()
         {
             return new Mock<ICommandLineService>();
+        }
+
+        public static Mock<ICopyRecordingsService> CreateCopyRecordingsService()
+        {
+            return new Mock<ICopyRecordingsService>();
         }
     }
 }

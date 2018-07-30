@@ -4,6 +4,7 @@ namespace OnlyR.ViewModel
     using GalaSoft.MvvmLight.Ioc;
     using Services.Audio;
     using Services.Options;
+    using Services.RecordingCopies;
     using Services.RecordingDestination;
 
     /// <summary>
@@ -23,6 +24,7 @@ namespace OnlyR.ViewModel
             SimpleIoc.Default.Register<ICommandLineService, CommandLineService>();
             SimpleIoc.Default.Register<IRecordingDestinationService, RecordingDestinationService>();
             SimpleIoc.Default.Register<IAudioService, AudioService>();
+            SimpleIoc.Default.Register<ICopyRecordingsService, CopyRecordingsService>();
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
