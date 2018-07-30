@@ -1,5 +1,3 @@
-using OnlyR.Services.RecordingCopies;
-
 namespace OnlyR.ViewModel
 {
     using System;
@@ -10,12 +8,15 @@ namespace OnlyR.ViewModel
     using System.Windows.Media;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
+    using MaterialDesignThemes.Wpf;
     using Messages;
     using Model;
     using Pages;
     using Services.Audio;
     using Services.Options;
+    using Services.RecordingCopies;
     using Services.RecordingDestination;
+    using Services.Snackbar;
 
     /// <summary>
     /// Main View model. The main view is just a container for pages
@@ -28,6 +29,7 @@ namespace OnlyR.ViewModel
         private readonly Dictionary<string, FrameworkElement> _pages;
         private readonly IOptionsService _optionsService;
         private readonly IAudioService _audioService;
+        private readonly ISnackbarService _snackbarService;
         private string _currentPageName;
 
         public MainViewModel(
@@ -35,7 +37,8 @@ namespace OnlyR.ViewModel
            IOptionsService optionsService,
            ICommandLineService commandLineService,
            IRecordingDestinationService destService,
-           ICopyRecordingsService copyRecordingsService)
+           ICopyRecordingsService copyRecordingsService,
+           ISnackbarService snackbarService)
         {
             if (commandLineService.NoGpu)
             {
@@ -51,12 +54,19 @@ namespace OnlyR.ViewModel
 
             _optionsService = optionsService;
             _audioService = audioService;
+            _snackbarService = snackbarService;
 
             // set up pages...
             SetupPage(
                 RecordingPageViewModel.PageName, 
                 new RecordingPage(),
-                new RecordingPageViewModel(audioService, optionsService, commandLineService, destService, copyRecordingsService));
+                new RecordingPageViewModel(
+                    audioService, 
+                    optionsService, 
+                    commandLineService, 
+                    destService, 
+                    copyRecordingsService,
+                    snackbarService));
 
             SetupPage(
                 SettingsPageViewModel.PageName, 
@@ -71,6 +81,8 @@ namespace OnlyR.ViewModel
 
             Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, state));
         }
+
+        public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
         public void Closing(object sender, CancelEventArgs e)
         {

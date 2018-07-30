@@ -70,6 +70,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Files copied successfully.
+        /// </summary>
+        internal static string COPIED {
+            get {
+                return ResourceManager.GetString("COPIED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not create folder {0}.
         /// </summary>
         internal static string CREATE_FOLDER_ERROR {
@@ -124,11 +133,38 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No recordings available for today!.
+        /// </summary>
+        internal static string NO_RECORDINGS {
+            get {
+                return ResourceManager.GetString("NO_RECORDINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insufficient space on {}.
+        /// </summary>
+        internal static string NO_SPACE {
+            get {
+                return ResourceManager.GetString("NO_SPACE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not recording.
         /// </summary>
         internal static string NOT_RECORDING {
             get {
                 return ResourceManager.GetString("NOT_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string OK {
+            get {
+                return ResourceManager.GetString("OK", resourceCulture);
             }
         }
         
@@ -210,6 +246,15 @@ namespace OnlyR.Properties {
         internal static string STOPPING {
             get {
                 return ResourceManager.GetString("STOPPING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error during copying!.
+        /// </summary>
+        internal static string UNKNOWN_COPY_ERROR {
+            get {
+                return ResourceManager.GetString("UNKNOWN_COPY_ERROR", resourceCulture);
             }
         }
         

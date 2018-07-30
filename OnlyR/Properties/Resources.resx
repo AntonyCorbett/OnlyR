@@ -120,6 +120,9 @@
   <data name="APP_VER" xml:space="preserve">
     <value>Version: {0}</value>
   </data>
+  <data name="COPIED" xml:space="preserve">
+    <value>Files copied successfully</value>
+  </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
     <value>Could not create folder {0}</value>
   </data>
@@ -140,6 +143,15 @@
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>No limit</value>
+  </data>
+  <data name="NO_RECORDINGS" xml:space="preserve">
+    <value>No recordings available for today!</value>
+  </data>
+  <data name="NO_SPACE" xml:space="preserve">
+    <value>Insufficient space on {}</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
     <value>1 hour</value>
@@ -167,6 +179,9 @@
   </data>
   <data name="STOPPING" xml:space="preserve">
     <value>Stopping</value>
+  </data>
+  <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
+    <value>Unknown error during copying!</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
     <value>{0} hours</value>

@@ -1,4 +1,5 @@
 ﻿using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.Snackbar;
 
 namespace OnlyR.Tests.Mocks
 {
@@ -35,6 +36,11 @@ namespace OnlyR.Tests.Mocks
         public static Mock<ICopyRecordingsService> CreateCopyRecordingsService()
         {
             return new Mock<ICopyRecordingsService>();
+        }
+
+        public static Mock<ISnackbarService> CreateSnackbarService()
+        {
+            return new Mock<ISnackbarService>();
         }
     }
 }

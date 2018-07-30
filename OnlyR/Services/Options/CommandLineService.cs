@@ -24,7 +24,7 @@
 
             p.Setup<bool>("nosave")
                 .Callback(s => { NoSave = s; }).SetDefault(false);
-
+            
             p.Parse(Environment.GetCommandLineArgs());
         }
 
@@ -37,5 +37,7 @@
         public bool NoFolder { get; set; }
 
         public bool NoSave { get; set; }
+
+        public bool NoCopy { get; set; }
     }
 }

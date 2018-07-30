@@ -149,6 +149,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Exceptions\NoRecordingsException.cs" />
+    <Compile Include="Exceptions\NoSpaceException.cs" />
     <Compile Include="Model\BitRateItem.cs" />
     <Compile Include="Model\ChannelItem.cs" />
     <Compile Include="Model\MaxRecordingTimeItem.cs" />
@@ -164,6 +166,8 @@
     <Compile Include="Services\Options\ICommandLineService.cs" />
     <Compile Include="Services\RecordingCopies\CopyRecordingsService.cs" />
     <Compile Include="Services\RecordingCopies\ICopyRecordingsService.cs" />
+    <Compile Include="Services\Snackbar\ISnackbarService.cs" />
+    <Compile Include="Services\Snackbar\SnackbarService.cs" />
     <Compile Include="Utils\RemovableDriveDetectionNativeMethods.cs" />
     <Compile Include="Utils\WindowPlacement.cs" />
     <Compile Include="ViewModel\IPage.cs" />

@@ -57,7 +57,7 @@
                     <Trigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" FillBehavior="Stop">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
                                     <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
                                 </DoubleAnimationUsingKeyFrames>

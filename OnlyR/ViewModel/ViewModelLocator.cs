@@ -6,6 +6,7 @@ namespace OnlyR.ViewModel
     using Services.Options;
     using Services.RecordingCopies;
     using Services.RecordingDestination;
+    using Services.Snackbar;
 
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -25,6 +26,7 @@ namespace OnlyR.ViewModel
             SimpleIoc.Default.Register<IRecordingDestinationService, RecordingDestinationService>();
             SimpleIoc.Default.Register<IAudioService, AudioService>();
             SimpleIoc.Default.Register<ICopyRecordingsService, CopyRecordingsService>();
+            SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
             SimpleIoc.Default.Register<MainViewModel>();
         }
 

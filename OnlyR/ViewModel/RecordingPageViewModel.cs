@@ -9,6 +9,7 @@
     using System.Threading.Tasks;
     using System.Windows.Threading;
     using Core.Enums;
+    using Exceptions;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Command;
     using GalaSoft.MvvmLight.Messaging;
@@ -20,6 +21,7 @@
     using Services.Options;
     using Services.RecordingCopies;
     using Services.RecordingDestination;
+    using Services.Snackbar;
     using Utils;
 
     /// <summary>
@@ -34,6 +36,7 @@
         private readonly IOptionsService _optionsService;
         private readonly ICopyRecordingsService _copyRecordingsService;
         private readonly ICommandLineService _commandLineService;
+        private readonly ISnackbarService _snackbarService;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
         private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new ConcurrentDictionary<char, DateTime>();
@@ -48,12 +51,14 @@
             IOptionsService optionsService,
             ICommandLineService commandLineService,
             IRecordingDestinationService destinationService,
-            ICopyRecordingsService copyRecordingsService)
+            ICopyRecordingsService copyRecordingsService,
+            ISnackbarService snackbarService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
             _commandLineService = commandLineService;
             _copyRecordingsService = copyRecordingsService;
+            _snackbarService = snackbarService;
 
             _stopwatch = new Stopwatch();
 
@@ -118,16 +123,6 @@
 
         public static string PageName => "RecordingPage";
 
-        //private bool CanExecuteStop()
-        //{
-        //    return RecordingStatus == RecordingStatus.Recording;
-        //}
-
-        //private bool CanExecuteStart()
-        //{
-        //    return RecordingStatus == RecordingStatus.NotRecording;
-        //}
-
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
@@ -174,7 +169,7 @@
         public bool NoFolder => _commandLineService.NoFolder;
 
         public bool NoSave => _commandLineService.NoSave;
-
+        
         public bool IsSaveVisible => !NoSave && _removableDrives.Any();
 
         public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
@@ -444,12 +439,44 @@
             
             Task.Run(() =>
             {
-                _copyRecordingsService.Copy(_removableDrives.Keys.ToArray());
-
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                try
                 {
-                    IsCopying = false;
-                });
+                    _copyRecordingsService.Copy(_removableDrives.Keys.ToArray());
+                    _snackbarService.Enqueue(
+                        Properties.Resources.COPIED,
+                        Properties.Resources.OK,
+                        o => { },
+                        null,
+                        promote: false,
+                        neverConsiderToBeDuplicate: true);
+                }
+                catch (NoRecordingsException ex)
+                {
+                    _snackbarService.EnqueueWithOk(ex.Message);
+                }
+                catch (AggregateException ex)
+                {
+                    foreach (var innerException in ex.InnerExceptions)
+                    {
+                        if (innerException is NoSpaceException exception)
+                        {
+                            _snackbarService.EnqueueWithOk(exception.Message);
+                        }
+                        else
+                        {
+                            _snackbarService.EnqueueWithOk(Properties.Resources.UNKNOWN_COPY_ERROR);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Error(ex, Properties.Resources.UNKNOWN_COPY_ERROR);
+                    _snackbarService.EnqueueWithOk(Properties.Resources.UNKNOWN_COPY_ERROR);
+                }
+                finally
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => { IsCopying = false; });
+                }
             });
         }
 
