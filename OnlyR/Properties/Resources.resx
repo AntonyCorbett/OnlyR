@@ -121,7 +121,7 @@
     <value>Version: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied successfully</value>
+    <value>Files copied</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
     <value>Could not create folder {0}</value>
@@ -145,10 +145,10 @@
     <value>No limit</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>No recordings available for today!</value>
+    <value>No recordings today!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Insufficient space on {}</value>
+    <value>No space on {}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -181,7 +181,7 @@
     <value>Stopping</value>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error during copying!</value>
+    <value>Unknown error!</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
     <value>{0} hours</value>

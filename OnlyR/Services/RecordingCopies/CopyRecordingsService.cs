@@ -148,6 +148,21 @@
                         File.Copy(file, destinationFile, overwrite: true);
                     }
                 });
+
+            Eject(driveLetter);
+        }
+
+        private void Eject(char driveLetter)
+        {
+            // so the device can be safely removed.
+            try
+            {
+                CopyRecordingsServiceNativeMethods.EjectDrive(driveLetter);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Warning(ex, "Ejecting device");
+            }
         }
 
         private string GetRecordingsFolder()

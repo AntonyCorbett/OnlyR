@@ -70,7 +70,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Files copied successfully.
+        ///   Looks up a localized string similar to Files copied.
         /// </summary>
         internal static string COPIED {
             get {
@@ -133,7 +133,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No recordings available for today!.
+        ///   Looks up a localized string similar to No recordings today!.
         /// </summary>
         internal static string NO_RECORDINGS {
             get {
@@ -142,7 +142,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insufficient space on {}.
+        ///   Looks up a localized string similar to No space on {}.
         /// </summary>
         internal static string NO_SPACE {
             get {
@@ -250,7 +250,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown error during copying!.
+        ///   Looks up a localized string similar to Unknown error!.
         /// </summary>
         internal static string UNKNOWN_COPY_ERROR {
             get {
