@@ -1,18 +1,15 @@
 ﻿namespace OnlyR.ViewModel
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
     using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Command;
+    using GalaSoft.MvvmLight.CommandWpf;
     using GalaSoft.MvvmLight.Messaging;
     using Messages;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using Model;
-    using Serilog;
     using Services.Audio;
     using Services.Options;
     using Utils;
