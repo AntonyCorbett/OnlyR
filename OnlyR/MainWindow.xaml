@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
         Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
-        Title="O N L Y - R" Height="300" Width="268" ResizeMode="CanMinimize" Closing="WindowClosing">
+        Title="O N L Y R" Height="300" Width="268" ResizeMode="CanMinimize" Closing="WindowClosing">
     
     <Grid>
         <ContentControl Content="{Binding CurrentPage}" />
