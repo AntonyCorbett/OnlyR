@@ -18,14 +18,7 @@
     <UserControl.Resources>
         <Style x:Key="SettingsComboStyle" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}" TargetType="{x:Type ComboBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel 
-                            Background="{StaticResource MaterialDesignChipBackground}" />
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="materialDesign:ComboBoxAssist.ClassicMode" Value="true" />
         </Style>
 
         <Style x:Key="SettingsCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
