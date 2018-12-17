@@ -1,7 +1,9 @@
 ﻿namespace OnlyR.Utils
 {
     using System;
+    using System.Globalization;
     using System.IO;
+    using System.Linq;
     using Serilog;
 
     /// <summary>
@@ -12,6 +14,8 @@
         private const string AppNamePathSegment = "OnlyR";
 
         private const string OptionsFileName = "options.json";
+
+        private const string FullDateFormat = @"yyyy-MM-dd";
 
         /// <summary>
         /// Creates directory if it doesn't exist. Throws if cannot be created
@@ -96,7 +100,7 @@
         {
             return Path.Combine(
                 GetMonthlyDestinationFolder(dt, commandLineIdentifier, rootFromOptions),
-                dt.ToString("yyyy-MM-dd"));
+                dt.ToString(FullDateFormat));
         }
 
         /// <summary>
@@ -114,6 +118,74 @@
                 dt.ToString("MM"));
         }
 
+        public static int? ParseYearFromFolderName(string yearlyDestinationFolderName)
+        {
+            if (yearlyDestinationFolderName.Length != 4)
+            {
+                return null;
+            }
+
+            if (!int.TryParse(yearlyDestinationFolderName, out var result))
+            {
+                return null;
+            }
+
+            if (result < 2000 || result > 3000)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
+        public static int? ParseMonthFromFolderName(string monthlyDestinationFolderName)
+        {
+            if (monthlyDestinationFolderName.Length != 2)
+            {
+                return null;
+            }
+
+            if (!int.TryParse(monthlyDestinationFolderName, out var result))
+            {
+                return null;
+            }
+
+            if (result < 1 || result > 12)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
+        public static DateTime? ParseDateFromFolderName(
+            string fullDateDestinationFolderName, 
+            int expectedYear,
+            int expectedMonth)
+        {
+            if (fullDateDestinationFolderName.Length != FullDateFormat.Length)
+            {
+                return null;
+            }
+
+            if (!DateTime.TryParseExact(
+                fullDateDestinationFolderName,
+                FullDateFormat,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var result))
+            {
+                return null;
+            }
+
+            if (result.Year != expectedYear || result.Month != expectedMonth)
+            {
+                return null;
+            }
+
+            return result.Date;
+        }
+
         /// <summary>
         /// Gets the recording destination folder
         /// </summary>
@@ -128,7 +200,7 @@
         }
 
         /// <summary>
-        /// Gets the temp recording folder (this is where recording files are initally created)
+        /// Gets the temp recording folder (this is where recording files are initially created)
         /// </summary>
         /// <returns>Folder path</returns>
         public static string GetTempRecordingFolder()
@@ -152,6 +224,69 @@
                 commandLineIdentifier ?? string.Empty,
                 optionsVersion.ToString(),
                 OptionsFileName);
+        }
+
+        public static void SafeDeleteFolder(string candidate)
+        {
+            if (string.IsNullOrEmpty(candidate))
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.Delete(candidate);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Log.Logger.Error($"Trying to delete folder but not found {candidate}");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Log.Logger.Error($"No permission to delete folder {candidate}");
+            }
+            catch (IOException)
+            {
+                Log.Logger.Error($"Trying to delete folder but may be in use {candidate}");
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, $"Could not delete folder {candidate}");
+            }
+        }
+
+        public static void SafeDeleteFile(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            try
+            {
+                File.Delete(path);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Log.Logger.Error($"Trying to delete file but folder not found {path}");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Log.Logger.Error($"No permission to delete file {path}");
+            }
+            catch (IOException)
+            {
+                Log.Logger.Error($"Trying to delete file but may be in use {path}");
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, $"Could not delete file {path}");
+            }
+        }
+
+        public static bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
         public static string FindSuitableRecordingFolderToShow(string commandLineIdentifier, string destFolder)

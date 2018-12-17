@@ -53,10 +53,17 @@
         {
             string logsDirectory = FileUtils.GetLogFolder();
 
+#if DEBUG
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .CreateLogger();
+#else
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
                 .CreateLogger();
+#endif
 
             Log.Logger.Information("==== Launched ====");
         }

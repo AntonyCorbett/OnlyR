@@ -79,6 +79,7 @@
             var commandLineService = MockGenerator.CreateCommandLineService();
             var copyService = MockGenerator.CreateCopyRecordingsService();
             var snackbarService = MockGenerator.CreateSnackbarService();
+            var purgeRecordingsService = MockGenerator.CreatePurgeRecordingsService();
 
             return new MainViewModel(
                 audioService,
@@ -86,7 +87,8 @@
                 commandLineService.Object,
                 destService.Object,
                 copyService.Object,
-                snackbarService.Object);
+                snackbarService.Object,
+                purgeRecordingsService.Object);
         }
     }
 }

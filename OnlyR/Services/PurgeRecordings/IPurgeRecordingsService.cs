@@ -1,6 +1,7 @@
 ﻿namespace OnlyR.Services.PurgeRecordings
 {
-    internal interface IPurgeRecordingsService
+    public interface IPurgeRecordingsService
     {
+        void NotifyClosing();
     }
 }

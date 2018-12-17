@@ -11,6 +11,7 @@ namespace OnlyR.ViewModel
     using MaterialDesignThemes.Wpf;
     using Messages;
     using Model;
+    using OnlyR.Services.PurgeRecordings;
     using Pages;
     using Services.Audio;
     using Services.Options;
@@ -30,6 +31,7 @@ namespace OnlyR.ViewModel
         private readonly IOptionsService _optionsService;
         private readonly IAudioService _audioService;
         private readonly ISnackbarService _snackbarService;
+        private readonly IPurgeRecordingsService _purgeRecordingsService;
         private string _currentPageName;
         private FrameworkElement _currentPage;
 
@@ -39,7 +41,8 @@ namespace OnlyR.ViewModel
            ICommandLineService commandLineService,
            IRecordingDestinationService destService,
            ICopyRecordingsService copyRecordingsService,
-           ISnackbarService snackbarService)
+           ISnackbarService snackbarService,
+           IPurgeRecordingsService purgeRecordingsService)
         {
             if (commandLineService.NoGpu)
             {
@@ -56,6 +59,7 @@ namespace OnlyR.ViewModel
             _optionsService = optionsService;
             _audioService = audioService;
             _snackbarService = snackbarService;
+            _purgeRecordingsService = purgeRecordingsService;
 
             // set up pages...
             SetupPage(
@@ -102,6 +106,8 @@ namespace OnlyR.ViewModel
 
         public void Closing(object sender, CancelEventArgs e)
         {
+            _purgeRecordingsService.NotifyClosing();
+
             var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
 
             if (_optionsService.Options.AllowCloseWhenRecording)

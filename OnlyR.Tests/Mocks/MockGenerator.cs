@@ -1,6 +1,7 @@
 ﻿namespace OnlyR.Tests.Mocks
 {
     using Moq;
+    using OnlyR.Services.PurgeRecordings;
     using OnlyR.Services.RecordingCopies;
     using OnlyR.Services.Snackbar;
     using Services.Audio;
@@ -40,6 +41,11 @@
         public static Mock<ISnackbarService> CreateSnackbarService()
         {
             return new Mock<ISnackbarService>();
+        }
+
+        public static Mock<IPurgeRecordingsService> CreatePurgeRecordingsService()
+        {
+            return new Mock<IPurgeRecordingsService>();
         }
     }
 }

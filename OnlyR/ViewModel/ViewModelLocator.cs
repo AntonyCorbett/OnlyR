@@ -2,6 +2,7 @@ namespace OnlyR.ViewModel
 {
     using CommonServiceLocator;
     using GalaSoft.MvvmLight.Ioc;
+    using OnlyR.Services.PurgeRecordings;
     using Services.Audio;
     using Services.Options;
     using Services.RecordingCopies;
@@ -24,6 +25,7 @@ namespace OnlyR.ViewModel
             SimpleIoc.Default.Register<IAudioService, AudioService>();
             SimpleIoc.Default.Register<ICopyRecordingsService, CopyRecordingsService>();
             SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
+            SimpleIoc.Default.Register<IPurgeRecordingsService, PurgeRecordingsService>();
             SimpleIoc.Default.Register<MainViewModel>();
         }
 

@@ -169,6 +169,7 @@
     <Compile Include="Services\Options\ICommandLineService.cs" />
     <Compile Include="Services\PurgeRecordings\IPurgeRecordingsService.cs" />
     <Compile Include="Services\PurgeRecordings\PurgeRecordingsService.cs" />
+    <Compile Include="Services\PurgeRecordings\PurgeServiceJob.cs" />
     <Compile Include="Services\RecordingCopies\CopyRecordingsService.cs" />
     <Compile Include="Services\RecordingCopies\CopyRecordingsServiceNativeMethods.cs" />
     <Compile Include="Services\RecordingCopies\ICopyRecordingsService.cs" />
