@@ -13,12 +13,13 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class PurgeRecordingsService : IPurgeRecordingsService
     {
-        private const int MaxFileDeletionsInBatch = 10;
+        private const int MaxFileDeletionsInBatch = 100;
 
         private readonly IOptionsService _optionsService;
         private readonly ICommandLineService _commandLineService;
         private readonly DispatcherTimer _timer = new DispatcherTimer(DispatcherPriority.Background);
-        private readonly TimeSpan _timerInterval = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _backoffTimerInterval = TimeSpan.FromMinutes(15);
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private PurgeServiceJob _lastJob = PurgeServiceJob.Nothing;
         private bool _allFilesDone;
@@ -41,7 +42,7 @@
 
         private void InitTimer()
         {
-            _timer.Interval = _timerInterval;
+            _timer.Interval = _initialTimerInterval;
             _timer.Tick += HandleTimerTick;
             _timer.Start();
         }
@@ -59,6 +60,7 @@
 
             if (days == 0)
             {
+                _timer.Interval = _backoffTimerInterval;
                 _timer.Start();
                 return;
             }
@@ -105,13 +107,13 @@
 
                 if (_lastJob == PurgeServiceJob.FolderPurge && _allFilesDone)
                 {
-                    // no need to do further work in this session...
-                    Log.Logger.Information("Purge activity completed in this session");
+                    // probably no need to do further work in this session
+                    // (unless user changes settings)...
+                    Log.Logger.Debug("Purge activity backing off in this session");
+                    _timer.Interval = _backoffTimerInterval;
                 }
-                else
-                {
-                    _timer.Start();
-                }
+
+                _timer.Start();
             }
         }
         
