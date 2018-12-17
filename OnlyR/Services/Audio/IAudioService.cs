@@ -16,7 +16,7 @@
 
         event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
-        IEnumerable<RecordingDeviceItem> GetRecordingDeviceList();
+        RecordingDeviceItem[] GetRecordingDeviceList();
 
         void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
 

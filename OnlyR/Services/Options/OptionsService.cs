@@ -38,7 +38,7 @@
         /// Gets a list of supported MP3 bit rates
         /// </summary>
         /// <returns>Collection of BitRateItem</returns>
-        public IEnumerable<BitRateItem> GetSupportedMp3BitRates()
+        public BitRateItem[] GetSupportedMp3BitRates()
         {
             var result = new List<BitRateItem>();
 
@@ -48,14 +48,14 @@
                 result.Add(new BitRateItem { Name = rate.ToString(), ActualBitRate = rate });
             }
 
-            return result;
+            return result.ToArray();
         }
 
         /// <summary>
         /// Gets a list of supported sample rates (for recording)
         /// </summary>
         /// <returns>Collection of SampleRateItem</returns>
-        public IEnumerable<SampleRateItem> GetSupportedSampleRates()
+        public SampleRateItem[] GetSupportedSampleRates()
         {
             var result = new List<SampleRateItem>();
 
@@ -65,14 +65,14 @@
                 result.Add(new SampleRateItem { Name = rate.ToString(), ActualSampleRate = rate });
             }
 
-            return result;
+            return result.ToArray();
         }
 
         /// <summary>
         /// Gets a list of supported channel counts
         /// </summary>
         /// <returns>Collection of ChannelItem</returns>
-        public IEnumerable<ChannelItem> GetSupportedChannels()
+        public ChannelItem[] GetSupportedChannels()
         {
             var result = new List<ChannelItem>();
 
@@ -82,7 +82,7 @@
                 result.Add(new ChannelItem { Name = GetChannelName(c), ChannelCount = c });
             }
 
-            return result;
+            return result.ToArray();
         }
 
         /// <summary>

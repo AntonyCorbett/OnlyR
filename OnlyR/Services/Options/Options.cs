@@ -12,75 +12,15 @@
     public class Options
     {
         private const int DefaultMaxRecordings = 999;
-
         private const int DefaultRecordingDevice = 0;
+        private const int DefaultMaxRecordingMinutes = 0; // no limit
+        private const int DefaultSampleRate = 44100;
+        private const int DefaultChannelCount = 1;
+        private const int DefaultMp3BitRate = 96;
 
         private static readonly int[] ValidSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
-        private static readonly int DefaultSampleRate = 44100;
-
         private static readonly int[] ValidChannelCounts = { 1, 2 };
-        private static readonly int DefaultChannelCount = 1;
-
         private static readonly int[] ValidMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
-        private static readonly int DefaultMp3BitRate = 96;
-
-        private static readonly int DefaultMaxRecordingMins = 0;  // no limit
-
-        /// <summary>
-        /// Maximum recordings in a single folder
-        /// </summary>
-        public int MaxRecordingsInOneFolder { get; set; }
-
-        /// <summary>
-        /// The audio sample rate used for recording
-        /// </summary>
-        public int SampleRate { get; set; }
-
-        /// <summary>
-        /// Number of channels to record
-        /// </summary>
-        public int ChannelCount { get; set; }
-
-        /// <summary>
-        /// Bit rate at which MP3 is encoded
-        /// </summary>
-        public int Mp3BitRate { get; set; }
-
-        /// <summary>
-        /// The music genre, placed in the MP3 Id3 tag
-        /// </summary>
-        public string Genre { get; set; }
-
-        /// <summary>
-        /// Maximum recording time (for a single recording). 0 = no limit
-        /// </summary>
-        public int MaxRecordingTimeMins { get; set; }
-
-        /// <summary>
-        /// Id of the chosen recording device. (0 is default)
-        /// </summary>
-        public int RecordingDevice { get; set; }
-
-        /// <summary>
-        /// Whether the recording should be automatically faded out
-        /// </summary>
-        public bool FadeOut { get; set; }
-
-        /// <summary>
-        /// Whether the recording should start automatically on launch
-        /// </summary>
-        public bool StartRecordingOnLaunch { get; set; }
-
-        /// <summary>
-        /// The final recording folder (leave empt for default).
-        /// </summary>
-        public string DestinationFolder { get; set; }
-
-        public string AppWindowPlacement { get; set; }
-
-        public bool AlwaysOnTop { get; set; }
-
-        public bool AllowCloseWhenRecording { get; set; }
 
         public Options()
         {
@@ -89,10 +29,39 @@
             ChannelCount = DefaultChannelCount;
             Mp3BitRate = DefaultMp3BitRate;
             Genre = Properties.Resources.SPEECH;
-            MaxRecordingTimeMins = DefaultMaxRecordingMins;
+            MaxRecordingTimeMins = DefaultMaxRecordingMinutes;
             RecordingDevice = DefaultRecordingDevice;
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
+            RecordingsLifeTimeDays = 0; // forever
         }
+
+        public int MaxRecordingsInOneFolder { get; set; }
+
+        public int SampleRate { get; set; }
+
+        public int ChannelCount { get; set; }
+
+        public int Mp3BitRate { get; set; }
+
+        public string Genre { get; set; }
+
+        public int MaxRecordingTimeMins { get; set; }
+
+        public int RecordingDevice { get; set; }
+
+        public bool FadeOut { get; set; }
+
+        public bool StartRecordingOnLaunch { get; set; }
+
+        public string DestinationFolder { get; set; }
+
+        public string AppWindowPlacement { get; set; }
+
+        public bool AlwaysOnTop { get; set; }
+
+        public bool AllowCloseWhenRecording { get; set; }
+
+        public int RecordingsLifeTimeDays { get; set; }
 
         public static IEnumerable<int> GetSupportedSampleRates()
         {
@@ -117,6 +86,11 @@
             Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount), "ValidChannelCounts.Contains(DefaultChannelCount)");
             Debug.Assert(ValidSampleRates.Contains(DefaultSampleRate), "ValidSampleRates.Contains(DefaultSampleRate)");
             Debug.Assert(ValidMp3BitRates.Contains(DefaultMp3BitRate), "ValidMp3BitRates.Contains(DefaultMp3BitRate)");
+
+            if (RecordingsLifeTimeDays < 0)
+            {
+                RecordingsLifeTimeDays = 0;
+            }
 
             if (MaxRecordingsInOneFolder < 10 || MaxRecordingsInOneFolder > 500)
             {
@@ -145,7 +119,7 @@
 
             if (MaxRecordingTimeMins < 0)
             {
-                MaxRecordingTimeMins = DefaultMaxRecordingMins;
+                MaxRecordingTimeMins = DefaultMaxRecordingMinutes;
             }
 
             if (RecordingDevice < 0)

@@ -1,9 +1,8 @@
-﻿using Serilog;
-
-namespace OnlyR.Utils
+﻿namespace OnlyR.Utils
 {
     using System;
     using System.IO;
+    using Serilog;
 
     /// <summary>
     /// General file / folder utilities
@@ -200,7 +199,6 @@ namespace OnlyR.Utils
 
             return folder;
         }
-
 
         private static string GetRecordingFolderRoot(string rootFromOptions)
         {

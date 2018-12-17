@@ -24,15 +24,18 @@
         private WaveIn _waveSource;
         private SampleAggregator _sampleAggregator;
         private VolumeFader _fader;
+        private RecordingStatus _recordingStatus;
 
         private int _dampedLevel;
-
-        public event EventHandler<RecordingProgressEventArgs> ProgressEvent;
-
+        
         public AudioRecorder()
         {
             _recordingStatus = RecordingStatus.NotRecording;
         }
+
+        public event EventHandler<RecordingProgressEventArgs> ProgressEvent;
+
+        public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
 
         /// <summary>
         /// Gets a list of Windows recording devices
@@ -110,14 +113,10 @@
                 }
             }
         }
-
-        private RecordingStatus _recordingStatus;
-
-        public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
-
+        
         private static ID3TagData CreateTag(RecordingConfig recordingConfig)
         {
-            // tag is embeded as MP3 metadata
+            // tag is embedded as MP3 metadata
             return new ID3TagData
             {
                 Title = recordingConfig.TrackTitle,
@@ -125,7 +124,9 @@
                 Track = recordingConfig.TrackNumber.ToString(),
                 Genre = recordingConfig.Genre,
                 Year = recordingConfig.RecordingDate.Year.ToString(),
-                UserDefinedTags = new string[] { }  // fix bug in naudio.lame
+                
+                // fix bug in naudio.lame
+                UserDefinedTags = new string[] { } 
             };
         }
 
@@ -159,7 +160,7 @@
 
         private void AggregatorReportHandler(object sender, SamplesReportEventArgs e)
         {
-            float value = Math.Max(e.MaxSample, Math.Abs(e.MinSample)) * 100;
+            var value = Math.Max(e.MaxSample, Math.Abs(e.MinSample)) * 100;
             OnProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = GetDampedVolumeLevel(value) });
         }
 

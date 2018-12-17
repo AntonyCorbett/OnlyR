@@ -49,18 +49,9 @@
             }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        private struct DEV_BROADCAST_VOLUME
-        {
-            public int dbcv_size;
-            public int dbcv_devicetype;
-            public int dbcv_reserved;
-            public int dbcv_unitmask;
-        }
-
         private static char DriveMaskToLetter(int mask)
         {
-            const string Drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string Drives = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
             var cnt = 0;
             var pom = mask / 2;
@@ -71,6 +62,15 @@
             }
 
             return cnt < Drives.Length ? Drives[cnt] : '?';
+        }
+        
+        [StructLayout(LayoutKind.Sequential)]
+        private struct DEV_BROADCAST_VOLUME
+        {
+            public int dbcv_size;
+            public int dbcv_devicetype;
+            public int dbcv_reserved;
+            public int dbcv_unitmask;
         }
     }
 }

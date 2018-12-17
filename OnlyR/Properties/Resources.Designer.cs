@@ -115,6 +115,96 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No limit.
+        /// </summary>
+        internal static string LIFE_0 {
+            get {
+                return ResourceManager.GetString("LIFE_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Day.
+        /// </summary>
+        internal static string LIFE_1_DAY {
+            get {
+                return ResourceManager.GetString("LIFE_1_DAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Month.
+        /// </summary>
+        internal static string LIFE_1_MONTH {
+            get {
+                return ResourceManager.GetString("LIFE_1_MONTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Week.
+        /// </summary>
+        internal static string LIFE_1_WEEK {
+            get {
+                return ResourceManager.GetString("LIFE_1_WEEK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Year.
+        /// </summary>
+        internal static string LIFE_1_YR {
+            get {
+                return ResourceManager.GetString("LIFE_1_YR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 Days.
+        /// </summary>
+        internal static string LIFE_2_DAYS {
+            get {
+                return ResourceManager.GetString("LIFE_2_DAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 Months.
+        /// </summary>
+        internal static string LIFE_2_MONTHS {
+            get {
+                return ResourceManager.GetString("LIFE_2_MONTHS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 Weeks.
+        /// </summary>
+        internal static string LIFE_2_WEEKS {
+            get {
+                return ResourceManager.GetString("LIFE_2_WEEKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 Years.
+        /// </summary>
+        internal static string LIFE_2_YRS {
+            get {
+                return ResourceManager.GetString("LIFE_2_YRS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 6 Months.
+        /// </summary>
+        internal static string LIFE_6_MONTHS {
+            get {
+                return ResourceManager.GetString("LIFE_6_MONTHS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mono.
         /// </summary>
         internal static string MONO {

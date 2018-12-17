@@ -135,6 +135,36 @@
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Insufficient free space to record</value>
   </data>
+  <data name="LIFE_0" xml:space="preserve">
+    <value>No limit</value>
+  </data>
+  <data name="LIFE_1_DAY" xml:space="preserve">
+    <value>1 Day</value>
+  </data>
+  <data name="LIFE_1_MONTH" xml:space="preserve">
+    <value>1 Month</value>
+  </data>
+  <data name="LIFE_1_WEEK" xml:space="preserve">
+    <value>1 Week</value>
+  </data>
+  <data name="LIFE_1_YR" xml:space="preserve">
+    <value>1 Year</value>
+  </data>
+  <data name="LIFE_2_DAYS" xml:space="preserve">
+    <value>2 Days</value>
+  </data>
+  <data name="LIFE_2_MONTHS" xml:space="preserve">
+    <value>2 Months</value>
+  </data>
+  <data name="LIFE_2_WEEKS" xml:space="preserve">
+    <value>2 Weeks</value>
+  </data>
+  <data name="LIFE_2_YRS" xml:space="preserve">
+    <value>2 Years</value>
+  </data>
+  <data name="LIFE_6_MONTHS" xml:space="preserve">
+    <value>6 Months</value>
+  </data>
   <data name="MONO" xml:space="preserve">
     <value>Mono</value>
   </data>

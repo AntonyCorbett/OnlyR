@@ -6,20 +6,14 @@
     /// </summary>
     internal class NavigateMessage
     {
-        /// <summary>
-        /// Name of the target page
-        /// </summary>
-        public string TargetPage { get; }
-
-        /// <summary>
-        /// Optional context-specific state
-        /// </summary>
-        public object State { get; }
-
         public NavigateMessage(string targetPage, object state)
         {
             TargetPage = targetPage;
             State = state;
         }
+
+        public string TargetPage { get; }
+
+        public object State { get; }
     }
 }

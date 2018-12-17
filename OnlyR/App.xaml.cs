@@ -1,11 +1,10 @@
-﻿using GalaSoft.MvvmLight.Threading;
-
-namespace OnlyR
+﻿namespace OnlyR
 {
     using System.IO;
     using System.Threading;
     using System.Windows;
     using AutoMapper;
+    using GalaSoft.MvvmLight.Threading;
     using Model;
     using Serilog;
     using Utils;

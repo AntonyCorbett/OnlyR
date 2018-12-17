@@ -18,14 +18,6 @@
     <UserControl.Resources>
         <Style x:Key="SettingsComboStyle" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}" TargetType="{x:Type ComboBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <VirtualizingStackPanel 
-                            Background="{StaticResource MaterialDesignChipBackground}" />
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
 
         <Style x:Key="SettingsCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
@@ -71,6 +63,7 @@
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding RecordingDevices}" 
                     materialDesign:HintAssist.Hint="Recording device"
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
                     DisplayMemberPath="DeviceName" 
                     SelectedValuePath="DeviceId" 
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
@@ -78,6 +71,7 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding SampleRates}" 
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
                     materialDesign:HintAssist.Hint="Sample rate"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualSampleRate" 
@@ -86,6 +80,7 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding Channels}" 
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
                     materialDesign:HintAssist.Hint="Channels"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ChannelCount" 
@@ -94,6 +89,7 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding BitRates}" 
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
                     materialDesign:HintAssist.Hint="Bit rate"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualBitRate" 
@@ -102,6 +98,7 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding MaxRecordingTimes}" 
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
                     materialDesign:HintAssist.Hint="Max recording time"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualMinutes" 
@@ -142,6 +139,15 @@
                         materialDesign:HintAssist.Hint="Recordings folder"
                         Text="{Binding DestinationFolder, Mode=TwoWay}" />
                 </DockPanel>
+
+                <ComboBox 
+                    Style="{StaticResource SettingsComboStyle}"
+                    ItemsSource="{Binding RecordingLifeTimes}" 
+                    materialDesign:ComboBoxAssist.ClassicMode="true"
+                    materialDesign:HintAssist.Hint="Recording lifetime"
+                    DisplayMemberPath="Description" 
+                    SelectedValuePath="Days" 
+                    SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"/>
 
             </StackPanel>
         </ScrollViewer>

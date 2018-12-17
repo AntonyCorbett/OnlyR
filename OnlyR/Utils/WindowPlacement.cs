@@ -1,5 +1,7 @@
 ﻿namespace OnlyR.Utils
 {
+#pragma warning disable SA1201 // Elements must appear in the correct order
+
     // ReSharper disable InconsistentNaming
     // ReSharper disable FieldCanBeMadeReadOnly.Global
     // ReSharper disable MemberCanBePrivate.Global
@@ -14,56 +16,7 @@
     using System.Xml;
     using System.Xml.Serialization;
 
-    // adapted from david Rickard's Tech Blog
-
-    // RECT structure required by WINDOWPLACEMENT structure
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-
-        // ReSharper disable once UnusedMember.Global
-        public RECT(int left, int top, int right, int bottom)
-        {
-            Left = left;
-            Top = top;
-            Right = right;
-            Bottom = bottom;
-        }
-    }
-
-    // POINT structure required by WINDOWPLACEMENT structure
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct POINT
-    {
-        public int X;
-        public int Y;
-
-        // ReSharper disable once UnusedMember.Global
-        public POINT(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
-    // WINDOWPLACEMENT stores the position, size, and state of a window
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct WINDOWPLACEMENT
-    {
-        public int length;
-        public int flags;
-        public int showCmd;
-        public POINT minPosition;
-        public POINT maxPosition;
-        public RECT normalPosition;
-    }
+    //// adapted from david Rickard's Tech Blog
 
     public static class WindowPlacement
     {
@@ -126,11 +79,11 @@
         {
             NativeMethods.GetWindowPlacement(windowHandle, out var placement);
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
-                XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+                var xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
                 Serializer.Serialize(xmlTextWriter, placement);
-                byte[] xmlBytes = memoryStream.ToArray();
+                var xmlBytes = memoryStream.ToArray();
                 return Encoding.GetString(xmlBytes);
             }
         }
@@ -139,10 +92,63 @@
         {
             var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
             var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
-            
+
             return new Tuple<int, int>(
-                (int)(dpiXProperty?.GetValue(null, null) ?? 0), 
+                (int)(dpiXProperty?.GetValue(null, null) ?? 0),
                 (int)(dpiYProperty?.GetValue(null, null) ?? 0));
         }
     }
+    
+    // RECT structure required by WINDOWPLACEMENT structure
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+
+        // ReSharper disable once UnusedMember.Global
+        public RECT(int left, int top, int right, int bottom)
+        {
+            Left = left;
+            Top = top;
+            Right = right;
+            Bottom = bottom;
+        }
+    }
+
+    // POINT structure required by WINDOWPLACEMENT structure
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+
+        // ReSharper disable once UnusedMember.Global
+        public POINT(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+#pragma warning disable SA1307 // Accessible fields must begin with upper-case letter
+    //// WINDOWPLACEMENT stores the position, size, and state of a window
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WINDOWPLACEMENT
+    {
+        public int length;
+        public int flags;
+        public int showCmd;
+        public POINT minPosition;
+        public POINT maxPosition;
+        public RECT normalPosition;
+    }
+#pragma warning restore SA1307 // Accessible fields must begin with upper-case letter
+
+#pragma warning restore SA1201 // Elements must appear in the correct order
 }

@@ -1,7 +1,6 @@
 ﻿namespace OnlyR.Tests.Mocks
 {
     using System;
-    using System.Collections.Generic;
     using System.Windows.Threading;
     using Core.Enums;
     using Core.EventArgs;
@@ -18,14 +17,6 @@
         private readonly Random _random;
         private RecordingStatus _status;
 
-        public event EventHandler StartedEvent;
-
-        public event EventHandler StoppedEvent;
-
-        public event EventHandler StopRequested;
-
-        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
-
         public MockAudioService()
         {
             _status = RecordingStatus.NotRecording;
@@ -35,9 +26,17 @@
             _timer.Tick += RecordingTimer;
         }
 
-        public IEnumerable<RecordingDeviceItem> GetRecordingDeviceList()
+        public event EventHandler StartedEvent;
+
+        public event EventHandler StoppedEvent;
+
+        public event EventHandler StopRequested;
+
+        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
+
+        public RecordingDeviceItem[] GetRecordingDeviceList()
         {
-            return new List<RecordingDeviceItem>
+            return new[]
             {
                 new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 1 },
                 new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 2 }

@@ -15,8 +15,6 @@
         private float _minValue;
         private int _count;
 
-        public event EventHandler<SamplesReportEventArgs> ReportEvent;
-
         public SampleAggregator(int samplesPerSecond, int reportingIntervalMs)
         {
             if (reportingIntervalMs < 20)
@@ -31,6 +29,8 @@
                 _reportCount = 10;
             }
         }
+
+        public event EventHandler<SamplesReportEventArgs> ReportEvent;
 
         public void Add(float value)
         {

@@ -19,6 +19,13 @@
         private AudioRecorder _audioRecorder;
         private RecordingCandidate _currentRecording;
 
+        public AudioService()
+        {
+            _audioRecorder = new AudioRecorder();
+            _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
+            _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
+        }
+
         public event EventHandler StartedEvent;
 
         public event EventHandler StoppedEvent;
@@ -26,13 +33,6 @@
         public event EventHandler StopRequested;
 
         public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
-
-        public AudioService()
-        {
-            _audioRecorder = new AudioRecorder();
-            _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
-            _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
-        }
 
         public void Dispose()
         {
@@ -44,10 +44,10 @@
         /// Gets a list of Windows audio recording devices
         /// </summary>
         /// <returns>List of available devices</returns>
-        public IEnumerable<RecordingDeviceItem> GetRecordingDeviceList()
+        public RecordingDeviceItem[] GetRecordingDeviceList()
         {
             var devices = AudioRecorder.GetRecordingDeviceList();
-            return AutoMapper.Mapper.Map<List<RecordingDeviceItem>>(devices);
+            return AutoMapper.Mapper.Map<List<RecordingDeviceItem>>(devices).ToArray();
         }
 
         /// <summary>

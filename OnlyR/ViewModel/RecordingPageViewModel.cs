@@ -41,7 +41,8 @@
         private readonly Stopwatch _stopwatch;
         private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new ConcurrentDictionary<char, DateTime>();
         private DispatcherTimer _splashTimer;
-
+        private int _volumeLevel;
+        private bool _isCopying;
         private RecordingStatus _recordingStatus;
         private string _statusStr;
         private string _errorMsg;
@@ -84,6 +85,149 @@
             Messenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
         }
 
+        public static string PageName => "RecordingPage";
+
+        // Commands (bound in ctor)...
+        public RelayCommand StartRecordingCommand { get; set; }
+
+        public RelayCommand StopRecordingCommand { get; set; }
+
+        public RelayCommand NavigateSettingsCommand { get; set; }
+
+        public RelayCommand ShowRecordingsCommand { get; set; }
+
+        public RelayCommand SaveToRemovableDriveCommand { get; set; }
+
+        public bool IsCopying
+        {
+            get => _isCopying;
+            set
+            {
+                if (_isCopying != value)
+                {
+                    _isCopying = value;
+                    RaisePropertyChanged(nameof(IsCopying));
+                    RaisePropertyChanged(nameof(IsSaveEnabled));
+                }
+            }
+        }
+
+        public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
+                                             RecordingStatus == RecordingStatus.StopRequested;
+
+        public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
+
+        public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
+
+        public int VolumeLevelAsPercentage
+        {
+            get => _volumeLevel;
+            set
+            {
+                if (_volumeLevel != value)
+                {
+                    _volumeLevel = value;
+                    RaisePropertyChanged(nameof(VolumeLevelAsPercentage));
+                }
+            }
+        }
+        
+        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
+
+        public bool NoSettings => _commandLineService.NoSettings;
+
+        public bool NoFolder => _commandLineService.NoFolder;
+
+        public bool NoSave => _commandLineService.NoSave;
+
+        public bool IsSaveVisible => !NoSave && _removableDrives.Any();
+
+        public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
+
+        /// <summary>
+        /// Gets or sets the Recording status
+        /// </summary>
+        public RecordingStatus RecordingStatus
+        {
+            get => _recordingStatus;
+            set
+            {
+                if (_recordingStatus != value)
+                {
+                    _recordingStatus = value;
+                    StatusStr = value.GetDescriptiveText();
+
+                    RaisePropertyChanged(nameof(RecordingStatus));
+                    RaisePropertyChanged(nameof(IsNotRecording));
+                    RaisePropertyChanged(nameof(IsRecording));
+                    RaisePropertyChanged(nameof(IsRecordingOrStopping));
+                    RaisePropertyChanged(nameof(IsSaveEnabled));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the Recording Status as a string
+        /// </summary>
+        public string StatusStr
+        {
+            get => _statusStr;
+            set
+            {
+                if (_statusStr != value)
+                {
+                    _statusStr = value;
+                    RaisePropertyChanged(nameof(StatusStr));
+                }
+            }
+        }
+
+        public string ErrorMsg
+        {
+            get => _errorMsg;
+            set
+            {
+                if (_errorMsg != value)
+                {
+                    _errorMsg = value;
+                    RaisePropertyChanged(nameof(ErrorMsg));
+                }
+            }
+        }
+
+        public string SaveHint
+        {
+            get
+            {
+                var driveLetterList = string.Join(", ", _removableDrives.Keys);
+
+                if (string.IsNullOrEmpty(driveLetterList))
+                {
+                    return string.Empty;
+                }
+
+                if (driveLetterList.Contains(","))
+                {
+                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
+                }
+
+                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
+            }
+        }
+
+        private TimeSpan ElapsedTime
+        {
+            get
+            {
+                if (_stopwatch != null && _stopwatch.IsRunning)
+                {
+                    return _stopwatch.Elapsed;
+                }
+
+                return TimeSpan.Zero;
+            }
+        }
+
         /// <summary>
         /// Responds to activation
         /// </summary>
@@ -120,9 +264,7 @@
         {
             // nothing to do
         }
-
-        public static string PageName => "RecordingPage";
-
+        
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
@@ -164,90 +306,6 @@
             RecordingStatus = RecordingStatus.Recording;
         }
 
-        public bool NoSettings => _commandLineService.NoSettings;
-
-        public bool NoFolder => _commandLineService.NoFolder;
-
-        public bool NoSave => _commandLineService.NoSave;
-        
-        public bool IsSaveVisible => !NoSave && _removableDrives.Any();
-
-        public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
-
-        /// <summary>
-        /// Recording status
-        /// </summary>
-        public RecordingStatus RecordingStatus
-        {
-            get => _recordingStatus;
-            set
-            {
-                if (_recordingStatus != value)
-                {
-                    _recordingStatus = value;
-                    StatusStr = value.GetDescriptiveText();
-
-                    RaisePropertyChanged(nameof(RecordingStatus));
-                    RaisePropertyChanged(nameof(IsNotRecording));
-                    RaisePropertyChanged(nameof(IsRecording));
-                    RaisePropertyChanged(nameof(IsRecordingOrStopping));
-                    RaisePropertyChanged(nameof(IsSaveEnabled));
-                }
-            }
-        }
-
-        /// <summary>
-        /// RecordingStatus as a string
-        /// </summary>
-        public string StatusStr
-        {
-            get => _statusStr;
-            set
-            {
-                if (_statusStr != value)
-                {
-                    _statusStr = value;
-                    RaisePropertyChanged(nameof(StatusStr));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Error message
-        /// </summary>
-        public string ErrorMsg
-        {
-            get => _errorMsg;
-            set
-            {
-                if (_errorMsg != value)
-                {
-                    _errorMsg = value;
-                    RaisePropertyChanged(nameof(ErrorMsg));
-                }
-            }
-        }
-
-        public string SaveHint
-        {
-            get
-            {
-                var driveLetterList = string.Join(", ", _removableDrives.Keys);
-
-                if (string.IsNullOrEmpty(driveLetterList))
-                {
-                    return string.Empty;
-                }
-
-                if (driveLetterList.Contains(","))
-                { 
-                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
-                }
-
-                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
-            }
-        }
-
         private void StartRecording()
         {
             try
@@ -270,24 +328,6 @@
                 Log.Logger.Error(ex, ErrorMsg);
             }
         }
-
-        private TimeSpan ElapsedTime
-        {
-            get
-            {
-                if (_stopwatch != null && _stopwatch.IsRunning)
-                {
-                    return _stopwatch.Elapsed;
-                }
-
-                return TimeSpan.Zero;
-            }
-        }
-
-        /// <summary>
-        /// Elapsed recording time as string
-        /// </summary>
-        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
 
         private void CheckDiskSpace(RecordingCandidate candidate)
         {
@@ -331,61 +371,6 @@
         {
             ErrorMsg = null;
         }
-
-        private int _volumeLevel;
-
-        public int VolumeLevelAsPercentage
-        {
-            get => _volumeLevel;
-            set
-            {
-                if (_volumeLevel != value)
-                {
-                    _volumeLevel = value;
-                    RaisePropertyChanged(nameof(VolumeLevelAsPercentage));
-                }
-            }
-        }
-
-        /// <summary>
-        /// status == NotRecording?
-        /// </summary>
-        public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
-
-        public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
-
-        private bool _isCopying;
-
-        public bool IsCopying
-        {
-            get => _isCopying;
-            set
-            {
-                if (_isCopying != value)
-                {
-                    _isCopying = value;
-                    RaisePropertyChanged(nameof(IsCopying));
-                    RaisePropertyChanged(nameof(IsSaveEnabled));
-                }
-            }
-        }
-
-        /// <summary>
-        /// status == Recording or Stopping
-        /// </summary>
-        public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
-                                             RecordingStatus == RecordingStatus.StopRequested;
-
-        // Commands (bound in ctor)...
-        public RelayCommand StartRecordingCommand { get; set; }
-
-        public RelayCommand StopRecordingCommand { get; set; }
-
-        public RelayCommand NavigateSettingsCommand { get; set; }
-
-        public RelayCommand ShowRecordingsCommand { get; set; }
-
-        public RelayCommand SaveToRemovableDriveCommand { get; set; }
 
         /// <summary>
         /// Show brief animation

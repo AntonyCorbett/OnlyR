@@ -7,19 +7,19 @@
     /// </summary>
     internal sealed class VolumeFader
     {
-        public event EventHandler FadeComplete;
-
         private readonly int _sampleRate;
         private readonly int _fadeTimeSecs = 4;
         private int _sampleCountToModify;
         private int _sampleCountModified;
-
-        public bool Active { get; private set; }
-
+        
         public VolumeFader(int sampleRate)
         {
             _sampleRate = sampleRate;
         }
+
+        public event EventHandler FadeComplete;
+
+        public bool Active { get; private set; }
 
         /// <summary>
         /// Start to fade out

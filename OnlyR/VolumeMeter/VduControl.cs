@@ -10,7 +10,7 @@
 
     /// <summary>
     /// Volume meter custom control using bitmaps on a DrawingVisual.
-    /// See also Themes\Generic.xanl
+    /// See also Themes\Generic.xaml
     /// </summary>
     public class VduControl : Control
     {
@@ -50,6 +50,18 @@
             _drawingVisual = new DrawingVisual();
         }
 
+        /// <summary>
+        /// Wraps the VolumeLevel DP (value range 0 - 100)
+        /// </summary>
+        public int VolumeLevel
+        {
+            // wrapper (no additional code in here!)
+
+            // ReSharper disable once PossibleNullReferenceException
+            get => (int)GetValue(VolumeLevelProperty);
+            set => SetValue(VolumeLevelProperty, value);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -76,18 +88,6 @@
         private void OnVolumeChanged()
         {
             Refresh();
-        }
-
-        /// <summary>
-        /// Wraps the VolumeLevel DP (value range 0 - 100)
-        /// </summary>
-        public int VolumeLevel
-        {
-            // wrapper (no additional code in here!)
-
-            // ReSharper disable once PossibleNullReferenceException
-            get => (int)GetValue(VolumeLevelProperty);
-            set => SetValue(VolumeLevelProperty, value);
         }
 
         private void Refresh()

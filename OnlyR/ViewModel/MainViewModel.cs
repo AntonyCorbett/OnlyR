@@ -31,6 +31,7 @@ namespace OnlyR.ViewModel
         private readonly IAudioService _audioService;
         private readonly ISnackbarService _snackbarService;
         private string _currentPageName;
+        private FrameworkElement _currentPage;
 
         public MainViewModel(
            IAudioService audioService,
@@ -84,6 +85,21 @@ namespace OnlyR.ViewModel
 
         public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
+        public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
+
+        public FrameworkElement CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                if (!ReferenceEquals(_currentPage, value))
+                {
+                    _currentPage = value;
+                    RaisePropertyChanged(nameof(CurrentPage));
+                }
+            }
+        }
+
         public void Closing(object sender, CancelEventArgs e)
         {
             var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
@@ -114,9 +130,7 @@ namespace OnlyR.ViewModel
         {
             RaisePropertyChanged(nameof(AlwaysOnTop));
         }
-
-        public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
-
+        
         private void SetupPage(string pageName, FrameworkElement page, ViewModelBase pageModel)
         {
             page.DataContext = pageModel;
@@ -128,21 +142,6 @@ namespace OnlyR.ViewModel
             CurrentPage = _pages[message.TargetPage];
             _currentPageName = message.TargetPage;
             ((IPage)CurrentPage.DataContext).Activated(message.State);
-        }
-
-        private FrameworkElement _currentPage;
-
-        public FrameworkElement CurrentPage
-        {
-            get => _currentPage;
-            set
-            {
-                if (!ReferenceEquals(_currentPage, value))
-                {
-                    _currentPage = value;
-                    RaisePropertyChanged(nameof(CurrentPage));
-                }
-            }
         }
 
         private void RecordingStoppedDuringAppClose(object sender, EventArgs e)

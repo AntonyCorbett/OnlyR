@@ -7,11 +7,11 @@
     /// </summary>
     public class RecordingStatusChangeEventArgs : System.EventArgs
     {
-        public RecordingStatus RecordingStatus { get; }
-
         public RecordingStatusChangeEventArgs(RecordingStatus status)
         {
             RecordingStatus = status;
         }
+
+        public RecordingStatus RecordingStatus { get; }
     }
 }

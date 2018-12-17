@@ -9,10 +9,10 @@
 
         void Save();
 
-        IEnumerable<SampleRateItem> GetSupportedSampleRates();
+        SampleRateItem[] GetSupportedSampleRates();
 
-        IEnumerable<ChannelItem> GetSupportedChannels();
+        ChannelItem[] GetSupportedChannels();
 
-        IEnumerable<BitRateItem> GetSupportedMp3BitRates();
+        BitRateItem[] GetSupportedMp3BitRates();
     }
 }

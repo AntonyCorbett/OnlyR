@@ -1,9 +1,8 @@
-﻿using OnlyR.Services.RecordingCopies;
-using OnlyR.Services.Snackbar;
-
-namespace OnlyR.Tests.Mocks
+﻿namespace OnlyR.Tests.Mocks
 {
     using Moq;
+    using OnlyR.Services.RecordingCopies;
+    using OnlyR.Services.Snackbar;
     using Services.Audio;
     using Services.Options;
     using Services.RecordingDestination;
