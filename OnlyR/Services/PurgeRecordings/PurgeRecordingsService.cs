@@ -13,12 +13,12 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class PurgeRecordingsService : IPurgeRecordingsService
     {
-        private const int MaxFileDeletionsInBatch = 100;
+        private const int MaxFileDeletionsInBatch = 20;
 
         private readonly IOptionsService _optionsService;
         private readonly ICommandLineService _commandLineService;
         private readonly DispatcherTimer _timer = new DispatcherTimer(DispatcherPriority.Background);
-        private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(5);
         private readonly TimeSpan _backoffTimerInterval = TimeSpan.FromMinutes(15);
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private PurgeServiceJob _lastJob = PurgeServiceJob.Nothing;
