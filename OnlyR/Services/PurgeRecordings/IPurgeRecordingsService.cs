@@ -2,6 +2,6 @@
 {
     public interface IPurgeRecordingsService
     {
-        void NotifyClosing();
+        void Close();
     }
 }

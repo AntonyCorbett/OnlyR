@@ -54,7 +54,7 @@
     <CodeAnalysisRuleSet>..\OnlyR.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon3.ico</ApplicationIcon>
+    <ApplicationIcon>iconmic.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>78AC5E1816344F715D907F3A44842D4A0A67A8C0</ManifestCertificateThumbprint>
@@ -279,7 +279,7 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon3.ico" />
+    <Resource Include="iconmic.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

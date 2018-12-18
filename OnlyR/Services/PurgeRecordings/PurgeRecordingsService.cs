@@ -34,7 +34,7 @@
             InitTimer();
         }
 
-        public void NotifyClosing()
+        public void Close()
         {
             // get a chance to clean up...
             _cancellationTokenSource.Cancel();

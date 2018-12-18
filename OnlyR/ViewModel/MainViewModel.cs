@@ -1,10 +1,9 @@
-using System.Diagnostics;
-
 namespace OnlyR.ViewModel
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Interop;
@@ -112,8 +111,6 @@ namespace OnlyR.ViewModel
 
         public void Closing(object sender, CancelEventArgs e)
         {
-            _purgeRecordingsService.NotifyClosing();
-
             var recordingPageModel = (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
 
             if (_optionsService.Options.AllowCloseWhenRecording)
@@ -135,6 +132,11 @@ namespace OnlyR.ViewModel
                     Messenger.Default.Send(new BeforeShutDownMessage(_currentPageName));
                     (_audioService as IDisposable)?.Dispose();
                 }
+            }
+
+            if (!e.Cancel)
+            {
+                _purgeRecordingsService.Close();
             }
         }
 
