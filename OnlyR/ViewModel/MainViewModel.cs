@@ -1,8 +1,11 @@
+using System.Diagnostics;
+
 namespace OnlyR.ViewModel
 {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Interop;
     using System.Windows.Media;
@@ -11,6 +14,7 @@ namespace OnlyR.ViewModel
     using MaterialDesignThemes.Wpf;
     using Messages;
     using Model;
+    using OnlyR.AutoUpdates;
     using OnlyR.Services.PurgeRecordings;
     using Pages;
     using Services.Audio;
@@ -84,6 +88,8 @@ namespace OnlyR.ViewModel
                 StartRecording = optionsService.Options.StartRecordingOnLaunch
             };
 
+            GetVersionData();
+
             Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, state));
         }
 
@@ -153,6 +159,27 @@ namespace OnlyR.ViewModel
         private void RecordingStoppedDuringAppClose(object sender, EventArgs e)
         {
             Messenger.Default.Send(new ShutDownApplicationMessage());
+        }
+
+        private void GetVersionData()
+        {
+            Task.Delay(2000).ContinueWith(_ =>
+            {
+                var latestVersion = VersionDetection.GetLatestReleaseVersion();
+                if (latestVersion != null)
+                {
+                    if (latestVersion > VersionDetection.GetCurrentVersion())
+                    {
+                        // there is a new version....
+                        _snackbarService.Enqueue("Update available", Properties.Resources.VIEW, LaunchWebPage);
+                    }
+                }
+            });
+        }
+
+        private void LaunchWebPage()
+        {
+            Process.Start(VersionDetection.LatestReleaseUrl);
         }
     }
 }

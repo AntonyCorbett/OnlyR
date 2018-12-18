@@ -349,6 +349,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to VIEW.
+        /// </summary>
+        internal static string VIEW {
+            get {
+                return ResourceManager.GetString("VIEW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} hours.
         /// </summary>
         internal static string X_HOURS {

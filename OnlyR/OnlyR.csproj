@@ -151,6 +151,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="AutoUpdates\VersionDetection.cs" />
     <Compile Include="Exceptions\NoRecordingsException.cs" />
     <Compile Include="Exceptions\NoSpaceException.cs" />
     <Compile Include="Model\BitRateItem.cs" />

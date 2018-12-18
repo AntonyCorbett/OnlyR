@@ -213,6 +213,9 @@
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
     <value>Unknown error!</value>
   </data>
+  <data name="VIEW" xml:space="preserve">
+    <value>VIEW</value>
+  </data>
   <data name="X_HOURS" xml:space="preserve">
     <value>{0} hours</value>
   </data>
