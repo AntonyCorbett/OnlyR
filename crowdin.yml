@@ -1,0 +1,5 @@
+files:
+  - source: /OnlyR/Properties/Resources.resx
+    translation: /OnlyR/Properties/%file_name%.%locale%.resx
+  - source: /OnlyR.Core/Properties/Resources.resx
+    translation: /OnlyR.Core/Properties/%file_name%.%locale%.resx
