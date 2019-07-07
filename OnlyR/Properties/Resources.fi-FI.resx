@@ -118,82 +118,82 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Version: {0}</value>
+    <value>Versio: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Tiedostot kopioitu</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>Kansion {0} luonti epäonnistui</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Could not start recording</value>
+    <value>Tallennusta ei voitu aloittaa</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Could not stop recording</value>
+    <value>Tallennusta ei voitu lopettaa</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
-    <value>Insufficient free space to record</value>
+    <value>Tallennustila ei riitä</value>
   </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>No limit</value>
+    <value>Rajoittamaton</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
-    <value>1 Day</value>
+    <value>1 päivä</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 Month</value>
+    <value>1 kuukausi</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 Week</value>
+    <value>1 viikko</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
-    <value>1 Year</value>
+    <value>1 vuosi</value>
   </data>
   <data name="LIFE_2_DAYS" xml:space="preserve">
-    <value>2 Days</value>
+    <value>2 päivää</value>
   </data>
   <data name="LIFE_2_MONTHS" xml:space="preserve">
-    <value>2 Months</value>
+    <value>2 kuukautta</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 Weeks</value>
+    <value>2 viikkoa</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
-    <value>2 Years</value>
+    <value>2 vuotta</value>
   </data>
   <data name="LIFE_6_MONTHS" xml:space="preserve">
-    <value>6 Months</value>
+    <value>6 kuukautta</value>
   </data>
   <data name="MONO" xml:space="preserve">
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Not recording</value>
+    <value>Ei tallenneta</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
-    <value>No limit</value>
+    <value>Rajoittamaton</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>No recordings today!</value>
+    <value>Ei tallennuksia tänään!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>No space on {}</value>
+    <value>Levyllä {} ei ole tilaa</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
-    <value>1 hour</value>
+    <value>1 tunti</value>
   </data>
   <data name="ONE_MIN" xml:space="preserve">
-    <value>1 minute</value>
+    <value>1 minuutti</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Recording</value>
+    <value>Tallennetaan</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Save today's recordings to drive {0}</value>
+    <value>Tallenna tämän päivän tallenteet levylle {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
     <value>Save today's recordings to drives {0}</value>
