@@ -193,33 +193,33 @@
     <value>Tallennetaan</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Tallenna tämän päivän tallenteet levylle {0}</value>
+    <value>Tallenna tämän päivän tallenteet asemalle {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Save today's recordings to drives {0}</value>
+    <value>Tallenna tämän päivän tallenteet asemille {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Select Recording Folder</value>
+    <value>Valitse tallennuskansio</value>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Puhe</value>
   </data>
   <data name="STEREO" xml:space="preserve">
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Stopping</value>
+    <value>Pysäytetään</value>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Tuntematon virhe!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>NÄYTÄ</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} tuntia</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} minuuttia</value>
   </data>
 </root>
