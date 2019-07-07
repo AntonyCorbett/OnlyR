@@ -9,7 +9,7 @@
     public class NoDevicesException : Exception
     {
         public NoDevicesException()
-            : base("No recording devices found")
+            : base(Properties.Resources.NO_RECORDING_DEVICE)
         {
         }
     }
