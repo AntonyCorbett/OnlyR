@@ -74,10 +74,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.en-US.resx" />
     <EmbeddedResource Include="Properties\Resources.fi-FI.resx" />
+    <EmbeddedResource Include="Properties\Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.sv-SE.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
