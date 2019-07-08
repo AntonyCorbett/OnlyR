@@ -192,6 +192,10 @@
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>
   </data>
+  <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
+    <value>Recordings folder</value>
+    <comment>Tooltip for the button that opens the recordings folder</comment>
+  </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Save today's recordings to drive {0}</value>
   </data>
@@ -201,14 +205,78 @@
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Select Recording Folder</value>
   </data>
+  <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
+    <value>Allow close when recording</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
+    <value>Always on top</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_BIT_RATE" xml:space="preserve">
+    <value>Bit rate</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_CHANNELS" xml:space="preserve">
+    <value>Channels</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_FADE_OUT" xml:space="preserve">
+    <value>Fade out recordings</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_GENRE" xml:space="preserve">
+    <value>Genre (in MP3 tag)</value>
+    <comment>Settings page genre title</comment>
+  </data>
+  <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
+    <value>Max recording time</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
+    <value>Recordings...</value>
+    <comment>Settings page Recordings button caption</comment>
+  </data>
+  <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
+    <value>Recordings folder</value>
+    <comment>Settings page "recordings folder" title</comment>
+  </data>
+  <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
+    <value>Recording device</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
+    <value>Recording lifetime</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
+    <value>Sample rate</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
+    <value>Start recording on launch</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_TOOLTIP" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Tooltip for the button that displays the Settings page</comment>
+  </data>
   <data name="SPEECH" xml:space="preserve">
     <value>Speech</value>
+  </data>
+  <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Start recording</value>
+    <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
     <value>Stopping</value>
+  </data>
+  <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Stop recording</value>
+    <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
     <value>Unknown error!</value>
