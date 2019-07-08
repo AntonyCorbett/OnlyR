@@ -33,7 +33,7 @@
                             Messenger.Default.Send(new RemovableDriveMessage
                             {
                                 Added = true,
-                                DriveLetter = driveLetter 
+                                DriveLetter = driveLetter,
                             });
                             break;
 
@@ -41,7 +41,7 @@
                             Messenger.Default.Send(new RemovableDriveMessage
                             {
                                 Added = false,
-                                DriveLetter = driveLetter
+                                DriveLetter = driveLetter,
                             });
                             break;
                     }

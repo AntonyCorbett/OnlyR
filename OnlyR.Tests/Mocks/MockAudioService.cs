@@ -39,7 +39,7 @@
             return new[]
             {
                 new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 1 },
-                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 2 }
+                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 2 },
             };
         }
 

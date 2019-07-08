@@ -34,7 +34,7 @@
                 RecordingDate = dt,
                 TrackNumber = finalPathAndTrack.TrackNumber,
                 TempPath = GetTempRecordingFile(),
-                FinalPath = finalPathAndTrack.FilePath
+                FinalPath = finalPathAndTrack.FilePath,
             };
 
             Log.Logger.Information("New candidate = {@Candidate}", result);

@@ -2,12 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
-    using Enums;
-    using EventArgs;
-    using Models;
     using NAudio.Lame;
     using NAudio.Wave;
-    using Samples;
+    using OnlyR.Core.Enums;
+    using OnlyR.Core.EventArgs;
+    using OnlyR.Core.Models;
+    using OnlyR.Core.Samples;
 
     /// <summary>
     /// The audio recorder. Uses NAudio for the heavy lifting, but it's isolated in this class
@@ -38,9 +38,9 @@
         public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
 
         /// <summary>
-        /// Gets a list of Windows recording devices
+        /// Gets a list of Windows recording devices.
         /// </summary>
-        /// <returns>Collection of devices</returns>
+        /// <returns>Collection of devices.</returns>
         public static IEnumerable<RecordingDeviceInfo> GetRecordingDeviceList()
         {
             var result = new List<RecordingDeviceInfo>();
@@ -76,7 +76,7 @@
                 _waveSource = new WaveIn
                 {
                     WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
-                    DeviceNumber = recordingConfig.RecordingDevice
+                    DeviceNumber = recordingConfig.RecordingDevice,
                 };
 
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
@@ -126,7 +126,7 @@
                 Year = recordingConfig.RecordingDate.Year.ToString(),
                 
                 // fix bug in naudio.lame
-                UserDefinedTags = new string[] { } 
+                UserDefinedTags = new string[] { },
             };
         }
 

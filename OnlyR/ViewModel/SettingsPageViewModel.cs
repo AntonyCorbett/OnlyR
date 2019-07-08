@@ -239,7 +239,7 @@
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_MONTHS, Days = 62 },
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_6_MONTHS, Days = 365 / 2 },
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_YR, Days = 365 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_YRS, Days = 365 * 2 }
+                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_YRS, Days = 365 * 2 },
             };
 
             return result;
@@ -258,7 +258,7 @@
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 45), ActualMinutes = 45 },
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.ONE_HOUR, 1), ActualMinutes = 60 },
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualMinutes = 120 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 }
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 },
             };
 
             return result;

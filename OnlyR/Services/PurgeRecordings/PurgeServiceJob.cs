@@ -4,6 +4,6 @@
     {
         Nothing,
         FilePurge,
-        FolderPurge
+        FolderPurge,
     }
 }

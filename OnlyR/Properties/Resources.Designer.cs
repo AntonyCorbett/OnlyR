@@ -22,7 +22,7 @@ namespace OnlyR.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace OnlyR.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OnlyR.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace OnlyR.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Version: {0}.
         /// </summary>
-        internal static string APP_VER {
+        public static string APP_VER {
             get {
                 return ResourceManager.GetString("APP_VER", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Files copied.
         /// </summary>
-        internal static string COPIED {
+        public static string COPIED {
             get {
                 return ResourceManager.GetString("COPIED", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Could not create folder {0}.
         /// </summary>
-        internal static string CREATE_FOLDER_ERROR {
+        public static string CREATE_FOLDER_ERROR {
             get {
                 return ResourceManager.GetString("CREATE_FOLDER_ERROR", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Could not start recording.
         /// </summary>
-        internal static string ERROR_START {
+        public static string ERROR_START {
             get {
                 return ResourceManager.GetString("ERROR_START", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Could not stop recording.
         /// </summary>
-        internal static string ERROR_STOP {
+        public static string ERROR_STOP {
             get {
                 return ResourceManager.GetString("ERROR_STOP", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Insufficient free space to record.
         /// </summary>
-        internal static string INSUFFICIENT_FREE_SPACE {
+        public static string INSUFFICIENT_FREE_SPACE {
             get {
                 return ResourceManager.GetString("INSUFFICIENT_FREE_SPACE", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No limit.
         /// </summary>
-        internal static string LIFE_0 {
+        public static string LIFE_0 {
             get {
                 return ResourceManager.GetString("LIFE_0", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 Day.
         /// </summary>
-        internal static string LIFE_1_DAY {
+        public static string LIFE_1_DAY {
             get {
                 return ResourceManager.GetString("LIFE_1_DAY", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 Month.
         /// </summary>
-        internal static string LIFE_1_MONTH {
+        public static string LIFE_1_MONTH {
             get {
                 return ResourceManager.GetString("LIFE_1_MONTH", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 Week.
         /// </summary>
-        internal static string LIFE_1_WEEK {
+        public static string LIFE_1_WEEK {
             get {
                 return ResourceManager.GetString("LIFE_1_WEEK", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 Year.
         /// </summary>
-        internal static string LIFE_1_YR {
+        public static string LIFE_1_YR {
             get {
                 return ResourceManager.GetString("LIFE_1_YR", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 2 Days.
         /// </summary>
-        internal static string LIFE_2_DAYS {
+        public static string LIFE_2_DAYS {
             get {
                 return ResourceManager.GetString("LIFE_2_DAYS", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 2 Months.
         /// </summary>
-        internal static string LIFE_2_MONTHS {
+        public static string LIFE_2_MONTHS {
             get {
                 return ResourceManager.GetString("LIFE_2_MONTHS", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 2 Weeks.
         /// </summary>
-        internal static string LIFE_2_WEEKS {
+        public static string LIFE_2_WEEKS {
             get {
                 return ResourceManager.GetString("LIFE_2_WEEKS", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 2 Years.
         /// </summary>
-        internal static string LIFE_2_YRS {
+        public static string LIFE_2_YRS {
             get {
                 return ResourceManager.GetString("LIFE_2_YRS", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 6 Months.
         /// </summary>
-        internal static string LIFE_6_MONTHS {
+        public static string LIFE_6_MONTHS {
             get {
                 return ResourceManager.GetString("LIFE_6_MONTHS", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Mono.
         /// </summary>
-        internal static string MONO {
+        public static string MONO {
             get {
                 return ResourceManager.GetString("MONO", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No limit.
         /// </summary>
-        internal static string NO_LIMIT {
+        public static string NO_LIMIT {
             get {
                 return ResourceManager.GetString("NO_LIMIT", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No recordings today!.
         /// </summary>
-        internal static string NO_RECORDINGS {
+        public static string NO_RECORDINGS {
             get {
                 return ResourceManager.GetString("NO_RECORDINGS", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to No space on {}.
         /// </summary>
-        internal static string NO_SPACE {
+        public static string NO_SPACE {
             get {
                 return ResourceManager.GetString("NO_SPACE", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Not recording.
         /// </summary>
-        internal static string NOT_RECORDING {
+        public static string NOT_RECORDING {
             get {
                 return ResourceManager.GetString("NOT_RECORDING", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
-        internal static string OK {
+        public static string OK {
             get {
                 return ResourceManager.GetString("OK", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 hour.
         /// </summary>
-        internal static string ONE_HOUR {
+        public static string ONE_HOUR {
             get {
                 return ResourceManager.GetString("ONE_HOUR", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 1 minute.
         /// </summary>
-        internal static string ONE_MIN {
+        public static string ONE_MIN {
             get {
                 return ResourceManager.GetString("ONE_MIN", resourceCulture);
             }
@@ -279,16 +279,25 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Recording.
         /// </summary>
-        internal static string RECORDING {
+        public static string RECORDING {
             get {
                 return ResourceManager.GetString("RECORDING", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recordings folder.
+        /// </summary>
+        public static string RECORDINGS_FOLDER_TOOLTIP {
+            get {
+                return ResourceManager.GetString("RECORDINGS_FOLDER_TOOLTIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save today&apos;s recordings to drive {0}.
         /// </summary>
-        internal static string SAVE_TO_DRIVE {
+        public static string SAVE_TO_DRIVE {
             get {
                 return ResourceManager.GetString("SAVE_TO_DRIVE", resourceCulture);
             }
@@ -297,7 +306,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Save today&apos;s recordings to drives {0}.
         /// </summary>
-        internal static string SAVE_TO_DRIVES {
+        public static string SAVE_TO_DRIVES {
             get {
                 return ResourceManager.GetString("SAVE_TO_DRIVES", resourceCulture);
             }
@@ -306,34 +315,178 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Select Recording Folder.
         /// </summary>
-        internal static string SELECT_DEST_FOLDER {
+        public static string SELECT_DEST_FOLDER {
             get {
                 return ResourceManager.GetString("SELECT_DEST_FOLDER", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow close when recording.
+        /// </summary>
+        public static string SETTINGS_ALLOW_CLOSE {
+            get {
+                return ResourceManager.GetString("SETTINGS_ALLOW_CLOSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Always on top.
+        /// </summary>
+        public static string SETTINGS_ALWAYS_ON_TOP {
+            get {
+                return ResourceManager.GetString("SETTINGS_ALWAYS_ON_TOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bit rate.
+        /// </summary>
+        public static string SETTINGS_BIT_RATE {
+            get {
+                return ResourceManager.GetString("SETTINGS_BIT_RATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Channels.
+        /// </summary>
+        public static string SETTINGS_CHANNELS {
+            get {
+                return ResourceManager.GetString("SETTINGS_CHANNELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade out recordings.
+        /// </summary>
+        public static string SETTINGS_FADE_OUT {
+            get {
+                return ResourceManager.GetString("SETTINGS_FADE_OUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Genre (in MP3 tag).
+        /// </summary>
+        public static string SETTINGS_GENRE {
+            get {
+                return ResourceManager.GetString("SETTINGS_GENRE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max recording time.
+        /// </summary>
+        public static string SETTINGS_MAX_RECORDING_TIME {
+            get {
+                return ResourceManager.GetString("SETTINGS_MAX_RECORDING_TIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording device.
+        /// </summary>
+        public static string SETTINGS_RECORDING_DEVICE {
+            get {
+                return ResourceManager.GetString("SETTINGS_RECORDING_DEVICE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording lifetime.
+        /// </summary>
+        public static string SETTINGS_RECORDING_LIFETIME {
+            get {
+                return ResourceManager.GetString("SETTINGS_RECORDING_LIFETIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recordings....
+        /// </summary>
+        public static string SETTINGS_RECORDINGS_BTN {
+            get {
+                return ResourceManager.GetString("SETTINGS_RECORDINGS_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recordings folder.
+        /// </summary>
+        public static string SETTINGS_RECORDINGS_FOLDER {
+            get {
+                return ResourceManager.GetString("SETTINGS_RECORDINGS_FOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample rate.
+        /// </summary>
+        public static string SETTINGS_SAMPLE_RATE {
+            get {
+                return ResourceManager.GetString("SETTINGS_SAMPLE_RATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start recording on launch.
+        /// </summary>
+        public static string SETTINGS_START_ON_LAUNCH {
+            get {
+                return ResourceManager.GetString("SETTINGS_START_ON_LAUNCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string SETTINGS_TOOLTIP {
+            get {
+                return ResourceManager.GetString("SETTINGS_TOOLTIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Speech.
         /// </summary>
-        internal static string SPEECH {
+        public static string SPEECH {
             get {
                 return ResourceManager.GetString("SPEECH", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start recording.
+        /// </summary>
+        public static string START_RECORDING_TOOLTIP {
+            get {
+                return ResourceManager.GetString("START_RECORDING_TOOLTIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stereo.
         /// </summary>
-        internal static string STEREO {
+        public static string STEREO {
             get {
                 return ResourceManager.GetString("STEREO", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop recording.
+        /// </summary>
+        public static string STOP_RECORDING_TOOLTIP {
+            get {
+                return ResourceManager.GetString("STOP_RECORDING_TOOLTIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stopping.
         /// </summary>
-        internal static string STOPPING {
+        public static string STOPPING {
             get {
                 return ResourceManager.GetString("STOPPING", resourceCulture);
             }
@@ -342,7 +495,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unknown error!.
         /// </summary>
-        internal static string UNKNOWN_COPY_ERROR {
+        public static string UNKNOWN_COPY_ERROR {
             get {
                 return ResourceManager.GetString("UNKNOWN_COPY_ERROR", resourceCulture);
             }
@@ -351,7 +504,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to VIEW.
         /// </summary>
-        internal static string VIEW {
+        public static string VIEW {
             get {
                 return ResourceManager.GetString("VIEW", resourceCulture);
             }
@@ -360,7 +513,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {0} hours.
         /// </summary>
-        internal static string X_HOURS {
+        public static string X_HOURS {
             get {
                 return ResourceManager.GetString("X_HOURS", resourceCulture);
             }
@@ -369,7 +522,7 @@ namespace OnlyR.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {0} minutes.
         /// </summary>
-        internal static string X_MINS {
+        public static string X_MINS {
             get {
                 return ResourceManager.GetString("X_MINS", resourceCulture);
             }

@@ -18,7 +18,7 @@
                 MaxRecordingsInOneFolder = _badIntValue,
                 Mp3BitRate = _badIntValue,
                 RecordingDevice = _badIntValue,
-                SampleRate = _badIntValue
+                SampleRate = _badIntValue,
             };
 
             options.Sanitize();

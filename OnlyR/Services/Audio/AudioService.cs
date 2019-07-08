@@ -70,7 +70,7 @@
                 Mp3BitRate = optionsService.Options.Mp3BitRate,
                 TrackTitle = GetTrackTitle(candidateFile),
                 AlbumName = GetAlbumName(candidateFile),
-                Genre = optionsService.Options.Genre
+                Genre = optionsService.Options.Genre,
             };
 
             _audioRecorder.Start(recordingConfig);
