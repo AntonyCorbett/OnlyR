@@ -230,7 +230,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Max recording time</value>
+    <value>Suurin tallennusaika</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
@@ -238,15 +238,15 @@
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Tallennuskansio</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Recording device</value>
+    <value>Tallennuslaite</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Recording lifetime</value>
+    <value>Tallenteiden elinikä</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
@@ -254,18 +254,18 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start recording on launch</value>
+    <value>Aloita tallennus käynnistyksessä</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Settings</value>
+    <value>Asetukset</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
     <value>Puhe</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start recording</value>
+    <value>Aloita tallennus</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
@@ -275,7 +275,7 @@
     <value>Pysäytetään</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop recording</value>
+    <value>Lopeta tallennus</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
