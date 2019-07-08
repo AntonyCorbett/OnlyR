@@ -178,7 +178,7 @@
     <value>Nenhuma gravação hoje!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Sem espaço em {}</value>
+    <value>Sem espaço em {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
