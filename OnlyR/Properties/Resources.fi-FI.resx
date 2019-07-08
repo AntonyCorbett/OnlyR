@@ -178,7 +178,7 @@
     <value>Ei tallennuksia tänään!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Levyllä {} ei ole tilaa</value>
+    <value>Levyllä {0} ei ole tilaa</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
