@@ -193,7 +193,7 @@
     <value>Tallennetaan</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Tallennuskansio</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
@@ -206,11 +206,11 @@
     <value>Valitse tallennuskansio</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Allow close when recording</value>
+    <value>Salli ohjelman sulkeminen tallennuksen aikana</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
-    <value>Always on top</value>
+    <value>Aina päällimmäisenä</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
