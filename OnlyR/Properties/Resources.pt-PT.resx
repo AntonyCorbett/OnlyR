@@ -118,176 +118,176 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Versio: {0}</value>
+    <value>Versão: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Tiedostot kopioitu</value>
+    <value>Ficheiros copiados</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Kansion {0} luonti epäonnistui</value>
+    <value>Não foi possível criar a pasta {0}</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Tallennusta ei voitu aloittaa</value>
+    <value>Não foi possível iniciar a gravação</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Tallennusta ei voitu lopettaa</value>
+    <value>Não foi possível parar a gravação</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
-    <value>Tallennustila ei riitä</value>
+    <value>Espaço livre insuficiente para gravar</value>
   </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>Rajoittamaton</value>
+    <value>Sem limite</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
-    <value>1 päivä</value>
+    <value>1 Dia</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 kuukausi</value>
+    <value>1 Mês</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 viikko</value>
+    <value>1 Semana</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
-    <value>1 vuosi</value>
+    <value>1 Ano</value>
   </data>
   <data name="LIFE_2_DAYS" xml:space="preserve">
-    <value>2 päivää</value>
+    <value>2 Dias</value>
   </data>
   <data name="LIFE_2_MONTHS" xml:space="preserve">
-    <value>2 kuukautta</value>
+    <value>2 Meses</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 viikkoa</value>
+    <value>2 Semanas</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
-    <value>2 vuotta</value>
+    <value>2 Anos</value>
   </data>
   <data name="LIFE_6_MONTHS" xml:space="preserve">
-    <value>6 kuukautta</value>
+    <value>6 Meses</value>
   </data>
   <data name="MONO" xml:space="preserve">
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Ei tallenneta</value>
+    <value>Não está a gravar</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
-    <value>Rajoittamaton</value>
+    <value>Sem limite</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>Ei tallennuksia tänään!</value>
+    <value>Nenhuma gravação hoje!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Levyllä {} ei ole tilaa</value>
+    <value>Sem espaço em {}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
-    <value>1 tunti</value>
+    <value>1 hora</value>
   </data>
   <data name="ONE_MIN" xml:space="preserve">
-    <value>1 minuutti</value>
+    <value>1 minuto</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Tallennetaan</value>
+    <value>A gravar</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Tallennuskansio</value>
+    <value>Pasta de gravações</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Tallenna tämän päivän tallenteet asemalle {0}</value>
+    <value>Guardar as gravações de hoje no disco {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Tallenna tämän päivän tallenteet asemille {0}</value>
+    <value>Guardar as gravações de hoje nos discos {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Valitse tallennuskansio</value>
+    <value>Selecione a Pasta de Gravação</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Salli ohjelman sulkeminen tallennuksen aikana</value>
+    <value>Permitir fechar quando estiver a gravar</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
-    <value>Aina päällimmäisenä</value>
+    <value>Sempre visível</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
-    <value>Bit rate</value>
+    <value>Velocidade de transmissão</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
-    <value>Kanavat</value>
+    <value>Canais</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Häivytä tallenteet lopuksi</value>
+    <value>Desvanecer gravações gradualmente</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
-    <value>Lajityyppi (MP3 -tunnisteissa)</value>
+    <value>Género (na tag MP3)</value>
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Suurin tallennusaika</value>
+    <value>Tempo máximo de gravação</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Tallenteet...</value>
+    <value>Gravações...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Tallennuskansio</value>
+    <value>Pasta de gravações</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Tallennuslaite</value>
+    <value>Dispositivo de gravação</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Tallenteiden elinikä</value>
+    <value>Guardar gravações durante</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Näytteenottotaajuus (kHz)</value>
+    <value>Taxa de amostragem</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Aloita tallennus käynnistyksessä</value>
+    <value>Iniciar a gravação ao abrir o programa</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Asetukset</value>
+    <value>Definições</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Puhe</value>
+    <value>Discurso</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Aloita tallennus</value>
+    <value>Iniciar gravação</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
-    <value>Stereo</value>
+    <value>Estéreo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Pysäytetään</value>
+    <value>A parar</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Lopeta tallennus</value>
+    <value>Parar gravação</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Tuntematon virhe!</value>
+    <value>Erro desconhecido!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>NÄYTÄ</value>
+    <value>VER</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} tuntia</value>
+    <value>{0} horas</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minuuttia</value>
+    <value>{0} minutos</value>
   </data>
 </root>
