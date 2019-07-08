@@ -218,15 +218,15 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
-    <value>Channels</value>
+    <value>Kanavat</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Fade out recordings</value>
+    <value>Häivytä tallenteet lopuksi</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
-    <value>Genre (in MP3 tag)</value>
+    <value>Lajityyppi (MP3 -tunnisteissa)</value>
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
