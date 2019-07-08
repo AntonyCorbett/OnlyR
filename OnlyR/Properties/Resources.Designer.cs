@@ -232,7 +232,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No space on {}.
+        ///   Looks up a localized string similar to No space on {0}.
         /// </summary>
         public static string NO_SPACE {
             get {
