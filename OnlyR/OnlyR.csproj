@@ -249,6 +249,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ro-RO.resx" />
     <EmbeddedResource Include="Properties\Resources.sv-SE.resx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
