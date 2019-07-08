@@ -178,7 +178,7 @@
     <value>Inga inspelningar idag!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>No space on {0}</value>
+    <value>Ingen plats på {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
