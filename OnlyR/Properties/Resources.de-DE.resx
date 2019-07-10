@@ -279,15 +279,15 @@
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Unbekannter Fehler!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>ANZEIGEN</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} Stunden</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} Minuten</value>
   </data>
 </root>
