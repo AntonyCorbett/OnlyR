@@ -121,10 +121,10 @@
     <value>Version: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Dateien kopiert</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>Ordner {0} konnte nicht erstellt werden</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
     <value>Could not start recording</value>
@@ -282,7 +282,7 @@
     <value>Unknown error!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>ANZEIGEN</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
     <value>{0} hours</value>
