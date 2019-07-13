@@ -238,56 +238,56 @@
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Pasta de gravações</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Recording device</value>
+    <value>Dispositivo de gravação</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Recording lifetime</value>
+    <value>Tempo de vida da gravação</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Sample rate</value>
+    <value>Taxa de amostra</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start recording on launch</value>
+    <value>Iniciar a gravação ao abrir o programa</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Settings</value>
+    <value>Configurações</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Discurso</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start recording</value>
+    <value>Iniciar gravação</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
-    <value>Stereo</value>
+    <value>Estéreo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Stopping</value>
+    <value>Parando</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop recording</value>
+    <value>Parar gravação</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Erro desconhecido!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>VER</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} horas</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} minutos</value>
   </data>
 </root>
