@@ -118,55 +118,55 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Version: {0}</value>
+    <value>Версия: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Файлы скопированы</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>Не удалось создать папку {0}</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Could not start recording</value>
+    <value>Не удалось начать запись</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Could not stop recording</value>
+    <value>Не удалось остановить запись</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
-    <value>Insufficient free space to record</value>
+    <value>Недостаточно свободного места для записи</value>
   </data>
   <data name="LIFE_0" xml:space="preserve">
     <value>No limit</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
-    <value>1 Day</value>
+    <value>1 день</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 Month</value>
+    <value>1 месяц</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 Week</value>
+    <value>1 неделя</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
-    <value>1 Year</value>
+    <value>1 год</value>
   </data>
   <data name="LIFE_2_DAYS" xml:space="preserve">
-    <value>2 Days</value>
+    <value>2 дня</value>
   </data>
   <data name="LIFE_2_MONTHS" xml:space="preserve">
-    <value>2 Months</value>
+    <value>2 месяца</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 Weeks</value>
+    <value>2 недели</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
-    <value>2 Years</value>
+    <value>2 года</value>
   </data>
   <data name="LIFE_6_MONTHS" xml:space="preserve">
-    <value>6 Months</value>
+    <value>6 месяцев</value>
   </data>
   <data name="MONO" xml:space="preserve">
-    <value>Mono</value>
+    <value>Моно</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
     <value>Not recording</value>
