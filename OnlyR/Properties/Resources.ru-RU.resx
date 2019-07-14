@@ -169,7 +169,7 @@
     <value>Моно</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Not recording</value>
+    <value>Не записывается</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>No limit</value>
@@ -178,10 +178,10 @@
     <value>Сегодня нет записей!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>No space on {0}</value>
+    <value>Нет места на {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
-    <value>OK</value>
+    <value>ОК</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
     <value>1 час</value>
@@ -197,10 +197,10 @@
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Save today's recordings to drive {0}</value>
+    <value>Сохранить сегодняшние записи на диск {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Save today's recordings to drives {0}</value>
+    <value>Сохранить сегодняшние записи на диски {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Выберите папку для записи</value>
@@ -210,7 +210,7 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
-    <value>Always on top</value>
+    <value>Поверх всех окон</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
@@ -230,7 +230,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Max recording time</value>
+    <value>Максимальное время записи</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
@@ -242,7 +242,7 @@
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Recording device</value>
+    <value>Записывающее устройство</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
@@ -250,7 +250,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Sample rate</value>
+    <value>Частота дискретизации</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
@@ -262,7 +262,7 @@
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Речь</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Начать запись</value>
@@ -282,12 +282,12 @@
     <value>Неизвестная ошибка!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>ПРОСМОТР</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} часов</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} минут</value>
   </data>
 </root>
