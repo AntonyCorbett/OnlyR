@@ -118,176 +118,176 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Versiunea {0}</value>
+    <value>Sürüm: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Fişiere copiate</value>
+    <value>Dosya kopyalandı</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Nu s-a putut crea dosarul {0}</value>
+    <value>{0} klasörü oluşturulamadı</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Nu s-a putut porni înregistrarea</value>
+    <value>Kayıt başlatılamadı</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Nu s-a putut opri înregistrarea</value>
+    <value>Kayıt durdurulamadı</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
-    <value>Spațiu insuficient pentru înregistrare</value>
+    <value>Kayıt için yeterli boş alan yok</value>
   </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>Nelimitat</value>
+    <value>Sınırlama yok</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
-    <value>1 zi</value>
+    <value>1 Gün</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 Lună</value>
+    <value>1 Ay</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 Saptamană</value>
+    <value>1 Hafta</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
-    <value>1 an</value>
+    <value>1 Yıl</value>
   </data>
   <data name="LIFE_2_DAYS" xml:space="preserve">
-    <value>2 zile</value>
+    <value>2 Gün</value>
   </data>
   <data name="LIFE_2_MONTHS" xml:space="preserve">
-    <value>2 luni</value>
+    <value>2 Ay</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 Saptămâni</value>
+    <value>2 Hafta</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
-    <value>2 ani</value>
+    <value>2 Yıl</value>
   </data>
   <data name="LIFE_6_MONTHS" xml:space="preserve">
-    <value>6 luni</value>
+    <value>6 Ay</value>
   </data>
   <data name="MONO" xml:space="preserve">
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Fără înregistrare</value>
+    <value>Kaydetmiyor</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
-    <value>Fără limită</value>
+    <value>Sınırlama yok</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>Nicio înregistrare astăzi!</value>
+    <value>Bugün için kayıt yok!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Nici un spațiu pe {0}</value>
+    <value>{0} üzerinde boşluk yok</value>
   </data>
   <data name="OK" xml:space="preserve">
-    <value>OK</value>
+    <value>Tamam</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
-    <value>1 oră</value>
+    <value>1 saat</value>
   </data>
   <data name="ONE_MIN" xml:space="preserve">
-    <value>1 minut</value>
+    <value>1 dakika</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Se înregistrează</value>
+    <value>Kayıtta</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Dosarul înregistrărilor</value>
+    <value>Kayıt klasörü</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe drive {0}</value>
+    <value>Bugünün kayıtlarını {0} sürücüsüne kaydet</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe driver-ele {0}</value>
+    <value>Bugünün kayıtlarını {0} sürücülerine kaydet</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Selectaţi dosarul Înregistrări</value>
+    <value>Kayıt Klasörünü Seçin</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Permite închiderea în timpul înregistrării</value>
+    <value>Kayıt sırasında kapatmaya izin ver</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
-    <value>Întotdeauna deasupra</value>
+    <value>Her zaman üstte</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
-    <value>Rata de biţi</value>
+    <value>Bit oranı</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
-    <value>Canale</value>
+    <value>Kanallar</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Estompare înregistrări</value>
+    <value>Kayıtları soldur (fade out)</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
-    <value>Gen (în eticheta MP3)</value>
+    <value>Tür (MP3 etiketinde)</value>
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Timp maxim de înregistrare</value>
+    <value>En fazla kayıt süresi</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Înregistrări...</value>
+    <value>Kayıtlar...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Dosarul înregistrărilor</value>
+    <value>Kayıt klasörü</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Dispozitiv de înregistrat</value>
+    <value>Kayıt cihazı</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Durata înregistrării</value>
+    <value>Kayıt ömrü</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Rata de probă</value>
+    <value>Örnekleme hızı</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start înregistrare la pornire</value>
+    <value>Açılır açılmaz kayda başla</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Setări</value>
+    <value>Ayarlar</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Discurs</value>
+    <value>Konuşma</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start înregistrare</value>
+    <value>Kaydı başlat</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Oprire</value>
+    <value>Durduruluyor</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop înregistrare</value>
+    <value>Kaydı durdur</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Eroare necunoscută</value>
+    <value>Bilinmeyen hata!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>DETALII</value>
+    <value>GÖRÜNÜM</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} ore</value>
+    <value>{0} saat</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minute</value>
+    <value>{0} dakika</value>
   </data>
 </root>
