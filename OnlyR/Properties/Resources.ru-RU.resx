@@ -175,7 +175,7 @@
     <value>No limit</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>No recordings today!</value>
+    <value>Сегодня нет записей!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
     <value>No space on {0}</value>
@@ -184,16 +184,16 @@
     <value>OK</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
-    <value>1 hour</value>
+    <value>1 час</value>
   </data>
   <data name="ONE_MIN" xml:space="preserve">
-    <value>1 minute</value>
+    <value>1 минута</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Recording</value>
+    <value>Запись</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Папка записей</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
@@ -203,7 +203,7 @@
     <value>Save today's recordings to drives {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Select Recording Folder</value>
+    <value>Выберите папку для записи</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
     <value>Allow close when recording</value>
@@ -214,11 +214,11 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
-    <value>Bit rate</value>
+    <value>Битрейт</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
-    <value>Channels</value>
+    <value>Каналы</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
@@ -234,11 +234,11 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Recordings...</value>
+    <value>Записи...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Папка записей</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
@@ -258,28 +258,28 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Settings</value>
+    <value>Настройки</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
     <value>Speech</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start recording</value>
+    <value>Начать запись</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
-    <value>Stereo</value>
+    <value>Стерео</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Stopping</value>
+    <value>Остановка</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop recording</value>
+    <value>Остановить запись</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Неизвестная ошибка!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>VIEW</value>
