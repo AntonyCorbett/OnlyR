@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Enregistrement pas démarré</value>
+    <value>Enreg. pas démarré</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Pas de limite</value>
@@ -254,7 +254,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Conserver enregistrements pendant</value>
+    <value>Conserver les enregistrements pendant</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
@@ -262,7 +262,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Commencer l'enregistrement au démarrage</value>
+    <value>Démarrer l'enregistrement au lancement</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
