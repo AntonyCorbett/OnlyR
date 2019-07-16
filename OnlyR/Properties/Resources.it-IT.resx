@@ -136,7 +136,7 @@
     <value>Spazio libero insufficiente per registrare</value>
   </data>
   <data name="LANGUAGE" xml:space="preserve">
-    <value>Language</value>
+    <value>Lingua</value>
     <comment>See Settings page</comment>
   </data>
   <data name="LIFE_0" xml:space="preserve">
@@ -201,7 +201,7 @@
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
-    <value>Please restart OnlyR after changing the language.</value>
+    <value>Si prega di riavviare OnlyR dopo aver cambiato la lingua.</value>
     <comment>See Settings page</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
