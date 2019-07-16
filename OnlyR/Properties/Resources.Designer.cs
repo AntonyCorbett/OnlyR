@@ -115,6 +115,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string LANGUAGE {
+            get {
+                return ResourceManager.GetString("LANGUAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No limit.
         /// </summary>
         public static string LIFE_0 {
@@ -291,6 +300,15 @@ namespace OnlyR.Properties {
         public static string RECORDINGS_FOLDER_TOOLTIP {
             get {
                 return ResourceManager.GetString("RECORDINGS_FOLDER_TOOLTIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please restart OnlyR after changing the language..
+        /// </summary>
+        public static string RESTART_LANGUAGE {
+            get {
+                return ResourceManager.GetString("RESTART_LANGUAGE", resourceCulture);
             }
         }
         

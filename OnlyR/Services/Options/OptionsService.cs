@@ -2,7 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
+    using System.Threading;
+    using System.Windows;
+    using System.Windows.Markup;
     using Model;
     using Newtonsoft.Json;
     using Serilog;
@@ -16,23 +20,17 @@
     {
         private readonly ICommandLineService _commandLineService;
         private readonly int _optionsVersion = 1;
-        private Options _options;
         private string _optionsFilePath;
         private string _originalOptionsSignature;
 
         public OptionsService(ICommandLineService commandLineService)
         {
             _commandLineService = commandLineService;
+
+            Init();
         }
 
-        public Options Options
-        {
-            get
-            {
-                Init();
-                return _options;
-            }
-        }
+        public Options Options { get; private set; }
 
         /// <summary>
         /// Gets a list of supported MP3 bit rates
@@ -86,13 +84,31 @@
         }
 
         /// <summary>
+        /// Gets or sets the culture.
+        /// </summary>
+        /// <value>
+        /// The culture.
+        /// </value>
+        public string Culture
+        {
+            get => Options.Culture;
+            set
+            {
+                if (Options.Culture == null || Options.Culture != value)
+                {
+                    Options.Culture = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Saves the settings (if they have changed since they were last read)
         /// </summary>
         public void Save()
         {
             try
             {
-                var newSignature = GetOptionsSignature(_options);
+                var newSignature = GetOptionsSignature(Options);
                 if (_originalOptionsSignature != newSignature)
                 {
                     // changed...
@@ -121,7 +137,7 @@
 
         private void Init()
         {
-            if (_options == null)
+            if (Options == null)
             {
                 try
                 {
@@ -134,19 +150,19 @@
                         ReadOptions();
                     }
 
-                    if (_options == null)
+                    if (Options == null)
                     {
-                        _options = new Options();
+                        Options = new Options();
                     }
 
                     // store the original settings so that we can determine if they have changed
                     // when we come to save them
-                    _originalOptionsSignature = GetOptionsSignature(_options);
+                    _originalOptionsSignature = GetOptionsSignature(Options);
                 }
                 catch (Exception ex)
                 {
                     Log.Logger.Error(ex, "Could not read options file");
-                    _options = new Options();
+                    Options = new Options();
                 }
             }
         }
@@ -168,28 +184,54 @@
                 using (StreamReader file = File.OpenText(_optionsFilePath))
                 {
                     JsonSerializer serializer = new JsonSerializer();
-                    _options = (Options)serializer.Deserialize(file, typeof(Options));
-                    _options.Sanitize();
+                    Options = (Options)serializer.Deserialize(file, typeof(Options));
+                    Options.Sanitize();
+
+                    SetCulture();
                 }
+            }
+        }
+
+        private void SetCulture()
+        {
+            var culture = Options.Culture;
+
+            if (string.IsNullOrEmpty(culture))
+            {
+                culture = CultureInfo.CurrentCulture.Name;
+            }
+
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture);
+                FrameworkElement.LanguageProperty.OverrideMetadata(
+                    typeof(FrameworkElement),
+                    new FrameworkPropertyMetadata(
+                        XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Could not set culture");
             }
         }
 
         private void WriteDefaultOptions()
         {
-            _options = new Options();
+            Options = new Options();
             WriteOptions();
         }
 
         private void WriteOptions()
         {
-            if (_options != null)
+            if (Options != null)
             {
                 using (StreamWriter file = File.CreateText(_optionsFilePath))
                 {
                     JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, _options);
+                    serializer.Serialize(file, Options);
 
-                    _originalOptionsSignature = GetOptionsSignature(_options);
+                    _originalOptionsSignature = GetOptionsSignature(Options);
                 }
             }
         }

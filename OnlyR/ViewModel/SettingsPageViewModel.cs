@@ -1,8 +1,10 @@
 ﻿namespace OnlyR.ViewModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
+    using System.Globalization;
+    using System.IO;
     using System.Reflection;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
@@ -29,7 +31,8 @@
         private readonly MaxRecordingTimeItem[] _maxRecordingTimes;
         private readonly RecordingLifeTimeItem[] _recordingLifetimes;
         private readonly ICommandLineService _commandLineService;
-        
+        private readonly LanguageItem[] _languages;
+
         public SettingsPageViewModel(
             IAudioService audioService, 
             IOptionsService optionsService, 
@@ -46,6 +49,7 @@
             _bitRates = optionsService.GetSupportedMp3BitRates();
             _maxRecordingTimes = GenerateMaxRecordingTimeItems();
             _recordingLifetimes = GenerateRecordingLifeTimes();
+            _languages = GetSupportedLanguages();
 
             NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
@@ -73,6 +77,21 @@
                 if (_optionsService.Options.MaxRecordingTimeMins != value)
                 {
                     _optionsService.Options.MaxRecordingTimeMins = value;
+                }
+            }
+        }
+
+        public IEnumerable<LanguageItem> Languages => _languages;
+
+        public string LanguageId
+        {
+            get => _optionsService.Culture;
+            set
+            {
+                if (_optionsService.Culture != value)
+                {
+                    _optionsService.Culture = value;
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -313,6 +332,47 @@
             return FileUtils.FindSuitableRecordingFolderToShow(
                 _commandLineService.OptionsIdentifier,
                 _optionsService.Options.DestinationFolder);
+        }
+
+        private LanguageItem[] GetSupportedLanguages()
+        {
+            var result = new List<LanguageItem>();
+
+            var subFolders = Directory.GetDirectories(AppDomain.CurrentDomain.BaseDirectory);
+
+            foreach (var folder in subFolders)
+            {
+                if (!string.IsNullOrEmpty(folder))
+                {
+                    try
+                    {
+                        var c = new CultureInfo(Path.GetFileNameWithoutExtension(folder));
+                        result.Add(new LanguageItem
+                        {
+                            LanguageId = c.Name,
+                            LanguageName = c.EnglishName,
+                        });
+                    }
+                    catch (CultureNotFoundException)
+                    {
+                        // expected
+                    }
+                }
+            }
+
+            // the native language
+            {
+                var c = new CultureInfo(Path.GetFileNameWithoutExtension("en-GB"));
+                result.Add(new LanguageItem
+                {
+                    LanguageId = c.Name,
+                    LanguageName = c.EnglishName,
+                });
+            }
+
+            result.Sort((x, y) => string.Compare(x.LanguageName, y.LanguageName, StringComparison.Ordinal));
+
+            return result.ToArray();
         }
     }
 }

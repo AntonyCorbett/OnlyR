@@ -156,6 +156,7 @@
     <Compile Include="Exceptions\NoSpaceException.cs" />
     <Compile Include="Model\BitRateItem.cs" />
     <Compile Include="Model\ChannelItem.cs" />
+    <Compile Include="Model\LanguageItem.cs" />
     <Compile Include="Model\MaxRecordingTimeItem.cs" />
     <Compile Include="Model\ObjectMappingProfile.cs" />
     <Compile Include="Model\RecordingCandidate.cs" />
@@ -245,6 +246,9 @@
     <EmbeddedResource Include="Properties\Resources.de-DE.resx" />
     <EmbeddedResource Include="Properties\Resources.en-US.resx" />
     <EmbeddedResource Include="Properties\Resources.fi-FI.resx" />
+    <EmbeddedResource Include="Properties\Resources.fr-FR.resx" />
+    <EmbeddedResource Include="Properties\Resources.hu-HU.resx" />
+    <EmbeddedResource Include="Properties\Resources.it-IT.resx" />
     <EmbeddedResource Include="Properties\Resources.pt-BR.resx" />
     <EmbeddedResource Include="Properties\Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -252,6 +256,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ro-RO.resx" />
+    <EmbeddedResource Include="Properties\Resources.ru-RU.resx" />
     <EmbeddedResource Include="Properties\Resources.sv-SE.resx" />
     <EmbeddedResource Include="Properties\Resources.tr-TR.resx" />
     <None Include="packages.config" />

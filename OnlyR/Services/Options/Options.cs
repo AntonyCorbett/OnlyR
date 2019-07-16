@@ -63,6 +63,8 @@
 
         public int RecordingsLifeTimeDays { get; set; }
 
+        public string Culture { get; set; }
+
         public static IEnumerable<int> GetSupportedSampleRates()
         {
             return ValidSampleRates;

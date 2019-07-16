@@ -25,6 +25,12 @@
         <Style x:Key="SettingsCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
+
+        <Style x:Key="MiscNotesStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryHueDarkBrush}" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -149,6 +155,25 @@
                     DisplayMemberPath="Description" 
                     SelectedValuePath="Days" 
                     SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"/>
+
+                <DockPanel Width="420" HorizontalAlignment="Left">
+                    <materialDesign:PackIcon Kind="Translate" 
+                                             Width="24" 
+                                             Height="24"
+                                             Margin="0,0,6,0"
+                                             VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding Languages}" 
+                              Style="{StaticResource SettingsComboStyle}"
+                              materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
+                              SelectedValuePath="LanguageId" 
+                              DisplayMemberPath="LanguageName"
+                              SelectedValue="{Binding LanguageId, Mode=TwoWay}"/>
+                </DockPanel>
+
+                <TextBlock Style="{StaticResource MiscNotesStyle}" 
+                           TextWrapping="Wrap"
+                           Text="{x:Static resx:Resources.RESTART_LANGUAGE}"/>
+
 
             </StackPanel>
         </ScrollViewer>

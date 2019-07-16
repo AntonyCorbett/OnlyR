@@ -14,5 +14,7 @@
         ChannelItem[] GetSupportedChannels();
 
         BitRateItem[] GetSupportedMp3BitRates();
+
+        string Culture { get; set; }
     }
 }
