@@ -22,6 +22,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\OnlyR
 DefaultGroupName={#MyAppName}
+OutputDir="..\Installer\Output"
 OutputBaseFilename=OnlyRSetup
 SetupIconFile=iconmic.ico
 SourceDir={#MySource}
