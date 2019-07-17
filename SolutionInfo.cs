@@ -2,7 +2,7 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("SoundBox")]
 [assembly: AssemblyProduct("OnlyR")]
-[assembly: AssemblyCopyright("Copyright © 2018 Antony Corbett")]
+[assembly: AssemblyCopyright("Copyright © 2018, 2019 Antony Corbett")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
