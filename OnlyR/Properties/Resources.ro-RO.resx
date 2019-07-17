@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Nu înregistrează</value>
+    <value>Nu se înregistrează</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Fără limită</value>
@@ -182,7 +182,7 @@
     <value>Nicio înregistrare astăzi!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Nici un spațiu pe {0}</value>
+    <value>Fără spațiu pe {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -201,14 +201,14 @@
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
-    <value>Vă rugăm să reporniţi după schimbarea limbii.</value>
+    <value>Vă rugăm să reporniţi OnlyR după schimbarea limbii.</value>
     <comment>See Settings page</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe drive {0}</value>
+    <value>Salvați înregistrările de azi pe driveul {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe driver-ele {0}</value>
+    <value>Salvați înregistrările de azi pe driverele {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Selectaţi dosarul Înregistrări</value>
@@ -230,7 +230,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Estompare înregistrări</value>
+    <value>Oprire progresivă a înregistrării</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
