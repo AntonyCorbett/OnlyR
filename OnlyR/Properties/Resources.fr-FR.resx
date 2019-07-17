@@ -121,171 +121,179 @@
     <value>Version: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Fichiers copiés</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>Impossible de créer le dossier {0}</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Could not start recording</value>
+    <value>L'enregistrement n'a pas pu démarrer</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Could not stop recording</value>
+    <value>L'enregistrement n'a pas pu finir</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
-    <value>Insufficient free space to record</value>
+    <value>Espace libre insuffisant pour enregistrer</value>
+  </data>
+  <data name="LANGUAGE" xml:space="preserve">
+    <value>Langue</value>
+    <comment>See Settings page</comment>
   </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>No limit</value>
+    <value>Pas de limite</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
-    <value>1 Day</value>
+    <value>1 Jour</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 Month</value>
+    <value>1 Mois</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 Week</value>
+    <value>1 Semaine</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
-    <value>1 Year</value>
+    <value>1 An</value>
   </data>
   <data name="LIFE_2_DAYS" xml:space="preserve">
-    <value>2 Days</value>
+    <value>2 Jours</value>
   </data>
   <data name="LIFE_2_MONTHS" xml:space="preserve">
-    <value>2 Months</value>
+    <value>2 Mois</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 Weeks</value>
+    <value>2 Semaines</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
-    <value>2 Years</value>
+    <value>2 Ans</value>
   </data>
   <data name="LIFE_6_MONTHS" xml:space="preserve">
-    <value>6 Months</value>
+    <value>6 Mois</value>
   </data>
   <data name="MONO" xml:space="preserve">
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Not recording</value>
+    <value>Enreg. pas démarré</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
-    <value>No limit</value>
+    <value>Pas de limite</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
-    <value>No recordings today!</value>
+    <value>Aucun enregistrement aujourd'hui !</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>No space on {0}</value>
+    <value>Espace insuffisant sur {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ONE_HOUR" xml:space="preserve">
-    <value>1 hour</value>
+    <value>1 heure</value>
   </data>
   <data name="ONE_MIN" xml:space="preserve">
     <value>1 minute</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Recording</value>
+    <value>Enregistrement en cours</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Dossier d'enregistrements</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
+  <data name="RESTART_LANGUAGE" xml:space="preserve">
+    <value>Redémarrez OnlyR après avoir changé la langue.</value>
+    <comment>See Settings page</comment>
+  </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Save today's recordings to drive {0}</value>
+    <value>Enregistrer les enregistrements d'aujourd'hui sur {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Save today's recordings to drives {0}</value>
+    <value>Enregistrer les enregistrements d'aujourd'hui sur {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Select Recording Folder</value>
+    <value>Sélectionner dossier d'enregistrements</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Allow close when recording</value>
+    <value>Autoriser la fermeture lors de l'enregistrement</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
-    <value>Always on top</value>
+    <value>Toujours au premier plan</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
-    <value>Bit rate</value>
+    <value>Débit</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
-    <value>Channels</value>
+    <value>Canaux</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Fade out recordings</value>
+    <value>Appliquer un fondu de fin</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
-    <value>Genre (in MP3 tag)</value>
+    <value>Genre (tag MP3)</value>
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Max recording time</value>
+    <value>Temps d'enregistrement maximum</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Recordings...</value>
+    <value>Enregistrements...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
-    <value>Recordings folder</value>
+    <value>Dossier d'enregistrements</value>
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Recording device</value>
+    <value>Périphérique d'entrée</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Recording lifetime</value>
+    <value>Conserver les enregistrements pendant</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Sample rate</value>
+    <value>Taux d'échantillonnage</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start recording on launch</value>
+    <value>Démarrer l'enregistrement au lancement</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Settings</value>
+    <value>Paramètres</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Discours</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start recording</value>
+    <value>Démarrer l'enregistrement</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
-    <value>Stereo</value>
+    <value>Stéréo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Stopping</value>
+    <value>Arrêt en cours</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop recording</value>
+    <value>Arrêter l'enregistrement</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Erreur inconnue !</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>DÉTAILS</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} heures</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
     <value>{0} minutes</value>

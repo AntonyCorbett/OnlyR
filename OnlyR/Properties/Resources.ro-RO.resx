@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Versiunea {0}</value>
+    <value>Versiune {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
     <value>Fişiere copiate</value>
@@ -135,17 +135,21 @@
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Spațiu insuficient pentru înregistrare</value>
   </data>
+  <data name="LANGUAGE" xml:space="preserve">
+    <value>Limba</value>
+    <comment>See Settings page</comment>
+  </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>Nelimitat</value>
+    <value>Fără limită</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
     <value>1 zi</value>
   </data>
   <data name="LIFE_1_MONTH" xml:space="preserve">
-    <value>1 Lună</value>
+    <value>1 lună</value>
   </data>
   <data name="LIFE_1_WEEK" xml:space="preserve">
-    <value>1 Saptamană</value>
+    <value>1 săptămână</value>
   </data>
   <data name="LIFE_1_YR" xml:space="preserve">
     <value>1 an</value>
@@ -157,7 +161,7 @@
     <value>2 luni</value>
   </data>
   <data name="LIFE_2_WEEKS" xml:space="preserve">
-    <value>2 Saptămâni</value>
+    <value>2 săptămâni</value>
   </data>
   <data name="LIFE_2_YRS" xml:space="preserve">
     <value>2 ani</value>
@@ -169,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Fără înregistrare</value>
+    <value>Nu se înregistrează</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Fără limită</value>
@@ -178,7 +182,7 @@
     <value>Nicio înregistrare astăzi!</value>
   </data>
   <data name="NO_SPACE" xml:space="preserve">
-    <value>Nici un spațiu pe {0}</value>
+    <value>Fără spațiu pe {0}</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -196,11 +200,15 @@
     <value>Dosarul înregistrărilor</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
+  <data name="RESTART_LANGUAGE" xml:space="preserve">
+    <value>Vă rugăm să reporniţi OnlyR după schimbarea limbii.</value>
+    <comment>See Settings page</comment>
+  </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe drive {0}</value>
+    <value>Salvați înregistrările de azi pe driveul {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salvați înregistrările de azi pe driver-ele {0}</value>
+    <value>Salvați înregistrările de azi pe driverele {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Selectaţi dosarul Înregistrări</value>
@@ -222,7 +230,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Estompare înregistrări</value>
+    <value>Oprire progresivă a înregistrării</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
@@ -246,11 +254,11 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Durata înregistrării</value>
+    <value>Retenția înregistrării</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Rata de probă</value>
+    <value>Rata eșantionului</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
@@ -275,7 +283,7 @@
     <value>Oprire</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop înregistrare</value>
+    <value>Oprire înregistrare</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
