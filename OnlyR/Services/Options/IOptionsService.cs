@@ -1,13 +1,12 @@
 ﻿namespace OnlyR.Services.Options
 {
-    using System.Collections.Generic;
     using Model;
 
     public interface IOptionsService
     {
         Options Options { get; }
 
-        void Save();
+        string Culture { get; set; }
 
         SampleRateItem[] GetSupportedSampleRates();
 
@@ -15,6 +14,6 @@
 
         BitRateItem[] GetSupportedMp3BitRates();
 
-        string Culture { get; set; }
+        void Save();
     }
 }

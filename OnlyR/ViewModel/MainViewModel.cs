@@ -35,7 +35,6 @@ namespace OnlyR.ViewModel
         private readonly IAudioService _audioService;
         private readonly ISnackbarService _snackbarService;
         private readonly IPurgeRecordingsService _purgeRecordingsService;
-        private string _currentPageName;
         private FrameworkElement _currentPage;
 
         public MainViewModel(
@@ -89,8 +88,11 @@ namespace OnlyR.ViewModel
 
             GetVersionData();
 
-            Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, state));
+            Messenger.Default.Send(new NavigateMessage(
+                null, RecordingPageViewModel.PageName, state));
         }
+
+        public string CurrentPageName { get; private set; }
 
         public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
@@ -129,7 +131,7 @@ namespace OnlyR.ViewModel
 
                 if (!e.Cancel)
                 {
-                    Messenger.Default.Send(new BeforeShutDownMessage(_currentPageName));
+                    Messenger.Default.Send(new BeforeShutDownMessage(CurrentPageName));
                     (_audioService as IDisposable)?.Dispose();
                 }
             }
@@ -153,8 +155,8 @@ namespace OnlyR.ViewModel
         
         private void OnNavigate(NavigateMessage message)
         {
-            CurrentPage = _pages[message.TargetPage];
-            _currentPageName = message.TargetPage;
+            CurrentPage = _pages[message.TargetPageName];
+            CurrentPageName = message.TargetPageName;
             ((IPage)CurrentPage.DataContext).Activated(message.State);
         }
 

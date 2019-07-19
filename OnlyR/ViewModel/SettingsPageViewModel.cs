@@ -291,7 +291,11 @@
         private void NavigateRecording()
         {
             Save();
-            Messenger.Default.Send(new NavigateMessage(RecordingPageViewModel.PageName, null));
+
+            Messenger.Default.Send(new NavigateMessage(
+                SettingsPageViewModel.PageName,
+                RecordingPageViewModel.PageName, 
+                null));
         }
 
         private void Save()

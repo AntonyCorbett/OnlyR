@@ -2,18 +2,27 @@
 {
     /// <summary>
     /// MVVM message used by the MainViewModel to navigate 
-    /// between the Settings Page and the Recording Page
+    /// between the Settings Page and the Recording Page.
     /// </summary>
     internal class NavigateMessage
     {
-        public NavigateMessage(string targetPage, object state)
+        public NavigateMessage(string originalPageName, string targetPageName, object state)
         {
-            TargetPage = targetPage;
+            OriginalPageName = originalPageName ?? string.Empty;
+            TargetPageName = targetPageName;
             State = state;
         }
 
-        public string TargetPage { get; }
+        public string OriginalPageName { get; }
 
+        /// <summary>
+        /// Name of the target page.
+        /// </summary>
+        public string TargetPageName { get; }
+
+        /// <summary>
+        /// Optional context-specific state.
+        /// </summary>
         public object State { get; }
     }
 }

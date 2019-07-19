@@ -257,7 +257,10 @@
 
         private static void NavigateSettings()
         {
-            Messenger.Default.Send(new NavigateMessage(SettingsPageViewModel.PageName, null));
+            Messenger.Default.Send(new NavigateMessage(
+                RecordingPageViewModel.PageName,
+                SettingsPageViewModel.PageName, 
+                null));
         }
 
         private void OnShutDown(BeforeShutDownMessage message)

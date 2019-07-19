@@ -156,7 +156,7 @@
                     SelectedValuePath="Days" 
                     SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"/>
 
-                <DockPanel Width="420" HorizontalAlignment="Left">
+                <DockPanel>
                     <materialDesign:PackIcon Kind="Translate" 
                                              Width="24" 
                                              Height="24"

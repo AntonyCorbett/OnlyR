@@ -33,6 +33,24 @@
         public Options Options { get; private set; }
 
         /// <summary>
+        /// Gets or sets the culture.
+        /// </summary>
+        /// <value>
+        /// The culture.
+        /// </value>
+        public string Culture
+        {
+            get => Options.Culture;
+            set
+            {
+                if (Options.Culture == null || Options.Culture != value)
+                {
+                    Options.Culture = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets a list of supported MP3 bit rates
         /// </summary>
         /// <returns>Collection of BitRateItem</returns>
@@ -81,24 +99,6 @@
             }
 
             return result.ToArray();
-        }
-
-        /// <summary>
-        /// Gets or sets the culture.
-        /// </summary>
-        /// <value>
-        /// The culture.
-        /// </value>
-        public string Culture
-        {
-            get => Options.Culture;
-            set
-            {
-                if (Options.Culture == null || Options.Culture != value)
-                {
-                    Options.Culture = value;
-                }
-            }
         }
 
         /// <summary>

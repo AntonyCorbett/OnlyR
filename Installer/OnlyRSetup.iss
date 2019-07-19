@@ -71,6 +71,8 @@ Source: "bin\Release\fi-FI\*.dll"; DestDir: "{app}\fi-FI"; Flags: ignoreversion
 Source: "bin\Release\fr-FR\*.dll"; DestDir: "{app}\fr-FR"; Flags: ignoreversion
 Source: "bin\Release\hu-HU\*.dll"; DestDir: "{app}\hu-HU"; Flags: ignoreversion
 Source: "bin\Release\it-IT\*.dll"; DestDir: "{app}\it-IT"; Flags: ignoreversion
+Source: "bin\Release\no\*.dll"; DestDir: "{app}\no"; Flags: ignoreversion
+; don't include this - Source: "bin\Release\no-NO\*.dll"; DestDir: "{app}\no"; Flags: ignoreversion
 Source: "bin\Release\pt-BR\*.dll"; DestDir: "{app}\pt-BR"; Flags: ignoreversion
 Source: "bin\Release\pt-PT\*.dll"; DestDir: "{app}\pt-PT"; Flags: ignoreversion
 Source: "bin\Release\ro-RO\*.dll"; DestDir: "{app}\ro-RO"; Flags: ignoreversion

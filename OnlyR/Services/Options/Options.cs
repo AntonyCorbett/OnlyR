@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Windows;
     using Utils;
 
     /// <summary>
@@ -56,6 +57,8 @@
         public string DestinationFolder { get; set; }
 
         public string AppWindowPlacement { get; set; }
+
+        public Size SettingsPageSize { get; set; }
 
         public bool AlwaysOnTop { get; set; }
 
