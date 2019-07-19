@@ -270,7 +270,7 @@
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Gesprochenes</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Aufnahme starten</value>
