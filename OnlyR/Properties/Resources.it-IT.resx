@@ -130,7 +130,7 @@
     <value>Impossibile avviare la registrazione</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Impossibile interrompere la registrazione</value>
+    <value>Impossibile fermare la registrazione</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Spazio libero insufficiente per registrare</value>
