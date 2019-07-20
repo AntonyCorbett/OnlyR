@@ -262,7 +262,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Avvia registrazione all'apertura</value>
+    <value>Inizia a registrare all'apertura</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
@@ -273,7 +273,7 @@
     <value>Discorso</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Inizia registrazione</value>
+    <value>Avvia registrazione</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
