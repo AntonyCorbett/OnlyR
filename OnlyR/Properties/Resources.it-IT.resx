@@ -205,10 +205,10 @@
     <comment>See Settings page</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salva le registrazioni di oggi su {0}</value>
+    <value>Salva registrazioni di oggi nell'unità {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salva le registrazioni di oggi su {0}</value>
+    <value>Salva registrazioni di oggi nelle unità {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
     <value>Seleziona cartella di registrazione</value>
