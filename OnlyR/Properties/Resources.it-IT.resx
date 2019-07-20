@@ -205,16 +205,16 @@
     <comment>See Settings page</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salva registrazioni di oggi nell'unità {0}</value>
+    <value>Salva le registrazioni di oggi nell'unità {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salva registrazioni di oggi nelle unità {0}</value>
+    <value>Salva le registrazioni di oggi nelle unità {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Seleziona cartella registrazioni</value>
+    <value>Selezione cartella registrazioni</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Consenti chiusura quando si registra</value>
+    <value>Consenti chiusura durante la registrazione</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
