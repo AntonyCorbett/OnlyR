@@ -130,7 +130,7 @@
     <value>Impossibile avviare la registrazione</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Impossibile interrompere la registrazione</value>
+    <value>Impossibile fermare la registrazione</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Spazio libero insufficiente per registrare</value>
@@ -205,16 +205,16 @@
     <comment>See Settings page</comment>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
-    <value>Salva le registrazioni di oggi su {0}</value>
+    <value>Salva le registrazioni di oggi nell'unità {0}</value>
   </data>
   <data name="SAVE_TO_DRIVES" xml:space="preserve">
-    <value>Salva le registrazioni di oggi su {0}</value>
+    <value>Salva le registrazioni di oggi nelle unità {0}</value>
   </data>
   <data name="SELECT_DEST_FOLDER" xml:space="preserve">
-    <value>Seleziona cartella di registrazione</value>
+    <value>Selezione cartella registrazioni</value>
   </data>
   <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
-    <value>Consenti chiusura quando si registra</value>
+    <value>Consenti chiusura durante la registrazione</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
@@ -262,7 +262,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Avvia registrazione all'apertura</value>
+    <value>Inizia a registrare all'apertura</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
@@ -273,7 +273,7 @@
     <value>Discorso</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Inizia registrazione</value>
+    <value>Avvia registrazione</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
