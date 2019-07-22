@@ -130,7 +130,7 @@
     <value>Nie można rozpocząć nagrywania</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Could not stop recording</value>
+    <value>Nie można rozpocząć nagrywania</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Za mało wolnego miejsca do nagrywania</value>
@@ -287,15 +287,15 @@
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Nieznany błąd!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>VIEW</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} godz.</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} min.</value>
   </data>
 </root>
