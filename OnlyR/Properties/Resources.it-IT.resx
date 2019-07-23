@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Non registra</value>
+    <value>Non avviato</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Nessun limite</value>
@@ -230,7 +230,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Dissolvenza registrazioni</value>
+    <value>Dissolvenza in uscita</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Durata registrazione</value>
+    <value>Conserva registrazioni per</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
