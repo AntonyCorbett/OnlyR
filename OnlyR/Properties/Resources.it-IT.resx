@@ -194,7 +194,7 @@
     <value>1 minuto</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Registrazione</value>
+    <value>Registrazione in corso</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
     <value>Cartella registrazioni</value>
@@ -280,10 +280,10 @@
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Sto fermando</value>
+    <value>Interruzione</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Ferma registrazione</value>
+    <value>Interrompi registrazione</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
