@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Version: {0}</value>
+    <value>Versión: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Archivos copiados</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>No se pudo crear la carpeta {0}</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Could not start recording</value>
+    <value>No se pudo iniciar la grabación</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Could not stop recording</value>
+    <value>No se pudo detener la grabación</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Insufficient free space to record</value>
