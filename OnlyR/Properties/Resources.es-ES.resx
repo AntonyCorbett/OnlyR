@@ -280,17 +280,17 @@
     <value>Estéreo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Parada</value>
+    <value>Deteniendo</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Parar grabación</value>
+    <value>Detener grabación</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
     <value>¡Error desconocido!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VISITA</value>
+    <value>VISTA</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
     <value>{0} horas</value>
