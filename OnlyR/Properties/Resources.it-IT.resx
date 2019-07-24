@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Non registra</value>
+    <value>Non avviato</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Nessun limite</value>
@@ -194,7 +194,7 @@
     <value>1 minuto</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
-    <value>Registrazione</value>
+    <value>Registrazione in corso</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
     <value>Cartella registrazioni</value>
@@ -230,7 +230,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
-    <value>Dissolvenza registrazioni</value>
+    <value>Dissolvenza in uscita</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_GENRE" xml:space="preserve">
@@ -238,7 +238,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Tempo massimo di registrazione</value>
+    <value>Tempo di registrazione massimo</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
@@ -254,7 +254,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Durata registrazione</value>
+    <value>Conserva registrazioni per</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
@@ -280,10 +280,10 @@
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Sto fermando</value>
+    <value>Interruzione</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Ferma registrazione</value>
+    <value>Interrompi registrazione</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
