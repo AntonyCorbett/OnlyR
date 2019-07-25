@@ -140,7 +140,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="LIFE_0" xml:space="preserve">
-    <value>Ingen gräns</value>
+    <value>Ingen begränsning</value>
   </data>
   <data name="LIFE_1_DAY" xml:space="preserve">
     <value>1dag</value>
@@ -176,7 +176,7 @@
     <value>Ingen inspelning</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
-    <value>Ingen gräns</value>
+    <value>Ingen begränsning</value>
   </data>
   <data name="NO_RECORDINGS" xml:space="preserve">
     <value>Inga inspelningar idag!</value>
@@ -270,7 +270,7 @@
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Tal</value>
+    <value>Föreläsning</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Starta inspelning</value>
