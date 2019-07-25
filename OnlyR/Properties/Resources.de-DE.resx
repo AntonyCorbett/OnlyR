@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Wird nicht aufgenommen</value>
+    <value>Keine Aufnahme aktiv</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Keine Begrenzung</value>
