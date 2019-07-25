@@ -67,6 +67,8 @@ Source: "bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags:
 ; localisation
 Source: "bin\Release\de-DE\*.dll"; DestDir: "{app}\de-DE"; Flags: ignoreversion
 Source: "bin\Release\en-US\*.dll"; DestDir: "{app}\en-US"; Flags: ignoreversion
+Source: "bin\Release\es-ES\*.dll"; DestDir: "{app}\es-ES"; Flags: ignoreversion
+Source: "bin\Release\es-MX\*.dll"; DestDir: "{app}\es-MX"; Flags: ignoreversion
 Source: "bin\Release\fi-FI\*.dll"; DestDir: "{app}\fi-FI"; Flags: ignoreversion
 Source: "bin\Release\fr-FR\*.dll"; DestDir: "{app}\fr-FR"; Flags: ignoreversion
 Source: "bin\Release\hu-HU\*.dll"; DestDir: "{app}\hu-HU"; Flags: ignoreversion
