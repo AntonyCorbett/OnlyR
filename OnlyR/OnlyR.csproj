@@ -173,8 +173,10 @@
     <Compile Include="Services\PurgeRecordings\PurgeRecordingsService.cs" />
     <Compile Include="Services\PurgeRecordings\PurgeServiceJob.cs" />
     <Compile Include="Services\RecordingCopies\CopyRecordingsService.cs" />
-    <Compile Include="Services\RecordingCopies\CopyRecordingsServiceNativeMethods.cs" />
+    <Compile Include="Services\RecordingCopies\DriveEjectionService.cs" />
+    <Compile Include="Services\RecordingCopies\DriveEjectionServiceNativeMethods.cs" />
     <Compile Include="Services\RecordingCopies\ICopyRecordingsService.cs" />
+    <Compile Include="Services\RecordingCopies\IDriveEjectionService.cs" />
     <Compile Include="Services\Snackbar\ISnackbarService.cs" />
     <Compile Include="Services\Snackbar\SnackbarService.cs" />
     <Compile Include="Utils\RemovableDriveDetectionNativeMethods.cs" />

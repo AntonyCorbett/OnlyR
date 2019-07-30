@@ -16,13 +16,16 @@
     {
         private readonly ICommandLineService _commandLineService;
         private readonly IOptionsService _optionsService;
+        private readonly IDriveEjectionService _driveEjectionService;
 
         public CopyRecordingsService(
             ICommandLineService commandLineService,
-            IOptionsService optionsService)
+            IOptionsService optionsService,
+            IDriveEjectionService driveEjectionService)
         {
             _commandLineService = commandLineService;
             _optionsService = optionsService;
+            _driveEjectionService = driveEjectionService;
         }
 
         public void Copy(IReadOnlyCollection<char> drives)
@@ -157,7 +160,7 @@
             // so the device can be safely removed.
             try
             {
-                CopyRecordingsServiceNativeMethods.EjectDrive(driveLetter);
+                _driveEjectionService.Eject(driveLetter);
             }
             catch (Exception ex)
             {

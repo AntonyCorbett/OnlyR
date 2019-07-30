@@ -24,6 +24,7 @@ namespace OnlyR.ViewModel
             SimpleIoc.Default.Register<IRecordingDestinationService, RecordingDestinationService>();
             SimpleIoc.Default.Register<IAudioService, AudioService>();
             SimpleIoc.Default.Register<ICopyRecordingsService, CopyRecordingsService>();
+            SimpleIoc.Default.Register<IDriveEjectionService, DriveEjectionService>();
             SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
             SimpleIoc.Default.Register<IPurgeRecordingsService, PurgeRecordingsService>();
             SimpleIoc.Default.Register<MainViewModel>();
