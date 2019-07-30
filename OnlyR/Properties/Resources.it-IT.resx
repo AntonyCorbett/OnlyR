@@ -130,7 +130,7 @@
     <value>Impossibile avviare la registrazione</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
-    <value>Impossibile fermare la registrazione</value>
+    <value>Impossibile interrompere la registrazione</value>
   </data>
   <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
     <value>Spazio libero insufficiente per registrare</value>
@@ -173,7 +173,7 @@
     <value>Mono</value>
   </data>
   <data name="NOT_RECORDING" xml:space="preserve">
-    <value>Non avviato</value>
+    <value>Non avviata</value>
   </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>Nessun limite</value>
@@ -238,7 +238,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
-    <value>Tempo di registrazione massimo</value>
+    <value>Durata massima registrazione</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
