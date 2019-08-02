@@ -448,6 +448,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start minimised.
+        /// </summary>
+        public static string SETTINGS_START_MINIMIZED {
+            get {
+                return ResourceManager.GetString("SETTINGS_START_MINIMIZED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start recording on launch.
         /// </summary>
         public static string SETTINGS_START_ON_LAUNCH {

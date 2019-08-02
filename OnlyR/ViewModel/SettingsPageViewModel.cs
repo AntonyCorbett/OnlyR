@@ -145,6 +145,18 @@
             }
         }
 
+        public bool StartMinimized
+        {
+            get => _optionsService.Options.StartMinimized;
+            set
+            {
+                if (_optionsService.Options.StartMinimized != value)
+                {
+                    _optionsService.Options.StartMinimized = value;
+                }
+            }
+        }
+
         public bool AllowCloseWhenRecording
         {
             get => _optionsService.Options.AllowCloseWhenRecording;

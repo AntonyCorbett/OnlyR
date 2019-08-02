@@ -26,9 +26,14 @@
         private static readonly Encoding Encoding = new UTF8Encoding();
         private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(WINDOWPLACEMENT));
 
-        public static void SetPlacement(this Window window, string placementJson)
+        public static void SetPlacement(this Window window, string placementJson, bool showMinimized)
         {
-            SetPlacement(new WindowInteropHelper(window).Handle, placementJson, window.Width, window.Height);
+            SetPlacement(
+                new WindowInteropHelper(window).Handle, 
+                placementJson, 
+                window.Width, 
+                window.Height, 
+                showMinimized);
         }
 
         public static string GetPlacement(this Window window)
@@ -36,7 +41,12 @@
             return GetPlacement(new WindowInteropHelper(window).Handle);
         }
 
-        private static void SetPlacement(IntPtr windowHandle, string placementJson, double width, double height)
+        private static void SetPlacement(
+            IntPtr windowHandle, 
+            string placementJson, 
+            double width, 
+            double height, 
+            bool showMinimized)
         {
             if (!string.IsNullOrEmpty(placementJson))
             {
@@ -51,9 +61,17 @@
 
                     var adjustedDimensions = GetAdjustedWidthAndHeight(width, height);
 
+                    if (showMinimized)
+                    {
+                        placement.showCmd = SwShowMinimized;
+                    }
+                    else if (placement.showCmd == SwShowMinimized)
+                    {
+                        placement.showCmd = SwShowNormal;
+                    }
+
                     placement.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
                     placement.flags = 0;
-                    placement.showCmd = placement.showCmd == SwShowMinimized ? SwShowNormal : placement.showCmd;
                     placement.normalPosition.Right = placement.normalPosition.Left + (int)adjustedDimensions.Item1;
                     placement.normalPosition.Bottom = placement.normalPosition.Top + (int)adjustedDimensions.Item2;
                     NativeMethods.SetWindowPlacement(windowHandle, ref placement);

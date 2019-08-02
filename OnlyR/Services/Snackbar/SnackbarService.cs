@@ -1,6 +1,8 @@
 ﻿namespace OnlyR.Services.Snackbar
 {
     using System;
+    using System.Windows;
+    using GalaSoft.MvvmLight.Threading;
     using MaterialDesignThemes.Wpf;
 
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -10,7 +12,13 @@
 
         public void Enqueue(object content, object actionContent, Action actionHandler, bool promote = false)
         {
-            TheSnackbarMessageQueue.Enqueue(content, actionContent, actionHandler, promote);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
+                {
+                    TheSnackbarMessageQueue.Enqueue(content, actionContent, actionHandler, promote);
+                }
+            });
         }
 
         public void Enqueue(
@@ -21,23 +29,41 @@
             bool promote,
             bool neverConsiderToBeDuplicate)
         {
-            TheSnackbarMessageQueue.Enqueue(
-                content,
-                actionContent,
-                actionHandler,
-                actionArgument,
-                promote,
-                neverConsiderToBeDuplicate);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
+                {
+                    TheSnackbarMessageQueue.Enqueue(
+                        content,
+                        actionContent,
+                        actionHandler,
+                        actionArgument,
+                        promote,
+                        neverConsiderToBeDuplicate);
+                }
+            });
         }
 
         public void Enqueue(object content)
         {
-            TheSnackbarMessageQueue.Enqueue(content);
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
+                {
+                    TheSnackbarMessageQueue.Enqueue(content);
+                }
+            });
         }
 
         public void EnqueueWithOk(object content)
         {
-            TheSnackbarMessageQueue.Enqueue(content, Properties.Resources.OK, () => { });
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
+                {
+                    TheSnackbarMessageQueue.Enqueue(content, Properties.Resources.OK, () => { });
+                }
+            });
         }
 
         public void Dispose()

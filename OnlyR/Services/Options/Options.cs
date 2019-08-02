@@ -68,6 +68,8 @@
 
         public string Culture { get; set; }
 
+        public bool StartMinimized { get; set; }
+
         public static IEnumerable<int> GetSupportedSampleRates()
         {
             return ValidSampleRates;

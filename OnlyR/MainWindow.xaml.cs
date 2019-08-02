@@ -22,7 +22,7 @@
         private const double SettingsWindowDefHeight = 400;
 
         private const double SettingsWindowMaxWidth = 500;
-        private const double SettingsWindowMaxHeight = 740;
+        private const double SettingsWindowMaxHeight = 770;
 
         public MainWindow()
         {
@@ -92,9 +92,14 @@
         private void AdjustMainWindowPositionAndSize()
         {
             var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
+
             if (!string.IsNullOrEmpty(optionsService.Options.AppWindowPlacement))
             {
-                this.SetPlacement(optionsService.Options.AppWindowPlacement);
+                this.SetPlacement(optionsService.Options.AppWindowPlacement, optionsService.Options.StartMinimized);
+            }
+            else if (optionsService.Options.StartMinimized)
+            {
+                WindowState = WindowState.Minimized;
             }
         }
 

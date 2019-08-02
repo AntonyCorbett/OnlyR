@@ -82,7 +82,7 @@ namespace OnlyR.ViewModel
 
             var state = new RecordingPageNavigationState
             {
-                ShowSplash = true,
+                ShowSplash = !optionsService.Options.StartMinimized,
                 StartRecording = optionsService.Options.StartRecordingOnLaunch,
             };
 

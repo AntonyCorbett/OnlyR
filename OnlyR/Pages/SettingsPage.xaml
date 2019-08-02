@@ -126,7 +126,12 @@
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding AllowCloseWhenRecording, Mode=TwoWay}"
                     Content="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"/>
-                    
+
+                <CheckBox 
+                    Style="{StaticResource SettingsCheckBox}"
+                    IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                    Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"/>
+
                 <TextBox 
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     Text="{Binding Genre, Mode=TwoWay}" 
