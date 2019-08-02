@@ -169,8 +169,20 @@
 
         private string GetOptionsSignature(Options options)
         {
+            var originalGenre = options.Genre;
+
+            if (originalGenre != null && originalGenre.Trim() == Properties.Resources.SPEECH)
+            {
+                // denotes default for the language.
+                options.Genre = null;
+            }
+
             // config data is small so simple solution is best...
-            return JsonConvert.SerializeObject(options);
+            var signature = JsonConvert.SerializeObject(options);
+
+            options.Genre = originalGenre;
+
+            return signature;
         }
 
         private void ReadOptions()
@@ -181,14 +193,28 @@
             }
             else
             {
-                using (StreamReader file = File.OpenText(_optionsFilePath))
+                ReadOptionsInternal();
+                if (Options == null)
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    Options = (Options)serializer.Deserialize(file, typeof(Options));
-                    Options.Sanitize();
-
-                    SetCulture();
+                    WriteDefaultOptions();
                 }
+            }
+
+            if (Options == null)
+            {
+                throw new Exception($"Could not read options file: {_optionsFilePath}");
+            }
+            
+            SetCulture();
+            Options.Sanitize();
+        }
+
+        private void ReadOptionsInternal()
+        {
+            using (var file = File.OpenText(_optionsFilePath))
+            {
+                var serializer = new JsonSerializer();
+                Options = (Options)serializer.Deserialize(file, typeof(Options));
             }
         }
 
@@ -228,8 +254,18 @@
             {
                 using (StreamWriter file = File.CreateText(_optionsFilePath))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
+                    var originalGenre = Options.Genre;
+
+                    if (originalGenre != null && originalGenre.Trim() == Properties.Resources.SPEECH)
+                    {
+                        // denotes default for the language.
+                        Options.Genre = null;
+                    }
+                    
+                    var serializer = new JsonSerializer();
                     serializer.Serialize(file, Options);
+
+                    Options.Genre = originalGenre;
 
                     _originalOptionsSignature = GetOptionsSignature(Options);
                 }
