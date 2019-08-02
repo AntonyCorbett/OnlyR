@@ -261,6 +261,10 @@
     <value>Abtastrate</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
+    <value>Start minimised</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
     <value>Aufnahme beim Start beginnen</value>
     <comment>Settings page checkbox title</comment>
