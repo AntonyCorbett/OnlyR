@@ -65,6 +65,7 @@ Source: "bin\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignorevers
 Source: "bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; localisation
+Source: "bin\Release\cs-CZ\*.dll"; DestDir: "{app}\cs-CZ"; Flags: ignoreversion
 Source: "bin\Release\de-DE\*.dll"; DestDir: "{app}\de-DE"; Flags: ignoreversion
 Source: "bin\Release\en-US\*.dll"; DestDir: "{app}\en-US"; Flags: ignoreversion
 Source: "bin\Release\es-ES\*.dll"; DestDir: "{app}\es-ES"; Flags: ignoreversion
