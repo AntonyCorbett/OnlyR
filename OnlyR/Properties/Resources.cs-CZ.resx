@@ -294,12 +294,12 @@
     <value>Neznámá chyba!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>ZOBRAZENÍ</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} hodin</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} minut</value>
   </data>
 </root>
