@@ -7,7 +7,7 @@ Windows audio recorder using C#, WPF, NAudio, NAudio.Lame, AutoMapper, GalaSoft 
 ### System Requirements
 
 * Windows 7, 8 or 10
-* .NET Framework 4.7 or later
+* .NET Framework 4.6.1 or later
 * 2GB RAM
 * 15MB Hard disk space
 * Audio recording device
