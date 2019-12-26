@@ -81,6 +81,7 @@
     <EmbeddedResource Include="Properties\Resources.fr-FR.resx" />
     <EmbeddedResource Include="Properties\Resources.hu-HU.resx" />
     <EmbeddedResource Include="Properties\Resources.it-IT.resx" />
+    <EmbeddedResource Include="Properties\Resources.lv-LV.resx" />
     <EmbeddedResource Include="Properties\Resources.no-NO.resx" />
     <EmbeddedResource Include="Properties\Resources.no.resx" />
     <EmbeddedResource Include="Properties\Resources.pl-PL.resx" />
