@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="APP_VER" xml:space="preserve">
-    <value>Version: {0}</value>
+    <value>Versija: {0}</value>
   </data>
   <data name="COPIED" xml:space="preserve">
-    <value>Files copied</value>
+    <value>Faili ir pārkopēti</value>
   </data>
   <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
-    <value>Could not create folder {0}</value>
+    <value>Nevarēja veidot mapi {0}</value>
   </data>
   <data name="ERROR_START" xml:space="preserve">
-    <value>Could not start recording</value>
+    <value>Nevarēja iesākt ierakstu</value>
   </data>
   <data name="ERROR_STOP" xml:space="preserve">
     <value>Could not stop recording</value>
