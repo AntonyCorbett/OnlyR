@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
@@ -10,6 +11,7 @@
     using System.Windows.Threading;
     using Core.Enums;
     using Exceptions;
+    using Fclp.Internals.Extensions;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
     using GalaSoft.MvvmLight.Messaging;
@@ -131,7 +133,7 @@
                 }
             }
         }
-        
+
         public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
 
         public bool NoSettings => _commandLineService.NoSettings;
@@ -259,7 +261,7 @@
         {
             Messenger.Default.Send(new NavigateMessage(
                 RecordingPageViewModel.PageName,
-                SettingsPageViewModel.PageName, 
+                SettingsPageViewModel.PageName,
                 null));
         }
 
@@ -267,17 +269,66 @@
         {
             // nothing to do
         }
-        
+
+        private TimeSpan SilenceTime = new TimeSpan(0);
+        private Queue<VolumeSample> VolumeAverage = new Queue<VolumeSample>();
+        private int SilenceSeconds = 5;
+        private int MinVolumeAverage = 5;
+
+        private class VolumeSample
+        {
+            public int VolumeLevel { get; set; }
+            public DateTime Timestamp { get; set; }
+        }
+
+        static bool stopRequested = false;
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
-            VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
-            RaisePropertyChanged(nameof(ElapsedTimeStr));
-
-            if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
-                ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+            if (!stopRequested)
             {
+                VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
+                RaisePropertyChanged(nameof(ElapsedTimeStr));
+                
+                DateTime timeStamp = SaveVolumeAverage();
+
+                if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
+                    ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+                {
+                    AutoStopRecording();
+                }
+
+                if (_optionsService.Options.StopOnSilence)
+                {
+                    StopIfSilenceDetected(timeStamp);
+                }
+            }
+        }
+
+        private void StopIfSilenceDetected(DateTime timeStamp)
+        {
+            int average = 0;
+            VolumeAverage.ForEach(v => average += v.VolumeLevel);
+            average /= VolumeAverage.Count;
+
+            //Debug.WriteLine(string.Format("Audio: T[{3:mm:ss.fff}] P[{6:mm:ss.fff}] V[{0}] C[{1}] A[{2}] S[{4}] E[{5}]", VolumeLevelAsPercentage, VolumeAverage.Count, average, timeStamp, startQ, endQ, VolumeAverage.Peek().Timestamp));
+
+            // Only check average if we have at least SilenceSeconds of volume data
+            if (VolumeAverage.Peek().Timestamp < timeStamp.AddSeconds(SilenceSeconds * -1) && average < MinVolumeAverage)
+            {
+                Debug.WriteLine("Stopping recording due to silence");
+                stopRequested = true;
                 AutoStopRecording();
             }
+        }
+
+        private DateTime SaveVolumeAverage()
+        {
+            var timeStamp = DateTime.Now;
+            // Only keep last SilenceSeconds + 1 seconds for average calculation
+            while (VolumeAverage.Count > 0 && VolumeAverage.Peek().Timestamp < timeStamp.AddSeconds((SilenceSeconds + 1) * -1))
+                VolumeAverage.Dequeue();
+            VolumeAverage.Enqueue(new VolumeSample { VolumeLevel = VolumeLevelAsPercentage, Timestamp = timeStamp });
+            return timeStamp;
         }
 
         private void AutoStopRecording()
@@ -361,6 +412,7 @@
             try
             {
                 ClearErrorMsg();
+                VolumeAverage.Clear();
                 _audioService.StopRecording(_optionsService.Options.FadeOut);
             }
             catch (Exception ex)
@@ -424,7 +476,7 @@
         private void SaveToRemovableDrives()
         {
             IsCopying = true;
-            
+
             Task.Run(() =>
             {
                 try

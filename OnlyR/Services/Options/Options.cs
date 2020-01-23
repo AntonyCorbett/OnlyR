@@ -34,6 +34,7 @@
             RecordingDevice = DefaultRecordingDevice;
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
             RecordingsLifeTimeDays = 0; // forever
+            SilencePeriod = 30;
         }
 
         public int MaxRecordingsInOneFolder { get; set; }
@@ -69,6 +70,10 @@
         public string Culture { get; set; }
 
         public bool StartMinimized { get; set; }
+
+        public bool StopOnSilence { get; set; }
+
+        public int SilencePeriod { get; set; }
 
         public static IEnumerable<int> GetSupportedSampleRates()
         {

@@ -32,6 +32,7 @@
         private readonly RecordingLifeTimeItem[] _recordingLifetimes;
         private readonly ICommandLineService _commandLineService;
         private readonly LanguageItem[] _languages;
+        private readonly SilencePeriod[] _silencePeriods;
 
         public SettingsPageViewModel(
             IAudioService audioService, 
@@ -50,6 +51,7 @@
             _maxRecordingTimes = GenerateMaxRecordingTimeItems();
             _recordingLifetimes = GenerateRecordingLifeTimes();
             _languages = GetSupportedLanguages();
+            _silencePeriods = GetSilencePeriods();
 
             NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
@@ -68,6 +70,8 @@
         public IEnumerable<MaxRecordingTimeItem> MaxRecordingTimes => _maxRecordingTimes;
 
         public IEnumerable<RecordingLifeTimeItem> RecordingLifeTimes => _recordingLifetimes;
+
+        public IEnumerable<SilencePeriod> SilencePeriods => _silencePeriods;
 
         public int MaxRecordingTime
         {
@@ -153,6 +157,30 @@
                 if (_optionsService.Options.StartMinimized != value)
                 {
                     _optionsService.Options.StartMinimized = value;
+                }
+            }
+        }
+
+        public bool StopOnSilence
+        {
+            get => _optionsService.Options.StopOnSilence;
+            set
+            {
+                if (_optionsService.Options.StopOnSilence != value)
+                {
+                    _optionsService.Options.StopOnSilence = value;
+                }
+            }
+        }
+
+        public int SilencePeriod
+        {
+            get => _optionsService.Options.SilencePeriod;
+            set
+            {
+                if (_optionsService.Options.SilencePeriod != value)
+                {
+                    _optionsService.Options.SilencePeriod = value;
                 }
             }
         }
@@ -290,6 +318,20 @@
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.ONE_HOUR, 1), ActualMinutes = 60 },
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualMinutes = 120 },
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 },
+            };
+
+            return result;
+        }
+
+        private static SilencePeriod[] GetSilencePeriods()
+        {
+            SilencePeriod[] result =
+            {
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 10), Seconds = 10},
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 30), Seconds = 10},
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 1), Seconds = 60},
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 5), Seconds = 300},
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 10), Seconds = 600}
             };
 
             return result;

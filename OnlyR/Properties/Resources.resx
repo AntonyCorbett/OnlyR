@@ -261,12 +261,19 @@
     <value>Sample rate</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_SILENCE_PERIOD" xml:space="preserve">
+    <value>Stop recording after period of silence</value>
+  </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
     <value>Start minimised</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
     <value>Start recording on launch</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_STOP_SILENCE" xml:space="preserve">
+    <value>Stop after Silence</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
@@ -301,5 +308,8 @@
   </data>
   <data name="X_MINS" xml:space="preserve">
     <value>{0} minutes</value>
+  </data>
+  <data name="X_SECONDS" xml:space="preserve">
+    <value>{0} seconds</value>
   </data>
 </root>

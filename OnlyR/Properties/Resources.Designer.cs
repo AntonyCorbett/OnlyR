@@ -19,7 +19,7 @@ namespace OnlyR.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -448,6 +448,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop recording after period of silence.
+        /// </summary>
+        public static string SETTINGS_SILENCE_PERIOD {
+            get {
+                return ResourceManager.GetString("SETTINGS_SILENCE_PERIOD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start minimised.
         /// </summary>
         public static string SETTINGS_START_MINIMIZED {
@@ -462,6 +471,15 @@ namespace OnlyR.Properties {
         public static string SETTINGS_START_ON_LAUNCH {
             get {
                 return ResourceManager.GetString("SETTINGS_START_ON_LAUNCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop after Silence.
+        /// </summary>
+        public static string SETTINGS_STOP_SILENCE {
+            get {
+                return ResourceManager.GetString("SETTINGS_STOP_SILENCE", resourceCulture);
             }
         }
         
@@ -552,6 +570,15 @@ namespace OnlyR.Properties {
         public static string X_MINS {
             get {
                 return ResourceManager.GetString("X_MINS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds.
+        /// </summary>
+        public static string X_SECONDS {
+            get {
+                return ResourceManager.GetString("X_SECONDS", resourceCulture);
             }
         }
     }

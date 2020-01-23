@@ -164,6 +164,7 @@
     <Compile Include="Model\RecordingLifeTimeItem.cs" />
     <Compile Include="Model\RecordingPageNavigationState.cs" />
     <Compile Include="Model\SampleRateItem.cs" />
+    <Compile Include="Model\SilencePeriod.cs" />
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
