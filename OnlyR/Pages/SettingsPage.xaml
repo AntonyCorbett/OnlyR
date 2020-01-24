@@ -134,7 +134,7 @@
 
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                    IsChecked="{Binding StopOnSilence, Mode=TwoWay}"
                     Content="{x:Static resx:Resources.SETTINGS_STOP_SILENCE}"/>
 
                 <ComboBox 

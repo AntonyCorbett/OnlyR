@@ -33,8 +33,6 @@
     /// </summary>
     public class RecordingPageViewModel : ViewModelBase, IPage
     {
-        private static bool _stopRequested = false;
-
         private readonly IAudioService _audioService;
         private readonly IRecordingDestinationService _destinationService;
         private readonly IOptionsService _optionsService;
@@ -276,17 +274,10 @@
 
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
-            if (!_stopRequested)
+            if (RecordingStatus != RecordingStatus.StopRequested)
             {
                 VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
                 RaisePropertyChanged(nameof(ElapsedTimeStr));
-
-                DateTime currentTime = DateTime.Now;
-
-                if (_optionsService.Options.StopOnSilence)
-                {
-                    SaveVolumeAverage(currentTime);
-                }
 
                 if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
                     ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
@@ -296,27 +287,16 @@
 
                 if (_optionsService.Options.StopOnSilence)
                 {
-                    StopIfSilenceDetected(currentTime);
+                    StopIfSilenceDetected();
                 }
             }
         }
 
-        private void StopIfSilenceDetected(DateTime timeStamp)
+        private void StopIfSilenceDetected()
         {
-            int average = 0;
-            _volumeAverage.ForEach(v => average += v.VolumeLevel);
-            average /= _volumeAverage.Count;
+            var currentTime = DateTime.Now;
 
-            // Only check average if we have at least SilenceSeconds of volume data
-            if (_volumeAverage.Peek().Timestamp < timeStamp.AddSeconds(_optionsService.Options.SilencePeriod * -1) && average < _minVolumeAverage)
-            {
-                _stopRequested = true;  // Prevent threading from requesting multiple stops
-                AutoStopRecording();
-            }
-        }
 
-        private void SaveVolumeAverage(DateTime currentTime)
-        {
             // Only keep last SilenceSeconds + 1 seconds for average calculation
             while (_volumeAverage.Count > 0 && _volumeAverage.Peek().Timestamp < currentTime.AddSeconds((_optionsService.Options.SilencePeriod + 1) * -1))
             {
@@ -324,6 +304,21 @@
             }
 
             _volumeAverage.Enqueue(new VolumeSample { VolumeLevel = VolumeLevelAsPercentage, Timestamp = currentTime });
+
+            int average = 0;
+            _volumeAverage.ForEach(v => average += v.VolumeLevel);
+            average /= _volumeAverage.Count;
+
+            // Only check average if we have at least SilenceSeconds of volume data
+            if (_volumeAverage.Peek().Timestamp < currentTime.AddSeconds(_optionsService.Options.SilencePeriod * -1) && average < _minVolumeAverage)
+            {
+                RecordingStatus = RecordingStatus.StopRequested;  // Prevent threading from requesting multiple stops
+                AutoStopRecording();
+            }
+        }
+
+        private void CalculateVolumeAverage(DateTime currentTime)
+        {
         }
 
         private void AutoStopRecording()
@@ -368,7 +363,6 @@
 
                 CheckDiskSpace(candidateFile);
 
-                _stopRequested = false;
                 _audioService.StartRecording(candidateFile, _optionsService);
                 _stopwatch.Restart();
             }
