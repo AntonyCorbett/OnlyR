@@ -368,6 +368,7 @@
 
                 CheckDiskSpace(candidateFile);
 
+                _stopRequested = false;
                 _audioService.StartRecording(candidateFile, _optionsService);
                 _stopwatch.Restart();
             }
