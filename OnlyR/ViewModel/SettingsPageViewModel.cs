@@ -327,11 +327,11 @@
         {
             SilencePeriod[] result =
             {
-                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 10), Seconds = 10},
-                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 30), Seconds = 10},
-                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 1), Seconds = 60},
-                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 5), Seconds = 300},
-                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 10), Seconds = 600}
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 10), Seconds = 10 },
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_SECONDS, 30), Seconds = 10 },
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 1), Seconds = 60 },
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 5), Seconds = 300 },
+                new SilencePeriod { Name = string.Format(Properties.Resources.X_MINS, 10), Seconds = 600 },
             };
 
             return result;
