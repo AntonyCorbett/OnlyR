@@ -133,6 +133,7 @@
                     Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"/>
 
                 <CheckBox 
+                    x:Name="StopOnSilenceCheckBox"
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding StopOnSilence, Mode=TwoWay}"
                     Content="{x:Static resx:Resources.SETTINGS_STOP_SILENCE}"/>
@@ -140,6 +141,7 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding SilencePeriods}" 
+                    IsEnabled="{Binding ElementName=StopOnSilenceCheckBox, Path=IsChecked}"
                     
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SILENCE_PERIOD}"
                     DisplayMemberPath="Name" 

@@ -294,7 +294,7 @@
 
         private void StopIfSilenceDetected()
         {
-            var currentTime = DateTime.Now;
+            var currentTime = DateTime.UtcNow;
 
 
             // Only keep last SilenceSeconds + 1 seconds for average calculation
@@ -310,10 +310,15 @@
             average /= _volumeAverage.Count;
 
             // Only check average if we have at least SilenceSeconds of volume data
-            if (_volumeAverage.Peek().Timestamp < currentTime.AddSeconds(_optionsService.Options.SilencePeriod * -1) && average < _minVolumeAverage)
+            if (_volumeAverage.Count > 0 && _volumeAverage.Peek().Timestamp < currentTime.AddSeconds(_optionsService.Options.SilencePeriod * -1) && average < _minVolumeAverage)
             {
                 RecordingStatus = RecordingStatus.StopRequested;  // Prevent threading from requesting multiple stops
-                AutoStopRecording();
+
+                Log.Logger.Information(
+                "Automatically stopped recording having detected {Limit} seconds of silence",
+                _optionsService.Options.SilencePeriod);
+
+                StopRecordingCommand.Execute(null);
             }
         }
 
