@@ -1,7 +1,6 @@
 ﻿namespace OnlyR.Services.Audio
 {
     using System;
-    using System.Collections.Generic;
     using Core.EventArgs;
     using Model;
     using Options;

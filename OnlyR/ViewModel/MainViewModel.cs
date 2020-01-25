@@ -14,6 +14,7 @@ namespace OnlyR.ViewModel
     using Messages;
     using Model;
     using OnlyR.AutoUpdates;
+    using OnlyR.Services.AudioSilence;
     using OnlyR.Services.PurgeRecordings;
     using Pages;
     using Services.Audio;
@@ -44,7 +45,8 @@ namespace OnlyR.ViewModel
            IRecordingDestinationService destService,
            ICopyRecordingsService copyRecordingsService,
            ISnackbarService snackbarService,
-           IPurgeRecordingsService purgeRecordingsService)
+           IPurgeRecordingsService purgeRecordingsService,
+           ISilenceService silenceService)
         {
             if (commandLineService.NoGpu)
             {
@@ -73,7 +75,8 @@ namespace OnlyR.ViewModel
                     commandLineService, 
                     destService, 
                     copyRecordingsService,
-                    snackbarService));
+                    snackbarService,
+                    silenceService));
 
             SetupPage(
                 SettingsPageViewModel.PageName, 

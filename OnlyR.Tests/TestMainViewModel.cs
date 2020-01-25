@@ -80,6 +80,7 @@
             var copyService = MockGenerator.CreateCopyRecordingsService();
             var snackbarService = MockGenerator.CreateSnackbarService();
             var purgeRecordingsService = MockGenerator.CreatePurgeRecordingsService();
+            var silenceService = MockGenerator.CreateSilenceService();
 
             return new MainViewModel(
                 audioService,
@@ -88,7 +89,8 @@
                 destService.Object,
                 copyService.Object,
                 snackbarService.Object,
-                purgeRecordingsService.Object);
+                purgeRecordingsService.Object,
+                silenceService.Object);
         }
     }
 }

@@ -18,6 +18,7 @@
     using Model;
     using Serilog;
     using Services.Audio;
+    using Services.AudioSilence;
     using Services.Options;
     using Services.RecordingCopies;
     using Services.RecordingDestination;
@@ -37,6 +38,7 @@
         private readonly ICopyRecordingsService _copyRecordingsService;
         private readonly ICommandLineService _commandLineService;
         private readonly ISnackbarService _snackbarService;
+        private readonly ISilenceService _silenceService;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
         private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new ConcurrentDictionary<char, DateTime>();
@@ -53,13 +55,15 @@
             ICommandLineService commandLineService,
             IRecordingDestinationService destinationService,
             ICopyRecordingsService copyRecordingsService,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService,
+            ISilenceService silenceService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
 
             _commandLineService = commandLineService;
             _copyRecordingsService = copyRecordingsService;
             _snackbarService = snackbarService;
+            _silenceService = silenceService;
 
             _stopwatch = new Stopwatch();
 
@@ -86,6 +90,8 @@
         }
 
         public static string PageName => "RecordingPage";
+
+        private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
 
         // Commands (bound in ctor)...
         public RelayCommand StartRecordingCommand { get; set; }
@@ -278,13 +284,31 @@
                 if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
                     ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
                 {
-                    Debug.WriteLine("Stopping");
-                    AutoStopRecording();
+                    AutoStopRecordingAtLimit();
+                }
+
+                if (StopOnSilenceEnabled)
+                {
+                    _silenceService.ReportVolume(e.VolumeLevelAsPercentage);
+
+                    if (_silenceService.GetSecondsOfSilence() > _optionsService.Options.MaxSilenceTimeSeconds)
+                    {
+                        AutoStopRecordingAfterSilence();
+                    }
                 }
             }
         }
+        
+        private void AutoStopRecordingAfterSilence()
+        {
+            Log.Logger.Information(
+                "Automatically stopped recording after {Limit} seconds of silence",
+                _optionsService.Options.MaxSilenceTimeSeconds);
 
-        private void AutoStopRecording()
+            StopRecordingCommand.Execute(null);
+        }
+
+        private void AutoStopRecordingAtLimit()
         {
             Log.Logger.Information(
                 "Automatically stopped recording having reached the {Limit} min limit",
@@ -319,6 +343,8 @@
             {
                 ClearErrorMsg();
                 Log.Logger.Information("Start requested");
+
+                _silenceService.Reset();
 
                 DateTime recordingDate = DateTime.Today;
                 var candidateFile = _destinationService.GetRecordingFileCandidate(

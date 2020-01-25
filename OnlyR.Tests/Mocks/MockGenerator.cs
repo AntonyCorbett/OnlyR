@@ -3,6 +3,7 @@
     using Moq;
     using OnlyR.Services.PurgeRecordings;
     using OnlyR.Services.RecordingCopies;
+    using OnlyR.Services.AudioSilence;
     using OnlyR.Services.Snackbar;
     using Services.Audio;
     using Services.Options;
@@ -46,6 +47,11 @@
         public static Mock<IPurgeRecordingsService> CreatePurgeRecordingsService()
         {
             return new Mock<IPurgeRecordingsService>();
+        }
+
+        public static Mock<ISilenceService> CreateSilenceService()
+        {
+            return new Mock<ISilenceService>();
         }
     }
 }

@@ -164,9 +164,12 @@
     <Compile Include="Model\RecordingLifeTimeItem.cs" />
     <Compile Include="Model\RecordingPageNavigationState.cs" />
     <Compile Include="Model\SampleRateItem.cs" />
+    <Compile Include="Model\MaxSilenceTimeItem.cs" />
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\AudioSilence\ISilenceService.cs" />
+    <Compile Include="Services\AudioSilence\SilenceService.cs" />
     <Compile Include="Services\Options\CommandLineService.cs" />
     <Compile Include="Services\Options\ICommandLineService.cs" />
     <Compile Include="Services\PurgeRecordings\IPurgeRecordingsService.cs" />
@@ -304,6 +307,7 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(ProjectDir)Properties\Resources.no-NO.resx" "$(ProjectDir)Properties\Resources.no.resx"</PreBuildEvent>

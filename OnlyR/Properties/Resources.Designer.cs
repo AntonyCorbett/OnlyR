@@ -19,7 +19,7 @@ namespace OnlyR.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -448,6 +448,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Silence detection (% of full volume).
+        /// </summary>
+        public static string SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME {
+            get {
+                return ResourceManager.GetString("SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start minimised.
         /// </summary>
         public static string SETTINGS_START_MINIMIZED {
@@ -462,6 +471,15 @@ namespace OnlyR.Properties {
         public static string SETTINGS_START_ON_LAUNCH {
             get {
                 return ResourceManager.GetString("SETTINGS_START_ON_LAUNCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop on a period of silence.
+        /// </summary>
+        public static string SETTINGS_STOP_RECORDING_ON_SILENCE {
+            get {
+                return ResourceManager.GetString("SETTINGS_STOP_RECORDING_ON_SILENCE", resourceCulture);
             }
         }
         
@@ -498,6 +516,15 @@ namespace OnlyR.Properties {
         public static string STEREO {
             get {
                 return ResourceManager.GetString("STEREO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string STOP_ON_SILENCE_DISABLED {
+            get {
+                return ResourceManager.GetString("STOP_ON_SILENCE_DISABLED", resourceCulture);
             }
         }
         
@@ -552,6 +579,15 @@ namespace OnlyR.Properties {
         public static string X_MINS {
             get {
                 return ResourceManager.GetString("X_MINS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} seconds.
+        /// </summary>
+        public static string X_SECS {
+            get {
+                return ResourceManager.GetString("X_SECS", resourceCulture);
             }
         }
     }

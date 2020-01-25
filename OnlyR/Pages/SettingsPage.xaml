@@ -22,6 +22,13 @@
             <Setter Property="materialDesign:ComboBoxAssist.ClassicMode" Value="true" />
         </Style>
 
+        <Style x:Key="SliderStyle" BasedOn="{StaticResource MaterialDesignSlider}" TargetType="{x:Type Slider}">
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="Orientation" Value="Horizontal"  />
+            <Setter Property="Minimum" Value="1"/>
+            <Setter Property="Maximum" Value="90"/>
+        </Style>
+
         <Style x:Key="SettingsCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
@@ -106,7 +113,20 @@
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualMinutes" 
                     SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"/>
-                
+
+                <ComboBox 
+                    Style="{StaticResource SettingsComboStyle}"
+                    ItemsSource="{Binding MaxSilenceTimeItems}"
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
+                    DisplayMemberPath="Name" 
+                    SelectedValuePath="Seconds" 
+                    SelectedValue="{Binding MaxSilenceTimeSeconds, Mode=TwoWay}"/>
+
+                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"></Label>
+                <Slider 
+                    Value="{Binding SilenceAsVolumePercentage}"
+                    Style="{StaticResource SliderStyle}" />
+
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding ShouldFadeRecordings, Mode=TwoWay}" 

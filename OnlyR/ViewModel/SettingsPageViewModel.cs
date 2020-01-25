@@ -32,6 +32,7 @@
         private readonly RecordingLifeTimeItem[] _recordingLifetimes;
         private readonly ICommandLineService _commandLineService;
         private readonly LanguageItem[] _languages;
+        private readonly MaxSilenceTimeItem[] _maxSilenceTimes;
 
         public SettingsPageViewModel(
             IAudioService audioService, 
@@ -50,6 +51,7 @@
             _maxRecordingTimes = GenerateMaxRecordingTimeItems();
             _recordingLifetimes = GenerateRecordingLifeTimes();
             _languages = GetSupportedLanguages();
+            _maxSilenceTimes = GetMaxSilenceTimes();
 
             NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
@@ -68,6 +70,32 @@
         public IEnumerable<MaxRecordingTimeItem> MaxRecordingTimes => _maxRecordingTimes;
 
         public IEnumerable<RecordingLifeTimeItem> RecordingLifeTimes => _recordingLifetimes;
+
+        public IEnumerable<MaxSilenceTimeItem> MaxSilenceTimeItems => _maxSilenceTimes;
+
+        public int MaxSilenceTimeSeconds
+        {
+            get => _optionsService.Options.MaxSilenceTimeSeconds;
+            set
+            {
+                if (_optionsService.Options.MaxSilenceTimeSeconds != value)
+                {
+                    _optionsService.Options.MaxSilenceTimeSeconds = value;
+                }
+            }
+        }
+
+        public int SilenceAsVolumePercentage
+        {
+            get => _optionsService.Options.SilenceAsVolumePercentage;
+            set
+            {
+                if (_optionsService.Options.SilenceAsVolumePercentage != value)
+                {
+                    _optionsService.Options.SilenceAsVolumePercentage = value;
+                }
+            }
+        }
 
         public int MaxRecordingTime
         {
@@ -259,7 +287,7 @@
 
         private static RecordingLifeTimeItem[] GenerateRecordingLifeTimes()
         {
-            RecordingLifeTimeItem[] result = 
+            return new[]
             {
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_0, Days = 0 },
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_DAY, Days = 1 },
@@ -272,13 +300,26 @@
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_YR, Days = 365 },
                 new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_YRS, Days = 365 * 2 },
             };
+        }
 
-            return result;
+        private static MaxSilenceTimeItem[] GetMaxSilenceTimes()
+        {
+            return new[]
+            {
+                new MaxSilenceTimeItem { Name = Properties.Resources.STOP_ON_SILENCE_DISABLED, Seconds = 0 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 10), Seconds = 10 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 15), Seconds = 15 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 30), Seconds = 30 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 1), Seconds = 60 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 2), Seconds = 120 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 3), Seconds = 180 },
+                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 5), Seconds = 300 },
+            };
         }
 
         private static MaxRecordingTimeItem[] GenerateMaxRecordingTimeItems()
         {
-            MaxRecordingTimeItem[] result =
+            return new[]
             {
                 new MaxRecordingTimeItem { Name = Properties.Resources.NO_LIMIT, ActualMinutes = 0 },
                 new MaxRecordingTimeItem { Name = Properties.Resources.ONE_MIN, ActualMinutes = 1 },
@@ -291,8 +332,6 @@
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualMinutes = 120 },
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 },
             };
-
-            return result;
         }
 
         private static bool CanExecuteNavigateRecording()

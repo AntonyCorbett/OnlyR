@@ -1,3 +1,5 @@
+using OnlyR.Services.AudioSilence;
+
 namespace OnlyR.ViewModel
 {
     using CommonServiceLocator;
@@ -27,6 +29,7 @@ namespace OnlyR.ViewModel
             SimpleIoc.Default.Register<IDriveEjectionService, DriveEjectionService>();
             SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
             SimpleIoc.Default.Register<IPurgeRecordingsService, PurgeRecordingsService>();
+            SimpleIoc.Default.Register<ISilenceService, SilenceService>();
             SimpleIoc.Default.Register<MainViewModel>();
         }
 

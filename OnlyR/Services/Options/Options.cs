@@ -18,6 +18,7 @@
         private const int DefaultSampleRate = 44100;
         private const int DefaultChannelCount = 1;
         private const int DefaultMp3BitRate = 96;
+        private const int DefaultSilenceAsVolumePercentage = 5;
 
         private static readonly int[] ValidSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
         private static readonly int[] ValidChannelCounts = { 1, 2 };
@@ -34,6 +35,7 @@
             RecordingDevice = DefaultRecordingDevice;
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
             RecordingsLifeTimeDays = 0; // forever
+            SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
         }
 
         public int MaxRecordingsInOneFolder { get; set; }
@@ -47,6 +49,10 @@
         public string Genre { get; set; }
 
         public int MaxRecordingTimeMins { get; set; }
+
+        public int MaxSilenceTimeSeconds { get; set; }
+
+        public int SilenceAsVolumePercentage { get; set; }
 
         public int RecordingDevice { get; set; }
 
@@ -84,7 +90,7 @@
         {
             return ValidMp3BitRates;
         }
-
+        
         /// <summary>
         /// Validates the data, correcting automatically as required
         /// </summary>
@@ -132,6 +138,16 @@
             if (RecordingDevice < 0)
             {
                 RecordingDevice = DefaultRecordingDevice;
+            }
+
+            if (SilenceAsVolumePercentage < 1 || SilenceAsVolumePercentage > 90)
+            {
+                SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
+            }
+
+            if (MaxSilenceTimeSeconds < 0)
+            {
+                MaxSilenceTimeSeconds = 0;
             }
         }
     }
