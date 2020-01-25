@@ -273,10 +273,14 @@
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
             RaisePropertyChanged(nameof(ElapsedTimeStr));
 
-            if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
-                ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+            if (RecordingStatus != RecordingStatus.StopRequested)
             {
-                AutoStopRecording();
+                if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
+                    ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+                {
+                    Debug.WriteLine("Stopping");
+                    AutoStopRecording();
+                }
             }
         }
 
