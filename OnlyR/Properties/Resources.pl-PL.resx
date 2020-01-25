@@ -242,7 +242,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Nagrywanie...</value>
+    <value>Folder nagrania</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
@@ -254,11 +254,15 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Okres ważności nagrywania</value>
+    <value>Okres przechowywania nagrań</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
     <value>Częstotliwość próbkowania</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
+    <value>Silence detection (% of full volume)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
@@ -268,6 +272,10 @@
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
     <value>Rozpocznij nagrywanie po uruchomieniu OnlyR</value>
     <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
+    <value>Stop on a period of silence</value>
+    <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
     <value>Ustawienia</value>
@@ -286,6 +294,9 @@
   <data name="STOPPING" xml:space="preserve">
     <value>Zatrzymywanie</value>
   </data>
+  <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Zatrzymaj nagrywanie</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
@@ -301,5 +312,8 @@
   </data>
   <data name="X_MINS" xml:space="preserve">
     <value>{0} min.</value>
+  </data>
+  <data name="X_SECS" xml:space="preserve">
+    <value>{0} seconds</value>
   </data>
 </root>
