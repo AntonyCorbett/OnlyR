@@ -262,7 +262,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
-    <value>Silence detection (% of full volume)</value>
+    <value>Rilevamento silenzio (% del volume massimo)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
