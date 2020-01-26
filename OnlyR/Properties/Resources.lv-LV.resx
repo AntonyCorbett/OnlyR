@@ -295,7 +295,7 @@
     <value>Apstāsies</value>
   </data>
   <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
-    <value>Izslēgta</value>
+    <value>Izslēgts</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Apturēt ierakstīšanu</value>
