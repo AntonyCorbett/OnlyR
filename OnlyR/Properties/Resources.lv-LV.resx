@@ -274,7 +274,7 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
-    <value>Apstāties, kad noteikts klusums</value>
+    <value>Pārtraukt ierakstu, kad noteikts klusums</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
