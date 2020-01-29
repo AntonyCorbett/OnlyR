@@ -314,6 +314,6 @@
     <value>{0} minutos</value>
   </data>
   <data name="X_SECS" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} segundos</value>
   </data>
 </root>
