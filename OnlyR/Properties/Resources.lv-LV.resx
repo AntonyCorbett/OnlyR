@@ -262,7 +262,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
-    <value>Silence detection (% of full volume)</value>
+    <value>Klusuma noteikšana (% no pilnā skaļuma)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
@@ -274,7 +274,7 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
-    <value>Stop on a period of silence</value>
+    <value>Pārtraukt ierakstu, kad noteikts klusums</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
@@ -295,7 +295,7 @@
     <value>Apstāsies</value>
   </data>
   <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Izslēgts</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Apturēt ierakstīšanu</value>
@@ -314,6 +314,6 @@
     <value>{0} minūtes</value>
   </data>
   <data name="X_SECS" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} sekundes</value>
   </data>
 </root>

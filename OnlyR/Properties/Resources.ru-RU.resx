@@ -295,7 +295,7 @@
     <value>Остановка</value>
   </data>
   <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Отключено</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Остановить запись</value>
@@ -314,6 +314,6 @@
     <value>{0} минут</value>
   </data>
   <data name="X_SECS" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} секунд</value>
   </data>
 </root>
