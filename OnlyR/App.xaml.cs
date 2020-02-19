@@ -1,4 +1,7 @@
-﻿namespace OnlyR
+﻿using GalaSoft.MvvmLight.Messaging;
+using OnlyR.ViewModel.Messages;
+
+namespace OnlyR
 {
     using System.IO;
     using System.Threading;
@@ -39,6 +42,12 @@
         {
             _appMutex?.Dispose();
             Log.Logger.Information("==== Exit ====");
+        }
+
+        protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
+        {
+            Messenger.Default.Send(new SessionEndingMessage(e));
+            base.OnSessionEnding(e);
         }
 
         private static void ConfigureAutoMapper()

@@ -59,6 +59,7 @@
             ISilenceService silenceService)
         {
             Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
+            Messenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
 
             _commandLineService = commandLineService;
             _copyRecordingsService = copyRecordingsService;
@@ -273,7 +274,13 @@
         {
             // nothing to do
         }
-        
+
+        private void OnSessionEnding(SessionEndingMessage e)
+        {
+            // allow the session to shutdown if we're not recording
+            e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
+        }
+
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;

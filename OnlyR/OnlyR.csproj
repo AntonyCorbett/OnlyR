@@ -203,6 +203,7 @@
     <Compile Include="ViewModel\Messages\AlwaysOnTopChanged.cs" />
     <Compile Include="ViewModel\Messages\NavigateMessage.cs" />
     <Compile Include="ViewModel\Messages\RemovableDriveMessage.cs" />
+    <Compile Include="ViewModel\Messages\SessionEndingMessage.cs" />
     <Compile Include="ViewModel\Messages\ShutDownApplicationMessage.cs" />
     <Compile Include="ViewModel\RecordingPageViewModel.cs" />
     <Compile Include="ViewModel\Messages\BeforeShutDownMessage.cs" />
