@@ -126,6 +126,9 @@
 
         public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
 
+        public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
+                                       RecordingStatus != RecordingStatus.StopRequested;
+
         public int VolumeLevelAsPercentage
         {
             get => _volumeLevel;
@@ -167,6 +170,7 @@
                     RaisePropertyChanged(nameof(RecordingStatus));
                     RaisePropertyChanged(nameof(IsNotRecording));
                     RaisePropertyChanged(nameof(IsRecording));
+                    RaisePropertyChanged(nameof(IsReadyToRecord));
                     RaisePropertyChanged(nameof(IsRecordingOrStopping));
                     RaisePropertyChanged(nameof(IsSaveEnabled));
                 }

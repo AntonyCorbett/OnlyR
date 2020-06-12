@@ -57,7 +57,10 @@
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
 
-        <Button Command="{Binding NavigateRecordingCommand}" >
+        <Button Command="{Binding NavigateRecordingCommand}" 
+                AutomationProperties.Name="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}"
+                AutomationProperties.AutomationId="BackBtn"
+                ToolTip="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}">
             <materialDesign:PackIcon
                 Kind="Backburger"
                 Height="24"
@@ -80,6 +83,8 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     DisplayMemberPath="DeviceName" 
                     SelectedValuePath="DeviceId" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
+                    AutomationProperties.AutomationId="RecordingDevice"
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
                 
                 <ComboBox 
@@ -205,6 +210,9 @@
 
         <Button Grid.Row="2" 
                 Command="{Binding ShowRecordingsCommand}"
+                AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
+                AutomationProperties.AutomationId="OpenFolderBtn2"
+                ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
                 Content="{x:Static resx:Resources.SETTINGS_RECORDINGS_BTN}" />
 
     </Grid>

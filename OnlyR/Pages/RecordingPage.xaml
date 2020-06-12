@@ -15,6 +15,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter"
              xmlns:resx="clr-namespace:OnlyR.Properties"
+             xmlns:behaviours="clr-namespace:OnlyR.Behaviours"
              mc:Ignorable="d" 
              d:DesignHeight="330" d:DesignWidth="300">
     <UserControl.Resources>
@@ -98,10 +99,13 @@
             </Grid.RowDefinitions>
 
             <Button Style="{StaticResource StartRecordingBtnStyle}" 
-                    Visibility="{Binding Path=IsNotRecording, Converter={StaticResource BoolToVis}}"
+                    AutomationProperties.Name="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
+                    AutomationProperties.AutomationId="StartBtn"
+                    Visibility="{Binding Path=IsReadyToRecord, Converter={StaticResource BoolToVis}}"
                     ToolTip="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
                     IsEnabled="{Binding IsNotRecording}"
-                    Command="{Binding StartRecordingCommand}" >
+                    Command="{Binding StartRecordingCommand}"
+                    behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True">
                 <materialDesign:PackIcon
                    Kind="Microphone"
                    Height="56"
@@ -110,10 +114,13 @@
 
             <!-- ReSharper disable once Xaml.MissingGridIndex -->
             <Button Style="{StaticResource StopRecordingBtnStyle}" 
+                    AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                    AutomationProperties.AutomationId="StopBtn"
                     ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
                     IsEnabled="{Binding IsRecording}"
                     Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
-                    Command="{Binding StopRecordingCommand}" >
+                    Command="{Binding StopRecordingCommand}"
+                    behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True">
                 <materialDesign:PackIcon
                    Kind="Stop"
                    Height="56"
@@ -128,6 +135,8 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Style="{StaticResource SaveBtnStyle}" 
+                                AutomationProperties.Name="{Binding SaveHint}"
+                                AutomationProperties.AutomationId="SaveBtn"
                                 Margin="0,0,10,0"
                                 ToolTip="{Binding SaveHint}"
                                 materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsCopying}"
@@ -144,6 +153,8 @@
 
                         <Button Style="{StaticResource SettingsBtnStyle}" 
                                 Margin="0,0,10,0"
+                                AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
+                                AutomationProperties.AutomationId="OpenFolderBtn"
                                 ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
                                 Visibility="{Binding Path=NoFolder, Converter={StaticResource InverseBoolToVisConverter}}"
                                 Command="{Binding ShowRecordingsCommand}" >
@@ -153,6 +164,8 @@
                                 Width="22" />
                         </Button>
                         <Button Style="{StaticResource SettingsBtnStyle}" 
+                                AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
+                                AutomationProperties.AutomationId="SettingsBtn"
                                 ToolTip="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
                                 IsEnabled="{Binding IsNotRecording}"
                                 Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}"

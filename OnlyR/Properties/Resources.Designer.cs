@@ -61,11 +61,29 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only R Application.
+        /// </summary>
+        public static string ACCESSIBILITY_ONLY_R {
+            get {
+                return ResourceManager.GetString("ACCESSIBILITY_ONLY_R", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Version: {0}.
         /// </summary>
         public static string APP_VER {
             get {
                 return ResourceManager.GetString("APP_VER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back to main page.
+        /// </summary>
+        public static string BACK_TO_MAIN_PAGE {
+            get {
+                return ResourceManager.GetString("BACK_TO_MAIN_PAGE", resourceCulture);
             }
         }
         

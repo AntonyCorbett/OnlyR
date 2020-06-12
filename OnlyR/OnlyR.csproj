@@ -152,6 +152,7 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="AutoUpdates\VersionDetection.cs" />
+    <Compile Include="Behaviours\VisibilityFocusBehaviour.cs" />
     <Compile Include="Exceptions\NoRecordingsException.cs" />
     <Compile Include="Exceptions\NoSpaceException.cs" />
     <Compile Include="Model\BitRateItem.cs" />
