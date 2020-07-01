@@ -117,8 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ACCESSIBILITY_ONLY_R" xml:space="preserve">
+    <value>Only R</value>
+    <comment>Application title (for accessibility)</comment>
+  </data>
   <data name="APP_VER" xml:space="preserve">
     <value>Wersja {0}</value>
+  </data>
+  <data name="BACK_TO_MAIN_PAGE" xml:space="preserve">
+    <value>Powrót do strony głównej</value>
+    <comment>Tooltip for the back button on the settings page</comment>
   </data>
   <data name="COPIED" xml:space="preserve">
     <value>Plik skopiowany</value>
