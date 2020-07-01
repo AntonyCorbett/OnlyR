@@ -3,6 +3,10 @@
 #pragma warning disable SA1401 // Fields should be private
 #pragma warning disable S1905 // unnecessary cast
 #pragma warning disable S101 // Types should be named in PascalCase
+#pragma warning disable S1144 // Remove unused field
+#pragma warning disable S4487 // unused private class field
+#pragma warning disable IDE0051 // unused member
+
     using System;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
@@ -422,6 +426,9 @@
         }
     }
 
+#pragma warning restore IDE0051 // unused member
+#pragma warning restore S4487 // unused private class field
+#pragma warning restore S1144 // Remove unused field
 #pragma warning restore S101 // Types should be named in PascalCase
 #pragma warning restore S1905 // unnecessary cast
 #pragma warning restore SA1401 // Fields should be private

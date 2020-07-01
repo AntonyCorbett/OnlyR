@@ -23,7 +23,9 @@
 
         private static void IsFocusTurn(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
+#pragma warning disable IDE0038 // Use pattern matching
             if (e.NewValue is bool && (bool)e.NewValue && sender is UIElement element)
+#pragma warning restore IDE0038 // Use pattern matching
             {
                 element.IsVisibleChanged += ElementIsVisibleChanged;
             }
