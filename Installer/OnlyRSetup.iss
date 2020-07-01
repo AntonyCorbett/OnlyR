@@ -52,17 +52,18 @@ Source: "bin\Release\libmp3lame.32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\libmp3lame.64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\Microsoft.Win32.Primitives.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Microsoft.WindowsAPICodePack.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\NAudio.Lame.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\netstandard.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\Release\System.*.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; localisation
 Source: "bin\Release\cs-CZ\*.dll"; DestDir: "{app}\cs-CZ"; Flags: ignoreversion
