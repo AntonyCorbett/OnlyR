@@ -117,8 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ACCESSIBILITY_ONLY_R" xml:space="preserve">
+    <value>Приложение Only R</value>
+    <comment>Application title (for accessibility)</comment>
+  </data>
   <data name="APP_VER" xml:space="preserve">
     <value>Версия: {0}</value>
+  </data>
+  <data name="BACK_TO_MAIN_PAGE" xml:space="preserve">
+    <value>Вернуться на главную страницу</value>
+    <comment>Tooltip for the back button on the settings page</comment>
   </data>
   <data name="COPIED" xml:space="preserve">
     <value>Файлы скопированы</value>
@@ -262,7 +270,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
-    <value>Silence detection (% of full volume)</value>
+    <value>Обнаружение тишины (% от полной громкости)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
@@ -274,7 +282,7 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
-    <value>Stop on a period of silence</value>
+    <value>Останавливать в периоды тишины</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
