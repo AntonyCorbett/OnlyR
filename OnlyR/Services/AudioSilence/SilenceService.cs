@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace OnlyR.Services.AudioSilence
+﻿namespace OnlyR.Services.AudioSilence
 {
     using System;
     using OnlyR.Services.Options;

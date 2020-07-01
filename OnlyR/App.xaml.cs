@@ -1,16 +1,13 @@
-﻿using GalaSoft.MvvmLight.Messaging;
-using OnlyR.ViewModel.Messages;
-
-namespace OnlyR
+﻿namespace OnlyR
 {
     using System.IO;
     using System.Threading;
     using System.Windows;
-    using AutoMapper;
+    using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
-    using Model;
     using Serilog;
     using Utils;
+    using ViewModel.Messages;
 
     /// <summary>
     /// Interaction logic for App.xaml.
@@ -34,7 +31,6 @@ namespace OnlyR
             else
             {
                 ConfigureLogger();
-                ConfigureAutoMapper();
             }
         }
 
@@ -48,14 +44,6 @@ namespace OnlyR
         {
             Messenger.Default.Send(new SessionEndingMessage(e));
             base.OnSessionEnding(e);
-        }
-
-        private static void ConfigureAutoMapper()
-        {
-            Mapper.Initialize(cfg =>
-            {
-                cfg.AddProfile<ObjectMappingProfile>();
-            });
         }
 
         private void ConfigureLogger()

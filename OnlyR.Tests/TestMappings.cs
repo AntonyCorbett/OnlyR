@@ -1,5 +1,6 @@
 ﻿namespace OnlyR.Tests
 {
+    using AutoMapper;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Model;
 
@@ -9,12 +10,12 @@
         [TestMethod]
         public void TestAutoMapper()
         {
-            AutoMapper.Mapper.Initialize(cfg =>
+            var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<ObjectMappingProfile>();
             });
-
-            AutoMapper.Mapper.AssertConfigurationIsValid();
+            
+            config.AssertConfigurationIsValid();
         }
     }
 }

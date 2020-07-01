@@ -4,7 +4,12 @@
 
     internal static class VisibilityFocusBehaviour
     {
-        public static readonly DependencyProperty IsFocusEnabledProperty;
+        public static readonly DependencyProperty IsFocusEnabledProperty = 
+            DependencyProperty.RegisterAttached(
+                "IsFocusEnabled",
+                typeof(bool),
+                typeof(VisibilityFocusBehaviour),
+                new UIPropertyMetadata(false, IsFocusTurn));
 
         public static void SetIsFocusEnabled(DependencyObject dependencyObject, bool value)
         {
@@ -14,15 +19,6 @@
         public static bool GetIsFocusEnabled(DependencyObject dependencyObject)
         {
             return (bool)dependencyObject.GetValue(IsFocusEnabledProperty);
-        }
-
-        static VisibilityFocusBehaviour()
-        {
-            IsFocusEnabledProperty = DependencyProperty.RegisterAttached(
-                "IsFocusEnabled",
-                typeof(bool),
-                typeof(VisibilityFocusBehaviour),
-                new UIPropertyMetadata(false, IsFocusTurn));
         }
 
         private static void IsFocusTurn(DependencyObject sender, DependencyPropertyChangedEventArgs e)

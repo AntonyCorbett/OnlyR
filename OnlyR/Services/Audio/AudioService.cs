@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using AutoMapper;
     using Core.Enums;
     using Core.EventArgs;
     using Core.Recorder;
@@ -16,11 +17,14 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class AudioService : IAudioService, IDisposable
     {
+        private readonly IMapper _mapper;
         private AudioRecorder _audioRecorder;
         private RecordingCandidate _currentRecording;
 
-        public AudioService()
+        public AudioService(IMapper mapper)
         {
+            _mapper = mapper;
+
             _audioRecorder = new AudioRecorder();
             _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
             _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
@@ -47,7 +51,7 @@
         public RecordingDeviceItem[] GetRecordingDeviceList()
         {
             var devices = AudioRecorder.GetRecordingDeviceList();
-            return AutoMapper.Mapper.Map<List<RecordingDeviceItem>>(devices).ToArray();
+            return _mapper.Map<List<RecordingDeviceItem>>(devices).ToArray();
         }
 
         /// <summary>

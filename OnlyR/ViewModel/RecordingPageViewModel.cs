@@ -28,7 +28,7 @@
     /// <summary>
     /// View model for Recording page. Contains properties that the Recording page 
     /// can data bind to, i.e. it has everything that is needed by the user during 
-    /// interaction with the Recording page
+    /// interaction with the Recording page.
     /// </summary>
     public class RecordingPageViewModel : ViewModelBase, IPage
     {
@@ -92,8 +92,6 @@
 
         public static string PageName => "RecordingPage";
 
-        private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
-
         // Commands (bound in ctor)...
         public RelayCommand StartRecordingCommand { get; set; }
 
@@ -155,7 +153,7 @@
         public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
 
         /// <summary>
-        /// Gets or sets the Recording status
+        /// Gets or sets the Recording status.
         /// </summary>
         public RecordingStatus RecordingStatus
         {
@@ -178,7 +176,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the Recording Status as a string
+        /// Gets or sets the Recording Status as a string.
         /// </summary>
         public string StatusStr
         {
@@ -239,10 +237,12 @@
             }
         }
 
+        private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
+
         /// <summary>
-        /// Responds to activation
+        /// Responds to activation.
         /// </summary>
-        /// <param name="state">RecordingPageNavigationState object (or null)</param>
+        /// <param name="state">RecordingPageNavigationState object (or null).</param>
         public void Activated(object state)
         {
             // on display of page...
@@ -384,16 +384,12 @@
 
         private void CheckDiskSpace(string filePath)
         {
-            if (!string.IsNullOrEmpty(filePath))
+            if (!string.IsNullOrEmpty(filePath) && 
+                FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree) && 
+                bytesFree < _safeMinBytesFree)
             {
-                if (FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree))
-                {
-                    if (bytesFree < _safeMinBytesFree)
-                    {
-                        // "Insufficient free space to record"
-                        throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
-                    }
-                }
+                // "Insufficient free space to record"
+                throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
             }
         }
 

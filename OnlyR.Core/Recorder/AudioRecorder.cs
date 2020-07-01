@@ -12,7 +12,7 @@
     /// <summary>
     /// The audio recorder. Uses NAudio for the heavy lifting, but it's isolated in this class
     /// so if we need to replace NAudio with another library we just need to modify this part
-    /// of the application
+    /// of the application.
     /// </summary>
     public sealed class AudioRecorder : IDisposable
     {
@@ -62,9 +62,9 @@
         }
 
         /// <summary>
-        /// Starts recording
+        /// Starts recording.
         /// </summary>
-        /// <param name="recordingConfig">Recording configuration</param>
+        /// <param name="recordingConfig">Recording configuration.</param>
         public void Start(RecordingConfig recordingConfig)
         {
             if (_recordingStatus == RecordingStatus.NotRecording)
@@ -94,9 +94,9 @@
         }
 
         /// <summary>
-        /// Stop recording
+        /// Stop recording.
         /// </summary>
-        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately</param>
+        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
         public void Stop(bool fadeOut)
         {
             if (_recordingStatus == RecordingStatus.Recording)
@@ -124,9 +124,6 @@
                 Track = recordingConfig.TrackNumber.ToString(),
                 Genre = recordingConfig.Genre,
                 Year = recordingConfig.RecordingDate.Year.ToString(),
-                
-                // fix bug in naudio.lame
-                UserDefinedTags = new string[] { },
             };
         }
 

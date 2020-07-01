@@ -1,5 +1,8 @@
 ﻿namespace OnlyR.Services.RecordingCopies
 {
+#pragma warning disable SA1401 // Fields should be private
+#pragma warning disable S1905 // unnecessary cast
+#pragma warning disable S101 // Types should be named in PascalCase
     using System;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
@@ -8,7 +11,6 @@
 
     // adapted from work by Armanisoft from here:
     // https://www.codeproject.com/Articles/375916/How-to-Prepare-a-USB-Drive-for-Safe-Removal-2
-
     internal static class DriveEjectionServiceNativeMethods
     {
         // from setupapi.h
@@ -371,7 +373,6 @@
                     if (DeviceNumber == driveDeviceNumber)
                     {
                         // matched the given device number with the one of the current device
-                        
                         SetupDiDestroyDeviceInfoList(hDevInfo);
                         return devData.devInst;
                     }
@@ -385,6 +386,7 @@
         }
 
         [StructLayout(LayoutKind.Sequential)]
+
         private struct STORAGE_DEVICE_NUMBER
         {
             public int DeviceType;
@@ -419,4 +421,8 @@
             public int reserved = 0;
         }
     }
+
+#pragma warning restore S101 // Types should be named in PascalCase
+#pragma warning restore S1905 // unnecessary cast
+#pragma warning restore SA1401 // Fields should be private
 }

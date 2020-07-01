@@ -22,7 +22,7 @@
         public bool Active { get; private set; }
 
         /// <summary>
-        /// Start to fade out
+        /// Start to fade out.
         /// </summary>
         public void Start()
         {
@@ -32,10 +32,10 @@
         }
 
         /// <summary>
-        /// Modifies the audio buffer in accord with the current fading status
+        /// Modifies the audio buffer in accord with the current fading status.
         /// </summary>
-        /// <param name="buffer">The aduio samples</param>
-        /// <param name="bytesInBuffer">The number of bytes in the audio buffer</param>
+        /// <param name="buffer">The audio samples.</param>
+        /// <param name="bytesInBuffer">The number of bytes in the audio buffer.</param>
         public void FadeBuffer(byte[] buffer, int bytesInBuffer)
         {
             _sampleCountModified += bytesInBuffer;
