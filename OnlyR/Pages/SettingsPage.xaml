@@ -82,7 +82,7 @@
                     ItemsSource="{Binding RecordingDevices}" 
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     DisplayMemberPath="DeviceName" 
-                    SelectedValuePath="DeviceId" 
+                    SelectedValuePath="DeviceId"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     AutomationProperties.AutomationId="RecordingDevice"
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
@@ -93,6 +93,8 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualSampleRate" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
+                    AutomationProperties.AutomationId="SampleRate"
                     SelectedValue="{Binding SampleRate, Mode=TwoWay}"/>
                 
                 <ComboBox 
@@ -101,6 +103,8 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_CHANNELS}"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ChannelCount" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_CHANNELS}"
+                    AutomationProperties.AutomationId="Channel"
                     SelectedValue="{Binding Channel, Mode=TwoWay}"/>
 
                 <ComboBox 
@@ -109,6 +113,8 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualBitRate" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
+                    AutomationProperties.AutomationId="BitRate"
                     SelectedValue="{Binding BitRate, Mode=TwoWay}"/>
                 
                 <ComboBox 
@@ -117,6 +123,8 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="ActualMinutes" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
+                    AutomationProperties.AutomationId="MaxRecordingTime"
                     SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"/>
 
                 <ComboBox 
@@ -125,42 +133,58 @@
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
                     DisplayMemberPath="Name" 
                     SelectedValuePath="Seconds" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
+                    AutomationProperties.AutomationId="StopOnSilence"
                     SelectedValue="{Binding MaxSilenceTimeSeconds, Mode=TwoWay}"/>
 
                 <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"></Label>
                 <Slider 
                     Value="{Binding SilenceAsVolumePercentage}"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    AutomationProperties.AutomationId="SilenceDetectionVolume"
                     Style="{StaticResource SliderStyle}" />
 
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding ShouldFadeRecordings, Mode=TwoWay}" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_FADE_OUT}"
+                    AutomationProperties.AutomationId="FadeOut"
                     Content="{x:Static resx:Resources.SETTINGS_FADE_OUT}"/>
 
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding StartRecordingOnLaunch, Mode=TwoWay}"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
+                    AutomationProperties.AutomationId="StartOnLaunch"
                     Content="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"/>
 
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"
+                    AutomationProperties.AutomationId="AlwaysOnTop"
                     Content="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"/>
                     
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding AllowCloseWhenRecording, Mode=TwoWay}"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"
+                    AutomationProperties.AutomationId="AllowClose"
                     Content="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"/>
 
                 <CheckBox 
                     Style="{StaticResource SettingsCheckBox}"
                     IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"
+                    AutomationProperties.AutomationId="StartMinimized"
                     Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"/>
 
                 <TextBox 
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     Text="{Binding Genre, Mode=TwoWay}" 
                     Margin="0,10,0,10"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_GENRE}"
+                    AutomationProperties.AutomationId="Genre"
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_GENRE}"/>
                 
                 <DockPanel LastChildFill="True">
@@ -168,22 +192,27 @@
                             Height="26" 
                             Margin="10,0,5,10"
                             VerticalAlignment="Bottom" 
+                            AutomationProperties.Name="{Binding SelectDestinationFolderCommand}"
+                            AutomationProperties.AutomationId="SelectDestinationFolder"
                             Command="{Binding SelectDestinationFolderCommand}" >...</Button>
                     <TextBox 
                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                         DockPanel.Dock="Left" 
                         Margin="0,10,0,10"
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
+                        AutomationProperties.Name="SETTINGS_RECORDINGS_FOLDER"
+                        AutomationProperties.AutomationId="EditDestinationFolder"
                         Text="{Binding DestinationFolder, Mode=TwoWay}" />
                 </DockPanel>
 
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding RecordingLifeTimes}" 
-                    
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_LIFETIME}"
                     DisplayMemberPath="Description" 
                     SelectedValuePath="Days" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_LIFETIME}"
+                    AutomationProperties.AutomationId="RecordingLifetime"
                     SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"/>
 
                 <DockPanel>
@@ -197,13 +226,14 @@
                               materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
                               SelectedValuePath="LanguageId" 
                               DisplayMemberPath="LanguageName"
+                              AutomationProperties.Name="{x:Static resx:Resources.LANGUAGE}"
+                              AutomationProperties.AutomationId="Language"
                               SelectedValue="{Binding LanguageId, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <TextBlock Style="{StaticResource MiscNotesStyle}" 
                            TextWrapping="Wrap"
                            Text="{x:Static resx:Resources.RESTART_LANGUAGE}"/>
-
 
             </StackPanel>
         </ScrollViewer>
