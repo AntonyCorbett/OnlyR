@@ -202,7 +202,9 @@
 
             if (Options == null)
             {
+#pragma warning disable S112 // General exceptions should never be thrown
                 throw new Exception($"Could not read options file: {_optionsFilePath}");
+#pragma warning restore S112 // General exceptions should never be thrown
             }
             
             SetCulture();

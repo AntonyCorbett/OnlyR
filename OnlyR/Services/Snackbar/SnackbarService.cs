@@ -2,7 +2,6 @@
 {
     using System;
     using System.Windows;
-    using GalaSoft.MvvmLight.Threading;
     using MaterialDesignThemes.Wpf;
 
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -12,7 +11,7 @@
 
         public void Enqueue(object content, object actionContent, Action actionHandler, bool promote = false)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
                 {
@@ -29,7 +28,7 @@
             bool promote,
             bool neverConsiderToBeDuplicate)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
                 {
@@ -46,7 +45,7 @@
 
         public void Enqueue(object content)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
                 {
@@ -57,7 +56,7 @@
 
         public void EnqueueWithOk(object content)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
                 {

@@ -1,35 +1,35 @@
+using Microsoft.Toolkit.Mvvm.Messaging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using OnlyR.ViewModel.Messages;
+using OnlyR.Model;
+using OnlyR.AutoUpdates;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.PurgeRecordings;
+using OnlyR.Pages;
+using OnlyR.Services.Audio;
+using OnlyR.Services.Options;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
+
 namespace OnlyR.ViewModel
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Interop;
-    using System.Windows.Media;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Messaging;
-    using MaterialDesignThemes.Wpf;
-    using Messages;
-    using Model;
-    using OnlyR.AutoUpdates;
-    using OnlyR.Services.AudioSilence;
-    using OnlyR.Services.PurgeRecordings;
-    using Pages;
-    using Services.Audio;
-    using Services.Options;
-    using Services.RecordingCopies;
-    using Services.RecordingDestination;
-    using Services.Snackbar;
-
     /// <summary>
     /// Main View model. The main view is just a container for pages
     /// <para>
     /// See http://www.galasoft.ch/mvvm for details of the mvvm light framework
     /// </para>
     /// </summary>
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableObject
     {
         private readonly Dictionary<string, FrameworkElement> _pages;
         private readonly IOptionsService _optionsService;
@@ -55,8 +55,8 @@ namespace OnlyR.ViewModel
             }
 
             // subscriptions...
-            Messenger.Default.Register<NavigateMessage>(this, OnNavigate);
-            Messenger.Default.Register<AlwaysOnTopChanged>(this, OnAlwaysOnTopChanged);
+            WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
+            WeakReferenceMessenger.Default.Register<AlwaysOnTopChanged>(this, OnAlwaysOnTopChanged);
 
             _pages = new Dictionary<string, FrameworkElement>();
 
@@ -91,7 +91,7 @@ namespace OnlyR.ViewModel
 
             GetVersionData();
 
-            Messenger.Default.Send(new NavigateMessage(
+            WeakReferenceMessenger.Default.Send(new NavigateMessage(
                 null, RecordingPageViewModel.PageName, state));
         }
 
@@ -109,7 +109,7 @@ namespace OnlyR.ViewModel
                 if (!ReferenceEquals(_currentPage, value))
                 {
                     _currentPage = value;
-                    RaisePropertyChanged(nameof(CurrentPage));
+                    OnPropertyChanged(nameof(CurrentPage));
                 }
             }
         }
@@ -134,7 +134,7 @@ namespace OnlyR.ViewModel
 
                 if (!e.Cancel)
                 {
-                    Messenger.Default.Send(new BeforeShutDownMessage(CurrentPageName));
+                    WeakReferenceMessenger.Default.Send(new BeforeShutDownMessage(CurrentPageName));
                     (_audioService as IDisposable)?.Dispose();
                 }
             }
@@ -145,18 +145,18 @@ namespace OnlyR.ViewModel
             }
         }
 
-        private void OnAlwaysOnTopChanged(AlwaysOnTopChanged obj)
+        private void OnAlwaysOnTopChanged(object recipient, AlwaysOnTopChanged obj)
         {
-            RaisePropertyChanged(nameof(AlwaysOnTop));
+            OnPropertyChanged(nameof(AlwaysOnTop));
         }
         
-        private void SetupPage(string pageName, FrameworkElement page, ViewModelBase pageModel)
+        private void SetupPage(string pageName, FrameworkElement page, ObservableObject pageModel)
         {
             page.DataContext = pageModel;
             _pages.Add(pageName, page);
         }
         
-        private void OnNavigate(NavigateMessage message)
+        private void OnNavigate(object recipient, NavigateMessage message)
         {
             CurrentPage = _pages[message.TargetPageName];
             CurrentPageName = message.TargetPageName;
@@ -165,7 +165,7 @@ namespace OnlyR.ViewModel
 
         private void RecordingStoppedDuringAppClose(object sender, EventArgs e)
         {
-            Messenger.Default.Send(new ShutDownApplicationMessage());
+            WeakReferenceMessenger.Default.Send(new ShutDownApplicationMessage());
         }
 
         private void GetVersionData()
@@ -173,20 +173,23 @@ namespace OnlyR.ViewModel
             Task.Delay(2000).ContinueWith(_ =>
             {
                 var latestVersion = VersionDetection.GetLatestReleaseVersion();
-                if (latestVersion != null)
+                if (latestVersion != null && latestVersion > VersionDetection.GetCurrentVersion())
                 {
-                    if (latestVersion > VersionDetection.GetCurrentVersion())
-                    {
-                        // there is a new version....
-                        _snackbarService.Enqueue("Update available", Properties.Resources.VIEW, LaunchWebPage);
-                    }
+                    // there is a new version....
+                    _snackbarService.Enqueue("Update available", Properties.Resources.VIEW, LaunchWebPage);
                 }
             });
         }
 
         private void LaunchWebPage()
         {
-            Process.Start(VersionDetection.LatestReleaseUrl);
+            var psi = new ProcessStartInfo
+            {
+                FileName = VersionDetection.LatestReleaseUrl,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
     }
 }

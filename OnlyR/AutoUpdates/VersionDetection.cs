@@ -20,19 +20,18 @@
 
             try
             {
-                using (var client = new HttpClient())
+                using var client = new HttpClient();
+
+                var response = client.GetAsync(LatestReleaseUrl).Result;
+                if (response.IsSuccessStatusCode)
                 {
-                    var response = client.GetAsync(LatestReleaseUrl).Result;
-                    if (response.IsSuccessStatusCode)
+                    var latestVersionUri = response.RequestMessage?.RequestUri;
+                    if (latestVersionUri != null)
                     {
-                        var latestVersionUri = response.RequestMessage.RequestUri;
-                        if (latestVersionUri != null)
+                        var segments = latestVersionUri.Segments;
+                        if (segments.Any())
                         {
-                            var segments = latestVersionUri.Segments;
-                            if (segments.Any())
-                            {
-                                version = segments[segments.Length - 1];
-                            }
+                            version = segments[^1];
                         }
                     }
                 }
@@ -47,14 +46,14 @@
 
         public static Version GetLatestReleaseVersion()
         {
-            string versionString = GetLatestReleaseVersionString();
+            var versionString = GetLatestReleaseVersionString();
 
             if (string.IsNullOrEmpty(versionString))
             {
                 return null;
             }
 
-            string[] tokens = versionString.Split('.');
+            var tokens = versionString.Split('.');
             if (tokens.Length != 4)
             {
                 return null;

@@ -1,14 +1,26 @@
-﻿namespace OnlyR
-{
-    using System.IO;
-    using System.Threading;
-    using System.Windows;
-    using GalaSoft.MvvmLight.Messaging;
-    using GalaSoft.MvvmLight.Threading;
-    using Serilog;
-    using Utils;
-    using ViewModel.Messages;
+﻿using System;
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using OnlyR.Model;
+using OnlyR.Services.Audio;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.Options;
+using OnlyR.Services.PurgeRecordings;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
+using OnlyR.ViewModel;
+using Serilog;
+using System.IO;
+using System.Threading;
+using System.Windows;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using OnlyR.Utils;
+using OnlyR.ViewModel.Messages;
 
+namespace OnlyR
+{
     /// <summary>
     /// Interaction logic for App.xaml.
     /// </summary>
@@ -16,11 +28,6 @@
     {
         private readonly string _appString = "OnlyRAudioRecording";
         private Mutex _appMutex;
-
-        public App()
-        {
-            DispatcherHelper.Initialize();
-        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -32,6 +39,28 @@
             {
                 ConfigureLogger();
             }
+
+            ConfigureServices();
+        }
+
+        private void ConfigureServices()
+        {
+            var serviceCollection = new ServiceCollection();
+            
+            serviceCollection.AddSingleton<IOptionsService, OptionsService>();
+            serviceCollection.AddSingleton<ICommandLineService, CommandLineService>();
+            serviceCollection.AddSingleton<IRecordingDestinationService, RecordingDestinationService>();
+            serviceCollection.AddSingleton<IAudioService, AudioService>();
+            serviceCollection.AddSingleton(MapperFactory);
+            serviceCollection.AddSingleton<ICopyRecordingsService, CopyRecordingsService>();
+            serviceCollection.AddSingleton<IDriveEjectionService, DriveEjectionService>();
+            serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
+            serviceCollection.AddSingleton<IPurgeRecordingsService, PurgeRecordingsService>();
+            serviceCollection.AddSingleton<ISilenceService, SilenceService>();
+            serviceCollection.AddSingleton<MainViewModel>();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            Ioc.Default.ConfigureServices(serviceProvider);
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -42,7 +71,7 @@
 
         protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
         {
-            Messenger.Default.Send(new SessionEndingMessage(e));
+            WeakReferenceMessenger.Default.Send(new SessionEndingMessage(e));
             base.OnSessionEnding(e);
         }
 
@@ -53,12 +82,12 @@
 #if DEBUG
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
                 .CreateLogger();
 #else
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.RollingFile(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
                 .CreateLogger();
 #endif
 
@@ -69,6 +98,16 @@
         {
             _appMutex = new Mutex(true, _appString, out var newInstance);
             return !newInstance;
+        }
+
+        private IMapper MapperFactory(IServiceProvider arg)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ObjectMappingProfile>();
+            });
+
+            return new Mapper(config);
         }
     }
 }

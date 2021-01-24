@@ -1,10 +1,11 @@
-﻿namespace OnlyR
+﻿using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
+
+namespace OnlyR
 {
     using System;
     using System.Windows;
     using System.Windows.Interop;
-    using CommonServiceLocator;
-    using GalaSoft.MvvmLight.Messaging;
     using Services.Options;
     using Utils;
     using ViewModel;
@@ -28,8 +29,8 @@
         {
             InitializeComponent();
             
-            Messenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
-            Messenger.Default.Register<NavigateMessage>(this, OnNavigate);
+            WeakReferenceMessenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
+            WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -42,7 +43,7 @@
             source?.AddHook(WndProc);
         }
 
-        private void OnNavigate(NavigateMessage message)
+        private void OnNavigate(object recipient, NavigateMessage message)
         {
             if (message.OriginalPageName.Equals(SettingsPageViewModel.PageName))
             {
@@ -68,7 +69,7 @@
                 MaxHeight = SettingsWindowMaxHeight;
                 MaxWidth = SettingsWindowMaxWidth;
 
-                var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
+                var optionsService = Ioc.Default.GetService<IOptionsService>();
                 var sz = optionsService.Options.SettingsPageSize;
                 if (sz != default(Size))
                 {
@@ -85,13 +86,13 @@
 
         private void SaveSettingsWindowSize()
         {
-            var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
+            var optionsService = Ioc.Default.GetService<IOptionsService>();
             optionsService.Options.SettingsPageSize = new Size(Width, Height);
         }
 
         private void AdjustMainWindowPositionAndSize()
         {
-            var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
+            var optionsService = Ioc.Default.GetService<IOptionsService>();
 
             if (!string.IsNullOrEmpty(optionsService.Options.AppWindowPlacement))
             {
@@ -109,7 +110,7 @@
             return IntPtr.Zero;
         }
 
-        private void OnShutDownApplication(ShutDownApplicationMessage obj)
+        private void OnShutDownApplication(object recipient, ShutDownApplicationMessage obj)
         {
             Close();
         }
@@ -130,7 +131,7 @@
 
         private void SaveWindowPos()
         {
-            var optionsService = ServiceLocator.Current.GetInstance<IOptionsService>();
+            var optionsService = Ioc.Default.GetService<IOptionsService>();
             optionsService.Options.AppWindowPlacement = this.GetPlacement();
             optionsService.Save();
         }

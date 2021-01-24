@@ -1,19 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlyR", "OnlyR\OnlyR.csproj", "{BE4DD680-A5C0-4971-AD4B-EE8D964A6270}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlyR", "OnlyR\OnlyR.csproj", "{BE4DD680-A5C0-4971-AD4B-EE8D964A6270}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlyR.Core", "OnlyR.Core\OnlyR.Core.csproj", "{5FC5515D-7ACF-4736-BCFD-F9E7CC45B062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlyR.Core", "OnlyR.Core\OnlyR.Core.csproj", "{5FC5515D-7ACF-4736-BCFD-F9E7CC45B062}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{A77F5339-BEDE-4F9E-9059-98F89E27EF4E}"
 	ProjectSection(SolutionItems) = preProject
-		OnlyR.ruleset = OnlyR.ruleset
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlyR.Tests", "OnlyR.Tests\OnlyR.Tests.csproj", "{6F411EE5-048C-4DED-9930-AF392DF152F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlyR.Tests", "OnlyR.Tests\OnlyR.Tests.csproj", "{6F411EE5-048C-4DED-9930-AF392DF152F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,6 @@
 ﻿namespace OnlyR.Utils
 {
+#pragma warning disable S101 // Types should be named in PascalCase
     // ReSharper disable StyleCop.SA1307
     // ReSharper disable MemberCanBePrivate.Local
     // ReSharper disable FieldCanBeMadeReadOnly.Local
@@ -7,8 +8,8 @@
     // ReSharper disable InconsistentNaming
     using System;
     using System.Runtime.InteropServices;
-    using GalaSoft.MvvmLight.Messaging;
     using ViewModel.Messages;
+    using Microsoft.Toolkit.Mvvm.Messaging;
 
     internal static class RemovableDriveDetectionNativeMethods
     {
@@ -30,7 +31,7 @@
                     switch (wparam.ToInt32())
                     {
                         case DBT_DEVICEARRIVAL:
-                            Messenger.Default.Send(new RemovableDriveMessage
+                            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
                             {
                                 Added = true,
                                 DriveLetter = driveLetter,
@@ -38,7 +39,7 @@
                             break;
 
                         case DBT_DEVICEREMOVALCOMPLETE:
-                            Messenger.Default.Send(new RemovableDriveMessage
+                            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
                             {
                                 Added = false,
                                 DriveLetter = driveLetter,
@@ -73,4 +74,5 @@
             public int dbcv_unitmask;
         }
     }
+#pragma warning restore S101 // Types should be named in PascalCase
 }

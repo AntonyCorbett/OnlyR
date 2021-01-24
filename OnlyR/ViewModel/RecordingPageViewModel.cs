@@ -1,5 +1,10 @@
-﻿namespace OnlyR.ViewModel
+﻿using System.Windows;
+
+namespace OnlyR.ViewModel
 {
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
+    using Microsoft.Toolkit.Mvvm.Messaging;
     using System;
     using System.Collections.Concurrent;
     using System.ComponentModel;
@@ -10,10 +15,6 @@
     using System.Windows.Threading;
     using Core.Enums;
     using Exceptions;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
-    using GalaSoft.MvvmLight.Messaging;
-    using GalaSoft.MvvmLight.Threading;
     using Messages;
     using Model;
     using Serilog;
@@ -30,7 +31,7 @@
     /// can data bind to, i.e. it has everything that is needed by the user during 
     /// interaction with the Recording page.
     /// </summary>
-    public class RecordingPageViewModel : ViewModelBase, IPage
+    public class RecordingPageViewModel : ObservableObject, IPage
     {
         private readonly IAudioService _audioService;
         private readonly IRecordingDestinationService _destinationService;
@@ -58,8 +59,8 @@
             ISnackbarService snackbarService,
             ISilenceService silenceService)
         {
-            Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
-            Messenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
+            WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
+            WeakReferenceMessenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
 
             _commandLineService = commandLineService;
             _copyRecordingsService = copyRecordingsService;
@@ -87,7 +88,7 @@
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
             SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
 
-            Messenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
+            WeakReferenceMessenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
         }
 
         public static string PageName => "RecordingPage";
@@ -111,8 +112,8 @@
                 if (_isCopying != value)
                 {
                     _isCopying = value;
-                    RaisePropertyChanged(nameof(IsCopying));
-                    RaisePropertyChanged(nameof(IsSaveEnabled));
+                    OnPropertyChanged(nameof(IsCopying));
+                    OnPropertyChanged(nameof(IsSaveEnabled));
                 }
             }
         }
@@ -135,7 +136,7 @@
                 if (_volumeLevel != value)
                 {
                     _volumeLevel = value;
-                    RaisePropertyChanged(nameof(VolumeLevelAsPercentage));
+                    OnPropertyChanged(nameof(VolumeLevelAsPercentage));
                 }
             }
         }
@@ -165,12 +166,12 @@
                     _recordingStatus = value;
                     StatusStr = value.GetDescriptiveText();
 
-                    RaisePropertyChanged(nameof(RecordingStatus));
-                    RaisePropertyChanged(nameof(IsNotRecording));
-                    RaisePropertyChanged(nameof(IsRecording));
-                    RaisePropertyChanged(nameof(IsReadyToRecord));
-                    RaisePropertyChanged(nameof(IsRecordingOrStopping));
-                    RaisePropertyChanged(nameof(IsSaveEnabled));
+                    OnPropertyChanged(nameof(RecordingStatus));
+                    OnPropertyChanged(nameof(IsNotRecording));
+                    OnPropertyChanged(nameof(IsRecording));
+                    OnPropertyChanged(nameof(IsReadyToRecord));
+                    OnPropertyChanged(nameof(IsRecordingOrStopping));
+                    OnPropertyChanged(nameof(IsSaveEnabled));
                 }
             }
         }
@@ -186,7 +187,7 @@
                 if (_statusStr != value)
                 {
                     _statusStr = value;
-                    RaisePropertyChanged(nameof(StatusStr));
+                    OnPropertyChanged(nameof(StatusStr));
                 }
             }
         }
@@ -199,7 +200,7 @@
                 if (_errorMsg != value)
                 {
                     _errorMsg = value;
-                    RaisePropertyChanged(nameof(ErrorMsg));
+                    OnPropertyChanged(nameof(ErrorMsg));
                 }
             }
         }
@@ -268,18 +269,18 @@
 
         private static void NavigateSettings()
         {
-            Messenger.Default.Send(new NavigateMessage(
+            WeakReferenceMessenger.Default.Send(new NavigateMessage(
                 RecordingPageViewModel.PageName,
                 SettingsPageViewModel.PageName, 
                 null));
         }
 
-        private void OnShutDown(BeforeShutDownMessage message)
+        private void OnShutDown(object recipient, BeforeShutDownMessage message)
         {
             // nothing to do
         }
 
-        private void OnSessionEnding(SessionEndingMessage e)
+        private void OnSessionEnding(object recipient, SessionEndingMessage e)
         {
             // allow the session to shutdown if we're not recording
             e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
@@ -288,7 +289,7 @@
         private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
-            RaisePropertyChanged(nameof(ElapsedTimeStr));
+            OnPropertyChanged(nameof(ElapsedTimeStr));
 
             if (RecordingStatus != RecordingStatus.StopRequested)
             {
@@ -389,7 +390,9 @@
                 bytesFree < _safeMinBytesFree)
             {
                 // "Insufficient free space to record"
+#pragma warning disable S112 // General exceptions should never be thrown
                 throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+#pragma warning restore S112 // General exceptions should never be thrown
             }
         }
 
@@ -448,7 +451,14 @@
 
         private void ShowRecordings()
         {
-            Process.Start(FindSuitableRecordingFolderToShow());
+            var folder = FindSuitableRecordingFolderToShow();
+            var psi = new ProcessStartInfo
+            {
+                FileName = folder, 
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
 
         private string FindSuitableRecordingFolderToShow()
@@ -500,24 +510,24 @@
                 }
                 finally
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => { IsCopying = false; });
+                    Application.Current.Dispatcher.Invoke(() => { IsCopying = false; });
                 }
             });
         }
 
-        private void OnRemovableDriveMessage(RemovableDriveMessage messsage)
+        private void OnRemovableDriveMessage(object recipient, RemovableDriveMessage message)
         {
-            if (messsage.Added)
+            if (message.Added)
             {
-                _removableDrives[messsage.DriveLetter] = DateTime.UtcNow;
+                _removableDrives[message.DriveLetter] = DateTime.UtcNow;
             }
             else
             {
-                _removableDrives.TryRemove(messsage.DriveLetter, out var _);
+                _removableDrives.TryRemove(message.DriveLetter, out var _);
             }
 
-            RaisePropertyChanged(nameof(IsSaveVisible));
-            RaisePropertyChanged(nameof(SaveHint));
+            OnPropertyChanged(nameof(IsSaveVisible));
+            OnPropertyChanged(nameof(SaveHint));
         }
     }
 }

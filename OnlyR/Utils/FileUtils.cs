@@ -29,7 +29,9 @@
                 if (!Directory.Exists(folderPath))
                 {
                     // "Could not create folder {0}"
+#pragma warning disable S112 // General exceptions should never be thrown
                     throw new Exception(string.Format(Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
+#pragma warning restore S112 // General exceptions should never be thrown
                 }
             }
         }

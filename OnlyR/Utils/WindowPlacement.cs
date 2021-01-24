@@ -1,6 +1,6 @@
 ﻿namespace OnlyR.Utils
 {
-#pragma warning disable SA1201 // Elements must appear in the correct order
+#pragma warning disable S101 // Types should be named in PascalCase
 
     // ReSharper disable InconsistentNaming
     // ReSharper disable FieldCanBeMadeReadOnly.Global
@@ -153,7 +153,6 @@
         }
     }
 
-#pragma warning disable SA1307 // Accessible fields must begin with upper-case letter
     //// WINDOWPLACEMENT stores the position, size, and state of a window
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
@@ -166,7 +165,6 @@
         public POINT maxPosition;
         public RECT normalPosition;
     }
-#pragma warning restore SA1307 // Accessible fields must begin with upper-case letter
 
-#pragma warning restore SA1201 // Elements must appear in the correct order
+#pragma warning restore S101 // Types should be named in PascalCase
 }

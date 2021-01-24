@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    /// Configuration of a reording
+    /// Configuration of a recording
     /// </summary>
     public class RecordingConfig
     {

@@ -1,14 +1,15 @@
-﻿namespace OnlyR.ViewModel
+﻿using Microsoft.Toolkit.Mvvm.Messaging;
+
+namespace OnlyR.ViewModel
 {
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Reflection;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
-    using GalaSoft.MvvmLight.Messaging;
     using Messages;
     using Microsoft.WindowsAPICodePack.Dialogs;
     using Model;
@@ -21,7 +22,7 @@
     /// can data bind to, i.e. it has everything that is needed by the user during 
     /// interaction with the Settings page
     /// </summary>
-    public class SettingsPageViewModel : ViewModelBase, IPage
+    public class SettingsPageViewModel : ObservableObject, IPage
     {
         private readonly IOptionsService _optionsService;
         private readonly RecordingDeviceItem[] _recordingDevices;
@@ -39,7 +40,7 @@
             IOptionsService optionsService, 
             ICommandLineService commandLineService)
         {
-            Messenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
+            WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
             _optionsService = optionsService;
 
             _commandLineService = commandLineService;
@@ -53,7 +54,7 @@
             _languages = GetSupportedLanguages();
             _maxSilenceTimes = GetMaxSilenceTimes();
 
-            NavigateRecordingCommand = new RelayCommand(NavigateRecording, CanExecuteNavigateRecording);
+            NavigateRecordingCommand = new RelayCommand(NavigateRecording);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
             SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
         }
@@ -119,7 +120,7 @@
                 if (_optionsService.Culture != value)
                 {
                     _optionsService.Culture = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -168,7 +169,7 @@
                 if (_optionsService.Options.AlwaysOnTop != value)
                 {
                     _optionsService.Options.AlwaysOnTop = value;
-                    Messenger.Default.Send(new AlwaysOnTopChanged());
+                    WeakReferenceMessenger.Default.Send(new AlwaysOnTopChanged());
                 }
             }
         }
@@ -217,7 +218,7 @@
                 if (_optionsService.Options.DestinationFolder != value)
                 {
                     _optionsService.Options.DestinationFolder = value;
-                    RaisePropertyChanged(nameof(DestinationFolder));
+                    OnPropertyChanged(nameof(DestinationFolder));
                 }
             }
         }
@@ -333,17 +334,12 @@
                 new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 },
             };
         }
-
-        private static bool CanExecuteNavigateRecording()
-        {
-            return true;
-        }
-
+        
         private void NavigateRecording()
         {
             Save();
 
-            Messenger.Default.Send(new NavigateMessage(
+            WeakReferenceMessenger.Default.Send(new NavigateMessage(
                 SettingsPageViewModel.PageName,
                 RecordingPageViewModel.PageName, 
                 null));
@@ -360,26 +356,33 @@
             return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
         }
 
-        private void OnShutDown(BeforeShutDownMessage obj)
+        private void OnShutDown(object recipient, BeforeShutDownMessage obj)
         {
             Save();
         }
 
         private void SelectDestinationFolder()
         {
-            using (var d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true })
+#pragma warning disable CA1416 // Validate platform compatibility
+            using var d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
+            var result = d.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
             {
-                var result = d.ShowDialog();
-                if (result == CommonFileDialogResult.Ok)
-                {
-                    DestinationFolder = d.FileName;
-                }
+                DestinationFolder = d.FileName;
             }
+#pragma warning restore CA1416 // Validate platform compatibility
         }
 
         private void ShowRecordings()
         {
-            Process.Start(FindSuitableRecordingFolderToShow());
+            var folder = FindSuitableRecordingFolderToShow();
+            var psi = new ProcessStartInfo
+            {
+                FileName = folder,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
 
         private string FindSuitableRecordingFolderToShow()
