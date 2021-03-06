@@ -2,6 +2,7 @@
 
 namespace OnlyR.Tests
 {
+#pragma warning disable CA1416 // Validate platform compatibility
     using System;
     using System.Windows;
     using Core.Enums;
@@ -123,4 +124,6 @@ namespace OnlyR.Tests
                 silenceService.Object);
         }
     }
+
+#pragma warning restore CA1416 // Validate platform compatibility
 }

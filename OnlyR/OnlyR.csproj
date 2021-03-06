@@ -19,12 +19,12 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
-    <PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="4.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-    <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.1.0" />
+    <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

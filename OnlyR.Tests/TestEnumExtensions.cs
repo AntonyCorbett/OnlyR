@@ -9,7 +9,9 @@
     public class TestEnumExtensions
     {
         [TestMethod]
+#pragma warning disable S2699 // Tests should include assertions
         public void ValidDescriptions()
+#pragma warning restore S2699 // Tests should include assertions
         {
             foreach (RecordingStatus status in Enum.GetValues(typeof(RecordingStatus)))
             {

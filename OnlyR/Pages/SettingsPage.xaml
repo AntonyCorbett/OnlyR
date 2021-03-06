@@ -68,9 +68,8 @@
         </Button>
 
         <ScrollViewer Grid.Column="0" Grid.Row="1" 
-                      PanningMode="VerticalOnly"
-                      Padding="5,0,5,10">
-            <StackPanel Orientation="Vertical">
+                      PanningMode="VerticalOnly">
+            <StackPanel Orientation="Vertical" Margin="5,0,5,10">
 
                 <TextBlock Margin="0,10,0,10" 
                            Text="{Binding AppVersionStr}" 
