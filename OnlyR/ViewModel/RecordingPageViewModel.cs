@@ -61,6 +61,7 @@ namespace OnlyR.ViewModel
         {
             WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
             WeakReferenceMessenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
+            WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
 
             _commandLineService = commandLineService;
             _copyRecordingsService = copyRecordingsService;
@@ -89,6 +90,16 @@ namespace OnlyR.ViewModel
             SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
 
             WeakReferenceMessenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
+        }
+
+        private void OnNavigate(object recipient, NavigateMessage message)
+        {
+            if (message.OriginalPageName == SettingsPageViewModel.PageName 
+                && message.TargetPageName == PageName)
+            {
+                OnPropertyChanged(nameof(MaxRecordingTimeString));
+                OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
+            }
         }
 
         public static string PageName => "RecordingPage";
@@ -140,7 +151,14 @@ namespace OnlyR.ViewModel
                 }
             }
         }
-        
+
+        public string MaxRecordingTimeString =>
+            _optionsService.Options.MaxRecordingTimeSeconds == 0
+            ? null
+            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss");
+
+        public bool IsMaxRecordingTimeSpecified => _optionsService.Options.MaxRecordingTimeSeconds > 0;
+
         public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
 
         public bool NoSettings => _commandLineService.NoSettings;
@@ -293,8 +311,8 @@ namespace OnlyR.ViewModel
 
             if (RecordingStatus != RecordingStatus.StopRequested)
             {
-                if (_optionsService.Options.MaxRecordingTimeMins > 0 &&
-                    ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeMins * 60)
+                if (_optionsService.Options.MaxRecordingTimeSeconds > 0 &&
+                    ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeSeconds)
                 {
                     AutoStopRecordingAtLimit();
                 }
@@ -323,8 +341,8 @@ namespace OnlyR.ViewModel
         private void AutoStopRecordingAtLimit()
         {
             Log.Logger.Information(
-                "Automatically stopped recording having reached the {Limit} min limit",
-                _optionsService.Options.MaxRecordingTimeMins);
+                "Automatically stopped recording having reached the {Limit} second limit",
+                _optionsService.Options.MaxRecordingTimeSeconds);
 
             StopRecordingCommand.Execute(null);
         }

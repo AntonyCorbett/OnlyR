@@ -7,6 +7,6 @@
     {
         public string Name { get; set; }
 
-        public int ActualMinutes { get; set; }
+        public int ActualSeconds { get; set; }
     }
 }

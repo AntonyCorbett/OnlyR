@@ -106,10 +106,16 @@
                     IsEnabled="{Binding IsNotRecording}"
                     Command="{Binding StartRecordingCommand}"
                     behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True">
-                <materialDesign:PackIcon
-                   Kind="Microphone"
-                   Height="56"
-                   Width="56" />
+                <StackPanel Orientation="Vertical">
+                    <materialDesign:PackIcon
+                        HorizontalAlignment="Center"
+                        Kind="Microphone"
+                        Height="56"
+                        Width="56" />
+                    <TextBlock Text="{Binding MaxRecordingTimeString}" 
+                               Visibility="{Binding IsMaxRecordingTimeSpecified, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Foreground="{StaticResource PrimaryHueLightForegroundBrush}"/>
+                </StackPanel>
             </Button>
 
             <!-- ReSharper disable once Xaml.MissingGridIndex -->

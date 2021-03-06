@@ -121,7 +121,7 @@
                     ItemsSource="{Binding MaxRecordingTimes}"
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
                     DisplayMemberPath="Name" 
-                    SelectedValuePath="ActualMinutes" 
+                    SelectedValuePath="ActualSeconds" 
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
                     AutomationProperties.AutomationId="MaxRecordingTime"
                     SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"/>

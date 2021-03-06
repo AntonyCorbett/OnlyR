@@ -100,12 +100,12 @@ namespace OnlyR.ViewModel
 
         public int MaxRecordingTime
         {
-            get => _optionsService.Options.MaxRecordingTimeMins;
+            get => _optionsService.Options.MaxRecordingTimeSeconds;
             set
             {
-                if (_optionsService.Options.MaxRecordingTimeMins != value)
+                if (_optionsService.Options.MaxRecordingTimeSeconds != value)
                 {
-                    _optionsService.Options.MaxRecordingTimeMins = value;
+                    _optionsService.Options.MaxRecordingTimeSeconds = value;
                 }
             }
         }
@@ -322,16 +322,19 @@ namespace OnlyR.ViewModel
         {
             return new[]
             {
-                new MaxRecordingTimeItem { Name = Properties.Resources.NO_LIMIT, ActualMinutes = 0 },
-                new MaxRecordingTimeItem { Name = Properties.Resources.ONE_MIN, ActualMinutes = 1 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 2), ActualMinutes = 2 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 5), ActualMinutes = 5 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 15), ActualMinutes = 15 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 30), ActualMinutes = 30 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 45), ActualMinutes = 45 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.ONE_HOUR, 1), ActualMinutes = 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualMinutes = 120 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualMinutes = 180 },
+                new MaxRecordingTimeItem { Name = Properties.Resources.NO_LIMIT, ActualSeconds = 0 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 15), ActualSeconds = 15 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 30), ActualSeconds = 30 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 45), ActualSeconds = 45 },
+                new MaxRecordingTimeItem { Name = Properties.Resources.ONE_MIN, ActualSeconds = 1 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 2), ActualSeconds = 2 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 5), ActualSeconds = 5 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 15), ActualSeconds = 15 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 30), ActualSeconds = 30 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 45), ActualSeconds = 45 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.ONE_HOUR, 1), ActualSeconds = 60 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualSeconds = 120 * 60 },
+                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualSeconds = 180 * 60 },
             };
         }
         

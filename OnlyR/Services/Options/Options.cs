@@ -14,7 +14,7 @@
     {
         private const int DefaultMaxRecordings = 999;
         private const int DefaultRecordingDevice = 0;
-        private const int DefaultMaxRecordingMinutes = 0; // no limit
+        private const int DefaultMaxRecordingSeconds = 0; // no limit
         private const int DefaultSampleRate = 44100;
         private const int DefaultChannelCount = 1;
         private const int DefaultMp3BitRate = 96;
@@ -31,7 +31,7 @@
             ChannelCount = DefaultChannelCount;
             Mp3BitRate = DefaultMp3BitRate;
             Genre = Properties.Resources.SPEECH;
-            MaxRecordingTimeMins = DefaultMaxRecordingMinutes;
+            MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
             RecordingDevice = DefaultRecordingDevice;
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
             RecordingsLifeTimeDays = 0; // forever
@@ -48,7 +48,7 @@
 
         public string Genre { get; set; }
 
-        public int MaxRecordingTimeMins { get; set; }
+        public int MaxRecordingTimeSeconds { get; set; }
 
         public int MaxSilenceTimeSeconds { get; set; }
 
@@ -130,9 +130,9 @@
                 Genre = Properties.Resources.SPEECH;
             }
 
-            if (MaxRecordingTimeMins < 0)
+            if (MaxRecordingTimeSeconds < 0)
             {
-                MaxRecordingTimeMins = DefaultMaxRecordingMinutes;
+                MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
             }
 
             if (RecordingDevice < 0)
