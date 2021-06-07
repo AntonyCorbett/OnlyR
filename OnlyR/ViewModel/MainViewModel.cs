@@ -25,9 +25,6 @@ namespace OnlyR.ViewModel
 {
     /// <summary>
     /// Main View model. The main view is just a container for pages
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm for details of the mvvm light framework
-    /// </para>
     /// </summary>
     public class MainViewModel : ObservableObject
     {

@@ -7,7 +7,7 @@
 #define MyAppExeName "OnlyR.exe"
 #define MySource "d:\ProjectsPersonal\OnlyR\OnlyR"
 
-#define MyAppVersion GetFileVersion(MySource + '\bin\Release\net5.0-windows\OnlyR.exe');
+#define MyAppVersion GetFileVersion(MySource + '\bin\Release\net5.0-windows\publish\OnlyR.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -35,11 +35,26 @@ RestartApplications=False
 CloseApplications=False
 AppMutex=OnlyRAudioRecording
 
+[InstallDelete]
+; files from pre-net-5 edition
+Type: files; Name: "{app}\CommonServiceLocator.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.Extras.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.Platform.dll"
+Type: files; Name: "{app}\Microsoft.Win32.Primitives.dll"
+Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.dll"
+Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.Shell.dll"
+Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
+Type: files; Name: "{app}\netstandard.dll"
+Type: files; Name: "{app}\OnlyR.exe.config"
+Type: files; Name: "{app}\Serilog.Sinks.RollingFile.dll"
+Type: files; Name: "{app}\System*.dll"
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "bin\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.dev.json,*.pdb"
+Source: "bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
