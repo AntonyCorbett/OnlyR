@@ -6,15 +6,15 @@ Windows audio recorder using C#, WPF, NAudio, NAudio.Lame, AutoMapper, GalaSoft 
 
 ### System Requirements
 
-* Windows 7, 8 or 10
-* .NET Framework 4.6.1 or later
+* Windows 10
+* .NET 5 x86 or later
 * 2GB RAM
 * 15MB Hard disk space
 * Audio recording device
 
 ### Download
 
-If you just want to install the application, please download the [OnlyRSetup.exe](https://github.com/AntonyCorbett/OnlyR/releases/latest) file.
+If you just want to install the application, please download the [OnlyRSetup.exe](https://github.com/AntonyCorbett/OnlyR/releases/latest) file (there is also a portable version if you'd prefer to just copy a folder).
 
 ### Help
 
@@ -22,4 +22,4 @@ See the [wiki](https://github.com/AntonyCorbett/OnlyR/wiki) for basic instructio
 
 ### License, etc
 
-OnlyR is Copyright &copy; 2017 Antony Corbett and other contributors under the [MIT license](LICENSE).
+OnlyR is Copyright &copy; 2017, 2021 Antony Corbett and other contributors under the [MIT license](LICENSE).
