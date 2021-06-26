@@ -528,7 +528,7 @@ namespace OnlyR.ViewModel
                 }
                 finally
                 {
-                    Application.Current.Dispatcher.Invoke(() => { IsCopying = false; });
+                    Application.Current.Dispatcher.Invoke(() => IsCopying = false);
                 }
             });
         }

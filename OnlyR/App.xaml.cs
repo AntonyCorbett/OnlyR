@@ -86,7 +86,7 @@ namespace OnlyR
             base.OnSessionEnding(e);
         }
 
-        private void ConfigureLogger()
+        private static void ConfigureLogger()
         {
             string logsDirectory = FileUtils.GetLogFolder();
 
@@ -113,11 +113,7 @@ namespace OnlyR
 
         private IMapper MapperFactory(IServiceProvider arg)
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<ObjectMappingProfile>();
-            });
-
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<ObjectMappingProfile>());
             return new Mapper(config);
         }
     }

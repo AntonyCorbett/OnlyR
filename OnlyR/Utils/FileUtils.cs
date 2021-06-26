@@ -15,7 +15,7 @@
 
         private const string OptionsFileName = "options.json";
 
-        private const string FullDateFormat = @"yyyy-MM-dd";
+        private const string FullDateFormat = "yyyy-MM-dd";
 
         /// <summary>
         /// Creates directory if it doesn't exist. Throws if cannot be created
@@ -56,7 +56,7 @@
         {
             freespace = 0;
 
-            if (!folderName.EndsWith("\\"))
+            if (!folderName.EndsWith("\\", StringComparison.Ordinal))
             {
                 folderName += '\\';
             }

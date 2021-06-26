@@ -2,3 +2,9 @@
 
 # S3925: "ISerializable" should be implemented correctly
 dotnet_diagnostic.S3925.severity = silent
+
+# U2U1009: Async or iterator methods should avoid state machine generation for early exits (throws or synchronous returns)
+dotnet_diagnostic.U2U1009.severity = silent
+
+# RCS1037: Remove trailing white-space.
+dotnet_diagnostic.RCS1037.severity = silent

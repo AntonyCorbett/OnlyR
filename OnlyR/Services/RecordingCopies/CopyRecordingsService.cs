@@ -60,7 +60,7 @@
             }
         }
 
-        private long GetSpaceNeed(IEnumerable<string> srcFiles)
+        private static long GetSpaceNeed(IEnumerable<string> srcFiles)
         {
             long totalSize = 0;
 
@@ -82,7 +82,7 @@
             }
 
             var files = Directory.GetFiles(folder, "*.mp3");
-            if (!files.Any())
+            if (files.Length == 0)
             {
                 throw new NoRecordingsException();
             }
@@ -104,12 +104,12 @@
             return result.ToArray();
         }
         
-        private bool CanCopyFile(string filePath)
+        private static bool CanCopyFile(string filePath)
         {
             return File.Exists(filePath) && !IsFileLocked(filePath);
         }
 
-        private bool IsFileLocked(string filePath)
+        private static bool IsFileLocked(string filePath)
         {
             FileStream stream = null;
 

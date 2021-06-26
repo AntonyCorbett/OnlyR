@@ -10,10 +10,7 @@
         [TestMethod]
         public void TestAutoMapper()
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<ObjectMappingProfile>();
-            });
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<ObjectMappingProfile>());
             
             config.AssertConfigurationIsValid();
         }

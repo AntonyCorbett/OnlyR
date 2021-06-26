@@ -167,7 +167,7 @@
             }
         }
 
-        private string GetOptionsSignature(Options options)
+        private static string GetOptionsSignature(Options options)
         {
             var originalGenre = options.Genre;
 

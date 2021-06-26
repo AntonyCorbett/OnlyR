@@ -400,13 +400,13 @@
             }
         }
 
-        private bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
+        private static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
         {
             return yearOfFolder < oldFileDate.Year ||
                    (yearOfFolder == oldFileDate.Year && monthOfFolder <= oldFileDate.Month);
         }
 
-        private bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
+        private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
         {
             return oldFileDate.Year >= yearOfFolder;
         }

@@ -241,7 +241,7 @@
         {
             // get the volume's device number
             long DeviceNumber = -1;
-            var size = 0x400; // some big size
+            const int size = 0x400; // some big size
             var buffer = Marshal.AllocHGlobal(size);
             int bytesReturned;
 

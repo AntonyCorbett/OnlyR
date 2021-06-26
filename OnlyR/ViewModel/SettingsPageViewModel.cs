@@ -353,7 +353,7 @@ namespace OnlyR.ViewModel
             _optionsService.Save();
         }
 
-        private string GetVersionString()
+        private static string GetVersionString()
         {
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
             return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
@@ -395,7 +395,7 @@ namespace OnlyR.ViewModel
                 _optionsService.Options.DestinationFolder);
         }
 
-        private LanguageItem[] GetSupportedLanguages()
+        private static LanguageItem[] GetSupportedLanguages()
         {
             var result = new List<LanguageItem>();
 
@@ -422,14 +422,12 @@ namespace OnlyR.ViewModel
             }
 
             // the native language
+            var cNative = new CultureInfo(Path.GetFileNameWithoutExtension("en-GB"));
+            result.Add(new LanguageItem
             {
-                var c = new CultureInfo(Path.GetFileNameWithoutExtension("en-GB"));
-                result.Add(new LanguageItem
-                {
-                    LanguageId = c.Name,
-                    LanguageName = c.EnglishName,
-                });
-            }
+                LanguageId = cNative.Name,
+                LanguageName = cNative.EnglishName,
+            });
 
             result.Sort((x, y) => string.Compare(x.LanguageName, y.LanguageName, StringComparison.Ordinal));
 

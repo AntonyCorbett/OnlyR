@@ -20,7 +20,9 @@
 
             try
             {
+#pragma warning disable U2U1025 // Avoid instantiating HttpClient
                 using var client = new HttpClient();
+#pragma warning restore U2U1025 // Avoid instantiating HttpClient
 
                 var response = client.GetAsync(LatestReleaseUrl).Result;
                 if (response.IsSuccessStatusCode)
@@ -29,7 +31,7 @@
                     if (latestVersionUri != null)
                     {
                         var segments = latestVersionUri.Segments;
-                        if (segments.Any())
+                        if (segments.Length > 0)
                         {
                             version = segments[^1];
                         }
