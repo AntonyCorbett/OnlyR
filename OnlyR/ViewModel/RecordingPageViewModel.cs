@@ -167,7 +167,7 @@ namespace OnlyR.ViewModel
 
         public bool NoSave => _commandLineService.NoSave;
 
-        public bool IsSaveVisible => !NoSave && _removableDrives.Any();
+        public bool IsSaveVisible => !NoSave && _removableDrives.Count > 0;
 
         public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
 
@@ -234,7 +234,7 @@ namespace OnlyR.ViewModel
                     return string.Empty;
                 }
 
-                if (driveLetterList.Contains(","))
+                if (driveLetterList.IndexOf(',') >= 0)
                 {
                     return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
                 }
@@ -285,7 +285,7 @@ namespace OnlyR.ViewModel
             e.Cancel = RecordingStatus != RecordingStatus.NotRecording;
         }
 
-        private static void NavigateSettings()
+        private void NavigateSettings()
         {
             WeakReferenceMessenger.Default.Send(new NavigateMessage(
                 RecordingPageViewModel.PageName,

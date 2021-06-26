@@ -21,7 +21,7 @@
         private const int VuSpeed = 5;
 
         private LameMP3FileWriter _mp3Writer;
-        private WaveIn _waveSource;
+        private IWaveIn _waveSource;
         private SampleAggregator _sampleAggregator;
         private VolumeFader _fader;
         private RecordingStatus _recordingStatus;

@@ -15,6 +15,7 @@ using Serilog;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
@@ -41,6 +42,16 @@ namespace OnlyR
             }
 
             ConfigureServices();
+
+            Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
+        }
+
+        private void CurrentDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            // unhandled exceptions thrown from UI thread
+            e.Handled = true;
+            Log.Logger.Fatal(e.Exception, "Unhandled exception");
+            Current.Shutdown();
         }
 
         private void ConfigureServices()
@@ -82,12 +93,12 @@ namespace OnlyR
 #if DEBUG
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 #else
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.File(Path.Combine(logsDirectory, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 #endif
 

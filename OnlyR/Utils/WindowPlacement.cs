@@ -108,8 +108,10 @@
 
         private static Tuple<int, int> GetDpiSettings()
         {
+#pragma warning disable S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
             var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
             var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+#pragma warning restore S3011 // Reflection should not be used to increase accessibility of classes, methods, or fields
 
             return new Tuple<int, int>(
                 (int)(dpiXProperty?.GetValue(null, null) ?? 0),
@@ -120,7 +122,9 @@
     // RECT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
+#pragma warning disable U2U1004 // Public value types should implement equality
     public struct RECT
+#pragma warning restore U2U1004 // Public value types should implement equality
     {
         public int Left;
         public int Top;
@@ -140,7 +144,9 @@
     // POINT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
+#pragma warning disable U2U1004 // Public value types should implement equality
     public struct POINT
+#pragma warning restore U2U1004 // Public value types should implement equality
     {
         public int X;
         public int Y;
@@ -156,7 +162,9 @@
     //// WINDOWPLACEMENT stores the position, size, and state of a window
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
+#pragma warning disable U2U1004 // Public value types should implement equality
     public struct WINDOWPLACEMENT
+#pragma warning restore U2U1004 // Public value types should implement equality
     {
         public int length;
         public int flags;

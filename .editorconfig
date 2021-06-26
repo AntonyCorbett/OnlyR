@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# S3925: "ISerializable" should be implemented correctly
+dotnet_diagnostic.S3925.severity = silent
