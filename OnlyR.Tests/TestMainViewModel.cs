@@ -102,7 +102,7 @@ namespace OnlyR.Tests
             t.Join();
         }
 
-        private MainViewModel CreateMainViewModel()
+        private static MainViewModel CreateMainViewModel()
         {
             var audioService = MockGenerator.CreateAudioService();
             var optionsService = MockGenerator.CreateOptionsService();

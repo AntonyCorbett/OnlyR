@@ -8,3 +8,6 @@ dotnet_diagnostic.U2U1009.severity = silent
 
 # RCS1037: Remove trailing white-space.
 dotnet_diagnostic.RCS1037.severity = silent
+
+# RCS1194: Implement exception constructors.
+dotnet_diagnostic.RCS1194.severity = silent
