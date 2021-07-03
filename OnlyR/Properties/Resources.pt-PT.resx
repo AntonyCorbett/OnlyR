@@ -246,7 +246,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_LOOPBACK_CAPTURE" xml:space="preserve">
-    <value>Use loopback capture</value>
+    <value>Usar captura loopback</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
