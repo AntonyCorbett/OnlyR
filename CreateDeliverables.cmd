@@ -7,6 +7,9 @@ rd Installer\Output /q /s
 REM build / publish
 dotnet publish OnlyR\OnlyR.csproj -p:PublishProfile=FolderProfile -c:Release
 
+REM delete unwanted NAudio x64
+del OnlyR\bin\Release\net5.0-windows\publish\libmp3lame.64.dll
+
 REM Create installer
 "C:\Program Files (x86)\Inno Setup 6\iscc" Installer\onlyrsetup.iss
 

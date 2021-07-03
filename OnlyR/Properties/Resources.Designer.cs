@@ -412,6 +412,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use loopback capture.
+        /// </summary>
+        public static string SETTINGS_LOOPBACK_CAPTURE {
+            get {
+                return ResourceManager.GetString("SETTINGS_LOOPBACK_CAPTURE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max recording time.
         /// </summary>
         public static string SETTINGS_MAX_RECORDING_TIME {

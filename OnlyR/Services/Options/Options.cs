@@ -56,6 +56,8 @@ namespace OnlyR.Services.Options
 
         public int RecordingDevice { get; set; }
 
+        public bool UseLoopbackCapture { get; set; }
+
         public bool FadeOut { get; set; }
 
         public bool StartRecordingOnLaunch { get; set; }

@@ -69,6 +69,7 @@ namespace OnlyR.Services.Audio
             var recordingConfig = new RecordingConfig
             {
                 RecordingDevice = optionsService.Options.RecordingDevice,
+                UseLoopbackCapture = optionsService.Options.UseLoopbackCapture,
                 RecordingDate = candidateFile.RecordingDate,
                 TrackNumber = candidateFile.TrackNumber,
                 DestFilePath = candidateFile.TempPath,

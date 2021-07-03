@@ -13,6 +13,11 @@ namespace OnlyR.Core.Recorder
         public int RecordingDevice { get; set; }
 
         /// <summary>
+        /// Record "what you hear"
+        /// </summary>
+        public bool UseLoopbackCapture { get; set; }
+
+        /// <summary>
         /// The date of the recording (the start date).
         /// </summary>
         public DateTime RecordingDate { get; set; }

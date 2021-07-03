@@ -54,8 +54,7 @@ namespace OnlyR.Core.Recorder
 
             return result;
         }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_mp3Writer", Justification = "See Cleanup()")]
+        
         public void Dispose()
         {
             Cleanup();
@@ -69,15 +68,23 @@ namespace OnlyR.Core.Recorder
         {
             if (_recordingStatus == RecordingStatus.NotRecording)
             {
-                InitAggregator(recordingConfig.SampleRate);
                 CheckRecordingDevice(recordingConfig);
-                InitFader(recordingConfig.SampleRate);
 
-                _waveSource = new WaveIn
+                if (recordingConfig.UseLoopbackCapture)
                 {
-                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
-                    DeviceNumber = recordingConfig.RecordingDevice,
-                };
+                    _waveSource = new WasapiLoopbackCapture();
+                }
+                else
+                {
+                    _waveSource = new WaveIn
+                    {
+                        WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
+                        DeviceNumber = recordingConfig.RecordingDevice,
+                    };
+                }
+
+                InitAggregator(_waveSource.WaveFormat.SampleRate);
+                InitFader(_waveSource.WaveFormat.SampleRate);
 
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
                 _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
@@ -117,7 +124,7 @@ namespace OnlyR.Core.Recorder
         private static ID3TagData CreateTag(RecordingConfig recordingConfig)
         {
             // tag is embedded as MP3 metadata
-            return new ID3TagData
+            return new()
             {
                 Title = recordingConfig.TrackTitle,
                 Album = recordingConfig.AlbumName,
@@ -135,7 +142,7 @@ namespace OnlyR.Core.Recorder
                 throw new NoDevicesException();
             }
 
-            if (recordingConfig.RecordingDevice >= deviceCount)
+            if (!recordingConfig.UseLoopbackCapture && recordingConfig.RecordingDevice >= deviceCount)
             {
                 recordingConfig.RecordingDevice = 0;
             }
@@ -158,7 +165,9 @@ namespace OnlyR.Core.Recorder
         private void AggregatorReportHandler(object? sender, SamplesReportEventArgs e)
         {
             var value = Math.Max(e.MaxSample, Math.Abs(e.MinSample)) * 100;
-            OnProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = GetDampedVolumeLevel(value) });
+
+            var damped = GetDampedVolumeLevel(value);
+            OnProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = damped });
         }
 
         private void WaveSourceRecordingStoppedHandler(object? sender, StoppedEventArgs e)
@@ -176,20 +185,39 @@ namespace OnlyR.Core.Recorder
             byte[] buffer = waveInEventArgs.Buffer;
             int bytesRecorded = waveInEventArgs.BytesRecorded;
 
+            var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
+
             if (_fader != null && _fader.Active)
             {
                 // we're fading out...
-                _fader.FadeBuffer(buffer, bytesRecorded);
+                _fader.FadeBuffer(buffer, bytesRecorded, isFloatingPointAudio);
             }
 
-            for (int index = 0; index < bytesRecorded; index += 2)
-            {
-                short sample = (short)((buffer[index + 1] << 8) | buffer[index + 0]);
-                float sample32 = sample / 32768F;
-                _sampleAggregator?.Add(sample32);
-            }
+            AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
 
             _mp3Writer?.Write(buffer, 0, bytesRecorded);
+        }
+
+        private void AddToSampleAggregator(byte[] buffer, int bytesRecorded, bool isFloatingPointAudio)
+        {
+            var buff = new WaveBuffer(buffer);
+
+            if (isFloatingPointAudio)
+            {
+                for (var index = 0; index < bytesRecorded / 4; ++index)
+                {
+                    var sample = buff.FloatBuffer[index];
+                    _sampleAggregator?.Add(sample);
+                }
+            }
+            else
+            {
+                for (var index = 0; index < bytesRecorded / 2; ++index)
+                {
+                    var sample = buff.ShortBuffer[index];
+                    _sampleAggregator?.Add(sample / 32768F);
+                }
+            }
         }
 
         private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
@@ -227,6 +255,8 @@ namespace OnlyR.Core.Recorder
 
         private void Cleanup()
         {
+            _mp3Writer?.Flush();
+
             _waveSource?.Dispose();
             _waveSource = null;
 

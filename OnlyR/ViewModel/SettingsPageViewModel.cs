@@ -226,6 +226,8 @@ namespace OnlyR.ViewModel
 
         public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
 
+        public bool NotUsingLoopbackCapture => !UseLoopbackCapture;
+
         public int RecordingDeviceId
         {
             get => _optionsService.Options.RecordingDevice;
@@ -234,6 +236,19 @@ namespace OnlyR.ViewModel
                 if (_optionsService.Options.RecordingDevice != value)
                 {
                     _optionsService.Options.RecordingDevice = value;
+                }
+            }
+        }
+
+        public bool UseLoopbackCapture
+        {
+            get => _optionsService.Options.UseLoopbackCapture;
+            set
+            {
+                if (_optionsService.Options.UseLoopbackCapture != value)
+                {
+                    _optionsService.Options.UseLoopbackCapture = value;
+                    OnPropertyChanged(nameof(NotUsingLoopbackCapture));
                 }
             }
         }

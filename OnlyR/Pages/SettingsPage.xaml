@@ -79,13 +79,21 @@
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding RecordingDevices}" 
+                    IsEnabled="{Binding NotUsingLoopbackCapture}"
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     DisplayMemberPath="DeviceName" 
                     SelectedValuePath="DeviceId"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     AutomationProperties.AutomationId="RecordingDevice"
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
-                
+
+                <CheckBox 
+                    Style="{StaticResource SettingsCheckBox}"
+                    IsChecked="{Binding UseLoopbackCapture, Mode=TwoWay}" 
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"
+                    AutomationProperties.AutomationId="LoopbackCapture"
+                    Content="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"/>
+
                 <ComboBox 
                     Style="{StaticResource SettingsComboStyle}"
                     ItemsSource="{Binding SampleRates}" 

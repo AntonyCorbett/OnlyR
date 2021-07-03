@@ -1,4 +1,5 @@
 ﻿using System;
+using NAudio.Wave;
 
 namespace OnlyR.Core.Recorder
 {
@@ -36,18 +37,29 @@ namespace OnlyR.Core.Recorder
         /// </summary>
         /// <param name="buffer">The audio samples.</param>
         /// <param name="bytesInBuffer">The number of bytes in the audio buffer.</param>
-        public void FadeBuffer(byte[] buffer, int bytesInBuffer)
+        /// <param name="isFloatingPointAudio">If the audio is 32-bit.</param>
+        public void FadeBuffer(byte[] buffer, int bytesInBuffer, bool isFloatingPointAudio)
         {
             _sampleCountModified += bytesInBuffer;
             float volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
 
-            for (int index = 0; index < bytesInBuffer; index += 2)
-            {
-                short sample = (short)((buffer[index + 1] << 8) | buffer[index + 0]);
+            var buff = new WaveBuffer(buffer);
 
-                short modifiedSample = (short)(sample * volumeAdjustmentFraction);
-                buffer[index + 1] = (byte)(modifiedSample >> 8);
-                buffer[index + 0] = (byte)(modifiedSample & 0xFF);
+            if (isFloatingPointAudio)
+            {
+                for (var index = 0; index < bytesInBuffer / 4; ++index)
+                {
+                    var sample = buff.FloatBuffer[index];
+                    buff.FloatBuffer[index] = sample * volumeAdjustmentFraction;
+                }
+            }
+            else
+            {
+                for (var index = 0; index < bytesInBuffer / 2; ++index)
+                {
+                    var sample = buff.ShortBuffer[index];
+                    buff.ShortBuffer[index] = (short)(sample * volumeAdjustmentFraction);
+                }
             }
 
             if (volumeAdjustmentFraction <= 0)
