@@ -1,0 +1,578 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0/win-x86",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {},
+    ".NETCoreApp,Version=v5.0/win-x86": {
+      "OnlyR/1.0.0": {
+        "dependencies": {
+          "FluentCommandLineParser-netstandard": "1.4.3.13",
+          "MaterialDesignThemes": "4.1.0",
+          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Toolkit.Mvvm": "7.0.2",
+          "Newtonsoft.Json": "13.0.1",
+          "OnlyR.Core": "1.0.0",
+          "Serilog.Sinks.File": "5.0.0",
+          "SonarAnalyzer.CSharp": "8.25.0.33663",
+          "WinCopies.WindowsAPICodePack.Shell": "2.3.0"
+        },
+        "runtime": {
+          "OnlyR.dll": {}
+        },
+        "resources": {
+          "cs-CZ/OnlyR.resources.dll": {
+            "locale": "cs-CZ"
+          },
+          "de-DE/OnlyR.resources.dll": {
+            "locale": "de-DE"
+          },
+          "en-US/OnlyR.resources.dll": {
+            "locale": "en-US"
+          },
+          "es-ES/OnlyR.resources.dll": {
+            "locale": "es-ES"
+          },
+          "es-MX/OnlyR.resources.dll": {
+            "locale": "es-MX"
+          },
+          "fi-FI/OnlyR.resources.dll": {
+            "locale": "fi-FI"
+          },
+          "fr-FR/OnlyR.resources.dll": {
+            "locale": "fr-FR"
+          },
+          "hu-HU/OnlyR.resources.dll": {
+            "locale": "hu-HU"
+          },
+          "it-IT/OnlyR.resources.dll": {
+            "locale": "it-IT"
+          },
+          "lv-LV/OnlyR.resources.dll": {
+            "locale": "lv-LV"
+          },
+          "pl-PL/OnlyR.resources.dll": {
+            "locale": "pl-PL"
+          },
+          "pt-BR/OnlyR.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "pt-PT/OnlyR.resources.dll": {
+            "locale": "pt-PT"
+          },
+          "ro-RO/OnlyR.resources.dll": {
+            "locale": "ro-RO"
+          },
+          "ru-RU/OnlyR.resources.dll": {
+            "locale": "ru-RU"
+          },
+          "sv-SE/OnlyR.resources.dll": {
+            "locale": "sv-SE"
+          },
+          "tr-TR/OnlyR.resources.dll": {
+            "locale": "tr-TR"
+          },
+          "vi-VN/OnlyR.resources.dll": {
+            "locale": "vi-VN"
+          }
+        }
+      },
+      "FluentCommandLineParser-netstandard/1.4.3.13": {
+        "runtime": {
+          "lib/netstandard2.0/FluentCommandLineParser.dll": {
+            "assemblyVersion": "1.4.3.13",
+            "fileVersion": "1.4.3.13"
+          }
+        }
+      },
+      "MaterialDesignColors/2.0.1": {
+        "runtime": {
+          "lib/netcoreapp3.1/MaterialDesignColors.dll": {
+            "assemblyVersion": "2.0.1.2556",
+            "fileVersion": "2.0.1.2556"
+          }
+        }
+      },
+      "MaterialDesignThemes/4.1.0": {
+        "dependencies": {
+          "MaterialDesignColors": "2.0.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/MaterialDesignThemes.Wpf.dll": {
+            "assemblyVersion": "4.1.0.2556",
+            "fileVersion": "4.1.0.2556"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection/5.0.1": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "5.0.0"
+        },
+        "runtime": {
+          "lib/net5.0/Microsoft.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "5.0.0.1",
+            "fileVersion": "5.0.120.57516"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/5.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.20.51904"
+          }
+        }
+      },
+      "Microsoft.NETCore.Platforms/5.0.0": {},
+      "Microsoft.Toolkit.Mvvm/7.0.2": {
+        "runtime": {
+          "lib/net5.0/Microsoft.Toolkit.Mvvm.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.2.1"
+          }
+        }
+      },
+      "Microsoft.Win32.Registry/4.7.0": {
+        "dependencies": {
+          "System.Security.AccessControl": "4.7.0",
+          "System.Security.Principal.Windows": "4.7.0"
+        }
+      },
+      "Microsoft.Win32.SystemEvents/5.0.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "5.0.0"
+        }
+      },
+      "NAudio.Core/2.0.0": {
+        "runtime": {
+          "lib/netstandard2.0/NAudio.Core.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "NAudio.Lame/2.0.0": {
+        "dependencies": {
+          "NAudio.Core": "2.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NAudio.Lame.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "NAudio.Wasapi/2.0.0": {
+        "dependencies": {
+          "NAudio.Core": "2.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NAudio.Wasapi.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
+          }
+        }
+      },
+      "NAudio.WinForms/2.0.1": {
+        "dependencies": {
+          "NAudio.WinMM": "2.0.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/NAudio.WinForms.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.0"
+          }
+        }
+      },
+      "NAudio.WinMM/2.0.1": {
+        "dependencies": {
+          "Microsoft.Win32.Registry": "4.7.0",
+          "NAudio.Core": "2.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NAudio.WinMM.dll": {
+            "assemblyVersion": "2.0.1.0",
+            "fileVersion": "2.0.1.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
+          }
+        }
+      },
+      "Serilog/2.10.0": {
+        "runtime": {
+          "lib/netstandard2.1/Serilog.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.10.0.0"
+          }
+        }
+      },
+      "Serilog.Sinks.File/5.0.0": {
+        "dependencies": {
+          "Serilog": "2.10.0"
+        },
+        "runtime": {
+          "lib/net5.0/Serilog.Sinks.File.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.0.0"
+          }
+        }
+      },
+      "SonarAnalyzer.CSharp/8.25.0.33663": {},
+      "System.Drawing.Common/5.0.0": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "5.0.0"
+        }
+      },
+      "System.Security.AccessControl/4.7.0": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "5.0.0",
+          "System.Security.Principal.Windows": "4.7.0"
+        }
+      },
+      "System.Security.Principal.Windows/4.7.0": {},
+      "WinCopies.Util/2.6.1.1": {
+        "runtime": {
+          "lib/net5.0/WinCopies.Util.dll": {
+            "assemblyVersion": "2.6.1.1",
+            "fileVersion": "2.6.1.1"
+          }
+        }
+      },
+      "WinCopies.WindowsAPICodePack/2.3.0": {
+        "dependencies": {
+          "WinCopies.Util": "2.6.1.1",
+          "WinCopies.WindowsAPICodePack.COMNative": "2.3.0",
+          "WinCopies.WindowsAPICodePack.Win32Native": "2.3.0"
+        },
+        "runtime": {
+          "lib/net5.0-windows7.0/WinCopies.WindowsAPICodePack.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
+      "WinCopies.WindowsAPICodePack.COMNative/2.3.0": {
+        "dependencies": {
+          "WinCopies.Util": "2.6.1.1",
+          "WinCopies.WindowsAPICodePack.Consts": "2.3.0",
+          "WinCopies.WindowsAPICodePack.Win32Native": "2.3.0"
+        },
+        "runtime": {
+          "lib/net5.0-windows7.0/WinCopies.WindowsAPICodePack.COMNative.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
+      "WinCopies.WindowsAPICodePack.Consts/2.3.0": {
+        "runtime": {
+          "lib/net5.0/WinCopies.WindowsAPICodePack.Consts.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
+      "WinCopies.WindowsAPICodePack.Shell/2.3.0": {
+        "dependencies": {
+          "System.Drawing.Common": "5.0.0",
+          "WinCopies.WindowsAPICodePack": "2.3.0",
+          "WinCopies.WindowsAPICodePack.COMNative": "2.3.0",
+          "WinCopies.WindowsAPICodePack.Win32Native": "2.3.0"
+        },
+        "runtime": {
+          "lib/net5.0-windows7.0/WinCopies.WindowsAPICodePack.Shell.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
+      "WinCopies.WindowsAPICodePack.Win32Native/2.3.0": {
+        "dependencies": {
+          "WinCopies.Util": "2.6.1.1",
+          "WinCopies.WindowsAPICodePack.Consts": "2.3.0"
+        },
+        "runtime": {
+          "lib/net5.0-windows7.0/WinCopies.WindowsAPICodePack.Win32Native.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.0.0"
+          }
+        }
+      },
+      "OnlyR.Core/1.0.0": {
+        "dependencies": {
+          "NAudio.Lame": "2.0.0",
+          "NAudio.Wasapi": "2.0.0",
+          "NAudio.WinForms": "2.0.1"
+        },
+        "runtime": {
+          "OnlyR.Core.dll": {}
+        },
+        "resources": {
+          "cs-CZ/OnlyR.Core.resources.dll": {
+            "locale": "cs-CZ"
+          },
+          "de-DE/OnlyR.Core.resources.dll": {
+            "locale": "de-DE"
+          },
+          "en-US/OnlyR.Core.resources.dll": {
+            "locale": "en-US"
+          },
+          "es-ES/OnlyR.Core.resources.dll": {
+            "locale": "es-ES"
+          },
+          "es-MX/OnlyR.Core.resources.dll": {
+            "locale": "es-MX"
+          },
+          "fi-FI/OnlyR.Core.resources.dll": {
+            "locale": "fi-FI"
+          },
+          "fr-FR/OnlyR.Core.resources.dll": {
+            "locale": "fr-FR"
+          },
+          "hu-HU/OnlyR.Core.resources.dll": {
+            "locale": "hu-HU"
+          },
+          "it-IT/OnlyR.Core.resources.dll": {
+            "locale": "it-IT"
+          },
+          "lv-LV/OnlyR.Core.resources.dll": {
+            "locale": "lv-LV"
+          },
+          "pl-PL/OnlyR.Core.resources.dll": {
+            "locale": "pl-PL"
+          },
+          "pt-BR/OnlyR.Core.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "pt-PT/OnlyR.Core.resources.dll": {
+            "locale": "pt-PT"
+          },
+          "ro-RO/OnlyR.Core.resources.dll": {
+            "locale": "ro-RO"
+          },
+          "ru-RU/OnlyR.Core.resources.dll": {
+            "locale": "ru-RU"
+          },
+          "sv-SE/OnlyR.Core.resources.dll": {
+            "locale": "sv-SE"
+          },
+          "tr-TR/OnlyR.Core.resources.dll": {
+            "locale": "tr-TR"
+          },
+          "vi-VN/OnlyR.Core.resources.dll": {
+            "locale": "vi-VN"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OnlyR/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FluentCommandLineParser-netstandard/1.4.3.13": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MQtF755bNo31t0JDTNb1IXfagmi+Mwq9B+FCH1c0nkxWiz53J5rwixWQQ/ireQAvneetyS8mbcVggwygORg4Mg==",
+      "path": "fluentcommandlineparser-netstandard/1.4.3.13",
+      "hashPath": "fluentcommandlineparser-netstandard.1.4.3.13.nupkg.sha512"
+    },
+    "MaterialDesignColors/2.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Azl8nN23SD6QPE0PdsfpKiIqWTvH7rzXwgXPiFSEt91NFOrwB5cx3iq/sbINWMZunhXJ32+jVUHiV03B8eJbZw==",
+      "path": "materialdesigncolors/2.0.1",
+      "hashPath": "materialdesigncolors.2.0.1.nupkg.sha512"
+    },
+    "MaterialDesignThemes/4.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WqrO9AbtdE4pLPtDk/C5BZRnkgWFwVGyUHWj7tRJrgnKl089DEobVXBCLeqp2mkgBeFHj4Xe3AfWyhmlnO6AZA==",
+      "path": "materialdesignthemes/4.1.0",
+      "hashPath": "materialdesignthemes.4.1.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection/5.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-//mDNrYeiJ0eh/awFhDFJQzkRVra/njU5Y4fyK7X29g5HScrzbUkKOKlyTtygthcGFt4zNC8G5CFCjb/oizomA==",
+      "path": "microsoft.extensions.dependencyinjection/5.0.1",
+      "hashPath": "microsoft.extensions.dependencyinjection.5.0.1.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ORj7Zh81gC69TyvmcUm9tSzytcy8AVousi+IVRAI8nLieQjOFryRusSFh7+aLk16FN9pQNqJAiMd7BTKINK0kA==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/5.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VyPlqzH2wavqquTcYpkIIAQ6WdenuKoFN0BdYBbCWsclXacSOHNQn66Gt4z5NBqEYW0FAPm5rlvki9ZiCij5xQ==",
+      "path": "microsoft.netcore.platforms/5.0.0",
+      "hashPath": "microsoft.netcore.platforms.5.0.0.nupkg.sha512"
+    },
+    "Microsoft.Toolkit.Mvvm/7.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vHowFlLxngwp/VVKtD2r6FydKEVUS7wSqRLcjiH4tgwAiyn5ctntBt5O/ErklH5w6F6PNz5cOZganUguqZQ6BA==",
+      "path": "microsoft.toolkit.mvvm/7.0.2",
+      "hashPath": "microsoft.toolkit.mvvm.7.0.2.nupkg.sha512"
+    },
+    "Microsoft.Win32.Registry/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KSrRMb5vNi0CWSGG1++id2ZOs/1QhRqROt+qgbEAdQuGjGrFcl4AOl4/exGPUYz2wUnU42nvJqon1T3U0kPXLA==",
+      "path": "microsoft.win32.registry/4.7.0",
+      "hashPath": "microsoft.win32.registry.4.7.0.nupkg.sha512"
+    },
+    "Microsoft.Win32.SystemEvents/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Bh6blKG8VAKvXiLe2L+sEsn62nc1Ij34MrNxepD2OCrS5cpCwQa9MeLyhVQPQ/R4Wlzwuy6wMK8hLb11QPDRsQ==",
+      "path": "microsoft.win32.systemevents/5.0.0",
+      "hashPath": "microsoft.win32.systemevents.5.0.0.nupkg.sha512"
+    },
+    "NAudio.Core/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-knmGOIYbzn9ZGkFcVs5d3zEYvi50jVriyEirVtAHjkcDoo2ziK32bZb7KkFARLD4lhCGkqp6uT0+0fc4JIfQcw==",
+      "path": "naudio.core/2.0.0",
+      "hashPath": "naudio.core.2.0.0.nupkg.sha512"
+    },
+    "NAudio.Lame/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/wUf0rkix9nvhJUbIXtgc7w4MLBDyIYLkXvkP2lcuAl1VEm982X27vR0xdPNKeKVSTMLi7+imwpfTsursPdaMg==",
+      "path": "naudio.lame/2.0.0",
+      "hashPath": "naudio.lame.2.0.0.nupkg.sha512"
+    },
+    "NAudio.Wasapi/2.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7ES+jfZyOooBp86gql9BZ/OjKFmGfLaSLCtJagtCYiRGxfauHp4hXyeuwxS2mPLBxBGxBo9oGThN6y3QY+/w/w==",
+      "path": "naudio.wasapi/2.0.0",
+      "hashPath": "naudio.wasapi.2.0.0.nupkg.sha512"
+    },
+    "NAudio.WinForms/2.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SOyXRsLePAvIWG20OMRHiUkNijme6J28DKBVesmhdfh4i7OKgkvGLN19eT+vPfXr97yhMudULsyYp9Niz8/a+g==",
+      "path": "naudio.winforms/2.0.1",
+      "hashPath": "naudio.winforms.2.0.1.nupkg.sha512"
+    },
+    "NAudio.WinMM/2.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-i7Da/gCqvwWvETFBRkuwCelSXEK5rPG7pTaqCU9aXFRiO0p7lwHjm/+k2lOWLmRGUJdLm/VSDO6Vknacnb6mSg==",
+      "path": "naudio.winmm/2.0.1",
+      "hashPath": "naudio.winmm.2.0.1.nupkg.sha512"
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "path": "newtonsoft.json/13.0.1",
+      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
+    },
+    "Serilog/2.10.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+QX0hmf37a0/OZLxM3wL7V6/ADvC1XihXN4Kq/p6d8lCPfgkRdiuhbWlMaFjR9Av0dy5F0+MBeDmDdRZN/YwQA==",
+      "path": "serilog/2.10.0",
+      "hashPath": "serilog.2.10.0.nupkg.sha512"
+    },
+    "Serilog.Sinks.File/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uwV5hdhWPwUH1szhO8PJpFiahqXmzPzJT/sOijH/kFgUx+cyoDTMM8MHD0adw9+Iem6itoibbUXHYslzXsLEAg==",
+      "path": "serilog.sinks.file/5.0.0",
+      "hashPath": "serilog.sinks.file.5.0.0.nupkg.sha512"
+    },
+    "SonarAnalyzer.CSharp/8.25.0.33663": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6Iu2gGAt/6WLT9Rg+pE1Kgnu2eHz4LwcDemcIPAZ9iV+pyHxa0S3WLLy1GS2E7u34/tJGA/WvHhZ04LI7BF9wA==",
+      "path": "sonaranalyzer.csharp/8.25.0.33663",
+      "hashPath": "sonaranalyzer.csharp.8.25.0.33663.nupkg.sha512"
+    },
+    "System.Drawing.Common/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SztFwAnpfKC8+sEKXAFxCBWhKQaEd97EiOL7oZJZP56zbqnLpmxACWA8aGseaUExciuEAUuR9dY8f7HkTRAdnw==",
+      "path": "system.drawing.common/5.0.0",
+      "hashPath": "system.drawing.common.5.0.0.nupkg.sha512"
+    },
+    "System.Security.AccessControl/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JECvTt5aFF3WT3gHpfofL2MNNP6v84sxtXxpqhLBCcDRzqsPBmHhQ6shv4DwwN2tRlzsUxtb3G9M3763rbXKDg==",
+      "path": "system.security.accesscontrol/4.7.0",
+      "hashPath": "system.security.accesscontrol.4.7.0.nupkg.sha512"
+    },
+    "System.Security.Principal.Windows/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ojD0PX0XhneCsUbAZVKdb7h/70vyYMDYs85lwEI+LngEONe/17A0cFaRFqZU+sOEidcVswYWikYOQ9PPfjlbtQ==",
+      "path": "system.security.principal.windows/4.7.0",
+      "hashPath": "system.security.principal.windows.4.7.0.nupkg.sha512"
+    },
+    "WinCopies.Util/2.6.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cgSMkT6vCWbEKimn3Lv8qr5YdsK63Vam8/XmvKQkBlNdJPhKc0WU8M0u7efET861l359PTtxestwzlGNPOgM9w==",
+      "path": "wincopies.util/2.6.1.1",
+      "hashPath": "wincopies.util.2.6.1.1.nupkg.sha512"
+    },
+    "WinCopies.WindowsAPICodePack/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kVtlMnTPKbGwznHrWAeIFpO8byDNmUByVEnq50C6E1rqxvbCY/D9VrJibKwElgbIXWvwac8FvkAx8aZTO6aS0Q==",
+      "path": "wincopies.windowsapicodepack/2.3.0",
+      "hashPath": "wincopies.windowsapicodepack.2.3.0.nupkg.sha512"
+    },
+    "WinCopies.WindowsAPICodePack.COMNative/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7RyLQFLdge7+JZupshB3XqbGWok6BTkxW+sPCZEpMxRWhfQ52i2RCf/mjk/d+zXWL4sMn1tr4TnWFhHB+MNYcA==",
+      "path": "wincopies.windowsapicodepack.comnative/2.3.0",
+      "hashPath": "wincopies.windowsapicodepack.comnative.2.3.0.nupkg.sha512"
+    },
+    "WinCopies.WindowsAPICodePack.Consts/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-M+IaBwP+moNPCykzMdBEkBM7D8lClAoYkMztS6+GHNlOso8vChhlygFgTp+cuBpNhxcsvmupyVejbvxBh7Ahlw==",
+      "path": "wincopies.windowsapicodepack.consts/2.3.0",
+      "hashPath": "wincopies.windowsapicodepack.consts.2.3.0.nupkg.sha512"
+    },
+    "WinCopies.WindowsAPICodePack.Shell/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7Xg8FjPj2DNP7KbbmsMOTgK8qHdNi/vEzN1lE0M79r3c2GZquCmLqswbst70baOKJ+gcttbYvnegxeMlTIjS9A==",
+      "path": "wincopies.windowsapicodepack.shell/2.3.0",
+      "hashPath": "wincopies.windowsapicodepack.shell.2.3.0.nupkg.sha512"
+    },
+    "WinCopies.WindowsAPICodePack.Win32Native/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-EHVbF6m5vhTyhDk59ZL7e+hlU9raCXRFB/3r/rItVHJL7aH7RQjM7z+W+M3v/PeVmG7NABbQESWAcAWowESI3A==",
+      "path": "wincopies.windowsapicodepack.win32native/2.3.0",
+      "hashPath": "wincopies.windowsapicodepack.win32native.2.3.0.nupkg.sha512"
+    },
+    "OnlyR.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

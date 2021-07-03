@@ -22,6 +22,7 @@ namespace OnlyR.Core.Recorder
 
         private LameMP3FileWriter? _mp3Writer;
         private IWaveIn? _waveSource;
+        private WaveOutEvent? _silenceWaveOut;
         private SampleAggregator? _sampleAggregator;
         private VolumeFader? _fader;
         private RecordingStatus _recordingStatus;
@@ -73,6 +74,7 @@ namespace OnlyR.Core.Recorder
                 if (recordingConfig.UseLoopbackCapture)
                 {
                     _waveSource = new WasapiLoopbackCapture();
+                    ConfigureSilenceOut();
                 }
                 else
                 {
@@ -96,8 +98,20 @@ namespace OnlyR.Core.Recorder
                     CreateTag(recordingConfig));
 
                 _waveSource.StartRecording();
+                
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
             }
+        }
+
+        private void ConfigureSilenceOut()
+        {
+            // WasapiLoopbackCapture doesn't record any audio when nothing is playing
+            // so we must play some silence!
+
+            var silence = new SilenceProvider(new WaveFormat(44100, 2));
+            _silenceWaveOut = new WaveOutEvent();
+            _silenceWaveOut.Init(silence);
+            _silenceWaveOut.Play();
         }
 
         /// <summary>
@@ -117,6 +131,7 @@ namespace OnlyR.Core.Recorder
                 else
                 {
                     _waveSource?.StopRecording();
+                    _silenceWaveOut?.Stop();
                 }
             }
         }
@@ -251,6 +266,7 @@ namespace OnlyR.Core.Recorder
         private void FadeCompleteHandler(object? sender, System.EventArgs e)
         {
             _waveSource?.StopRecording();
+            _silenceWaveOut?.Stop();
         }
 
         private void Cleanup()
@@ -259,6 +275,9 @@ namespace OnlyR.Core.Recorder
 
             _waveSource?.Dispose();
             _waveSource = null;
+
+            _silenceWaveOut?.Dispose();
+            _silenceWaveOut = null;
 
             _mp3Writer?.Dispose();
             _mp3Writer = null;
