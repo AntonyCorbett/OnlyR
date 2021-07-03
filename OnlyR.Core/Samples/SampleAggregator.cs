@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Core.Samples
-{
-    using System;
-    using EventArgs;
+﻿using System;
+using OnlyR.Core.EventArgs;
 
+namespace OnlyR.Core.Samples
+{
     /// <summary>
     /// Aggregator of audio samples. Based on Mark Heath's work in NAudio sample applications
     /// </summary>
@@ -30,7 +30,7 @@
             }
         }
 
-        public event EventHandler<SamplesReportEventArgs> ReportEvent;
+        public event EventHandler<SamplesReportEventArgs>? ReportEvent;
 
         public void Add(float value)
         {

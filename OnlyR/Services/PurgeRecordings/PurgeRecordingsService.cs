@@ -1,15 +1,15 @@
-﻿namespace OnlyR.Services.PurgeRecordings
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Threading;
-    using OnlyR.Services.Options;
-    using OnlyR.Utils;
-    using Serilog;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using Serilog;
 
+namespace OnlyR.Services.PurgeRecordings
+{
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class PurgeRecordingsService : IPurgeRecordingsService
     {
@@ -47,7 +47,7 @@
             _timer.Start();
         }
 
-        private async void HandleTimerTick(object sender, EventArgs e)
+        private async void HandleTimerTick(object? sender, EventArgs e)
         {
             _timer.Stop();
 
@@ -206,6 +206,7 @@
             var result = new List<string>();
 
             if (_cancellationTokenSource.IsCancellationRequested)
+                
             {
                 return result;
             }
@@ -297,7 +298,7 @@
         {
             if (_cancellationTokenSource.IsCancellationRequested)
             {
-                yield return null;
+                yield break;
             }
 
             var folders = GetPurgeCandidateFolders(oldFileDate);
@@ -317,7 +318,7 @@
         {
             if (_cancellationTokenSource.IsCancellationRequested)
             {
-                yield return null;
+                yield break;
             }
 
             var rootFolder = FileUtils.GetRootDestinationFolder(
@@ -326,7 +327,7 @@
 
             if (!Directory.Exists(rootFolder))
             {
-                yield return null;
+                yield break;
             }
 
             var yearSubFolders = Directory.EnumerateDirectories(rootFolder);

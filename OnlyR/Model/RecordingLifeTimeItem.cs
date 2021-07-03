@@ -2,8 +2,14 @@
 {
     public class RecordingLifeTimeItem
     {
-        public string Description { get; set; }
+        public RecordingLifeTimeItem(string description, int days)
+        {
+            Description = description;
+            Days = days;
+        }
 
-        public int Days { get; set; }
+        public string Description { get; }
+
+        public int Days { get; }
     }
 }

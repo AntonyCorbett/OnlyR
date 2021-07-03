@@ -1,10 +1,10 @@
-﻿namespace OnlyR.Tests
-{
-    using System;
-    using Core.Enums;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Utils;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OnlyR.Core.Enums;
+using OnlyR.Utils;
 
+namespace OnlyR.Tests
+{
     [TestClass]
     public class TestEnumExtensions
     {

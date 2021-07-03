@@ -5,8 +5,14 @@
     /// </summary>
     public class SampleRateItem
     {
-        public string Name { get; set; }
+        public SampleRateItem(string name, int actualSampleRate)
+        {
+            Name = name;
+            ActualSampleRate = actualSampleRate;
+        }
 
-        public int ActualSampleRate { get; set; }
+        public string Name { get; }
+
+        public int ActualSampleRate { get; }
     }
 }

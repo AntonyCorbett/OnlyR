@@ -8,6 +8,6 @@ namespace OnlyR.ViewModel
     /// </summary>
     public class ViewModelLocator
     {
-        public MainViewModel Main => Ioc.Default.GetService<MainViewModel>();
+        public MainViewModel? Main => Ioc.Default.GetService<MainViewModel>();
     }
 }

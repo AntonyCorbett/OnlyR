@@ -1,12 +1,12 @@
-﻿namespace OnlyR.Services.RecordingDestination
-{
-    using System;
-    using Model;
-    using Options;
+﻿using System;
+using OnlyR.Model;
+using OnlyR.Services.Options;
 
+namespace OnlyR.Services.RecordingDestination
+{
     public interface IRecordingDestinationService
     {
         // ReSharper disable once UnusedMember.Global
-        RecordingCandidate GetRecordingFileCandidate(IOptionsService optionsService, DateTime dt, string commandLineIdentifier);
+        RecordingCandidate GetRecordingFileCandidate(IOptionsService optionsService, DateTime dt, string? commandLineIdentifier);
     }
 }

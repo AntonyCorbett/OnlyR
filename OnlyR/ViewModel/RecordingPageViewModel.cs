@@ -1,31 +1,30 @@
 ﻿using System.Windows;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using System;
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using OnlyR.Core.Enums;
+using OnlyR.Exceptions;
+using OnlyR.Model;
+using OnlyR.Services.Audio;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.Options;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
+using OnlyR.Utils;
+using OnlyR.ViewModel.Messages;
+using Serilog;
 
 namespace OnlyR.ViewModel
 {
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-    using Microsoft.Toolkit.Mvvm.Input;
-    using Microsoft.Toolkit.Mvvm.Messaging;
-    using System;
-    using System.Collections.Concurrent;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Windows.Threading;
-    using Core.Enums;
-    using Exceptions;
-    using Messages;
-    using Model;
-    using Serilog;
-    using Services.Audio;
-    using Services.AudioSilence;
-    using Services.Options;
-    using Services.RecordingCopies;
-    using Services.RecordingDestination;
-    using Services.Snackbar;
-    using Utils;
-
     /// <summary>
     /// View model for Recording page. Contains properties that the Recording page 
     /// can data bind to, i.e. it has everything that is needed by the user during 
@@ -42,13 +41,13 @@ namespace OnlyR.ViewModel
         private readonly ISilenceService _silenceService;
         private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
         private readonly Stopwatch _stopwatch;
-        private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new ConcurrentDictionary<char, DateTime>();
-        private DispatcherTimer _splashTimer;
+        private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new();
+        private DispatcherTimer? _splashTimer;
         private int _volumeLevel;
         private bool _isCopying;
         private RecordingStatus _recordingStatus;
         private string _statusStr;
-        private string _errorMsg;
+        private string? _errorMsg;
 
         public RecordingPageViewModel(
             IAudioService audioService,
@@ -105,15 +104,15 @@ namespace OnlyR.ViewModel
         public static string PageName => "RecordingPage";
 
         // Commands (bound in ctor)...
-        public RelayCommand StartRecordingCommand { get; set; }
+        public RelayCommand StartRecordingCommand { get; }
 
-        public RelayCommand StopRecordingCommand { get; set; }
+        public RelayCommand StopRecordingCommand { get; }
 
-        public RelayCommand NavigateSettingsCommand { get; set; }
+        public RelayCommand NavigateSettingsCommand { get; }
 
-        public RelayCommand ShowRecordingsCommand { get; set; }
+        public RelayCommand ShowRecordingsCommand { get; }
 
-        public RelayCommand SaveToRemovableDriveCommand { get; set; }
+        public RelayCommand SaveToRemovableDriveCommand { get; }
 
         public bool IsCopying
         {
@@ -152,7 +151,7 @@ namespace OnlyR.ViewModel
             }
         }
 
-        public string MaxRecordingTimeString =>
+        public string? MaxRecordingTimeString =>
             _optionsService.Options.MaxRecordingTimeSeconds == 0
             ? null
             : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss");
@@ -210,7 +209,7 @@ namespace OnlyR.ViewModel
             }
         }
 
-        public string ErrorMsg
+        public string? ErrorMsg
         {
             get => _errorMsg;
             set
@@ -247,7 +246,7 @@ namespace OnlyR.ViewModel
         {
             get
             {
-                if (_stopwatch != null && _stopwatch.IsRunning)
+                if (_stopwatch.IsRunning)
                 {
                     return _stopwatch.Elapsed;
                 }
@@ -262,10 +261,10 @@ namespace OnlyR.ViewModel
         /// Responds to activation.
         /// </summary>
         /// <param name="state">RecordingPageNavigationState object (or null).</param>
-        public void Activated(object state)
+        public void Activated(object? state)
         {
             // on display of page...
-            var stateObj = (RecordingPageNavigationState)state;
+            var stateObj = (RecordingPageNavigationState?)state;
             if (stateObj != null)
             {
                 if (stateObj.StartRecording)
@@ -287,10 +286,7 @@ namespace OnlyR.ViewModel
 
         private void NavigateSettings()
         {
-            WeakReferenceMessenger.Default.Send(new NavigateMessage(
-                RecordingPageViewModel.PageName,
-                SettingsPageViewModel.PageName, 
-                null));
+            WeakReferenceMessenger.Default.Send(new NavigateMessage(PageName, SettingsPageViewModel.PageName, null));
         }
 
         private void OnShutDown(object recipient, BeforeShutDownMessage message)
@@ -304,7 +300,7 @@ namespace OnlyR.ViewModel
             e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
         }
 
-        private void AudioProgressHandler(object sender, Core.EventArgs.RecordingProgressEventArgs e)
+        private void AudioProgressHandler(object? sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
             OnPropertyChanged(nameof(ElapsedTimeStr));
@@ -347,13 +343,13 @@ namespace OnlyR.ViewModel
             StopRecordingCommand.Execute(null);
         }
 
-        private void AudioStopRequestedHandler(object sender, EventArgs e)
+        private void AudioStopRequestedHandler(object? sender, EventArgs e)
         {
             Log.Logger.Information("Stop requested");
             RecordingStatus = RecordingStatus.StopRequested;
         }
 
-        private void AudioStoppedHandler(object sender, EventArgs e)
+        private void AudioStoppedHandler(object? sender, EventArgs e)
         {
             Log.Logger.Information("Stopped recording");
             RecordingStatus = RecordingStatus.NotRecording;
@@ -361,7 +357,7 @@ namespace OnlyR.ViewModel
             _stopwatch.Stop();
         }
 
-        private void AudioStartedHandler(object sender, EventArgs e)
+        private void AudioStartedHandler(object? sender, EventArgs e)
         {
             Log.Logger.Information("Started recording");
             RecordingStatus = RecordingStatus.Recording;
@@ -394,23 +390,28 @@ namespace OnlyR.ViewModel
 
         private void CheckDiskSpace(RecordingCandidate candidate)
         {
-            if (candidate != null)
-            {
-                CheckDiskSpace(candidate.TempPath);
-                CheckDiskSpace(candidate.FinalPath);
-            }
+            CheckDiskSpace(candidate.TempPath);
+            CheckDiskSpace(candidate.FinalPath);
         }
 
         private void CheckDiskSpace(string filePath)
         {
-            if (!string.IsNullOrEmpty(filePath) && 
-                FileUtils.DriveFreeBytes(Path.GetDirectoryName(filePath), out ulong bytesFree) && 
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return;
+            }
+
+            var folder = Path.GetDirectoryName(filePath);
+            if (string.IsNullOrEmpty(folder))
+            {
+                return;
+            }
+
+            if (FileUtils.DriveFreeBytes(folder, out ulong bytesFree) && 
                 bytesFree < _safeMinBytesFree)
             {
                 // "Insufficient free space to record"
-#pragma warning disable S112 // General exceptions should never be thrown
                 throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
-#pragma warning restore S112 // General exceptions should never be thrown
             }
         }
 
@@ -419,7 +420,7 @@ namespace OnlyR.ViewModel
             try
             {
                 ClearErrorMsg();
-                _audioService.StopRecording(_optionsService.Options.FadeOut);
+                _audioService.StopRecording(_optionsService.Options?.FadeOut ?? false);
             }
             catch (Exception ex)
             {
@@ -451,19 +452,19 @@ namespace OnlyR.ViewModel
             _splashTimer.Start();
         }
 
-        private void SplashTimerTick(object sender, EventArgs e)
+        private void SplashTimerTick(object? sender, EventArgs e)
         {
             if (IsNotRecording)
             {
                 VolumeLevelAsPercentage -= 6;
                 if (VolumeLevelAsPercentage <= 0)
                 {
-                    _splashTimer.Stop();
+                    _splashTimer?.Stop();
                 }
             }
             else
             {
-                _splashTimer.Stop();
+                _splashTimer?.Stop();
             }
         }
 
@@ -483,7 +484,7 @@ namespace OnlyR.ViewModel
         {
             return FileUtils.FindSuitableRecordingFolderToShow(
                 _commandLineService.OptionsIdentifier,
-                _optionsService.Options.DestinationFolder);
+                _optionsService.Options?.DestinationFolder);
         }
 
         private void SaveToRemovableDrives()

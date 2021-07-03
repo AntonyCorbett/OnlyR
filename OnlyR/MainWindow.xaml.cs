@@ -1,16 +1,15 @@
 ﻿using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using System;
+using System.Windows;
+using System.Windows.Interop;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using OnlyR.ViewModel;
+using OnlyR.ViewModel.Messages;
 
 namespace OnlyR
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Interop;
-    using Services.Options;
-    using Utils;
-    using ViewModel;
-    using ViewModel.Messages;
-
     /// <summary>
     /// MainWindow.xaml code-behind.
     /// </summary>
@@ -70,8 +69,8 @@ namespace OnlyR
                 MaxWidth = SettingsWindowMaxWidth;
 
                 var optionsService = Ioc.Default.GetService<IOptionsService>();
-                var sz = optionsService.Options.SettingsPageSize;
-                if (sz != default(Size))
+                var sz = optionsService?.Options?.SettingsPageSize ?? default;
+                if (sz != default)
                 {
                     Width = sz.Width;
                     Height = sz.Height;
@@ -87,20 +86,25 @@ namespace OnlyR
         private void SaveSettingsWindowSize()
         {
             var optionsService = Ioc.Default.GetService<IOptionsService>();
-            optionsService.Options.SettingsPageSize = new Size(Width, Height);
+            if (optionsService != null)
+            {
+                optionsService.Options.SettingsPageSize = new Size(Width, Height);
+            }
         }
 
         private void AdjustMainWindowPositionAndSize()
         {
             var optionsService = Ioc.Default.GetService<IOptionsService>();
-
-            if (!string.IsNullOrEmpty(optionsService.Options.AppWindowPlacement))
+            if (optionsService != null)
             {
-                this.SetPlacement(optionsService.Options.AppWindowPlacement, optionsService.Options.StartMinimized);
-            }
-            else if (optionsService.Options.StartMinimized)
-            {
-                WindowState = WindowState.Minimized;
+                if (!string.IsNullOrEmpty(optionsService.Options.AppWindowPlacement))
+                {
+                    this.SetPlacement(optionsService.Options.AppWindowPlacement, optionsService.Options.StartMinimized);
+                }
+                else if (optionsService.Options.StartMinimized)
+                {
+                    WindowState = WindowState.Minimized;
+                }
             }
         }
 
@@ -121,7 +125,8 @@ namespace OnlyR
 
             var m = (MainViewModel)DataContext;
 
-            if (m.CurrentPageName.Equals(SettingsPageViewModel.PageName))
+            if (m.CurrentPageName != null && 
+                m.CurrentPageName.Equals(SettingsPageViewModel.PageName))
             {
                 SaveSettingsWindowSize();
             }
@@ -132,8 +137,11 @@ namespace OnlyR
         private void SaveWindowPos()
         {
             var optionsService = Ioc.Default.GetService<IOptionsService>();
-            optionsService.Options.AppWindowPlacement = this.GetPlacement();
-            optionsService.Save();
+            if (optionsService != null)
+            {
+                optionsService.Options.AppWindowPlacement = this.GetPlacement();
+                optionsService.Save();
+            }
         }
     }
 }

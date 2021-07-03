@@ -1,11 +1,10 @@
-﻿namespace OnlyR.AutoUpdates
-{
-    using System;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Reflection;
-    using Serilog;
+﻿using System;
+using System.Net.Http;
+using System.Reflection;
+using Serilog;
 
+namespace OnlyR.AutoUpdates
+{
     /// <summary>
     /// Used to get the installed OnlyR version and the 
     /// latest OnlyR release version from the github webpage.
@@ -14,9 +13,9 @@
     {
         public static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
 
-        public static string GetLatestReleaseVersionString()
+        public static string? GetLatestReleaseVersionString()
         {
-            string version = null;
+            string? version = null;
 
             try
             {
@@ -46,7 +45,7 @@
             return version;
         }
 
-        public static Version GetLatestReleaseVersion()
+        public static Version? GetLatestReleaseVersion()
         {
             var versionString = GetLatestReleaseVersionString();
 
@@ -72,13 +71,7 @@
             return new Version(major, minor, build, revision);
         }
 
-        public static string GetCurrentVersionString()
-        {
-            var ver = GetCurrentVersion();
-            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
-        }
-
-        public static Version GetCurrentVersion()
+        public static Version? GetCurrentVersion()
         {
             return Assembly.GetExecutingAssembly().GetName().Version;
         }

@@ -1,11 +1,11 @@
-﻿namespace OnlyR.Utils
-{
-    using System;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using Serilog;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using Serilog;
 
+namespace OnlyR.Utils
+{
     /// <summary>
     /// General file / folder utilities
     /// </summary>
@@ -29,9 +29,7 @@
                 if (!Directory.Exists(folderPath))
                 {
                     // "Could not create folder {0}"
-#pragma warning disable S112 // General exceptions should never be thrown
                     throw new Exception(string.Format(Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
-#pragma warning restore S112 // General exceptions should never be thrown
                 }
             }
         }
@@ -98,7 +96,7 @@
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="rootFromOptions">Overriding root folder as manually specified in app's settings</param>
         /// <returns>Folder path</returns>
-        public static string GetDestinationFolder(DateTime dt, string commandLineIdentifier, string rootFromOptions)
+        public static string GetDestinationFolder(DateTime dt, string? commandLineIdentifier, string? rootFromOptions)
         {
             return Path.Combine(
                 GetMonthlyDestinationFolder(dt, commandLineIdentifier, rootFromOptions),
@@ -112,7 +110,7 @@
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="rootFromOptions">Overriding root folder as manually specified in app's settings</param>
         /// <returns>Folder path</returns>
-        public static string GetMonthlyDestinationFolder(DateTime dt, string commandLineIdentifier, string rootFromOptions)
+        public static string GetMonthlyDestinationFolder(DateTime dt, string? commandLineIdentifier, string? rootFromOptions)
         {
             return Path.Combine(
                 GetRootDestinationFolder(commandLineIdentifier, rootFromOptions),
@@ -194,7 +192,7 @@
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="rootFromOptions">Overriding root folder as manually specified in app's settings</param>
         /// <returns>Folder path</returns>
-        public static string GetRootDestinationFolder(string commandLineIdentifier, string rootFromOptions)
+        public static string GetRootDestinationFolder(string? commandLineIdentifier, string? rootFromOptions)
         {
             return Path.Combine(
                 GetRecordingFolderRoot(rootFromOptions),
@@ -218,7 +216,7 @@
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="optionsVersion">The options schema version</param>
         /// <returns>Options file path.</returns>
-        public static string GetUserOptionsFilePath(string commandLineIdentifier, int optionsVersion)
+        public static string GetUserOptionsFilePath(string? commandLineIdentifier, int optionsVersion)
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -291,9 +289,9 @@
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-        public static string FindSuitableRecordingFolderToShow(string commandLineIdentifier, string destFolder)
+        public static string FindSuitableRecordingFolderToShow(string? commandLineIdentifier, string? destFolder)
         {
-            string folder = null;
+            string? folder = null;
 
             try
             {
@@ -337,14 +335,14 @@
             return folder;
         }
 
-        private static string GetRecordingFolderRoot(string rootFromOptions)
+        private static string GetRecordingFolderRoot(string? rootFromOptions)
         {
             return DirectoryIsAvailable(rootFromOptions) 
-                ? rootFromOptions 
+                ? rootFromOptions!
                 : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppNamePathSegment);
         }
 
-        private static bool DirectoryIsAvailable(string dir)
+        private static bool DirectoryIsAvailable(string? dir)
         {
             if (string.IsNullOrEmpty(dir))
             {

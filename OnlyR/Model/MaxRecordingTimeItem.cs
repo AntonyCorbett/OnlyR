@@ -5,8 +5,14 @@
     /// </summary>
     public class MaxRecordingTimeItem
     {
-        public string Name { get; set; }
+        public MaxRecordingTimeItem(string name, int actualSeconds)
+        {
+            Name = name;
+            ActualSeconds = actualSeconds;
+        }
 
-        public int ActualSeconds { get; set; }
+        public string Name { get; }
+
+        public int ActualSeconds { get; }
     }
 }

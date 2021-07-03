@@ -5,8 +5,14 @@
     /// </summary>
     public class BitRateItem
     {
-        public string Name { get; set; }
+        public BitRateItem(string name, int actualBitRate)
+        {
+            Name = name;
+            ActualBitRate = actualBitRate;
+        }
 
-        public int ActualBitRate { get; set; }
+        public string Name { get; }
+
+        public int ActualBitRate { get; }
     }
 }

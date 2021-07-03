@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Services.Options
-{
-    using System;
-    using Fclp;
+﻿using System;
+using Fclp;
 
+namespace OnlyR.Services.Options
+{
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class CommandLineService : ICommandLineService
     {
@@ -13,7 +13,7 @@
             p.Setup<bool>("nogpu")
                 .Callback(s => NoGpu = s).SetDefault(false);
 
-            p.Setup<string>("id")
+            p.Setup<string?>("id")
                 .Callback(s => OptionsIdentifier = s).SetDefault(null);
 
             p.Setup<bool>("nosettings")
@@ -30,7 +30,7 @@
 
         public bool NoGpu { get; set; }
 
-        public string OptionsIdentifier { get; set; }
+        public string? OptionsIdentifier { get; set; }
 
         public bool NoSettings { get; set; }
 

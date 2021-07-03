@@ -1,7 +1,7 @@
-﻿namespace OnlyR.Services.RecordingCopies
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace OnlyR.Services.RecordingCopies
+{
     public interface ICopyRecordingsService
     {
         void Copy(IReadOnlyCollection<char> drives);

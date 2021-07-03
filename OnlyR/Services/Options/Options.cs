@@ -1,11 +1,11 @@
-﻿namespace OnlyR.Services.Options
-{
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Windows;
-    using Utils;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
+using OnlyR.Utils;
 
+namespace OnlyR.Services.Options
+{
     /// <summary>
     /// All program options. The full structure is written to disk in JSON format on change
     /// of data, and read from disk during app startup
@@ -46,7 +46,7 @@
 
         public int Mp3BitRate { get; set; }
 
-        public string Genre { get; set; }
+        public string? Genre { get; set; }
 
         public int MaxRecordingTimeSeconds { get; set; }
 
@@ -62,7 +62,7 @@
 
         public string DestinationFolder { get; set; }
 
-        public string AppWindowPlacement { get; set; }
+        public string? AppWindowPlacement { get; set; }
 
         public Size SettingsPageSize { get; set; }
 
@@ -72,7 +72,7 @@
 
         public int RecordingsLifeTimeDays { get; set; }
 
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
         public bool StartMinimized { get; set; }
 

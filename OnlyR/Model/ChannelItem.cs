@@ -5,8 +5,14 @@
     /// </summary>
     public class ChannelItem
     {
-        public string Name { get; set; }
+        public ChannelItem(string name, int channelCount)
+        {
+            Name = name;
+            ChannelCount = channelCount;
+        }
 
-        public int ChannelCount { get; set; }
+        public string Name { get; }
+
+        public int ChannelCount { get; }
     }
 }

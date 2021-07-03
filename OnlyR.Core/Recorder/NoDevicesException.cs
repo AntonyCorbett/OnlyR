@@ -1,7 +1,7 @@
-﻿namespace OnlyR.Core.Recorder
-{
-    using System;
+﻿using System;
 
+namespace OnlyR.Core.Recorder
+{
     /// <summary>
     /// To indicate there are no audio recording devices
     /// </summary>

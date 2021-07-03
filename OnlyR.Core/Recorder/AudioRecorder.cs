@@ -1,14 +1,14 @@
-﻿namespace OnlyR.Core.Recorder
-{
-    using System;
-    using System.Collections.Generic;
-    using NAudio.Lame;
-    using NAudio.Wave;
-    using OnlyR.Core.Enums;
-    using OnlyR.Core.EventArgs;
-    using OnlyR.Core.Models;
-    using OnlyR.Core.Samples;
+﻿using System;
+using System.Collections.Generic;
+using NAudio.Lame;
+using NAudio.Wave;
+using OnlyR.Core.Enums;
+using OnlyR.Core.EventArgs;
+using OnlyR.Core.Models;
+using OnlyR.Core.Samples;
 
+namespace OnlyR.Core.Recorder
+{
     /// <summary>
     /// The audio recorder. Uses NAudio for the heavy lifting, but it's isolated in this class
     /// so if we need to replace NAudio with another library we just need to modify this part
@@ -20,10 +20,10 @@
         private const int RequiredReportingIntervalMs = 40;
         private const int VuSpeed = 5;
 
-        private LameMP3FileWriter _mp3Writer;
-        private IWaveIn _waveSource;
-        private SampleAggregator _sampleAggregator;
-        private VolumeFader _fader;
+        private LameMP3FileWriter? _mp3Writer;
+        private IWaveIn? _waveSource;
+        private SampleAggregator? _sampleAggregator;
+        private VolumeFader? _fader;
         private RecordingStatus _recordingStatus;
 
         private int _dampedLevel;
@@ -33,9 +33,9 @@
             _recordingStatus = RecordingStatus.NotRecording;
         }
 
-        public event EventHandler<RecordingProgressEventArgs> ProgressEvent;
+        public event EventHandler<RecordingProgressEventArgs>? ProgressEvent;
 
-        public event EventHandler<RecordingStatusChangeEventArgs> RecordingStatusChangeEvent;
+        public event EventHandler<RecordingStatusChangeEventArgs>? RecordingStatusChangeEvent;
 
         /// <summary>
         /// Gets a list of Windows recording devices.
@@ -49,7 +49,7 @@
             for (int n = 0; n < count; ++n)
             {
                 var caps = WaveIn.GetCapabilities(n);
-                result.Add(new RecordingDeviceInfo { Id = n, Name = caps.ProductName });
+                result.Add(new RecordingDeviceInfo(n, caps.ProductName));
             }
 
             return result;
@@ -105,11 +105,11 @@
 
                 if (fadeOut)
                 {
-                    _fader.Start();
+                    _fader?.Start();
                 }
                 else
                 {
-                    _waveSource.StopRecording();
+                    _waveSource?.StopRecording();
                 }
             }
         }
@@ -155,20 +155,20 @@
             _sampleAggregator.ReportEvent += AggregatorReportHandler;
         }
 
-        private void AggregatorReportHandler(object sender, SamplesReportEventArgs e)
+        private void AggregatorReportHandler(object? sender, SamplesReportEventArgs e)
         {
             var value = Math.Max(e.MaxSample, Math.Abs(e.MinSample)) * 100;
             OnProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = GetDampedVolumeLevel(value) });
         }
 
-        private void WaveSourceRecordingStoppedHandler(object sender, StoppedEventArgs e)
+        private void WaveSourceRecordingStoppedHandler(object? sender, StoppedEventArgs e)
         {
             Cleanup();
             OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.NotRecording));
             _fader = null;
         }
 
-        private void WaveSourceDataAvailableHandler(object sender, WaveInEventArgs waveInEventArgs)
+        private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
         {
             // as audio samples are provided by WaveIn, we hook in here 
             // and write them to disk, encoding to MP3 on the fly 
@@ -186,10 +186,10 @@
             {
                 short sample = (short)((buffer[index + 1] << 8) | buffer[index + 0]);
                 float sample32 = sample / 32768F;
-                _sampleAggregator.Add(sample32);
+                _sampleAggregator?.Add(sample32);
             }
 
-            _mp3Writer.Write(buffer, 0, bytesRecorded);
+            _mp3Writer?.Write(buffer, 0, bytesRecorded);
         }
 
         private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
@@ -220,9 +220,9 @@
             return _dampedLevel;
         }
 
-        private void FadeCompleteHandler(object sender, EventArgs e)
+        private void FadeCompleteHandler(object? sender, System.EventArgs e)
         {
-            _waveSource.StopRecording();
+            _waveSource?.StopRecording();
         }
 
         private void Cleanup()

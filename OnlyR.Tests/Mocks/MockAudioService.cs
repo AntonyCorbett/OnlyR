@@ -1,13 +1,13 @@
-﻿namespace OnlyR.Tests.Mocks
-{
-    using System;
-    using System.Windows.Threading;
-    using Core.Enums;
-    using Core.EventArgs;
-    using Model;
-    using Services.Audio;
-    using Services.Options;
+﻿using System;
+using System.Windows.Threading;
+using OnlyR.Core.Enums;
+using OnlyR.Core.EventArgs;
+using OnlyR.Model;
+using OnlyR.Services.Audio;
+using OnlyR.Services.Options;
 
+namespace OnlyR.Tests.Mocks
+{
     /// <summary>
     /// A mock audio service
     /// </summary>
@@ -38,8 +38,8 @@
         {
             return new[]
             {
-                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 1 },
-                new RecordingDeviceItem { DeviceName = "Dev1", DeviceId = 2 },
+                new RecordingDeviceItem(1, "Dev1"),
+                new RecordingDeviceItem(2, "Dev2"),
             };
         }
 

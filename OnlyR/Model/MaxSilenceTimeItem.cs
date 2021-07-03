@@ -2,8 +2,15 @@
 {
     public class MaxSilenceTimeItem
     {
-        public string Name { get; set; }
+        public MaxSilenceTimeItem(string name, int seconds)
+        {
 
-        public int Seconds { get; set; }
+            Name = name;
+            Seconds = seconds;
+        }
+
+        public string Name { get; }
+
+        public int Seconds { get; }
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Utils
-{
-    using System;
-    using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
+namespace OnlyR.Utils
+{
     internal static class NativeMethods
     {
         // Pinvoke for API function

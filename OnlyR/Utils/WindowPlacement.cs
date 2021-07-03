@@ -1,4 +1,14 @@
-﻿namespace OnlyR.Utils
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
+using System.Windows.Interop;
+using System.Xml;
+using System.Xml.Serialization;
+
+namespace OnlyR.Utils
 {
 #pragma warning disable S101 // Types should be named in PascalCase
 
@@ -6,15 +16,6 @@
     // ReSharper disable FieldCanBeMadeReadOnly.Global
     // ReSharper disable MemberCanBePrivate.Global
     // ReSharper disable StyleCop.SA1307
-    using System;
-    using System.IO;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Windows;
-    using System.Windows.Interop;
-    using System.Xml;
-    using System.Xml.Serialization;
 
     //// adapted from david Rickard's Tech Blog
 
@@ -54,9 +55,15 @@
                 try
                 {
                     WINDOWPLACEMENT placement;
-                    using (MemoryStream memoryStream = new MemoryStream(xmlBytes))
+                    using (var memoryStream = new MemoryStream(xmlBytes))
                     {
-                        placement = (WINDOWPLACEMENT)Serializer.Deserialize(memoryStream);
+                        var p = (WINDOWPLACEMENT?)Serializer.Deserialize(memoryStream);
+                        if (p == null)
+                        {
+                            return;
+                        }
+
+                        placement = p.Value;
                     }
 
                     var adjustedDimensions = GetAdjustedWidthAndHeight(width, height);

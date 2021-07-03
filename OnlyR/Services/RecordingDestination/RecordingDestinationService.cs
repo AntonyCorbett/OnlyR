@@ -1,15 +1,15 @@
-﻿namespace OnlyR.Services.RecordingDestination
-{
-    using System;
-    using System.Globalization;
-    using System.IO;
-    using Model;
-    using Options;
-    using Serilog;
-    using Utils;
+﻿using System;
+using System.Globalization;
+using System.IO;
+using OnlyR.Model;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using Serilog;
 
+namespace OnlyR.Services.RecordingDestination
+{
     /// <summary>
-    /// Service to analyse recording destinate folder and generate a recording candidate
+    /// Service to analyse recording destination folder and generate a recording candidate
     /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
     public class RecordingDestinationService : IRecordingDestinationService
@@ -24,30 +24,34 @@
         public RecordingCandidate GetRecordingFileCandidate(
             IOptionsService optionsService,
             DateTime dt,
-            string commandLineIdentifier)
+            string? commandLineIdentifier)
         {
             var destFolder = FileUtils.GetDestinationFolder(dt, commandLineIdentifier, optionsService.Options.DestinationFolder);
             var finalPathAndTrack = GetNextAvailableFile(optionsService, destFolder, dt);
 
-            var result = new RecordingCandidate
+            if (finalPathAndTrack == null)
             {
-                RecordingDate = dt,
-                TrackNumber = finalPathAndTrack.TrackNumber,
-                TempPath = GetTempRecordingFile(),
-                FinalPath = finalPathAndTrack.FilePath,
-            };
+                throw new NotSupportedException("Unable to get recording candidate!");
+            }
+
+            var result = new RecordingCandidate(
+                dt, 
+                finalPathAndTrack.TrackNumber, 
+                GetTempRecordingFile(),
+                finalPathAndTrack.FilePath);
 
             Log.Logger.Information("New candidate = {@Candidate}", result);
             return result;
         }
 
-        private static PathAndTrackNumber GetNextAvailableFile(IOptionsService optionsService, string folder, DateTime dt)
+        private static PathAndTrackNumber? GetNextAvailableFile(IOptionsService optionsService, string folder, DateTime dt)
         {
-            PathAndTrackNumber result = null;
+            PathAndTrackNumber? result = null;
+
             var path = Directory.Exists(folder) ? null : GenerateCandidateFilePath(folder, dt, 1);
             if (path != null)
             {
-                result = new PathAndTrackNumber { FilePath = path, TrackNumber = 1 };
+                result = new PathAndTrackNumber(path, 1);
             }
             else
             {
@@ -58,7 +62,7 @@
                     string candidateFile = GenerateCandidateFilePath(folder, dt, increment);
                     if (!File.Exists(candidateFile))
                     {
-                        result = new PathAndTrackNumber { FilePath = candidateFile, TrackNumber = increment };
+                        result = new PathAndTrackNumber(candidateFile, increment);
                     }
                 }
             }

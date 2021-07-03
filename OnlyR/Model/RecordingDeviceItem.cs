@@ -5,8 +5,14 @@
     /// </summary>
     public class RecordingDeviceItem
     {
-        public int DeviceId { get; set; }
+        public RecordingDeviceItem(int deviceId, string deviceName)
+        {
+            DeviceId = deviceId;
+            DeviceName = deviceName;
+        }
 
-        public string DeviceName { get; set; }
+        public int DeviceId { get; }
+
+        public string DeviceName { get; }
     }
 }

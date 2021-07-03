@@ -1,8 +1,5 @@
-﻿using System;
-using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
-using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -28,7 +25,7 @@ namespace OnlyR
     public partial class App
     {
         private readonly string _appString = "OnlyRAudioRecording";
-        private Mutex _appMutex;
+        private Mutex? _appMutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -54,7 +51,7 @@ namespace OnlyR
             Current.Shutdown();
         }
 
-        private void ConfigureServices()
+        private static void ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
             
@@ -62,7 +59,6 @@ namespace OnlyR
             serviceCollection.AddSingleton<ICommandLineService, CommandLineService>();
             serviceCollection.AddSingleton<IRecordingDestinationService, RecordingDestinationService>();
             serviceCollection.AddSingleton<IAudioService, AudioService>();
-            serviceCollection.AddSingleton(MapperFactory);
             serviceCollection.AddSingleton<ICopyRecordingsService, CopyRecordingsService>();
             serviceCollection.AddSingleton<IDriveEjectionService, DriveEjectionService>();
             serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
@@ -104,17 +100,11 @@ namespace OnlyR
 
             Log.Logger.Information("==== Launched ====");
         }
-
+        
         private bool AnotherInstanceRunning()
         {
             _appMutex = new Mutex(true, _appString, out var newInstance);
             return !newInstance;
-        }
-
-        private IMapper MapperFactory(IServiceProvider arg)
-        {
-            var config = new MapperConfiguration(cfg => cfg.AddProfile<ObjectMappingProfile>());
-            return new Mapper(config);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Services.Snackbar
-{
-    using System;
-    using MaterialDesignThemes.Wpf;
+﻿using System;
+using MaterialDesignThemes.Wpf;
 
+namespace OnlyR.Services.Snackbar
+{
     public interface ISnackbarService
     {
         ISnackbarMessageQueue TheSnackbarMessageQueue { get; }
@@ -12,8 +12,8 @@
         void Enqueue(
             object content,
             object actionContent,
-            Action<object> actionHandler,
-            object actionArgument,
+            Action<object?>? actionHandler,
+            object? actionArgument,
             bool promote,
             bool neverConsiderToBeDuplicate);
 

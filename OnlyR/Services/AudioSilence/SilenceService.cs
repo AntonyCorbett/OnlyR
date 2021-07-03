@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Services.AudioSilence
-{
-    using System;
-    using OnlyR.Services.Options;
+﻿using System;
+using OnlyR.Services.Options;
 
+namespace OnlyR.Services.AudioSilence
+{
     internal class SilenceService : ISilenceService
     {
         private readonly IOptionsService _optionsService;

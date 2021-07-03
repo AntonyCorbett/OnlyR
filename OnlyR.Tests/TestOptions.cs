@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Tests
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Services.Options;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OnlyR.Services.Options;
 
+namespace OnlyR.Tests
+{
     [TestClass]
     public class TestOptions
     {

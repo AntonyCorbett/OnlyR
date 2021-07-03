@@ -33,7 +33,7 @@ namespace OnlyR.ViewModel
         private readonly IAudioService _audioService;
         private readonly ISnackbarService _snackbarService;
         private readonly IPurgeRecordingsService _purgeRecordingsService;
-        private FrameworkElement _currentPage;
+        private FrameworkElement? _currentPage;
 
         public MainViewModel(
            IAudioService audioService,
@@ -82,8 +82,8 @@ namespace OnlyR.ViewModel
 
             var state = new RecordingPageNavigationState
             {
-                ShowSplash = !optionsService.Options.StartMinimized,
-                StartRecording = optionsService.Options.StartRecordingOnLaunch,
+                ShowSplash = !(optionsService.Options?.StartMinimized ?? false),
+                StartRecording = optionsService.Options?.StartRecordingOnLaunch ?? false,
             };
 
             GetVersionData();
@@ -92,13 +92,13 @@ namespace OnlyR.ViewModel
                 null, RecordingPageViewModel.PageName, state));
         }
 
-        public string CurrentPageName { get; private set; }
+        public string? CurrentPageName { get; private set; }
 
         public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
-        public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
+        public bool AlwaysOnTop => _optionsService.Options?.AlwaysOnTop ?? false;
 
-        public FrameworkElement CurrentPage
+        public FrameworkElement? CurrentPage
         {
             get => _currentPage;
             set
@@ -160,7 +160,7 @@ namespace OnlyR.ViewModel
             ((IPage)CurrentPage.DataContext).Activated(message.State);
         }
 
-        private void RecordingStoppedDuringAppClose(object sender, EventArgs e)
+        private void RecordingStoppedDuringAppClose(object? sender, EventArgs e)
         {
             WeakReferenceMessenger.Default.Send(new ShutDownApplicationMessage());
         }

@@ -6,11 +6,11 @@
     // ReSharper disable once UnusedMember.Global
     internal class BeforeShutDownMessage
     {
-        public BeforeShutDownMessage(string currentPageName)
+        public BeforeShutDownMessage(string? currentPageName)
         {
             CurrentPageName = currentPageName;
         }
 
-        public string CurrentPageName { get; }
+        public string? CurrentPageName { get; }
     }
 }

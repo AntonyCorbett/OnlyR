@@ -1,9 +1,8 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace OnlyR.Exceptions
 {
-    using System;
-
     [Serializable]
     public sealed class NoRecordingsException : Exception
     {

@@ -1,10 +1,10 @@
-﻿namespace OnlyR.Services.Audio
-{
-    using System;
-    using Core.EventArgs;
-    using Model;
-    using Options;
+﻿using System;
+using OnlyR.Core.EventArgs;
+using OnlyR.Model;
+using OnlyR.Services.Options;
 
+namespace OnlyR.Services.Audio
+{
     public interface IAudioService
     {
         event EventHandler StartedEvent;

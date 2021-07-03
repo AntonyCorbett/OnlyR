@@ -1,17 +1,18 @@
-﻿namespace OnlyR.Services.Options
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Threading;
-    using System.Windows;
-    using System.Windows.Markup;
-    using Model;
-    using Newtonsoft.Json;
-    using Serilog;
-    using Utils;
+﻿using System.Diagnostics.CodeAnalysis;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Windows;
+using System.Windows.Markup;
+using Newtonsoft.Json;
+using OnlyR.Model;
+using OnlyR.Utils;
+using Serilog;
 
+namespace OnlyR.Services.Options
+{
     /// <summary>
     /// The Option service is used to store and retrieve program settings
     /// </summary>
@@ -20,8 +21,8 @@
     {
         private readonly ICommandLineService _commandLineService;
         private readonly int _optionsVersion = 1;
-        private string _optionsFilePath;
-        private string _originalOptionsSignature;
+        private string? _optionsFilePath;
+        private string? _originalOptionsSignature;
 
         public OptionsService(ICommandLineService commandLineService)
         {
@@ -38,7 +39,7 @@
         /// <value>
         /// The culture.
         /// </value>
-        public string Culture
+        public string? Culture
         {
             get => Options.Culture;
             set
@@ -61,7 +62,7 @@
             var validBitRates = Options.GetSupportedMp3BitRates();
             foreach (var rate in validBitRates)
             {
-                result.Add(new BitRateItem { Name = rate.ToString(), ActualBitRate = rate });
+                result.Add(new BitRateItem(rate.ToString(), rate));
             }
 
             return result.ToArray();
@@ -78,7 +79,7 @@
             var validSampleRates = Options.GetSupportedSampleRates();
             foreach (var rate in validSampleRates)
             {
-                result.Add(new SampleRateItem { Name = rate.ToString(), ActualSampleRate = rate });
+                result.Add(new SampleRateItem(rate.ToString(), rate));
             }
 
             return result.ToArray();
@@ -95,7 +96,7 @@
             var channels = Options.GetSupportedChannels();
             foreach (var c in channels)
             {
-                result.Add(new ChannelItem { Name = GetChannelName(c), ChannelCount = c });
+                result.Add(new ChannelItem(GetChannelName(c), c));
             }
 
             return result.ToArray();
@@ -134,36 +135,31 @@
                     return "Unknown";
             }
         }
-
+        
+        [MemberNotNull(nameof(Options))]
         private void Init()
         {
-            if (Options == null)
+            try
             {
-                try
+                string? commandLineIdentifier = _commandLineService.OptionsIdentifier;
+                _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
+                var path = Path.GetDirectoryName(_optionsFilePath);
+                if (path != null)
                 {
-                    string commandLineIdentifier = _commandLineService.OptionsIdentifier;
-                    _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
-                    var path = Path.GetDirectoryName(_optionsFilePath);
-                    if (path != null)
-                    {
-                        Directory.CreateDirectory(path);
-                        ReadOptions();
-                    }
-
-                    if (Options == null)
-                    {
-                        Options = new Options();
-                    }
-
-                    // store the original settings so that we can determine if they have changed
-                    // when we come to save them
-                    _originalOptionsSignature = GetOptionsSignature(Options);
+                    Directory.CreateDirectory(path);
+                    ReadOptions();
                 }
-                catch (Exception ex)
-                {
-                    Log.Logger.Error(ex, "Could not read options file");
-                    Options = new Options();
-                }
+
+                Options ??= new Options();
+
+                // store the original settings so that we can determine if they have changed
+                // when we come to save them
+                _originalOptionsSignature = GetOptionsSignature(Options);
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Could not read options file");
+                Options = new Options();
             }
         }
 
@@ -187,37 +183,41 @@
 
         private void ReadOptions()
         {
-            if (!File.Exists(_optionsFilePath))
+            if (!File.Exists(_optionsFilePath) || !ReadOptionsInternal())
             {
+                Options = new Options();
                 WriteDefaultOptions();
-            }
-            else
-            {
-                ReadOptionsInternal();
-                if (Options == null)
-                {
-                    WriteDefaultOptions();
-                }
             }
 
             if (Options == null)
             {
-#pragma warning disable S112 // General exceptions should never be thrown
                 throw new Exception($"Could not read options file: {_optionsFilePath}");
-#pragma warning restore S112 // General exceptions should never be thrown
             }
             
             SetCulture();
             Options.Sanitize();
         }
 
-        private void ReadOptionsInternal()
+        // returns true if successfully read options from disk
+        private bool ReadOptionsInternal()
         {
-            using (var file = File.OpenText(_optionsFilePath))
+            if (string.IsNullOrEmpty(_optionsFilePath))
             {
-                var serializer = new JsonSerializer();
-                Options = (Options)serializer.Deserialize(file, typeof(Options));
+                return false;
             }
+
+            using var file = File.OpenText(_optionsFilePath);
+
+            var serializer = new JsonSerializer();
+            var options = (Options?)serializer.Deserialize(file, typeof(Options));
+
+            if (options == null)
+            {
+                return false;
+            }
+
+            Options = options;
+            return true;
         }
 
         private void SetCulture()
@@ -252,26 +252,27 @@
 
         private void WriteOptions()
         {
-            if (Options != null)
+            if (string.IsNullOrEmpty(_optionsFilePath))
             {
-                using (StreamWriter file = File.CreateText(_optionsFilePath))
-                {
-                    var originalGenre = Options.Genre;
-
-                    if (originalGenre != null && originalGenre.Trim() == Properties.Resources.SPEECH)
-                    {
-                        // denotes default for the language.
-                        Options.Genre = null;
-                    }
-                    
-                    var serializer = new JsonSerializer();
-                    serializer.Serialize(file, Options);
-
-                    Options.Genre = originalGenre;
-
-                    _originalOptionsSignature = GetOptionsSignature(Options);
-                }
+                return;
             }
+
+            using StreamWriter file = File.CreateText(_optionsFilePath);
+
+            var originalGenre = Options.Genre;
+
+            if (originalGenre != null && originalGenre.Trim() == Properties.Resources.SPEECH)
+            {
+                // denotes default for the language.
+                Options.Genre = null;
+            }
+                
+            var serializer = new JsonSerializer();
+            serializer.Serialize(file, Options);
+
+            Options.Genre = originalGenre;
+
+            _originalOptionsSignature = GetOptionsSignature(Options);
         }
     }
 }

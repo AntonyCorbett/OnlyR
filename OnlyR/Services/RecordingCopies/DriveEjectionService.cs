@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Services.RecordingCopies
-{
-    using System;
-    using Serilog;
+﻿using System;
+using Serilog;
 
+namespace OnlyR.Services.RecordingCopies
+{
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class DriveEjectionService : IDriveEjectionService
     {

@@ -4,7 +4,7 @@
     {
         bool NoGpu { get; set; }
 
-        string OptionsIdentifier { get; set; }
+        string? OptionsIdentifier { get; set; }
 
         bool NoSettings { get; set; }
 

@@ -1,4 +1,10 @@
-﻿namespace OnlyR.Services.RecordingCopies
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+
+namespace OnlyR.Services.RecordingCopies
 {
 #pragma warning disable SA1401 // Fields should be private
 #pragma warning disable S1905 // unnecessary cast
@@ -6,12 +12,6 @@
 #pragma warning disable S1144 // Remove unused field
 #pragma warning disable S4487 // unused private class field
 #pragma warning disable IDE0051 // unused member
-
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Threading;
 
     // adapted from work by Armanisoft from here:
     // https://www.codeproject.com/Articles/375916/How-to-Prepare-a-USB-Drive-for-Safe-Removal-2
@@ -197,7 +197,7 @@
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool SetupDiEnumDeviceInterfaces(
             IntPtr deviceInfoSet,
-            SP_DEVINFO_DATA deviceInfoData,
+            SP_DEVINFO_DATA? deviceInfoData,
             ref Guid interfaceClassGuid,
             int memberIndex,
             SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
@@ -233,7 +233,7 @@
         private static extern int CM_Request_Device_Eject_NoUi(
             int dnDevInst,
             IntPtr pVetoType,
-            StringBuilder pszVetoName,
+            StringBuilder? pszVetoName,
             int ulNameLength,
             int ulFlags);
 
@@ -264,8 +264,8 @@
 
             if (bytesReturned > 0)
             {
-                var sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(buffer, typeof(STORAGE_DEVICE_NUMBER));
-                DeviceNumber = sdn.DeviceNumber;
+                var sdn = (STORAGE_DEVICE_NUMBER?)Marshal.PtrToStructure(buffer, typeof(STORAGE_DEVICE_NUMBER));
+                DeviceNumber = sdn?.DeviceNumber ?? -1;
             }
 
             Marshal.FreeHGlobal(buffer);
@@ -360,25 +360,28 @@
                 var devicePath = Marshal.PtrToStringAuto(pDevicePath);
                 Marshal.FreeHGlobal(buffer);
 
-                // open the disk or cdrom or floppy
-                var hDrive = CreateFile(
-                    devicePath, 
-                    0, 
-                    FILE_SHARE_READ | FILE_SHARE_WRITE, 
-                    IntPtr.Zero, 
-                    OPEN_EXISTING, 
-                    0, 
-                    IntPtr.Zero);
-
-                if (hDrive.ToInt32() != INVALID_HANDLE_VALUE)
+                if (!string.IsNullOrEmpty(devicePath))
                 {
-                    // get its device number
-                    var driveDeviceNumber = GetDeviceNumber(hDrive);
-                    if (DeviceNumber == driveDeviceNumber)
+                    // open the disk or cdrom or floppy
+                    var hDrive = CreateFile(
+                        devicePath,
+                        0,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE,
+                        IntPtr.Zero,
+                        OPEN_EXISTING,
+                        0,
+                        IntPtr.Zero);
+
+                    if (hDrive.ToInt32() != INVALID_HANDLE_VALUE)
                     {
-                        // matched the given device number with the one of the current device
-                        SetupDiDestroyDeviceInfoList(hDevInfo);
-                        return devData.devInst;
+                        // get its device number
+                        var driveDeviceNumber = GetDeviceNumber(hDrive);
+                        if (DeviceNumber == driveDeviceNumber)
+                        {
+                            // matched the given device number with the one of the current device
+                            SetupDiDestroyDeviceInfoList(hDevInfo);
+                            return devData.devInst;
+                        }
                     }
                 }
 

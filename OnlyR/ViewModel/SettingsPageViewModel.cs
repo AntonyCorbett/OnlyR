@@ -1,22 +1,21 @@
 ﻿using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using OnlyR.ViewModel.Messages;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using OnlyR.Model;
+using OnlyR.Services.Audio;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
 
 namespace OnlyR.ViewModel
 {
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-    using Microsoft.Toolkit.Mvvm.Input;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Reflection;
-    using Messages;
-    using Microsoft.WindowsAPICodePack.Dialogs;
-    using Model;
-    using Services.Audio;
-    using Services.Options;
-    using Utils;
-
     /// <summary>
     /// View model for Settings page. Contains properties that the Settings page 
     /// can data bind to, i.e. it has everything that is needed by the user during 
@@ -112,7 +111,7 @@ namespace OnlyR.ViewModel
 
         public IEnumerable<LanguageItem> Languages => _languages;
 
-        public string LanguageId
+        public string? LanguageId
         {
             get => _optionsService.Culture;
             set
@@ -198,7 +197,7 @@ namespace OnlyR.ViewModel
             }
         }
 
-        public string Genre
+        public string? Genre
         {
             get => _optionsService.Options.Genre;
             set
@@ -281,7 +280,7 @@ namespace OnlyR.ViewModel
             }
         }
 
-        public void Activated(object state)
+        public void Activated(object? state)
         {
             // nothing to do
         }
@@ -290,16 +289,16 @@ namespace OnlyR.ViewModel
         {
             return new[]
             {
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_0, Days = 0 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_DAY, Days = 1 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_DAYS, Days = 2 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_WEEK, Days = 7 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_WEEKS, Days = 14 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_MONTH, Days = 31 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_MONTHS, Days = 62 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_6_MONTHS, Days = 365 / 2 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_1_YR, Days = 365 },
-                new RecordingLifeTimeItem { Description = Properties.Resources.LIFE_2_YRS, Days = 365 * 2 },
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_0, 0),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_1_DAY, 1),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_2_DAYS, 2),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_1_WEEK, 7),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_2_WEEKS, 14),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_1_MONTH, 31),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_2_MONTHS, 62),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_6_MONTHS, 365 / 2),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_1_YR, 365),
+                new RecordingLifeTimeItem(Properties.Resources.LIFE_2_YRS, 365 * 2),
             };
         }
 
@@ -307,14 +306,14 @@ namespace OnlyR.ViewModel
         {
             return new[]
             {
-                new MaxSilenceTimeItem { Name = Properties.Resources.STOP_ON_SILENCE_DISABLED, Seconds = 0 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 10), Seconds = 10 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 15), Seconds = 15 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_SECS, 30), Seconds = 30 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 1), Seconds = 60 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 2), Seconds = 120 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 3), Seconds = 180 },
-                new MaxSilenceTimeItem { Name = string.Format(Properties.Resources.X_MINS, 5), Seconds = 300 },
+                new MaxSilenceTimeItem(Properties.Resources.STOP_ON_SILENCE_DISABLED, 0),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 10), 10),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 1), 60),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 2), 120),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 3), 180),
+                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 5), 300),
             };
         }
 
@@ -322,19 +321,19 @@ namespace OnlyR.ViewModel
         {
             return new[]
             {
-                new MaxRecordingTimeItem { Name = Properties.Resources.NO_LIMIT, ActualSeconds = 0 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 15), ActualSeconds = 15 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 30), ActualSeconds = 30 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_SECS, 45), ActualSeconds = 45 },
-                new MaxRecordingTimeItem { Name = Properties.Resources.ONE_MIN, ActualSeconds = 1 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 2), ActualSeconds = 2 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 5), ActualSeconds = 5 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 15), ActualSeconds = 15 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 30), ActualSeconds = 30 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_MINS, 45), ActualSeconds = 45 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.ONE_HOUR, 1), ActualSeconds = 60 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 2), ActualSeconds = 120 * 60 },
-                new MaxRecordingTimeItem { Name = string.Format(Properties.Resources.X_HOURS, 3), ActualSeconds = 180 * 60 },
+                new MaxRecordingTimeItem(Properties.Resources.NO_LIMIT, 0),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 45), 45),
+                new MaxRecordingTimeItem(Properties.Resources.ONE_MIN, 1 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 2), 2 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 5), 5 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 15), 15 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 30), 30 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 45), 45 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.ONE_HOUR, 1), 60 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 2), 120 * 60),
+                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 3), 180 * 60),
             };
         }
         
@@ -356,7 +355,9 @@ namespace OnlyR.ViewModel
         private static string GetVersionString()
         {
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+            return ver == null 
+                ? "Unknown" 
+                : $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
         }
 
         private void OnShutDown(object recipient, BeforeShutDownMessage obj)
@@ -408,11 +409,7 @@ namespace OnlyR.ViewModel
                     try
                     {
                         var c = new CultureInfo(Path.GetFileNameWithoutExtension(folder));
-                        result.Add(new LanguageItem
-                        {
-                            LanguageId = c.Name,
-                            LanguageName = c.EnglishName,
-                        });
+                        result.Add(new LanguageItem(c.Name, c.EnglishName));
                     }
                     catch (CultureNotFoundException)
                     {
@@ -423,12 +420,8 @@ namespace OnlyR.ViewModel
 
             // the native language
             var cNative = new CultureInfo(Path.GetFileNameWithoutExtension("en-GB"));
-            result.Add(new LanguageItem
-            {
-                LanguageId = cNative.Name,
-                LanguageName = cNative.EnglishName,
-            });
-
+            result.Add(new LanguageItem(cNative.Name, cNative.EnglishName));
+        
             result.Sort((x, y) => string.Compare(x.LanguageName, y.LanguageName, StringComparison.Ordinal));
 
             return result.ToArray();

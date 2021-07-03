@@ -1,12 +1,12 @@
-﻿namespace OnlyR.Services.Options
-{
-    using Model;
+﻿using OnlyR.Model;
 
+namespace OnlyR.Services.Options
+{
     public interface IOptionsService
     {
         Options Options { get; }
 
-        string Culture { get; set; }
+        string? Culture { get; set; }
 
         SampleRateItem[] GetSupportedSampleRates();
 

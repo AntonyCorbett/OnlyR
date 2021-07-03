@@ -1,13 +1,14 @@
-﻿namespace OnlyR.VolumeMeter
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
+﻿using System.Diagnostics.CodeAnalysis;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
+namespace OnlyR.VolumeMeter
+{
     /// <summary>
     /// Volume meter custom control using bitmaps on a DrawingVisual.
     /// See also Themes\Generic.xaml
@@ -25,14 +26,14 @@
         private readonly int _levelsCount = 14;
         private readonly DrawingVisual _drawingVisual;
 
-        private Image _image;
-        private Border _innerBorder;
+        private Image? _image;
+        private Border? _innerBorder;
         private SolidColorBrush _backBrush;
         private SolidColorBrush _lightGreenBrush;
         private SolidColorBrush _yellowBrush;
         private SolidColorBrush _redBrush;
 
-        private List<RenderTargetBitmap> _bitmaps;
+        private List<RenderTargetBitmap?> _bitmaps;
 
         static VduControl()
         {
@@ -92,13 +93,22 @@
 
         private void Refresh()
         {
+            if (_image == null)
+            {
+                return;
+            }
+
             int numBlocksLit = VolumeLevel * _levelsCount / 100;
-            RenderTargetBitmap bmp = _bitmaps[numBlocksLit] ?? CreateBitmap(numBlocksLit);
-            _image.Source = bmp;
+            _image.Source = _bitmaps[numBlocksLit] ?? CreateBitmap(numBlocksLit);
         }
 
-        private RenderTargetBitmap CreateBitmap(int numBlocksLit)
+        private RenderTargetBitmap? CreateBitmap(int numBlocksLit)
         {
+            if (_innerBorder == null)
+            {
+                return null;
+            }
+
             int bmpHeight = (int)_innerBorder.ActualHeight;
             int overallBlockHeight = bmpHeight / _levelsCount;
 
@@ -146,10 +156,11 @@
                 }
             }
 
-            _bitmaps[numBlocksLit].Render(_drawingVisual);
+            _bitmaps[numBlocksLit]?.Render(_drawingVisual);
             return _bitmaps[numBlocksLit];
         }
 
+        [MemberNotNull(nameof(_backBrush), nameof(_lightGreenBrush), nameof(_yellowBrush), nameof(_redBrush))]
         private void InitBrushes()
         {
             _backBrush = new SolidColorBrush { Color = Colors.Black };
@@ -158,9 +169,10 @@
             _redBrush = new SolidColorBrush { Color = Colors.Red };
         }
 
+        [MemberNotNull(nameof(_bitmaps))]
         private void InitBitmaps()
         {
-            _bitmaps = new List<RenderTargetBitmap>();
+            _bitmaps = new List<RenderTargetBitmap?>();
 
             for (int n = 0; n < _levelsCount + 1; ++n)
             {

@@ -1,14 +1,14 @@
 ﻿using System.Threading;
+using System;
+using System.Windows;
+using OnlyR.Core.Enums;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OnlyR.Tests.Mocks;
+using OnlyR.ViewModel;
 
 namespace OnlyR.Tests
 {
 #pragma warning disable CA1416 // Validate platform compatibility
-    using System;
-    using System.Windows;
-    using Core.Enums;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Mocks;
-    using ViewModel;
 
     [TestClass]
     public class TestMainViewModel

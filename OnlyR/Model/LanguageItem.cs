@@ -2,8 +2,14 @@
 {
     public class LanguageItem
     {
-        public string LanguageId { get; set; }
+        public LanguageItem(string languageId, string languageName)
+        {
+            LanguageId = languageId;
+            LanguageName = languageName;
+        }
 
-        public string LanguageName { get; set; }
+        public string LanguageId { get; }
+
+        public string LanguageName { get; }
     }
 }

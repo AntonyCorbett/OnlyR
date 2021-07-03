@@ -1,14 +1,14 @@
-﻿namespace OnlyR.Tests.Mocks
-{
-    using Moq;
-    using Services.Audio;
-    using Services.AudioSilence;
-    using Services.Options;
-    using Services.PurgeRecordings;
-    using Services.RecordingCopies;
-    using Services.RecordingDestination;
-    using Services.Snackbar;
+﻿using Moq;
+using OnlyR.Services.Audio;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.Options;
+using OnlyR.Services.PurgeRecordings;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
 
+namespace OnlyR.Tests.Mocks
+{
     public static class MockGenerator
     {
         public static IAudioService CreateAudioService()

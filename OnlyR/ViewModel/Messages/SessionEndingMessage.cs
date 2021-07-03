@@ -1,7 +1,7 @@
-﻿namespace OnlyR.ViewModel.Messages
-{
-    using System.Windows;
+﻿using System.Windows;
 
+namespace OnlyR.ViewModel.Messages
+{
     internal class SessionEndingMessage
     {
         public SessionEndingMessage(SessionEndingCancelEventArgs e)

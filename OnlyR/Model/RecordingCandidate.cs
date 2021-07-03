@@ -1,18 +1,26 @@
-﻿namespace OnlyR.Model
-{
-    using System;
+﻿using System;
 
+namespace OnlyR.Model
+{
     /// <summary>
     /// Represents a planned recording, with properties based on existing content of the recordings folder.
     /// </summary>
     public class RecordingCandidate
     {
-        public DateTime RecordingDate { get; set; }
+        public RecordingCandidate(DateTime recordingDate, int trackNumber, string tempPath, string finalPath)
+        {
+            RecordingDate = recordingDate;
+            TrackNumber = trackNumber;
+            TempPath = tempPath;
+            FinalPath = finalPath;
+        }
 
-        public int TrackNumber { get; set; }
+        public DateTime RecordingDate { get; }
 
-        public string TempPath { get; set; }
+        public int TrackNumber { get; }
 
-        public string FinalPath { get; set; }
+        public string TempPath { get; }
+
+        public string FinalPath { get; }
     }
 }

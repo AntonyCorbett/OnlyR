@@ -1,7 +1,7 @@
-﻿namespace OnlyR.Behaviours
-{
-    using System.Windows;
+﻿using System.Windows;
 
+namespace OnlyR.Behaviours
+{
     internal static class VisibilityFocusBehaviour
     {
         public static readonly DependencyProperty IsFocusEnabledProperty = 

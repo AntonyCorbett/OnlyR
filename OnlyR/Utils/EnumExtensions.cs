@@ -1,8 +1,8 @@
-﻿namespace OnlyR.Utils
-{
-    using System;
-    using Core.Enums;
+﻿using System;
+using OnlyR.Core.Enums;
 
+namespace OnlyR.Utils
+{
     // ReSharper disable once UnusedMember.Global
     public static class EnumExtensions
     {

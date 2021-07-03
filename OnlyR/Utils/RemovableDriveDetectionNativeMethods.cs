@@ -1,4 +1,9 @@
-﻿namespace OnlyR.Utils
+﻿using System;
+using System.Runtime.InteropServices;
+using OnlyR.ViewModel.Messages;
+using Microsoft.Toolkit.Mvvm.Messaging;
+
+namespace OnlyR.Utils
 {
 #pragma warning disable S101 // Types should be named in PascalCase
     // ReSharper disable StyleCop.SA1307
@@ -6,10 +11,6 @@
     // ReSharper disable FieldCanBeMadeReadOnly.Local
     // ReSharper disable StyleCop.SA1310
     // ReSharper disable InconsistentNaming
-    using System;
-    using System.Runtime.InteropServices;
-    using ViewModel.Messages;
-    using Microsoft.Toolkit.Mvvm.Messaging;
 
     internal static class RemovableDriveDetectionNativeMethods
     {
@@ -22,11 +23,11 @@
         {
             if (msg == WM_DEVICECHANGE && lparam != IntPtr.Zero)
             {
-                DEV_BROADCAST_VOLUME vol = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(lparam, typeof(DEV_BROADCAST_VOLUME));
+                var vol = (DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure(lparam, typeof(DEV_BROADCAST_VOLUME));
 
-                if (vol.dbcv_devicetype == DBT_DEVTYPVOLUME)
+                if (vol != null && vol.Value.dbcv_devicetype == DBT_DEVTYPVOLUME)
                 {
-                    char driveLetter = DriveMaskToLetter(vol.dbcv_unitmask);
+                    char driveLetter = DriveMaskToLetter(vol.Value.dbcv_unitmask);
 
                     switch (wparam.ToInt32())
                     {

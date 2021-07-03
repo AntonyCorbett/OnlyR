@@ -1,16 +1,15 @@
-﻿namespace OnlyR.Services.RecordingCopies
-{
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Exceptions;
-    using Options;
-    using Serilog;
-    using Utils;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using OnlyR.Exceptions;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using Serilog;
 
+namespace OnlyR.Services.RecordingCopies
+{
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class CopyRecordingsService : ICopyRecordingsService
     {
@@ -111,7 +110,7 @@
 
         private static bool IsFileLocked(string filePath)
         {
-            FileStream stream = null;
+            FileStream? stream = null;
 
             try
             {
@@ -168,7 +167,7 @@
             }
         }
 
-        private string GetRecordingsFolder()
+        private string? GetRecordingsFolder()
         {
             Log.Logger.Debug("Getting recordings folder for today");
 

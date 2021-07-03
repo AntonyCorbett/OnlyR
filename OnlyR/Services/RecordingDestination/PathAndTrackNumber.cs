@@ -5,8 +5,14 @@
     /// </summary>
     internal class PathAndTrackNumber
     {
-        public string FilePath { get; set; }
+        public PathAndTrackNumber(string filePath, int trackNumber)
+        {
+            FilePath = filePath;
+            TrackNumber = trackNumber;
+        }
 
-        public int TrackNumber { get; set; }
+        public string FilePath { get; }
+
+        public int TrackNumber { get; }
     }
 }

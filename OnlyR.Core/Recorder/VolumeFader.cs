@@ -1,7 +1,7 @@
-﻿namespace OnlyR.Core.Recorder
-{
-    using System;
+﻿using System;
 
+namespace OnlyR.Core.Recorder
+{
     /// <summary>
     /// Controls optional volume fading at end of a recording
     /// </summary>
@@ -17,7 +17,7 @@
             _sampleRate = sampleRate;
         }
 
-        public event EventHandler FadeComplete;
+        public event EventHandler? FadeComplete;
 
         public bool Active { get; private set; }
 
@@ -58,7 +58,7 @@
 
         private void OnFadeComplete()
         {
-            FadeComplete?.Invoke(this, EventArgs.Empty);
+            FadeComplete?.Invoke(this, System.EventArgs.Empty);
             Active = false;
         }
     }

@@ -1,7 +1,7 @@
-﻿namespace OnlyR.Core.Recorder
-{
-    using System;
+﻿using System;
 
+namespace OnlyR.Core.Recorder
+{
     /// <summary>
     /// Configuration of a recording
     /// </summary>
@@ -25,7 +25,7 @@
         /// <summary>
         /// The destination file path.
         /// </summary>
-        public string DestFilePath { get; set; }
+        public string? DestFilePath { get; set; }
 
         /// <summary>
         /// The audio sample rate.
@@ -45,16 +45,16 @@
         /// <summary>
         /// Teh title of the track (used in file name and written to MP3 tag title).
         /// </summary>
-        public string TrackTitle { get; set; }
+        public string? TrackTitle { get; set; }
 
         /// <summary>
         /// Album name (written to MP3 tag).
         /// </summary>
-        public string AlbumName { get; set; }
+        public string? AlbumName { get; set; }
 
         /// <summary>
         /// Genre (written to MP3 tag).
         /// </summary>
-        public string Genre { get; set; }
+        public string? Genre { get; set; }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace OnlyR.Services.Snackbar
-{
-    using System;
-    using System.Windows;
-    using MaterialDesignThemes.Wpf;
+﻿using System;
+using System.Windows;
+using MaterialDesignThemes.Wpf;
 
+namespace OnlyR.Services.Snackbar
+{
     // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class SnackbarService : ISnackbarService, IDisposable
     {
@@ -23,8 +23,8 @@
         public void Enqueue(
             object content,
             object actionContent,
-            Action<object> actionHandler,
-            object actionArgument,
+            Action<object?>? actionHandler,
+            object? actionArgument,
             bool promote,
             bool neverConsiderToBeDuplicate)
         {
