@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
+// Ensure this is built x86!
+
 namespace OnlyR.Services.RecordingCopies
 {
 #pragma warning disable SA1401 // Fields should be private

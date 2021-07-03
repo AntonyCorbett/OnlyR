@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using OnlyR.ViewModel.Messages;
 using Microsoft.Toolkit.Mvvm.Messaging;
 
+// Ensure this is built x86!
+
 namespace OnlyR.Utils
 {
 #pragma warning disable S101 // Types should be named in PascalCase
