@@ -29,7 +29,7 @@ namespace OnlyR.Utils
                 {
                     char driveLetter = DriveMaskToLetter(vol.Value.dbcv_unitmask);
 
-                    switch (wparam.ToInt32())
+                    switch ((int)wparam)
                     {
                         case DBT_DEVICEARRIVAL:
                             WeakReferenceMessenger.Default.Send(new RemovableDriveMessage

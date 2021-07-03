@@ -15,7 +15,9 @@
     
     <Grid>
         <ContentControl Content="{Binding CurrentPage}" />
-        <materialDesign:Snackbar MessageQueue="{Binding TheSnackbarMessageQueue}"/>
+        <materialDesign:Snackbar 
+            Padding="10,0,10,0"
+            MessageQueue="{Binding TheSnackbarMessageQueue}"/>
     </Grid>
 
 </Window>

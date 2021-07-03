@@ -100,7 +100,7 @@ namespace OnlyR.Services.RecordingCopies
                 0,
                 IntPtr.Zero);
 
-            if (hVolume.ToInt32() == -1)
+            if ((int)hVolume == INVALID_HANDLE_VALUE)
             {
                 return false;
             }
@@ -306,7 +306,7 @@ namespace OnlyR.Services.RecordingCopies
                 IntPtr.Zero, 
                 DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-            if (hDevInfo.ToInt32() == INVALID_HANDLE_VALUE)
+            if ((int)hDevInfo == INVALID_HANDLE_VALUE)
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
             }
@@ -372,7 +372,7 @@ namespace OnlyR.Services.RecordingCopies
                         0,
                         IntPtr.Zero);
 
-                    if (hDrive.ToInt32() != INVALID_HANDLE_VALUE)
+                    if ((int)hDrive != INVALID_HANDLE_VALUE)
                     {
                         // get its device number
                         var driveDeviceNumber = GetDeviceNumber(hDrive);
