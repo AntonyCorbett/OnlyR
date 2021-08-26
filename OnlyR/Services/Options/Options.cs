@@ -78,6 +78,10 @@ namespace OnlyR.Services.Options
 
         public bool StartMinimized { get; set; }
 
+        public string? UnfinishedRecordingTempPath { get; set; }
+
+        public string? UnfinishedRecordingFinalPath { get; set; }
+
         public static IEnumerable<int> GetSupportedSampleRates()
         {
             return ValidSampleRates;

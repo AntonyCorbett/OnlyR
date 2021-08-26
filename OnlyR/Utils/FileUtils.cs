@@ -335,6 +335,18 @@ namespace OnlyR.Utils
             return folder;
         }
 
+        public static void MoveFile(string sourcePath, string destPath)
+        {
+            Log.Logger.Information("Copying {Source} to {Target}", sourcePath, destPath);
+
+            var path = Path.GetDirectoryName(destPath);
+            if (path != null)
+            {
+                Directory.CreateDirectory(path);
+                File.Move(sourcePath, destPath);
+            }
+        }
+
         private static string GetRecordingFolderRoot(string? rootFromOptions)
         {
             return DirectoryIsAvailable(rootFromOptions) 

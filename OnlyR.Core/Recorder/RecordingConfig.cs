@@ -28,9 +28,14 @@ namespace OnlyR.Core.Recorder
         public int TrackNumber { get; set; }
 
         /// <summary>
-        /// The destination file path.
+        /// The destination file path (a temporary location).
         /// </summary>
         public string? DestFilePath { get; set; }
+
+        /// <summary>
+        /// The final file path.
+        /// </summary>
+        public string? FinalFilePath { get; set; }
 
         /// <summary>
         /// The audio sample rate.

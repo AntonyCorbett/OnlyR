@@ -26,6 +26,8 @@ namespace OnlyR.Core.Recorder
         private SampleAggregator? _sampleAggregator;
         private VolumeFader? _fader;
         private RecordingStatus _recordingStatus;
+        private string? _tempRecordingFilePath;
+        private string? _finalRecordingFilePath;
 
         private int _dampedLevel;
 
@@ -90,7 +92,7 @@ namespace OnlyR.Core.Recorder
 
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
                 _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
-
+                
                 _mp3Writer = new LameMP3FileWriter(
                     recordingConfig.DestFilePath,
                     _waveSource.WaveFormat,
@@ -99,7 +101,14 @@ namespace OnlyR.Core.Recorder
 
                 _waveSource.StartRecording();
 
-                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording));
+                _tempRecordingFilePath = recordingConfig.DestFilePath;
+                _finalRecordingFilePath = recordingConfig.FinalFilePath;
+
+                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording)
+                {
+                    TempRecordingPath = _tempRecordingFilePath,
+                    FinalRecordingPath = _finalRecordingFilePath
+                });
             }
         }
 
@@ -122,7 +131,10 @@ namespace OnlyR.Core.Recorder
         {
             if (_recordingStatus == RecordingStatus.Recording)
             {
-                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested));
+                OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested)
+                {
+                    TempRecordingPath = _tempRecordingFilePath
+                });
 
                 if (fadeOut)
                 {
@@ -281,6 +293,8 @@ namespace OnlyR.Core.Recorder
 
             _mp3Writer?.Dispose();
             _mp3Writer = null;
+
+            _tempRecordingFilePath = null;
         }
 
         private void InitFader(int sampleRate)

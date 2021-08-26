@@ -13,5 +13,9 @@ namespace OnlyR.Core.EventArgs
         }
 
         public RecordingStatus RecordingStatus { get; }
+
+        public string? TempRecordingPath { get; set; }
+
+        public string? FinalRecordingPath { get; set; }
     }
 }

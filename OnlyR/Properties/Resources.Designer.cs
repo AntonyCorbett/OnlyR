@@ -313,6 +313,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recording salvaged from last session!.
+        /// </summary>
+        public static string RECORDING_SALVAGED {
+            get {
+                return ResourceManager.GetString("RECORDING_SALVAGED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recordings folder.
         /// </summary>
         public static string RECORDINGS_FOLDER_TOOLTIP {

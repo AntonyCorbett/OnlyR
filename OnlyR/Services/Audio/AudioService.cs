@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OnlyR.Core.Enums;
@@ -8,6 +7,7 @@ using OnlyR.Core.Models;
 using OnlyR.Core.Recorder;
 using OnlyR.Model;
 using OnlyR.Services.Options;
+using OnlyR.Utils;
 using Serilog;
 
 namespace OnlyR.Services.Audio
@@ -19,10 +19,12 @@ namespace OnlyR.Services.Audio
     public sealed class AudioService : IAudioService, IDisposable
     {
         private readonly AudioRecorder _audioRecorder;
+        private readonly IOptionsService _optionsService;
         private RecordingCandidate? _currentRecording;
 
-        public AudioService()
+        public AudioService(IOptionsService optionsService)
         {
+            _optionsService = optionsService;
             _audioRecorder = new AudioRecorder();
             _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
             _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
@@ -51,7 +53,6 @@ namespace OnlyR.Services.Audio
             return devices.Select(Convert).ToArray();
         }
 
-
         private RecordingDeviceItem Convert(RecordingDeviceInfo deviceInfo)
         {
             return new(deviceInfo.Id, deviceInfo.Name);
@@ -73,6 +74,7 @@ namespace OnlyR.Services.Audio
                 RecordingDate = candidateFile.RecordingDate,
                 TrackNumber = candidateFile.TrackNumber,
                 DestFilePath = candidateFile.TempPath,
+                FinalFilePath = candidateFile.FinalPath,
                 SampleRate = optionsService.Options.SampleRate,
                 ChannelCount = optionsService.Options.ChannelCount,
                 Mp3BitRate = optionsService.Options.Mp3BitRate,
@@ -109,11 +111,15 @@ namespace OnlyR.Services.Audio
             switch (recordingStatusChangeEventArgs.RecordingStatus)
             {
                 case RecordingStatus.NotRecording:
+                    ClearPathOfUnfinishedRecording();
                     OnStoppedEvent();
                     break;
+
                 case RecordingStatus.Recording:
+                    StorePathOfUnfinishedRecording(recordingStatusChangeEventArgs);
                     OnStartedEvent();
                     break;
+
                 case RecordingStatus.StopRequested:
                     OnStopRequested();
                     break;
@@ -123,6 +129,20 @@ namespace OnlyR.Services.Audio
                 default:
                     break;
             }
+        }
+
+        private void StorePathOfUnfinishedRecording(RecordingStatusChangeEventArgs args)
+        {
+            _optionsService.Options.UnfinishedRecordingTempPath = args.TempRecordingPath;
+            _optionsService.Options.UnfinishedRecordingFinalPath = args.FinalRecordingPath;
+            _optionsService.Save();
+        }
+
+        private void ClearPathOfUnfinishedRecording()
+        {
+            _optionsService.Options.UnfinishedRecordingTempPath = null;
+            _optionsService.Options.UnfinishedRecordingFinalPath = null;
+            _optionsService.Save();
         }
 
         private void OnStartedEvent()
@@ -144,13 +164,7 @@ namespace OnlyR.Services.Audio
                 return;
             }
 
-            Log.Logger.Information("Copying {Source} to {Target}", _currentRecording.TempPath, _currentRecording.FinalPath);
-            var path = Path.GetDirectoryName(_currentRecording.FinalPath);
-            if (path != null)
-            {
-                Directory.CreateDirectory(path);
-                File.Move(_currentRecording.TempPath, _currentRecording.FinalPath);
-            }
+            FileUtils.MoveFile(_currentRecording.TempPath, _currentRecording.FinalPath);
         }
 
         private void OnStopRequested()

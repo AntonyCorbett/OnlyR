@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -20,6 +21,7 @@ using OnlyR.Services.Options;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
+using OnlyR.Utils;
 
 namespace OnlyR.ViewModel
 {
@@ -33,6 +35,7 @@ namespace OnlyR.ViewModel
         private readonly IAudioService _audioService;
         private readonly ISnackbarService _snackbarService;
         private readonly IPurgeRecordingsService _purgeRecordingsService;
+        private readonly (string TempPath, string FinalPath)? _unfinishedRecordingFileFoundOnStartup;
         private FrameworkElement? _currentPage;
 
         public MainViewModel(
@@ -80,23 +83,28 @@ namespace OnlyR.ViewModel
                 new SettingsPage(),
                 new SettingsPageViewModel(audioService, optionsService, commandLineService));
 
+            _unfinishedRecordingFileFoundOnStartup = GetUnfinishedRecordingPaths();
+
             var state = new RecordingPageNavigationState
             {
-                ShowSplash = !(optionsService.Options?.StartMinimized ?? false),
-                StartRecording = optionsService.Options?.StartRecordingOnLaunch ?? false,
+                ShowSplash = !optionsService.Options.StartMinimized,
+                StartRecording = optionsService.Options.StartRecordingOnLaunch && 
+                                 _unfinishedRecordingFileFoundOnStartup == null
             };
 
             GetVersionData();
 
             WeakReferenceMessenger.Default.Send(new NavigateMessage(
                 null, RecordingPageViewModel.PageName, state));
+
+            FixAnyUnfinishedRecording();
         }
 
         public string? CurrentPageName { get; private set; }
 
         public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
-        public bool AlwaysOnTop => _optionsService.Options?.AlwaysOnTop ?? false;
+        public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
 
         public FrameworkElement? CurrentPage
         {
@@ -187,6 +195,40 @@ namespace OnlyR.ViewModel
             };
 
             Process.Start(psi);
+        }
+
+        private void FixAnyUnfinishedRecording()
+        {
+            if (_unfinishedRecordingFileFoundOnStartup == null)
+            {
+                return;
+            }
+
+            if (File.Exists(_unfinishedRecordingFileFoundOnStartup.Value.FinalPath))
+            {
+                return;
+            }
+
+            FileUtils.MoveFile(
+                _unfinishedRecordingFileFoundOnStartup.Value.TempPath,
+                _unfinishedRecordingFileFoundOnStartup.Value.FinalPath);
+
+            _snackbarService.Enqueue(Properties.Resources.RECORDING_SALVAGED);
+        }
+
+        private (string tempPath, string FinalPath)? GetUnfinishedRecordingPaths()
+        {
+            var tempPath = _optionsService.Options.UnfinishedRecordingTempPath;
+            var finalPath = _optionsService.Options.UnfinishedRecordingFinalPath;
+
+            if (!string.IsNullOrEmpty(tempPath) &&
+                !string.IsNullOrEmpty(finalPath) &&
+                File.Exists(tempPath))
+            {
+                return (tempPath, finalPath);
+            }
+
+            return null;
         }
     }
 }
