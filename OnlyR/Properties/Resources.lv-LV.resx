@@ -208,6 +208,10 @@
     <value>Ierakstu mape</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
+  <data name="RECORDING_SALVAGED" xml:space="preserve">
+    <value>Recording salvaged from last session!</value>
+    <comment>Message displayed at app startup if a recording was found from the previous session that was not properly finalised.</comment>
+  </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
     <value>Lūdzu restartē OnlyR pēc valodas izmaiņas.</value>
     <comment>See Settings page</comment>
