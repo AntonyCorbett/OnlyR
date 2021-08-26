@@ -133,7 +133,8 @@ namespace OnlyR.Core.Recorder
             {
                 OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested)
                 {
-                    TempRecordingPath = _tempRecordingFilePath
+                    TempRecordingPath = _tempRecordingFilePath,
+                    FinalRecordingPath = _finalRecordingFilePath,
                 });
 
                 if (fadeOut)
