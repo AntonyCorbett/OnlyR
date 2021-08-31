@@ -3,3 +3,6 @@ files:
     translation: /OnlyR/Properties/%file_name%.%locale%.resx
   - source: /OnlyR.Core/Properties/Resources.resx
     translation: /OnlyR.Core/Properties/%file_name%.%locale%.resx
+  - name: crowdin-action
+    uses: crowdin/github-action@1.3.3
+
