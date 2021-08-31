@@ -246,7 +246,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_LOOPBACK_CAPTURE" xml:space="preserve">
-    <value>Use loopback capture</value>
+    <value>Записывать ссистемный звук</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
@@ -278,11 +278,11 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
-    <value>Запускать свернуто</value>
+    <value>Запускать свернутым</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start recording on launch</value>
+    <value>Начать запись при запуске</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
