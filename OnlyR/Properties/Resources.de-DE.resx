@@ -208,6 +208,10 @@
     <value>Ordner für Aufnahmen</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
+  <data name="RECORDING_SALVAGED" xml:space="preserve">
+    <value>Aufnahme aus der letzten Sitzung wiederhergestellt!</value>
+    <comment>Message displayed at app startup if a recording was found from the previous session that was not properly finalised.</comment>
+  </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
     <value>Bitte OnlyR nach Änderung der Sprache neustarten.</value>
     <comment>See Settings page</comment>
