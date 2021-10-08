@@ -98,7 +98,7 @@ namespace OnlyR.VolumeMeter
                 return;
             }
 
-            int numBlocksLit = VolumeLevel * _levelsCount / 100;
+            var numBlocksLit = VolumeLevel * _levelsCount / 100;
             _image.Source = _bitmaps[numBlocksLit] ?? CreateBitmap(numBlocksLit);
         }
 
@@ -109,21 +109,21 @@ namespace OnlyR.VolumeMeter
                 return null;
             }
 
-            int bmpHeight = (int)_innerBorder.ActualHeight;
-            int overallBlockHeight = bmpHeight / _levelsCount;
+            var bmpHeight = (int)_innerBorder.ActualHeight;
+            var overallBlockHeight = bmpHeight / _levelsCount;
 
             bmpHeight = overallBlockHeight * _levelsCount;  // normalise
 
-            int ySpaceBetweenBlocks = Math.Max(overallBlockHeight / 3, 1);
-            int blockHeight = overallBlockHeight - ySpaceBetweenBlocks;
+            var ySpaceBetweenBlocks = Math.Max(overallBlockHeight / 3, 1);
+            var blockHeight = overallBlockHeight - ySpaceBetweenBlocks;
 
-            int bmpWidth = (int)_innerBorder.ActualWidth;
-            int blockWidth = bmpWidth;
+            var bmpWidth = (int)_innerBorder.ActualWidth;
+            var blockWidth = bmpWidth;
 
             _bitmaps[numBlocksLit] = new RenderTargetBitmap(bmpWidth, bmpHeight, 96, 96, PixelFormats.Pbgra32);
 
-            int numRedBlocks = _levelsCount / 7;
-            int numYellowBlocks = _levelsCount / 4;
+            var numRedBlocks = _levelsCount / 7;
+            var numYellowBlocks = _levelsCount / 4;
 
             using (DrawingContext dc = _drawingVisual.RenderOpen())
             {

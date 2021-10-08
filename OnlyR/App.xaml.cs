@@ -84,7 +84,7 @@ namespace OnlyR
 
         private static void ConfigureLogger()
         {
-            string logsDirectory = FileUtils.GetLogFolder();
+            var logsDirectory = FileUtils.GetLogFolder();
 
 #if DEBUG
             Log.Logger = new LoggerConfiguration()

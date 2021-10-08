@@ -141,7 +141,7 @@ namespace OnlyR.Services.Options
         {
             try
             {
-                string? commandLineIdentifier = _commandLineService.OptionsIdentifier;
+                var commandLineIdentifier = _commandLineService.OptionsIdentifier;
                 _optionsFilePath = FileUtils.GetUserOptionsFilePath(commandLineIdentifier, _optionsVersion);
                 var path = Path.GetDirectoryName(_optionsFilePath);
                 if (path != null)
@@ -257,7 +257,7 @@ namespace OnlyR.Services.Options
                 return;
             }
 
-            using StreamWriter file = File.CreateText(_optionsFilePath);
+            using var file = File.CreateText(_optionsFilePath);
 
             var originalGenre = Options.Genre;
 

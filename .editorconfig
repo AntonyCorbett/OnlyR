@@ -15,3 +15,12 @@ dotnet_diagnostic.RCS1194.severity = silent
 # S112: General exceptions should never be thrown
 dotnet_diagnostic.S112.severity = silent
 csharp_using_directive_placement=outside_namespace:warning
+
+# CC0021: Use nameof
+dotnet_diagnostic.CC0021.severity = silent
+
+# CC0022: Should dispose object
+dotnet_diagnostic.CC0022.severity = silent
+
+# CC0091: Use static method
+dotnet_diagnostic.CC0091.severity = silent

@@ -48,8 +48,8 @@ namespace OnlyR.Core.Recorder
         {
             var result = new List<RecordingDeviceInfo>();
 
-            int count = WaveIn.DeviceCount;
-            for (int n = 0; n < count; ++n)
+            var count = WaveIn.DeviceCount;
+            for (var n = 0; n < count; ++n)
             {
                 var caps = WaveIn.GetCapabilities(n);
                 result.Add(new RecordingDeviceInfo(n, caps.ProductName));
@@ -164,7 +164,7 @@ namespace OnlyR.Core.Recorder
 
         private static void CheckRecordingDevice(RecordingConfig recordingConfig)
         {
-            int deviceCount = WaveIn.DeviceCount;
+            var deviceCount = WaveIn.DeviceCount;
             if (deviceCount == 0)
             {
                 throw new NoDevicesException();
@@ -210,8 +210,8 @@ namespace OnlyR.Core.Recorder
             // as audio samples are provided by WaveIn, we hook in here 
             // and write them to disk, encoding to MP3 on the fly 
             // using the _mp3Writer.
-            byte[] buffer = waveInEventArgs.Buffer;
-            int bytesRecorded = waveInEventArgs.BytesRecorded;
+            var buffer = waveInEventArgs.Buffer;
+            var bytesRecorded = waveInEventArgs.BytesRecorded;
 
             var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
 

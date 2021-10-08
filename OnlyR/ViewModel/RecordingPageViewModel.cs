@@ -372,7 +372,7 @@ namespace OnlyR.ViewModel
 
                 _silenceService.Reset();
 
-                DateTime recordingDate = DateTime.Today;
+                var recordingDate = DateTime.Today;
                 var candidateFile = _destinationService.GetRecordingFileCandidate(
                     _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
 

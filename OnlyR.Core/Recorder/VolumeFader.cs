@@ -41,7 +41,7 @@ namespace OnlyR.Core.Recorder
         public void FadeBuffer(byte[] buffer, int bytesInBuffer, bool isFloatingPointAudio)
         {
             _sampleCountModified += bytesInBuffer;
-            float volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
+            var volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
 
             var buff = new WaveBuffer(buffer);
 

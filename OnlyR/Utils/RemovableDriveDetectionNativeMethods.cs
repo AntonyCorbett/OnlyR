@@ -29,7 +29,7 @@ namespace OnlyR.Utils
 
                 if (vol != null && vol.Value.dbcv_devicetype == DBT_DEVTYPVOLUME)
                 {
-                    char driveLetter = DriveMaskToLetter(vol.Value.dbcv_unitmask);
+                    var driveLetter = DriveMaskToLetter(vol.Value.dbcv_unitmask);
 
                     switch ((int)wparam)
                     {

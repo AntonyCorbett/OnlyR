@@ -9,9 +9,9 @@ namespace OnlyR.Tests
         private readonly int _badIntValue = -100;
 
         [TestMethod]
-        public void TestSantize()
+        public void TestSanitize()
         {
-            Options options = new Options
+            var options = new Options
             {
                 ChannelCount = _badIntValue,
                 MaxRecordingTimeSeconds = _badIntValue,

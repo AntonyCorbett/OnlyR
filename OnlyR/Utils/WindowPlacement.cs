@@ -51,7 +51,7 @@ namespace OnlyR.Utils
         {
             if (!string.IsNullOrEmpty(placementJson))
             {
-                byte[] xmlBytes = Encoding.GetBytes(placementJson);
+                var xmlBytes = Encoding.GetBytes(placementJson);
                 try
                 {
                     WINDOWPLACEMENT placement;
@@ -83,10 +83,12 @@ namespace OnlyR.Utils
                     placement.normalPosition.Bottom = placement.normalPosition.Top + (int)adjustedDimensions.Item2;
                     NativeMethods.SetWindowPlacement(windowHandle, ref placement);
                 }
+#pragma warning disable CC0004 // Catch block cannot be empty
                 catch (InvalidOperationException)
                 {
                     // Parsing placement XML failed. Fail silently.
                 }
+#pragma warning restore CC0004 // Catch block cannot be empty
             }
         }
 

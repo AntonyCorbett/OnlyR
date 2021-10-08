@@ -88,7 +88,7 @@ namespace OnlyR.Services.RecordingCopies
 
             Log.Logger.Debug($"Recordings found = {files.Length}");
 
-            ConcurrentBag<string> result = new ConcurrentBag<string>();
+            var result = new ConcurrentBag<string>();
 
             Parallel.ForEach(
                 files, 

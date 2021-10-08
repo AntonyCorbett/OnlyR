@@ -295,7 +295,7 @@ namespace OnlyR.Utils
 
             try
             {
-                DateTime today = DateTime.Today;
+                var today = DateTime.Today;
                 
                 // first try today's folder...
                 folder = GetDestinationFolder(today, commandLineIdentifier, destFolder);

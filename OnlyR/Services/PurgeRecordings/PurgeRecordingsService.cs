@@ -11,16 +11,16 @@ using Serilog;
 namespace OnlyR.Services.PurgeRecordings
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class PurgeRecordingsService : IPurgeRecordingsService
+    internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposable
     {
         private const int MaxFileDeletionsInBatch = 20;
 
         private readonly IOptionsService _optionsService;
         private readonly ICommandLineService _commandLineService;
-        private readonly DispatcherTimer _timer = new DispatcherTimer(DispatcherPriority.Background);
+        private readonly DispatcherTimer _timer = new(DispatcherPriority.Background);
         private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(5);
         private readonly TimeSpan _backoffTimerInterval = TimeSpan.FromMinutes(15);
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private PurgeServiceJob _lastJob = PurgeServiceJob.Nothing;
         private bool _allFilesDone;
 
@@ -65,7 +65,7 @@ namespace OnlyR.Services.PurgeRecordings
                 return;
             }
             
-            int itemsDeletedCount = 0;
+            var itemsDeletedCount = 0;
             try
             {
                 switch (_lastJob)
@@ -83,6 +83,9 @@ namespace OnlyR.Services.PurgeRecordings
                         _lastJob = PurgeServiceJob.FolderPurge;
                         itemsDeletedCount = await RemoveEmptyFolders();
                         break;
+
+                    default:
+                        throw new NotImplementedException();
                 }
             }
             catch (Exception ex)
@@ -133,7 +136,7 @@ namespace OnlyR.Services.PurgeRecordings
                 return 0;
             }
 
-            int count = 0;
+            var count = 0;
 
             foreach (var candidate in emptyFolders)
             {
@@ -410,6 +413,11 @@ namespace OnlyR.Services.PurgeRecordings
         private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
         {
             return oldFileDate.Year >= yearOfFolder;
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource.Dispose();
         }
     }
 }

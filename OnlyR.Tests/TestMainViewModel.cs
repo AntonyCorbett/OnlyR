@@ -61,13 +61,13 @@ namespace OnlyR.Tests
         {
             var t = new Thread(delegate()
             {
-                MainViewModel vm = CreateMainViewModel();
+                var vm = CreateMainViewModel();
 
-                RecordingPageViewModel rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+                var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
                 rvm.NavigateSettingsCommand.Execute(null);
 
                 // ReSharper disable once PossibleInvalidCastException
-                SettingsPageViewModel svm = (SettingsPageViewModel)vm.CurrentPage.DataContext;
+                var svm = (SettingsPageViewModel)vm.CurrentPage.DataContext;
                 svm.NavigateRecordingCommand.Execute(null);
 
                 Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
@@ -83,9 +83,9 @@ namespace OnlyR.Tests
         {
             var t = new Thread(delegate ()
             {
-                MainViewModel vm = CreateMainViewModel();
+                var vm = CreateMainViewModel();
 
-                RecordingPageViewModel rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+                var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
                 Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
 
                 Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss"));

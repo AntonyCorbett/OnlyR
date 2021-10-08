@@ -426,10 +426,12 @@ namespace OnlyR.ViewModel
                         var c = new CultureInfo(Path.GetFileNameWithoutExtension(folder));
                         result.Add(new LanguageItem(c.Name, c.EnglishName));
                     }
+#pragma warning disable CC0004 // Catch block cannot be empty
                     catch (CultureNotFoundException)
                     {
                         // expected
                     }
+#pragma warning restore CC0004 // Catch block cannot be empty
                 }
             }
 

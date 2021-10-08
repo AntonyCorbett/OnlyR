@@ -55,11 +55,11 @@ namespace OnlyR.Services.RecordingDestination
             }
             else
             {
-                int maxFileCount = optionsService.Options.MaxRecordingsInOneFolder;
+                var maxFileCount = optionsService.Options.MaxRecordingsInOneFolder;
 
                 for (int increment = 1; increment <= maxFileCount && result == null; ++increment)
                 {
-                    string candidateFile = GenerateCandidateFilePath(folder, dt, increment);
+                    var candidateFile = GenerateCandidateFilePath(folder, dt, increment);
                     if (!File.Exists(candidateFile))
                     {
                         result = new PathAndTrackNumber(candidateFile, increment);
@@ -83,8 +83,8 @@ namespace OnlyR.Services.RecordingDestination
         /// <returns>File name (full path)</returns>
         private static string GetTempRecordingFile()
         {
-            string folder = FileUtils.GetTempRecordingFolder();
-            string file = string.Concat(Guid.NewGuid().ToString("N"), ".mp3");
+            var folder = FileUtils.GetTempRecordingFolder();
+            var file = string.Concat(Guid.NewGuid().ToString("N"), ".mp3");
             return Path.Combine(folder, file);
         }
     }
