@@ -1,23 +1,25 @@
 ﻿<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:resx="clr-namespace:OnlyR.Properties"
-        x:Class="OnlyR.MainWindow"
-        mc:Ignorable="d"
-        DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
-        Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
-        Title="O N L Y R" Height="300" Width="268" 
-        AutomationProperties.Name="{x:Static resx:Resources.ACCESSIBILITY_ONLY_R}"
-        ResizeMode="CanMinimize" Closing="WindowClosing" Icon="iconmic.ico">
-    
+    x:Class="OnlyR.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:OnlyR.Properties"
+    Title="O N L Y R"
+    Width="268"
+    Height="300"
+    AutomationProperties.Name="{x:Static resx:Resources.ACCESSIBILITY_ONLY_R}"
+    Closing="WindowClosing"
+    DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
+    Icon="iconmic.ico"
+    ResizeMode="CanMinimize"
+    Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
+    mc:Ignorable="d">
+
     <Grid>
         <ContentControl Content="{Binding CurrentPage}" />
-        <materialDesign:Snackbar 
-            Padding="10,0,10,0"
-            MessageQueue="{Binding TheSnackbarMessageQueue}"/>
+        <materialDesign:Snackbar Padding="10,0,10,0" MessageQueue="{Binding TheSnackbarMessageQueue}" />
     </Grid>
 
 </Window>

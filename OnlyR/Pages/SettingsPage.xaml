@@ -1,35 +1,45 @@
-﻿<UserControl x:Class="OnlyR.Pages.SettingsPage"
-             
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             TextElement.FontWeight="Regular"
-             TextElement.FontSize="13"
-             TextOptions.TextFormattingMode="Ideal" 
-             TextOptions.TextRenderingMode="Auto"        
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{DynamicResource MaterialDesignFont}"
-
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:resx="clr-namespace:OnlyR.Properties"
-             mc:Ignorable="d" d:DesignWidth="268" d:DesignHeight="688">
+﻿<UserControl
+    x:Class="OnlyR.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:OnlyR.Properties"
+    d:DesignHeight="688"
+    d:DesignWidth="268"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="SettingsComboStyle" BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}" TargetType="{x:Type ComboBox}">
+        <Style
+            x:Key="SettingsComboStyle"
+            BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}"
+            TargetType="{x:Type ComboBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
             <Setter Property="materialDesign:ComboBoxAssist.ClassicMode" Value="true" />
         </Style>
 
-        <Style x:Key="SliderStyle" BasedOn="{StaticResource MaterialDesignSlider}" TargetType="{x:Type Slider}">
+        <Style
+            x:Key="SliderStyle"
+            BasedOn="{StaticResource MaterialDesignSlider}"
+            TargetType="{x:Type Slider}">
             <Setter Property="Margin" Value="0,0,0,10" />
-            <Setter Property="Orientation" Value="Horizontal"  />
-            <Setter Property="Minimum" Value="1"/>
-            <Setter Property="Maximum" Value="90"/>
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Minimum" Value="1" />
+            <Setter Property="Maximum" Value="90" />
         </Style>
 
-        <Style x:Key="SettingsCheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="{x:Type CheckBox}">
+        <Style
+            x:Key="SettingsCheckBox"
+            BasedOn="{StaticResource MaterialDesignCheckBox}"
+            TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
         </Style>
 
@@ -43,8 +53,12 @@
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="UserControl.Loaded">
             <BeginStoryboard>
-                <Storyboard >
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1" />
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="0.0"
+                        To="1.0"
+                        Duration="0:0:1" />
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
@@ -52,205 +66,216 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35"/>
-            <RowDefinition Height="326*"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="326*" />
+            <RowDefinition Height="35" />
         </Grid.RowDefinitions>
 
-        <Button Command="{Binding NavigateRecordingCommand}" 
-                AutomationProperties.Name="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}"
-                AutomationProperties.AutomationId="BackBtn"
-                ToolTip="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}">
+        <Button
+            AutomationProperties.AutomationId="BackBtn"
+            AutomationProperties.Name="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}"
+            Command="{Binding NavigateRecordingCommand}"
+            ToolTip="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}">
             <materialDesign:PackIcon
-                Kind="Backburger"
+                Width="24"
                 Height="24"
-                Width="24" />
+                Kind="Backburger" />
         </Button>
 
-        <ScrollViewer Grid.Column="0" Grid.Row="1" 
-                      PanningMode="VerticalOnly">
-            <StackPanel Orientation="Vertical" Margin="5,0,5,10">
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.Column="0"
+            PanningMode="VerticalOnly">
+            <StackPanel Margin="5,0,5,10" Orientation="Vertical">
 
-                <TextBlock Margin="0,10,0,10" 
-                           Text="{Binding AppVersionStr}" 
-                           FontSize="10"
-                           Foreground="{StaticResource PrimaryHueLightForegroundBrush}"/>
-
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding RecordingDevices}" 
-                    IsEnabled="{Binding NotUsingLoopbackCapture}"
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
-                    DisplayMemberPath="DeviceName" 
-                    SelectedValuePath="DeviceId"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
-                    AutomationProperties.AutomationId="RecordingDevice"
-                    SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"/>
-
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding UseLoopbackCapture, Mode=TwoWay}" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"
-                    AutomationProperties.AutomationId="LoopbackCapture"
-                    Content="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"/>
-
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding SampleRates}" 
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
-                    DisplayMemberPath="Name" 
-                    SelectedValuePath="ActualSampleRate" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
-                    AutomationProperties.AutomationId="SampleRate"
-                    SelectedValue="{Binding SampleRate, Mode=TwoWay}"/>
-                
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding Channels}"
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_CHANNELS}"
-                    DisplayMemberPath="Name" 
-                    SelectedValuePath="ChannelCount" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_CHANNELS}"
-                    AutomationProperties.AutomationId="Channel"
-                    SelectedValue="{Binding Channel, Mode=TwoWay}"/>
-
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding BitRates}" 
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
-                    DisplayMemberPath="Name" 
-                    SelectedValuePath="ActualBitRate" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
-                    AutomationProperties.AutomationId="BitRate"
-                    SelectedValue="{Binding BitRate, Mode=TwoWay}"/>
-                
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding MaxRecordingTimes}"
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
-                    DisplayMemberPath="Name" 
-                    SelectedValuePath="ActualSeconds" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
-                    AutomationProperties.AutomationId="MaxRecordingTime"
-                    SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"/>
-
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding MaxSilenceTimeItems}"
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
-                    DisplayMemberPath="Name" 
-                    SelectedValuePath="Seconds" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
-                    AutomationProperties.AutomationId="StopOnSilence"
-                    SelectedValue="{Binding MaxSilenceTimeSeconds, Mode=TwoWay}"/>
-
-                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"></Label>
-                <Slider 
-                    Value="{Binding SilenceAsVolumePercentage}"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
-                    AutomationProperties.AutomationId="SilenceDetectionVolume"
-                    Style="{StaticResource SliderStyle}" />
-
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding ShouldFadeRecordings, Mode=TwoWay}" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_FADE_OUT}"
-                    AutomationProperties.AutomationId="FadeOut"
-                    Content="{x:Static resx:Resources.SETTINGS_FADE_OUT}"/>
-
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding StartRecordingOnLaunch, Mode=TwoWay}"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
-                    AutomationProperties.AutomationId="StartOnLaunch"
-                    Content="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"/>
-
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"
-                    AutomationProperties.AutomationId="AlwaysOnTop"
-                    Content="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"/>
-                    
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding AllowCloseWhenRecording, Mode=TwoWay}"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"
-                    AutomationProperties.AutomationId="AllowClose"
-                    Content="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"/>
-
-                <CheckBox 
-                    Style="{StaticResource SettingsCheckBox}"
-                    IsChecked="{Binding StartMinimized, Mode=TwoWay}"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"
-                    AutomationProperties.AutomationId="StartMinimized"
-                    Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"/>
-
-                <TextBox 
-                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    Text="{Binding Genre, Mode=TwoWay}" 
+                <TextBlock
                     Margin="0,10,0,10"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_GENRE}"
+                    FontSize="10"
+                    Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
+                    Text="{Binding AppVersionStr}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
+                    AutomationProperties.AutomationId="RecordingDevice"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
+                    DisplayMemberPath="DeviceName"
+                    IsEnabled="{Binding NotUsingLoopbackCapture}"
+                    ItemsSource="{Binding RecordingDevices}"
+                    SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"
+                    SelectedValuePath="DeviceId"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="LoopbackCapture"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"
+                    Content="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"
+                    IsChecked="{Binding UseLoopbackCapture, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
+                    AutomationProperties.AutomationId="SampleRate"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding SampleRates}"
+                    SelectedValue="{Binding SampleRate, Mode=TwoWay}"
+                    SelectedValuePath="ActualSampleRate"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_CHANNELS}"
+                    AutomationProperties.AutomationId="Channel"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_CHANNELS}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Channels}"
+                    SelectedValue="{Binding Channel, Mode=TwoWay}"
+                    SelectedValuePath="ChannelCount"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
+                    AutomationProperties.AutomationId="BitRate"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_BIT_RATE}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding BitRates}"
+                    SelectedValue="{Binding BitRate, Mode=TwoWay}"
+                    SelectedValuePath="ActualBitRate"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
+                    AutomationProperties.AutomationId="MaxRecordingTime"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding MaxRecordingTimes}"
+                    SelectedValue="{Binding MaxRecordingTime, Mode=TwoWay}"
+                    SelectedValuePath="ActualSeconds"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
+                    AutomationProperties.AutomationId="StopOnSilence"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_STOP_RECORDING_ON_SILENCE}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding MaxSilenceTimeItems}"
+                    SelectedValue="{Binding MaxSilenceTimeSeconds, Mode=TwoWay}"
+                    SelectedValuePath="Seconds"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
+                <Slider
+                    AutomationProperties.AutomationId="SilenceDetectionVolume"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    Style="{StaticResource SliderStyle}"
+                    Value="{Binding SilenceAsVolumePercentage}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="FadeOut"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_FADE_OUT}"
+                    Content="{x:Static resx:Resources.SETTINGS_FADE_OUT}"
+                    IsChecked="{Binding ShouldFadeRecordings, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="StartOnLaunch"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
+                    Content="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
+                    IsChecked="{Binding StartRecordingOnLaunch, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="AlwaysOnTop"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"
+                    Content="{x:Static resx:Resources.SETTINGS_ALWAYS_ON_TOP}"
+                    IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="AllowClose"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"
+                    Content="{x:Static resx:Resources.SETTINGS_ALLOW_CLOSE}"
+                    IsChecked="{Binding AllowCloseWhenRecording, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <CheckBox
+                    AutomationProperties.AutomationId="StartMinimized"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"
+                    Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"
+                    IsChecked="{Binding StartMinimized, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <TextBox
+                    Margin="0,10,0,10"
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_GENRE}"
                     AutomationProperties.AutomationId="Genre"
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_GENRE}"/>
-                
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_GENRE}"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    Text="{Binding Genre, Mode=TwoWay}" />
+
                 <DockPanel LastChildFill="True">
-                    <Button DockPanel.Dock="Right" 
-                            Height="26" 
-                            Margin="10,0,5,10"
-                            VerticalAlignment="Bottom" 
-                            AutomationProperties.Name="{Binding SelectDestinationFolderCommand}"
-                            AutomationProperties.AutomationId="SelectDestinationFolder"
-                            Command="{Binding SelectDestinationFolderCommand}" >...</Button>
-                    <TextBox 
-                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                        DockPanel.Dock="Left" 
+                    <Button
+                        Height="26"
+                        Margin="10,0,5,10"
+                        VerticalAlignment="Bottom"
+                        AutomationProperties.AutomationId="SelectDestinationFolder"
+                        AutomationProperties.Name="{Binding SelectDestinationFolderCommand}"
+                        Command="{Binding SelectDestinationFolderCommand}"
+                        DockPanel.Dock="Right">
+                        ...
+                    </Button>
+                    <TextBox
                         Margin="0,10,0,10"
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
-                        AutomationProperties.Name="SETTINGS_RECORDINGS_FOLDER"
                         AutomationProperties.AutomationId="EditDestinationFolder"
+                        AutomationProperties.Name="SETTINGS_RECORDINGS_FOLDER"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                         Text="{Binding DestinationFolder, Mode=TwoWay}" />
                 </DockPanel>
 
-                <ComboBox 
-                    Style="{StaticResource SettingsComboStyle}"
-                    ItemsSource="{Binding RecordingLifeTimes}" 
+                <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_LIFETIME}"
-                    DisplayMemberPath="Description" 
-                    SelectedValuePath="Days" 
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_LIFETIME}"
                     AutomationProperties.AutomationId="RecordingLifetime"
-                    SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"/>
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_LIFETIME}"
+                    DisplayMemberPath="Description"
+                    ItemsSource="{Binding RecordingLifeTimes}"
+                    SelectedValue="{Binding RecordingLifeTime, Mode=TwoWay}"
+                    SelectedValuePath="Days"
+                    Style="{StaticResource SettingsComboStyle}" />
 
                 <DockPanel>
-                    <materialDesign:PackIcon Kind="Translate" 
-                                             Width="24" 
-                                             Height="24"
-                                             Margin="0,0,6,0"
-                                             VerticalAlignment="Center"/>
-                    <ComboBox ItemsSource="{Binding Languages}" 
-                              Style="{StaticResource SettingsComboStyle}"
-                              materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
-                              SelectedValuePath="LanguageId" 
-                              DisplayMemberPath="LanguageName"
-                              AutomationProperties.Name="{x:Static resx:Resources.LANGUAGE}"
-                              AutomationProperties.AutomationId="Language"
-                              SelectedValue="{Binding LanguageId, Mode=TwoWay}"/>
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        Kind="Translate" />
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
+                        AutomationProperties.AutomationId="Language"
+                        AutomationProperties.Name="{x:Static resx:Resources.LANGUAGE}"
+                        DisplayMemberPath="LanguageName"
+                        ItemsSource="{Binding Languages}"
+                        SelectedValue="{Binding LanguageId, Mode=TwoWay}"
+                        SelectedValuePath="LanguageId"
+                        Style="{StaticResource SettingsComboStyle}" />
                 </DockPanel>
 
-                <TextBlock Style="{StaticResource MiscNotesStyle}" 
-                           TextWrapping="Wrap"
-                           Text="{x:Static resx:Resources.RESTART_LANGUAGE}"/>
+                <TextBlock
+                    Style="{StaticResource MiscNotesStyle}"
+                    Text="{x:Static resx:Resources.RESTART_LANGUAGE}"
+                    TextWrapping="Wrap" />
 
             </StackPanel>
         </ScrollViewer>
 
-        <Button Grid.Row="2" 
-                Command="{Binding ShowRecordingsCommand}"
-                AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
-                AutomationProperties.AutomationId="OpenFolderBtn2"
-                ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
-                Content="{x:Static resx:Resources.SETTINGS_RECORDINGS_BTN}" />
+        <Button
+            Grid.Row="2"
+            AutomationProperties.AutomationId="OpenFolderBtn2"
+            AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
+            Command="{Binding ShowRecordingsCommand}"
+            Content="{x:Static resx:Resources.SETTINGS_RECORDINGS_BTN}"
+            ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}" />
 
     </Grid>
 </UserControl>

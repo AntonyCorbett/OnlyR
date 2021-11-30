@@ -1,28 +1,31 @@
-﻿<UserControl x:Class="OnlyR.Pages.RecordingPage"
-             
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-             TextElement.FontWeight="Regular"
-             TextElement.FontSize="13"
-             TextOptions.TextFormattingMode="Ideal" 
-             TextOptions.TextRenderingMode="Auto"        
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{DynamicResource MaterialDesignFont}"
-
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter"
-             xmlns:resx="clr-namespace:OnlyR.Properties"
-             xmlns:behaviours="clr-namespace:OnlyR.Behaviours"
-             mc:Ignorable="d" 
-             d:DesignHeight="330" d:DesignWidth="300">
+﻿<UserControl
+    x:Class="OnlyR.Pages.RecordingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviours="clr-namespace:OnlyR.Behaviours"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resx="clr-namespace:OnlyR.Properties"
+    xmlns:volumeMeter="clr-namespace:OnlyR.VolumeMeter"
+    d:DesignHeight="330"
+    d:DesignWidth="300"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
     <UserControl.Resources>
 
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
-        <Style x:Key="StartRecordingBtnStyle" BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="{x:Type Button}">
+        <Style
+            x:Key="StartRecordingBtnStyle"
+            BasedOn="{StaticResource MaterialDesignRaisedButton}"
+            TargetType="{x:Type Button}">
             <Setter Property="Height" Value="85" />
             <Setter Property="Grid.Column" Value="1" />
             <Setter Property="Grid.Row" Value="0" />
@@ -30,7 +33,10 @@
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
 
-        <Style x:Key="StopRecordingBtnStyle" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}" TargetType="{x:Type Button}">
+        <Style
+            x:Key="StopRecordingBtnStyle"
+            BasedOn="{StaticResource MaterialDesignRaisedAccentButton}"
+            TargetType="{x:Type Button}">
             <Setter Property="Height" Value="85" />
             <Setter Property="Grid.Column" Value="1" />
             <Setter Property="Grid.Row" Value="0" />
@@ -38,7 +44,10 @@
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
 
-        <Style x:Key="SettingsBtnStyle" BasedOn="{StaticResource MaterialDesignFloatingActionLightButton}" TargetType="{x:Type Button}">
+        <Style
+            x:Key="SettingsBtnStyle"
+            BasedOn="{StaticResource MaterialDesignFloatingActionLightButton}"
+            TargetType="{x:Type Button}">
             <Setter Property="Height" Value="36" />
             <Setter Property="Width" Value="36" />
             <Setter Property="Grid.Column" Value="1" />
@@ -47,7 +56,10 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="SaveBtnStyle" BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}" TargetType="{x:Type Button}">
+        <Style
+            x:Key="SaveBtnStyle"
+            BasedOn="{StaticResource MaterialDesignFloatingActionDarkButton}"
+            TargetType="{x:Type Button}">
             <Setter Property="Height" Value="36" />
             <Setter Property="Width" Value="36" />
             <Setter Property="Grid.Column" Value="1" />
@@ -59,9 +71,9 @@
                     <Trigger.EnterActions>
                         <BeginStoryboard>
                             <Storyboard>
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" FillBehavior="Stop">
-                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                <DoubleAnimationUsingKeyFrames FillBehavior="Stop" Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </BeginStoryboard>
@@ -76,8 +88,12 @@
     <UserControl.Triggers>
         <EventTrigger RoutedEvent="UserControl.Loaded">
             <BeginStoryboard>
-                <Storyboard >
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:1" />
+                <Storyboard>
+                    <DoubleAnimation
+                        Storyboard.TargetProperty="Opacity"
+                        From="0.0"
+                        To="1.0"
+                        Duration="0:0:1" />
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
@@ -85,101 +101,126 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="86*"/>
-            <ColumnDefinition Width="235*"/>
+            <ColumnDefinition Width="86*" />
+            <ColumnDefinition Width="235*" />
         </Grid.ColumnDefinitions>
 
-        <volumeMeter:VduControl Margin="10,10,0,10" Grid.Column="0" Grid.Row="0" x:Name="VduControl"
-                                VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}"/>
+        <volumeMeter:VduControl
+            x:Name="VduControl"
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="10,10,0,10"
+            VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}" />
 
         <Grid Grid.Column="1" Margin="10,10,10,12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Style="{StaticResource StartRecordingBtnStyle}" 
-                    AutomationProperties.Name="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
-                    AutomationProperties.AutomationId="StartBtn"
-                    Visibility="{Binding Path=IsReadyToRecord, Converter={StaticResource BoolToVis}}"
-                    ToolTip="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
-                    IsEnabled="{Binding IsNotRecording}"
-                    Command="{Binding StartRecordingCommand}"
-                    behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True">
+            <Button
+                behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
+                AutomationProperties.AutomationId="StartBtn"
+                AutomationProperties.Name="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
+                Command="{Binding StartRecordingCommand}"
+                IsEnabled="{Binding IsNotRecording}"
+                Style="{StaticResource StartRecordingBtnStyle}"
+                ToolTip="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
+                Visibility="{Binding Path=IsReadyToRecord, Converter={StaticResource BoolToVis}}">
                 <StackPanel Orientation="Vertical">
                     <materialDesign:PackIcon
-                        HorizontalAlignment="Center"
-                        Kind="Microphone"
+                        Width="56"
                         Height="56"
-                        Width="56" />
-                    <TextBlock Text="{Binding MaxRecordingTimeString}" 
-                               Visibility="{Binding IsMaxRecordingTimeSpecified, Converter={StaticResource BooleanToVisibilityConverter}}"
-                               Foreground="{StaticResource PrimaryHueLightForegroundBrush}"/>
+                        HorizontalAlignment="Center"
+                        Kind="Microphone" />
+                    <TextBlock
+                        Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
+                        Text="{Binding MaxRecordingTimeString}"
+                        Visibility="{Binding IsMaxRecordingTimeSpecified, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Button>
 
-            <!-- ReSharper disable once Xaml.MissingGridIndex -->
-            <Button Style="{StaticResource StopRecordingBtnStyle}" 
-                    AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
-                    AutomationProperties.AutomationId="StopBtn"
-                    ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
-                    IsEnabled="{Binding IsRecording}"
-                    Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}"
-                    Command="{Binding StopRecordingCommand}"
-                    behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True">
+            <!--  ReSharper disable once Xaml.MissingGridIndex  -->
+            <Button
+                behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
+                AutomationProperties.AutomationId="StopBtn"
+                AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                Command="{Binding StopRecordingCommand}"
+                IsEnabled="{Binding IsRecording}"
+                Style="{StaticResource StopRecordingBtnStyle}"
+                ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}">
                 <materialDesign:PackIcon
-                   Kind="Stop"
-                   Height="56"
-                   Width="56" />
+                    Width="56"
+                    Height="56"
+                    Kind="Stop" />
             </Button>
 
-            <materialDesign:Card Grid.Row="1" VerticalAlignment="Stretch" Padding="10">
+            <materialDesign:Card
+                Grid.Row="1"
+                Padding="10"
+                VerticalAlignment="Stretch">
                 <DockPanel>
-                    <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding StatusStr}" Foreground="{StaticResource PrimaryHueLightForegroundBrush}"/>
-                    <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ElapsedTimeStr}" FontSize="32"/>
-                    <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Text="{Binding ErrorMsg}" Foreground="Crimson" />
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
+                        Text="{Binding StatusStr}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        FontSize="32"
+                        Text="{Binding ElapsedTimeStr}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        Foreground="Crimson"
+                        Text="{Binding ErrorMsg}"
+                        TextWrapping="Wrap" />
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource SaveBtnStyle}" 
-                                AutomationProperties.Name="{Binding SaveHint}"
-                                AutomationProperties.AutomationId="SaveBtn"
-                                Margin="0,0,10,0"
-                                ToolTip="{Binding SaveHint}"
-                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsCopying}"
-                                materialDesign:ButtonProgressAssist.Value="-1"
-                                materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsCopying}"                                
-                                IsEnabled="{Binding IsSaveEnabled}"
-                                Visibility="{Binding IsSaveVisible, Converter={StaticResource BoolToVis}}"
-                                Command="{Binding SaveToRemovableDriveCommand}">
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,10,0"
+                            materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsCopying}"
+                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsCopying}"
+                            materialDesign:ButtonProgressAssist.Value="-1"
+                            AutomationProperties.AutomationId="SaveBtn"
+                            AutomationProperties.Name="{Binding SaveHint}"
+                            Command="{Binding SaveToRemovableDriveCommand}"
+                            IsEnabled="{Binding IsSaveEnabled}"
+                            Style="{StaticResource SaveBtnStyle}"
+                            ToolTip="{Binding SaveHint}"
+                            Visibility="{Binding IsSaveVisible, Converter={StaticResource BoolToVis}}">
                             <materialDesign:PackIcon
-                                Kind="ContentSave"
+                                Width="22"
                                 Height="22"
-                                Width="22" />
+                                Kind="ContentSave" />
                         </Button>
 
-                        <Button Style="{StaticResource SettingsBtnStyle}" 
-                                Margin="0,0,10,0"
-                                AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
-                                AutomationProperties.AutomationId="OpenFolderBtn"
-                                ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
-                                Visibility="{Binding Path=NoFolder, Converter={StaticResource InverseBoolToVisConverter}}"
-                                Command="{Binding ShowRecordingsCommand}" >
+                        <Button
+                            Margin="0,0,10,0"
+                            AutomationProperties.AutomationId="OpenFolderBtn"
+                            AutomationProperties.Name="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
+                            Command="{Binding ShowRecordingsCommand}"
+                            Style="{StaticResource SettingsBtnStyle}"
+                            ToolTip="{x:Static resx:Resources.RECORDINGS_FOLDER_TOOLTIP}"
+                            Visibility="{Binding Path=NoFolder, Converter={StaticResource InverseBoolToVisConverter}}">
                             <materialDesign:PackIcon
-                                Kind="Folder"
+                                Width="22"
                                 Height="22"
-                                Width="22" />
+                                Kind="Folder" />
                         </Button>
-                        <Button Style="{StaticResource SettingsBtnStyle}" 
-                                AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
-                                AutomationProperties.AutomationId="SettingsBtn"
-                                ToolTip="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
-                                IsEnabled="{Binding IsNotRecording}"
-                                Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}"
-                                Command="{Binding NavigateSettingsCommand}" >
+                        <Button
+                            AutomationProperties.AutomationId="SettingsBtn"
+                            AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
+                            Command="{Binding NavigateSettingsCommand}"
+                            IsEnabled="{Binding IsNotRecording}"
+                            Style="{StaticResource SettingsBtnStyle}"
+                            ToolTip="{x:Static resx:Resources.SETTINGS_TOOLTIP}"
+                            Visibility="{Binding Path=NoSettings, Converter={StaticResource InverseBoolToVisConverter}}">
                             <materialDesign:PackIcon
-                                Kind="Settings"
+                                Width="22"
                                 Height="22"
-                                Width="22" />
+                                Kind="Settings" />
                         </Button>
                     </StackPanel>
 
