@@ -45,6 +45,8 @@ namespace OnlyR.Tests
             {
                 var vm = CreateMainViewModel();
 
+                Assert.IsNotNull(vm.CurrentPage);
+
                 var rvm = (RecordingPageViewModel) vm.CurrentPage.DataContext;
                 rvm.NavigateSettingsCommand.Execute(null);
 
@@ -62,6 +64,8 @@ namespace OnlyR.Tests
             var t = new Thread(delegate()
             {
                 var vm = CreateMainViewModel();
+
+                Assert.IsNotNull(vm.CurrentPage);
 
                 var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
                 rvm.NavigateSettingsCommand.Execute(null);
@@ -84,6 +88,8 @@ namespace OnlyR.Tests
             var t = new Thread(delegate ()
             {
                 var vm = CreateMainViewModel();
+
+                Assert.IsNotNull(vm.CurrentPage);
 
                 var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
                 Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);

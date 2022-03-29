@@ -53,7 +53,7 @@ namespace OnlyR.Services.RecordingCopies
                     }
                 });
 
-            if (exceptions.Count > 0)
+            if (!exceptions.IsEmpty)
             {
                 throw new AggregateException(exceptions);
             }

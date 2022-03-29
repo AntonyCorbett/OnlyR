@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using System;
+using Moq;
+using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -26,7 +28,12 @@ namespace OnlyR.Tests.Mocks
 
         public static Mock<IRecordingDestinationService> CreateRecordingsDestinationService()
         {
-            return new Mock<IRecordingDestinationService>();
+            var s = new Mock<IRecordingDestinationService>();
+            s.Setup(o =>
+                    o.GetRecordingFileCandidate(It.IsAny<IOptionsService>(), It.IsAny<DateTime>(), It.IsAny<string>()))
+                    .Returns(new RecordingCandidate(DateTime.Now, 1, ".", "."));
+
+            return s;
         }
 
         public static Mock<ICommandLineService> CreateCommandLineService()

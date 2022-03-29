@@ -166,7 +166,7 @@ namespace OnlyR.ViewModel
 
         public bool NoSave => _commandLineService.NoSave;
 
-        public bool IsSaveVisible => !NoSave && _removableDrives.Count > 0;
+        public bool IsSaveVisible => !NoSave && !_removableDrives.IsEmpty;
 
         public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
 
@@ -375,7 +375,7 @@ namespace OnlyR.ViewModel
                 var recordingDate = DateTime.Today;
                 var candidateFile = _destinationService.GetRecordingFileCandidate(
                     _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
-
+                
                 CheckDiskSpace(candidateFile);
 
                 _audioService.StartRecording(candidateFile, _optionsService);

@@ -21,7 +21,7 @@ IF %ERRORLEVEL% NEQ 0 goto ERROR
 
 ECHO.
 ECHO Creating portable zip
-powershell Compress-Archive -Path OnlyR\bin\Release\net5.0-windows\publish\* -DestinationPath Installer\Output\OnlyRPortable.zip 
+powershell Compress-Archive -Path OnlyR\bin\Release\net5.0-windows\publish\win-x86\* -DestinationPath Installer\Output\OnlyRPortable.zip 
 IF %ERRORLEVEL% NEQ 0 goto ERROR
 
 goto SUCCESS

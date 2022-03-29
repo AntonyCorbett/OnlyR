@@ -26,13 +26,13 @@ namespace OnlyR.Tests.Mocks
             _timer.Tick += RecordingTimer;
         }
 
-        public event EventHandler StartedEvent;
+        public event EventHandler? StartedEvent;
 
-        public event EventHandler StoppedEvent;
+        public event EventHandler? StoppedEvent;
 
-        public event EventHandler StopRequested;
+        public event EventHandler? StopRequested;
 
-        public event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
+        public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
 
         public RecordingDeviceItem[] GetRecordingDeviceList()
         {
@@ -82,7 +82,7 @@ namespace OnlyR.Tests.Mocks
             RecordingProgressEvent?.Invoke(this, e);
         }
 
-        private void RecordingTimer(object sender, EventArgs e)
+        private void RecordingTimer(object? sender, EventArgs e)
         {
             OnRecordingProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = _random.Next(0, 101) });
         }
