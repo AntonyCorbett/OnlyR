@@ -15,6 +15,10 @@ dotnet publish OnlyR\OnlyR.csproj -p:PublishProfile=FolderProfile -c:Release
 IF %ERRORLEVEL% NEQ 0 goto ERROR
 
 ECHO.
+ECHO Removing unwanted x64 DLLs
+del OnlyR\bin\Release\net5.0-windows\publish\win-x86\libmp3lame.64.dll
+
+ECHO.
 ECHO Creating installer
 "D:\Program Files (x86)\Inno Setup 6\iscc" Installer\onlyrsetup.iss
 IF %ERRORLEVEL% NEQ 0 goto ERROR
@@ -33,3 +37,5 @@ ECHO An ERROR occurred!
 ECHO ******************
 
 :SUCCESS
+
+PAUSE

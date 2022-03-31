@@ -129,7 +129,7 @@ namespace OnlyR.Services.PurgeRecordings
             return t;
         }
 
-        private int DeleteFolders(IReadOnlyCollection<string> emptyFolders)
+        private int DeleteFolders(IReadOnlyCollection<string>? emptyFolders)
         {
             if (_cancellationTokenSource.IsCancellationRequested || emptyFolders == null)
             {
