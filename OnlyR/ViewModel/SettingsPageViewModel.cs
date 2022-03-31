@@ -439,7 +439,7 @@ namespace OnlyR.ViewModel
             var cNative = new CultureInfo(Path.GetFileNameWithoutExtension("en-GB"));
             result.Add(new LanguageItem(cNative.Name, cNative.EnglishName));
         
-            result.Sort((x, y) => string.Compare(x.LanguageName, y.LanguageName, StringComparison.Ordinal));
+            result.Sort((x, y) => string.CompareOrdinal(x.LanguageName, y.LanguageName));
 
             return result.ToArray();
         }

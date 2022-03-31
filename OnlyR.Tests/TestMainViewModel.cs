@@ -14,7 +14,7 @@ namespace OnlyR.Tests
     public class TestMainViewModel
     {
         [ClassInitialize]
-        public static void ClassInit(TestContext ctx)
+        public static void ClassInit(TestContext _)
         {
             Application.LoadComponent(
                 new Uri("/OnlyR;component/App.xaml", UriKind.Relative));
@@ -25,10 +25,10 @@ namespace OnlyR.Tests
         {
             var success = false;
 
-            var t = new Thread(delegate ()
+            var t = new Thread(() =>
             {
                 var vm = CreateMainViewModel();
-                
+
                 OpenOnRecordingPage(vm);
                 NavToOptionsPage(vm);
                 NavToRecordingsPage(vm);

@@ -233,7 +233,7 @@ namespace OnlyR.ViewModel
                     return string.Empty;
                 }
 
-                if (driveLetterList.IndexOf(',') >= 0)
+                if (driveLetterList.Contains(','))
                 {
                     return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
                 }
@@ -499,7 +499,7 @@ namespace OnlyR.ViewModel
                     _snackbarService.Enqueue(
                         Properties.Resources.COPIED,
                         Properties.Resources.OK,
-                        o => { },
+                        _ => { },
                         null,
                         promote: false,
                         neverConsiderToBeDuplicate: true);

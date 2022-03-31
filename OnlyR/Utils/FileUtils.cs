@@ -59,7 +59,7 @@ namespace OnlyR.Utils
                 folderName += '\\';
             }
 
-            if (NativeMethods.GetDiskFreeSpaceEx(folderName, out var free, out var dummy1, out var dummy2))
+            if (NativeMethods.GetDiskFreeSpaceEx(folderName, out var free, out var _, out var _))
             {
                 freespace = free;
                 return true;

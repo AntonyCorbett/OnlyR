@@ -125,15 +125,12 @@ namespace OnlyR.Services.Options
 
         private static string GetChannelName(int channelsCount)
         {
-            switch (channelsCount)
+            return channelsCount switch
             {
-                case 1:
-                    return Properties.Resources.MONO;
-                case 2:
-                    return Properties.Resources.STEREO;
-                default:
-                    return "Unknown";
-            }
+                1 => Properties.Resources.MONO,
+                2 => Properties.Resources.STEREO,
+                _ => "Unknown"
+            };
         }
         
         [MemberNotNull(nameof(Options))]

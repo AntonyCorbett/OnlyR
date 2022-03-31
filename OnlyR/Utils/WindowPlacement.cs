@@ -25,7 +25,7 @@ namespace OnlyR.Utils
         private const int SwShowMinimized = 2;
 
         private static readonly Encoding Encoding = new UTF8Encoding();
-        private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(WINDOWPLACEMENT));
+        private static readonly XmlSerializer Serializer = new(typeof(WINDOWPLACEMENT));
 
         public static void SetPlacement(this Window window, string placementJson, bool showMinimized)
         {
@@ -106,13 +106,12 @@ namespace OnlyR.Utils
         {
             NativeMethods.GetWindowPlacement(windowHandle, out var placement);
 
-            using (var memoryStream = new MemoryStream())
-            {
-                var xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
-                Serializer.Serialize(xmlTextWriter, placement);
-                var xmlBytes = memoryStream.ToArray();
-                return Encoding.GetString(xmlBytes);
-            }
+            using var memoryStream = new MemoryStream();
+
+            var xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+            Serializer.Serialize(xmlTextWriter, placement);
+            var xmlBytes = memoryStream.ToArray();
+            return Encoding.GetString(xmlBytes);
         }
 
         private static Tuple<int, int> GetDpiSettings()

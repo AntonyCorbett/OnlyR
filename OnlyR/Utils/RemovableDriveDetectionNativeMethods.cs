@@ -55,13 +55,13 @@ namespace OnlyR.Utils
 
         private static char DriveMaskToLetter(int mask)
         {
-            const string Drives = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string Drives = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
             var cnt = 0;
             var pom = mask / 2;
             while (pom != 0)
             {
-                pom = pom / 2;
+                pom /= 2;
                 ++cnt;
             }
 

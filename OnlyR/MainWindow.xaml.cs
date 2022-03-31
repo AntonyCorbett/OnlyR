@@ -44,13 +44,13 @@ namespace OnlyR
 
         private void OnNavigate(object recipient, NavigateMessage message)
         {
-            if (message.OriginalPageName.Equals(SettingsPageViewModel.PageName))
+            if (message.OriginalPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
             {
                 // store the size of the settings page...
                 SaveSettingsWindowSize();
             }
 
-            if (message.TargetPageName.Equals(RecordingPageViewModel.PageName))
+            if (message.TargetPageName.Equals(RecordingPageViewModel.PageName, StringComparison.Ordinal))
             {
                 // We don't allow the main window to be resized...
                 ResizeMode = ResizeMode.CanMinimize;
@@ -58,7 +58,7 @@ namespace OnlyR
                 Width = MainWindowWidth;
                 Height = MainWindowHeight;
             }
-            else if (message.TargetPageName.Equals(SettingsPageViewModel.PageName))
+            else if (message.TargetPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
             {
                 // Settings window can be resized...
                 ResizeMode = ResizeMode.CanResize;
@@ -126,7 +126,7 @@ namespace OnlyR
             var m = (MainViewModel)DataContext;
 
             if (m.CurrentPageName != null && 
-                m.CurrentPageName.Equals(SettingsPageViewModel.PageName))
+                m.CurrentPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
             {
                 SaveSettingsWindowSize();
             }
