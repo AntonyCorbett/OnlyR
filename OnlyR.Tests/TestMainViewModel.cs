@@ -21,91 +21,71 @@ namespace OnlyR.Tests
         }
 
         [TestMethod]
-        public void OpenOnRecordingPage()
+        public void TestNavigation()
         {
-            var t = new Thread(delegate ()
-            { 
-                // open on recording page...
-                var vm = CreateMainViewModel();
+            var success = false;
 
-                Assert.IsTrue(vm.CurrentPage != null);
-                Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
-                Assert.IsTrue(vm.CurrentPage.DataContext is RecordingPageViewModel);
-            });
-
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
-        }
-
-        [TestMethod]
-        public void NavToOptionsPage()
-        {
-            var t = new Thread(delegate()
-            {
-                var vm = CreateMainViewModel();
-
-                Assert.IsNotNull(vm.CurrentPage);
-
-                var rvm = (RecordingPageViewModel) vm.CurrentPage.DataContext;
-                rvm.NavigateSettingsCommand.Execute(null);
-
-                Assert.IsTrue(vm.CurrentPage is Pages.SettingsPage);
-            });
-
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
-        }
-
-        [TestMethod]
-        public void NavToRecordingPage()
-        {
-            var t = new Thread(delegate()
-            {
-                var vm = CreateMainViewModel();
-
-                Assert.IsNotNull(vm.CurrentPage);
-
-                var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
-                rvm.NavigateSettingsCommand.Execute(null);
-
-                // ReSharper disable once PossibleInvalidCastException
-                var svm = (SettingsPageViewModel)vm.CurrentPage.DataContext;
-                svm.NavigateRecordingCommand.Execute(null);
-
-                Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
-            });
-
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
-        }
-
-        [TestMethod]
-        public void StartRecording()
-        {
             var t = new Thread(delegate ()
             {
                 var vm = CreateMainViewModel();
+                
+                OpenOnRecordingPage(vm);
+                NavToOptionsPage(vm);
+                NavToRecordingsPage(vm);
+                StartRecording(vm);
 
-                Assert.IsNotNull(vm.CurrentPage);
-
-                var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
-                Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
-
-                Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
-                rvm.StartRecordingCommand.Execute(null);
-
-                Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.Recording);
-
-                rvm.StopRecordingCommand.Execute(null);
-                Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
+                success = true;
             });
 
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
             t.Join();
+
+            Assert.IsTrue(success);
+        }
+
+        private static void StartRecording(MainViewModel vm)
+        {
+            Assert.IsNotNull(vm.CurrentPage);
+
+            var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+            
+            Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
+            rvm.StartRecordingCommand.Execute(null);
+
+            Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.Recording);
+
+            rvm.StopRecordingCommand.Execute(null);
+            Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
+        }
+
+        private static void NavToRecordingsPage(MainViewModel vm)
+        {
+            Assert.IsNotNull(vm.CurrentPage);
+
+            var svm = (SettingsPageViewModel)vm.CurrentPage.DataContext;
+            svm.NavigateRecordingCommand.Execute(null);
+
+            Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
+        }
+
+        private static void NavToOptionsPage(MainViewModel vm)
+        {
+            Assert.IsNotNull(vm.CurrentPage);
+
+            var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+            rvm.NavigateSettingsCommand.Execute(null);
+
+            Assert.IsTrue(vm.CurrentPage is Pages.SettingsPage);
+        }
+
+        private static void OpenOnRecordingPage(MainViewModel vm)
+        {
+            // open on recording page...
+            
+            Assert.IsTrue(vm.CurrentPage != null);
+            Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
+            Assert.IsTrue(vm.CurrentPage.DataContext is RecordingPageViewModel);
         }
 
         private static MainViewModel CreateMainViewModel()

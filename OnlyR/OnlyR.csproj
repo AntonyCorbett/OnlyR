@@ -31,7 +31,7 @@
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.3.0" />
+		<PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.10.2" />
 	</ItemGroup>
 
 	<ItemGroup>
