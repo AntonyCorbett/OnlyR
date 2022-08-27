@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -26,16 +26,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+		<PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Roslynator.Analyzers" Version="4.1.0">
+		<PackageReference Include="Roslynator.Analyzers" Version="4.1.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-		<PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.10.2" />
+		<PackageReference Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

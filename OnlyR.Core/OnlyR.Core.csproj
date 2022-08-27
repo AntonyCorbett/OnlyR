@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Platforms>AnyCPU;x86</Platforms>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -15,9 +15,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="NAudio.Lame" Version="2.0.1" />
-		<PackageReference Include="NAudio.Wasapi" Version="2.0.0" />
-		<PackageReference Include="NAudio.WinForms" Version="2.0.1" />
-		<PackageReference Include="Roslynator.Analyzers" Version="4.1.0">
+		<PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
+		<PackageReference Include="NAudio.WinForms" Version="2.1.0" />
+		<PackageReference Include="Roslynator.Analyzers" Version="4.1.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

@@ -12,5 +12,10 @@ namespace OnlyR.Core.Recorder
             : base(Properties.Resources.NO_RECORDING_DEVICE)
         {
         }
+
+        protected NoDevicesException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;
@@ -156,9 +157,9 @@ namespace OnlyR.Core.Recorder
             {
                 Title = recordingConfig.TrackTitle,
                 Album = recordingConfig.AlbumName,
-                Track = recordingConfig.TrackNumber.ToString(),
+                Track = recordingConfig.TrackNumber.ToString(CultureInfo.CurrentCulture),
                 Genre = recordingConfig.Genre,
-                Year = recordingConfig.RecordingDate.Year.ToString(),
+                Year = recordingConfig.RecordingDate.Year.ToString(CultureInfo.CurrentCulture),
             };
         }
 
