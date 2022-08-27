@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -63,7 +64,7 @@ namespace OnlyR.Services.RecordingCopies
             DRIVE_RAMDISK = 6,
         }
 
-        private enum PNP_VETO_TYPE
+        private enum PnpVetoType
         {
             Ok,
             TypeUnknown,
@@ -103,8 +104,8 @@ namespace OnlyR.Services.RecordingCopies
             }
 
             // get the volume's device number
-            var DeviceNumber = GetDeviceNumber(hVolume);
-            if (DeviceNumber == -1)
+            var deviceNumber = GetDeviceNumber(hVolume);
+            if (deviceNumber == -1)
             {
                 return false;
             }
@@ -123,21 +124,21 @@ namespace OnlyR.Services.RecordingCopies
 
             // get the device instance handle of the storage volume by means of a
             // SetupDi enum and matching the device number
-            var DevInst = GetDrivesDevInstByDeviceNumber(DeviceNumber, driveType, pathInformation.ToString());
-            if (DevInst == 0)
+            var devInst = GetDrivesDevInstByDeviceNumber(deviceNumber, driveType, pathInformation.ToString());
+            if (devInst == 0)
             {
                 return false;
             }
 
             // get drive's parent, e.g. the USB bridge, the SATA port, an IDE channel with two drives!
-            var DevInstParent = 0;
-            CM_Get_Parent(ref DevInstParent, (int)DevInst, 0);
+            var devInstParent = 0;
+            _ = CM_Get_Parent(ref devInstParent, (int)devInst, 0);
 
-            for (int tries = 1; tries <= 3; tries++)
+            for (var tries = 1; tries <= 3; tries++)
             {
                 // sometimes we need to retry
                 var r = CM_Request_Device_Eject_NoUi(
-                    DevInstParent,
+                    devInstParent,
                     IntPtr.Zero,
                     null,
                     0,
@@ -155,9 +156,9 @@ namespace OnlyR.Services.RecordingCopies
         }
 
         [DllImport("kernel32.dll")]
-        private static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
+        private static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         private static extern uint QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
 
         [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -194,19 +195,19 @@ namespace OnlyR.Services.RecordingCopies
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool SetupDiEnumDeviceInterfaces(
             IntPtr deviceInfoSet,
-            SP_DEVINFO_DATA? deviceInfoData,
+            SpDevInfoData? deviceInfoData,
             ref Guid interfaceClassGuid,
             int memberIndex,
-            SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
+            SpDeviceInterfaceData deviceInterfaceData);
 
         [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool SetupDiGetDeviceInterfaceDetail(
             IntPtr deviceInfoSet,
-            SP_DEVICE_INTERFACE_DATA deviceInterfaceData,
+            SpDeviceInterfaceData deviceInterfaceData,
             IntPtr deviceInterfaceDetailData,
             int deviceInterfaceDetailDataSize,
             ref int requiredSize,
-            SP_DEVINFO_DATA deviceInfoData);
+            SpDevInfoData deviceInfoData);
 
         [DllImport("setupapi.dll")]
         private static extern uint SetupDiDestroyDeviceInfoList(
@@ -218,15 +219,15 @@ namespace OnlyR.Services.RecordingCopies
             int dnDevInst,
             int ulFlags);
 
-        [DllImport("setupapi.dll")]
+        [DllImport("setupapi.dll", CharSet = CharSet.Unicode)]
         private static extern int CM_Request_Device_Eject(
             int dnDevInst,
-            out PNP_VETO_TYPE pVetoType,
+            out PnpVetoType pVetoType,
             StringBuilder pszVetoName,
             int ulNameLength,
             int ulFlags);
 
-        [DllImport("setupapi.dll", EntryPoint = "CM_Request_Device_Eject")]
+        [DllImport("setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Unicode)]
         private static extern int CM_Request_Device_Eject_NoUi(
             int dnDevInst,
             IntPtr pVetoType,
@@ -237,7 +238,7 @@ namespace OnlyR.Services.RecordingCopies
         private static long GetDeviceNumber(IntPtr handle)
         {
             // get the volume's device number
-            long DeviceNumber = -1;
+            long deviceNumber = -1;
             const int size = 0x400; // some big size
             var buffer = Marshal.AllocHGlobal(size);
             int bytesReturned;
@@ -261,25 +262,25 @@ namespace OnlyR.Services.RecordingCopies
 
             if (bytesReturned > 0)
             {
-                var sdn = (STORAGE_DEVICE_NUMBER?)Marshal.PtrToStructure(buffer, typeof(STORAGE_DEVICE_NUMBER));
-                DeviceNumber = sdn?.DeviceNumber ?? -1;
+                var sdn = (StorageDeviceNumber?)Marshal.PtrToStructure(buffer, typeof(StorageDeviceNumber));
+                deviceNumber = sdn?.DeviceNumber ?? -1;
             }
 
             Marshal.FreeHGlobal(buffer);
 
-            return DeviceNumber;
+            return deviceNumber;
         }
         
         // returns the device instance handle of a storage volume or 0 on error
-        private static long GetDrivesDevInstByDeviceNumber(long DeviceNumber, DriveType DriveType, string dosDeviceName)
+        private static long GetDrivesDevInstByDeviceNumber(long deviceNumber, DriveType driveType, string dosDeviceName)
         {
-            var IsFloppy = dosDeviceName.Contains("\\Floppy"); 
+            var isFloppy = dosDeviceName.Contains("\\Floppy"); 
             Guid guid;
 
-            switch (DriveType)
+            switch (driveType)
             {
                 case DriveType.DRIVE_REMOVABLE:
-                    guid = IsFloppy 
+                    guid = isFloppy 
                         ? new Guid(GUID_DEVINTERFACE_FLOPPY) 
                         : new Guid(GUID_DEVINTERFACE_DISK);
                     break;
@@ -313,7 +314,7 @@ namespace OnlyR.Services.RecordingCopies
 
             while (true)
             {
-                var interfaceData = new SP_DEVICE_INTERFACE_DATA();
+                var interfaceData = new SpDeviceInterfaceData();
                 if (!SetupDiEnumDeviceInterfaces(hDevInfo, null, ref guid, dwIndex, interfaceData))
                 {
                     var error = Marshal.GetLastWin32Error();
@@ -325,7 +326,7 @@ namespace OnlyR.Services.RecordingCopies
                     break;
                 }
 
-                var devData = new SP_DEVINFO_DATA();
+                var devData = new SpDevInfoData();
                 var size = 0;
                 if (!SetupDiGetDeviceInterfaceDetail(
                     hDevInfo, 
@@ -343,8 +344,8 @@ namespace OnlyR.Services.RecordingCopies
                 }
 
                 var buffer = Marshal.AllocHGlobal(size);
-                var detailData = default(SP_DEVICE_INTERFACE_DETAIL_DATA);
-                detailData.cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+                var detailData = default(SpDeviceInterfaceDetailData);
+                detailData.cbSize = Marshal.SizeOf(typeof(SpDeviceInterfaceDetailData));
                 Marshal.StructureToPtr(detailData, buffer, false);
 
                 if (!SetupDiGetDeviceInterfaceDetail(hDevInfo, interfaceData, buffer, size, ref size, devData))
@@ -373,10 +374,10 @@ namespace OnlyR.Services.RecordingCopies
                     {
                         // get its device number
                         var driveDeviceNumber = GetDeviceNumber(hDrive);
-                        if (DeviceNumber == driveDeviceNumber)
+                        if (deviceNumber == driveDeviceNumber)
                         {
                             // matched the given device number with the one of the current device
-                            SetupDiDestroyDeviceInfoList(hDevInfo);
+                            _ = SetupDiDestroyDeviceInfoList(hDevInfo);
                             return devData.devInst;
                         }
                     }
@@ -385,13 +386,13 @@ namespace OnlyR.Services.RecordingCopies
                 dwIndex++;
             }
 
-            SetupDiDestroyDeviceInfoList(hDevInfo);
+            _ = SetupDiDestroyDeviceInfoList(hDevInfo);
             return 0;
         }
 
         [StructLayout(LayoutKind.Sequential)]
 
-        private struct STORAGE_DEVICE_NUMBER
+        private struct StorageDeviceNumber
         {
             public int DeviceType;
 
@@ -401,28 +402,28 @@ namespace OnlyR.Services.RecordingCopies
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        private struct SP_DEVICE_INTERFACE_DETAIL_DATA
+        private struct SpDeviceInterfaceDetailData
         {
             public int cbSize;
             public short devicePath;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class SP_DEVICE_INTERFACE_DATA
+        private class SpDeviceInterfaceData
         {
-            public int cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DATA));
+            public int cbSize = Marshal.SizeOf(typeof(SpDeviceInterfaceData));
             public Guid interfaceClassGuid = Guid.Empty; // temp
-            public int flags = 0;
-            public int reserved = 0;
+            public int flags;
+            public int reserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private class SP_DEVINFO_DATA
+        private class SpDevInfoData
         {
-            public int cbSize = Marshal.SizeOf(typeof(SP_DEVINFO_DATA));
+            public int cbSize = Marshal.SizeOf(typeof(SpDevInfoData));
             public Guid classGuid = Guid.Empty; // temp
-            public int devInst = 0; // dumy
-            public int reserved = 0;
+            public int devInst; // dumy
+            public int reserved;
         }
     }
 

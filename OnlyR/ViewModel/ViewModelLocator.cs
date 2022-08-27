@@ -1,3 +1,4 @@
+#nullable enable
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace OnlyR.ViewModel
@@ -8,6 +9,6 @@ namespace OnlyR.ViewModel
     /// </summary>
     public class ViewModelLocator
     {
-        public MainViewModel? Main => Ioc.Default.GetService<MainViewModel>();
+        public virtual MainViewModel? Main => Ioc.Default.GetService<MainViewModel>();
     }
 }

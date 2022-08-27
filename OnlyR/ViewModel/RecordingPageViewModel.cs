@@ -22,6 +22,7 @@ using OnlyR.Services.Snackbar;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
 using Serilog;
+using System.Globalization;
 
 namespace OnlyR.ViewModel
 {
@@ -154,11 +155,11 @@ namespace OnlyR.ViewModel
         public string? MaxRecordingTimeString =>
             _optionsService.Options.MaxRecordingTimeSeconds == 0
             ? null
-            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss");
+            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
 
         public bool IsMaxRecordingTimeSpecified => _optionsService.Options.MaxRecordingTimeSeconds > 0;
 
-        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
+        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
 
         public bool NoSettings => _commandLineService.NoSettings;
 
@@ -227,33 +228,12 @@ namespace OnlyR.ViewModel
             get
             {
                 var driveLetterList = string.Join(", ", _removableDrives.Keys);
-
-                if (string.IsNullOrEmpty(driveLetterList))
-                {
-                    return string.Empty;
-                }
-
-                if (driveLetterList.Contains(','))
-                {
-                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
-                }
-
-                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
+                return string.IsNullOrEmpty(driveLetterList) ? string.Empty : $"{Properties.Resources.SAVE_TO_DRIVES} - {driveLetterList}";
             }
         }
 
-        private TimeSpan ElapsedTime
-        {
-            get
-            {
-                if (_stopwatch.IsRunning)
-                {
-                    return _stopwatch.Elapsed;
-                }
-
-                return TimeSpan.Zero;
-            }
-        }
+        private TimeSpan ElapsedTime => 
+            _stopwatch.IsRunning ? _stopwatch.Elapsed : TimeSpan.Zero;
 
         private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
 
@@ -411,7 +391,7 @@ namespace OnlyR.ViewModel
                 bytesFree < _safeMinBytesFree)
             {
                 // "Insufficient free space to record"
-                throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+                throw new IOException(Properties.Resources.INSUFFICIENT_FREE_SPACE);
             }
         }
 

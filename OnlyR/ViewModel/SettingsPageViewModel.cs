@@ -222,7 +222,7 @@ namespace OnlyR.ViewModel
             }
         }
 
-        public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
+        //public string AppVersionStr => $"{Properties.Resources.APP_VER} - {GetVersionString()}";
 
         public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
 
@@ -322,13 +322,13 @@ namespace OnlyR.ViewModel
             return new[]
             {
                 new MaxSilenceTimeItem(Properties.Resources.STOP_ON_SILENCE_DISABLED, 0),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 10), 10),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 1), 60),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 2), 120),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 3), 180),
-                new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 5), 300),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_SECS} - {10}", 10),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_SECS} - {15}", 15),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_SECS} - {30}", 30),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_MINS} - {1}", 30),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_MINS} - {2}", 120),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_MINS} - {3}", 180),
+                new MaxSilenceTimeItem($"{Properties.Resources.X_MINS} - {5}", 300)
             };
         }
 
@@ -337,18 +337,18 @@ namespace OnlyR.ViewModel
             return new[]
             {
                 new MaxRecordingTimeItem(Properties.Resources.NO_LIMIT, 0),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 45), 45),
-                new MaxRecordingTimeItem(Properties.Resources.ONE_MIN, 1 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 2), 2 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 5), 5 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 15), 15 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 30), 30 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 45), 45 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.ONE_HOUR, 1), 60 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 2), 120 * 60),
-                new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 3), 180 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_SECS} - {15}", 15),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_SECS} - {30}", 30),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_SECS} - {45}", 45),
+                new MaxRecordingTimeItem($"{Properties.Resources.ONE_MIN}", 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_MINS} - {2}", 2 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_MINS} - {5}", 5 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_MINS} - {15}", 15 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_MINS} - {30}", 30 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.X_MINS} - {45}", 45 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.ONE_HOUR} - {1}", 60 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.ONE_HOUR} - {2}", 120 * 60),
+                new MaxRecordingTimeItem($"{Properties.Resources.ONE_HOUR} - {3}", 180 * 60)
             };
         }
         
