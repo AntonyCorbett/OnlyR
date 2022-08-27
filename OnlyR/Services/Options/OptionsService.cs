@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Markup;
+using Fclp.Internals.Extensions;
 using Newtonsoft.Json;
 using OnlyR.Model;
 using OnlyR.Utils;
@@ -62,7 +63,7 @@ namespace OnlyR.Services.Options
             var validBitRates = Options.GetSupportedMp3BitRates();
             foreach (var rate in validBitRates)
             {
-                result.Add(new BitRateItem(rate.ToString(), rate));
+                result.Add(new BitRateItem(rate.ToString(CultureInfo.CurrentCulture), rate));
             }
 
             return result.ToArray();
@@ -79,7 +80,7 @@ namespace OnlyR.Services.Options
             var validSampleRates = Options.GetSupportedSampleRates();
             foreach (var rate in validSampleRates)
             {
-                result.Add(new SampleRateItem(rate.ToString(), rate));
+                result.Add(new SampleRateItem(rate.ToString(CultureInfo.CurrentCulture), rate));
             }
 
             return result.ToArray();
@@ -188,7 +189,8 @@ namespace OnlyR.Services.Options
 
             if (Options == null)
             {
-                throw new Exception($"Could not read options file: {_optionsFilePath}");
+                string path = _optionsFilePath ?? "unknown";
+                throw new FileNotFoundException(message: $"Could not read options file: {path}");
             }
             
             SetCulture();

@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Fclp.Internals.Extensions;
 using Serilog;
 
 namespace OnlyR.Utils
@@ -23,14 +24,15 @@ namespace OnlyR.Utils
         /// <param name="folderPath">Directory to create</param>
         public static void CreateDirectory(string folderPath)
         {
+            if(folderPath.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(folderPath));
+
+            if (Directory.Exists(folderPath)) return;
+
+            Directory.CreateDirectory(folderPath!);
             if (!Directory.Exists(folderPath))
             {
-                Directory.CreateDirectory(folderPath);
-                if (!Directory.Exists(folderPath))
-                {
-                    // "Could not create folder {0}"
-                    throw new Exception(string.Format(Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
-                }
+                throw new DirectoryNotFoundException($"{Properties.Resources.CREATE_FOLDER_ERROR} - {folderPath}");
             }
         }
 
@@ -100,7 +102,7 @@ namespace OnlyR.Utils
         {
             return Path.Combine(
                 GetMonthlyDestinationFolder(dt, commandLineIdentifier, rootFromOptions),
-                dt.ToString(FullDateFormat));
+                dt.ToString(FullDateFormat, CultureInfo.CurrentCulture));
         }
 
         /// <summary>
@@ -114,8 +116,8 @@ namespace OnlyR.Utils
         {
             return Path.Combine(
                 GetRootDestinationFolder(commandLineIdentifier, rootFromOptions),
-                dt.ToString("yyyy"),
-                dt.ToString("MM"));
+                dt.ToString("yyyy", CultureInfo.CurrentCulture),
+                dt.ToString("MM", CultureInfo.CurrentCulture));
         }
 
         public static int? ParseYearFromFolderName(string yearlyDestinationFolderName)
@@ -222,7 +224,7 @@ namespace OnlyR.Utils
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 AppNamePathSegment,
                 commandLineIdentifier ?? string.Empty,
-                optionsVersion.ToString(),
+                optionsVersion.ToString(CultureInfo.CurrentCulture),
                 OptionsFileName);
         }
 

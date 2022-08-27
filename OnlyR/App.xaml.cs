@@ -22,10 +22,12 @@ namespace OnlyR
     /// <summary>
     /// Interaction logic for App.xaml.
     /// </summary>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable.  Disposed on exit.
     public partial class App
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable.  Disposed on exit.
     {
         private readonly string _appString = "OnlyRAudioRecording";
-        private Mutex? _appMutex;
+        private Mutex _appMutex = new ();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -72,7 +74,7 @@ namespace OnlyR
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _appMutex?.Dispose();
+            _appMutex.Dispose();
             Log.Logger.Information("==== Exit ====");
         }
 

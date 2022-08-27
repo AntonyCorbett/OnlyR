@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using OnlyR.Core.Enums;
@@ -93,7 +94,7 @@ namespace OnlyR.Services.Audio
 
         private static string GetAlbumName(RecordingCandidate candidate)
         {
-            return candidate.RecordingDate.ToString("MMM yyyy");
+            return candidate.RecordingDate.ToString("MMM yyyy", CultureInfo.CurrentCulture);
         }
 
         private static string GetTrackTitle(RecordingCandidate candidate)
