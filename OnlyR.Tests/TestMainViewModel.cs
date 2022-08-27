@@ -5,6 +5,7 @@ using OnlyR.Core.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
+using System.Globalization;
 
 namespace OnlyR.Tests
 {
@@ -50,7 +51,7 @@ namespace OnlyR.Tests
 
             var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
             
-            Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
+            Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture));
             rvm.StartRecordingCommand.Execute(null);
 
             Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.Recording);
