@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Messaging;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -13,7 +12,8 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
 

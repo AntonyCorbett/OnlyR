@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.ViewModel.Messages;
-using Microsoft.Toolkit.Mvvm.Messaging;
 
 // Ensure this is built x86!
 

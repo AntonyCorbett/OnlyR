@@ -1,7 +1,4 @@
 ﻿using System.Windows;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -10,6 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Core.Enums;
 using OnlyR.Exceptions;
 using OnlyR.Model;
