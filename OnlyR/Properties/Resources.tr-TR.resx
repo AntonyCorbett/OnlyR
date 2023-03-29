@@ -118,14 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ACCESSIBILITY_ONLY_R" xml:space="preserve">
-    <value>Only R Application</value>
+    <value>Only R Uygulaması</value>
     <comment>Application title (for accessibility)</comment>
   </data>
   <data name="APP_VER" xml:space="preserve">
     <value>Sürüm: {0}</value>
   </data>
   <data name="BACK_TO_MAIN_PAGE" xml:space="preserve">
-    <value>Back to main page</value>
+    <value>Ana sayfaya geri dön</value>
     <comment>Tooltip for the back button on the settings page</comment>
   </data>
   <data name="COPIED" xml:space="preserve">
@@ -209,7 +209,7 @@
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RECORDING_SALVAGED" xml:space="preserve">
-    <value>Recording salvaged from last session!</value>
+    <value>Son oturumdan kurtarılan kayıt!</value>
     <comment>Message displayed at app startup if a recording was found from the previous session that was not properly finalised.</comment>
   </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
@@ -250,7 +250,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_LOOPBACK_CAPTURE" xml:space="preserve">
-    <value>Use loopback capture</value>
+    <value>Döngü yakalaması kullan</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
@@ -278,7 +278,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
-    <value>Silence detection (% of full volume)</value>
+    <value>Sessizlik tespiti (tam sesin %si)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
@@ -290,7 +290,7 @@
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
-    <value>Stop on a period of silence</value>
+    <value>Belli bir süre sessizlikte dur</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
@@ -311,7 +311,7 @@
     <value>Durduruluyor</value>
   </data>
   <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Devre dışı</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
     <value>Kaydı durdur</value>
@@ -330,6 +330,6 @@
     <value>{0} dakika</value>
   </data>
   <data name="X_SECS" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} saniye</value>
   </data>
 </root>
