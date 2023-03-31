@@ -1,4 +1,3 @@
-using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,8 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
 using OnlyR.ViewModel.Messages;
 using OnlyR.Model;
 using OnlyR.AutoUpdates;
