@@ -419,11 +419,17 @@ namespace OnlyR.ViewModel
 
             foreach (var folder in subFolders)
             {
-                if (!string.IsNullOrEmpty(folder))
+                var filenameNoExt = Path.GetFileNameWithoutExtension(folder);
+
+                if (ShouldIgnoreLanguageFolder(filenameNoExt))
+                {
+                    continue;
+                }
+                
                 {
                     try
                     {
-                        var c = new CultureInfo(Path.GetFileNameWithoutExtension(folder));
+                        var c = new CultureInfo(filenameNoExt);
                         result.Add(new LanguageItem(c.Name, c.EnglishName));
                     }
 #pragma warning disable CC0004 // Catch block cannot be empty
@@ -442,6 +448,41 @@ namespace OnlyR.ViewModel
             result.Sort((x, y) => string.CompareOrdinal(x.LanguageName, y.LanguageName));
 
             return result.ToArray();
+        }
+
+        private static bool ShouldIgnoreLanguageFolder(string lastSegmentOfFolderPath)
+        {
+            if (string.IsNullOrEmpty(lastSegmentOfFolderPath))
+            {
+                return true;
+            }
+
+            if (lastSegmentOfFolderPath.Equals("runtimes", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (lastSegmentOfFolderPath.Equals("ja", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("ko", StringComparison.OrdinalIgnoreCase))
+            {
+                // Japanese and Korean have some minor 3rd party localisation so not appropriate
+                // to include them until they appear in the Crowdin translation project.
+                return true;
+            }
+
+            // other exclusions are 'duplicates'
+
+            return
+                lastSegmentOfFolderPath.Equals("de", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("es", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("zh-Hans", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("zh-Hant", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("cs", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("fr", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("it", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("pl", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("ru", StringComparison.OrdinalIgnoreCase) ||
+                lastSegmentOfFolderPath.Equals("tr", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
