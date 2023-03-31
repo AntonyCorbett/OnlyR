@@ -22,7 +22,9 @@ namespace OnlyR
     /// <summary>
     /// Interaction logic for App.xaml.
     /// </summary>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
     public partial class App
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly string _appString = "OnlyRAudioRecording";
         private Mutex? _appMutex;

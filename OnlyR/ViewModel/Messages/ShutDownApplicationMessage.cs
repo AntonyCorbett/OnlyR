@@ -1,9 +1,8 @@
-﻿namespace OnlyR.ViewModel.Messages
+﻿namespace OnlyR.ViewModel.Messages;
+
+/// <summary>
+/// Triggers app close.
+/// </summary>
+internal sealed class ShutDownApplicationMessage
 {
-    /// <summary>
-    /// Triggers app close.
-    /// </summary>
-    internal class ShutDownApplicationMessage
-    {
-    }
 }

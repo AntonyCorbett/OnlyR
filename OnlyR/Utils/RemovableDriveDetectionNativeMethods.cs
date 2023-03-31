@@ -31,23 +31,26 @@ namespace OnlyR.Utils
                 {
                     var driveLetter = DriveMaskToLetter(vol.Value.dbcv_unitmask);
 
-                    switch ((int)wparam)
+                    checked
                     {
-                        case DBT_DEVICEARRIVAL:
-                            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
-                            {
-                                Added = true,
-                                DriveLetter = driveLetter,
-                            });
-                            break;
+                        switch ((int) wparam)
+                        {
+                            case DBT_DEVICEARRIVAL:
+                                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
+                                {
+                                    Added = true,
+                                    DriveLetter = driveLetter,
+                                });
+                                break;
 
-                        case DBT_DEVICEREMOVALCOMPLETE:
-                            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
-                            {
-                                Added = false,
-                                DriveLetter = driveLetter,
-                            });
-                            break;
+                            case DBT_DEVICEREMOVALCOMPLETE:
+                                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
+                                {
+                                    Added = false,
+                                    DriveLetter = driveLetter,
+                                });
+                                break;
+                        }
                     }
                 }
             }

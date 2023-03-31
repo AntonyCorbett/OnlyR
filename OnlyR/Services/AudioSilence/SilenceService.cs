@@ -1,39 +1,38 @@
 ﻿using System;
 using OnlyR.Services.Options;
 
-namespace OnlyR.Services.AudioSilence
+namespace OnlyR.Services.AudioSilence;
+
+internal sealed class SilenceService : ISilenceService
 {
-    internal class SilenceService : ISilenceService
+    private readonly IOptionsService _optionsService;
+    private DateTime _nonSilenceLastDetected;
+
+    public SilenceService(IOptionsService optionsService)
     {
-        private readonly IOptionsService _optionsService;
-        private DateTime _nonSilenceLastDetected;
+        _optionsService = optionsService;
+    }
 
-        public SilenceService(IOptionsService optionsService)
+    public int GetSecondsOfSilence()
+    {
+        if (_nonSilenceLastDetected == default)
         {
-            _optionsService = optionsService;
+            return 0;
         }
 
-        public int GetSecondsOfSilence()
-        {
-            if (_nonSilenceLastDetected == default)
-            {
-                return 0;
-            }
+        return (int)(DateTime.UtcNow - _nonSilenceLastDetected).TotalSeconds;
+    }
 
-            return (int)(DateTime.UtcNow - _nonSilenceLastDetected).TotalSeconds;
-        }
-
-        public void ReportVolume(int volumeLevelAsPercentage)
-        {
-            if (volumeLevelAsPercentage > _optionsService.Options.SilenceAsVolumePercentage)
-            {
-                _nonSilenceLastDetected = DateTime.UtcNow;
-            }
-        }
-
-        public void Reset()
+    public void ReportVolume(int volumeLevelAsPercentage)
+    {
+        if (volumeLevelAsPercentage > _optionsService.Options.SilenceAsVolumePercentage)
         {
             _nonSilenceLastDetected = DateTime.UtcNow;
         }
+    }
+
+    public void Reset()
+    {
+        _nonSilenceLastDetected = DateTime.UtcNow;
     }
 }
