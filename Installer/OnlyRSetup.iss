@@ -39,25 +39,13 @@ AppMutex=OnlyRAudioRecording
 PrivilegesRequired=admin
 
 [InstallDelete]
-; files from pre-net-5 edition
-Type: files; Name: "{app}\CommonServiceLocator.dll"
-Type: files; Name: "{app}\GalaSoft.MvvmLight.dll"
-Type: files; Name: "{app}\GalaSoft.MvvmLight.Extras.dll"
-Type: files; Name: "{app}\GalaSoft.MvvmLight.Platform.dll"
-Type: files; Name: "{app}\Microsoft.Win32.Primitives.dll"
-Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.dll"
-Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.Shell.dll"
-Type: files; Name: "{app}\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
-Type: files; Name: "{app}\netstandard.dll"
-Type: files; Name: "{app}\OnlyR.exe.config"
-Type: files; Name: "{app}\Serilog.Sinks.RollingFile.dll"
-Type: files; Name: "{app}\System*.dll"
+Type: filesandordirs; Name: "{app}\*.*"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "..\OnlyR\bin\Release\net5.0-windows\publish\win-x86\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
+Source: "..\OnlyR\bin\Release\net7.0-windows\publish\win-x86\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
 
 // https://go.microsoft.com/fwlink/?linkid=2135256
 Source: "netcorecheck.exe"; Flags: dontcopy noencryption

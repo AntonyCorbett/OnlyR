@@ -67,5 +67,6 @@
   </ItemGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 </Project>
