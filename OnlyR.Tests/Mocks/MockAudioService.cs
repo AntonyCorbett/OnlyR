@@ -11,7 +11,7 @@ namespace OnlyR.Tests.Mocks
     /// <summary>
     /// A mock audio service
     /// </summary>
-    internal class MockAudioService : IAudioService
+    internal sealed class MockAudioService : IAudioService
     {
         private readonly DispatcherTimer _timer;
         private readonly Random _random;

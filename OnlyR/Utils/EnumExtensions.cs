@@ -26,7 +26,7 @@ namespace OnlyR.Utils
                 default:
                 // ReSharper disable once RedundantCaseLabel
                 case RecordingStatus.Unknown:
-                    throw new ArgumentException(nameof(value));
+                    throw new ArgumentException("Bad argument value", nameof(value));
             }
         }
     }

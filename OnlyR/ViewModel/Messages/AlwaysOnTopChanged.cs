@@ -3,7 +3,7 @@
     /// <summary>
     /// When the application's "Always in top" option changes
     /// </summary>
-    internal class AlwaysOnTopChanged
+    internal sealed class AlwaysOnTopChanged
     {
     }
 }

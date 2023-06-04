@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a file path and recording track number
     /// </summary>
-    internal class PathAndTrackNumber
+    internal sealed class PathAndTrackNumber
     {
         public PathAndTrackNumber(string filePath, int trackNumber)
         {

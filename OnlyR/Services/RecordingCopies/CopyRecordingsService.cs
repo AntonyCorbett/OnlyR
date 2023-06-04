@@ -11,7 +11,7 @@ using Serilog;
 namespace OnlyR.Services.RecordingCopies
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class CopyRecordingsService : ICopyRecordingsService
+    internal sealed class CopyRecordingsService : ICopyRecordingsService
     {
         private readonly ICommandLineService _commandLineService;
         private readonly IOptionsService _optionsService;

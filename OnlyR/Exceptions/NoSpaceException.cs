@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace OnlyR.Exceptions
@@ -11,7 +12,7 @@ namespace OnlyR.Exceptions
         }
 
         public NoSpaceException(char driveLetter)
-            : base(string.Format(Properties.Resources.NO_SPACE, driveLetter.ToString()))
+            : base(string.Format(CultureInfo.CurrentCulture, Properties.Resources.NO_SPACE, driveLetter.ToString()))
         {
         }
 

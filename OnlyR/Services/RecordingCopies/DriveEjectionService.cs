@@ -4,7 +4,7 @@ using Serilog;
 namespace OnlyR.Services.RecordingCopies
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class DriveEjectionService : IDriveEjectionService
+    internal sealed class DriveEjectionService : IDriveEjectionService
     {
         public bool Eject(char driveLetter)
         {

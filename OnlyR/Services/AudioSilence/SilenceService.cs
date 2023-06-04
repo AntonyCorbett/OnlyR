@@ -3,7 +3,7 @@ using OnlyR.Services.Options;
 
 namespace OnlyR.Services.AudioSilence
 {
-    internal class SilenceService : ISilenceService
+    internal sealed class SilenceService : ISilenceService
     {
         private readonly IOptionsService _optionsService;
         private DateTime _nonSilenceLastDetected;

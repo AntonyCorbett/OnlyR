@@ -4,7 +4,7 @@
     /// MVVM message used by the MainViewModel to navigate 
     /// between the Settings Page and the Recording Page.
     /// </summary>
-    internal class NavigateMessage
+    internal sealed class NavigateMessage
     {
         public NavigateMessage(string? originalPageName, string targetPageName, object? state)
         {

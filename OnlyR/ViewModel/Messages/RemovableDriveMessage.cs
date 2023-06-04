@@ -1,6 +1,6 @@
 ﻿namespace OnlyR.ViewModel.Messages
 {
-    internal class RemovableDriveMessage
+    internal sealed class RemovableDriveMessage
     {
         public char DriveLetter { get; set; }
 

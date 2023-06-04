@@ -4,7 +4,7 @@ using Fclp;
 namespace OnlyR.Services.Options
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class CommandLineService : ICommandLineService
+    internal sealed class CommandLineService : ICommandLineService
     {
         public CommandLineService()
         {
