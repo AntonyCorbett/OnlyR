@@ -3,7 +3,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/OnlyR"
 #define MyAppExeName "OnlyR.exe"
 
-#define MyAppVersion GetFileVersion('..\OnlyR\bin\Release\net7.0-windows\publish\win-x86\OnlyR.exe');
+#define MyAppVersion GetFileVersion('..\OnlyR\bin\Release\net8.0-windows\publish\win-x86\OnlyR.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -39,7 +39,7 @@ Type: filesandordirs; Name: "{app}\*.*"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "..\OnlyR\bin\Release\net7.0-windows\publish\win-x86\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
+Source: "..\OnlyR\bin\Release\net8.0-windows\publish\win-x86\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
