@@ -21,4 +21,4 @@ See the [wiki](https://github.com/AntonyCorbett/OnlyR/wiki) for basic instructio
 
 ### License, etc
 
-OnlyR is Copyright &copy; 2017, 2021 Antony Corbett and other contributors under the [MIT license](LICENSE).
+OnlyR is Copyright &copy; 2017, 2024 Antony Corbett and other contributors under the [MIT license](LICENSE).
