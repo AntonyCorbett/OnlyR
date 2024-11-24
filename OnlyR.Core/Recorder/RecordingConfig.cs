@@ -53,7 +53,7 @@ namespace OnlyR.Core.Recorder
         public int Mp3BitRate { get; set; }
 
         /// <summary>
-        /// Teh title of the track (used in file name and written to MP3 tag title).
+        /// The title of the track (used in file name and written to MP3 tag title).
         /// </summary>
         public string? TrackTitle { get; set; }
 
