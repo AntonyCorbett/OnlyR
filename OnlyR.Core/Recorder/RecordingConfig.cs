@@ -1,4 +1,5 @@
 ﻿using System;
+using OnlyR.Core.Enums;
 
 namespace OnlyR.Core.Recorder
 {
@@ -51,6 +52,11 @@ namespace OnlyR.Core.Recorder
         /// The bit rate at which we want to encode to MP3.
         /// </summary>
         public int Mp3BitRate { get; set; }
+
+        /// <summary>
+        /// The recording audio codec.
+        /// </summary>
+        public AudioCodec Codec { get; set; }
 
         /// <summary>
         /// The title of the track (used in file name and written to MP3 tag title).

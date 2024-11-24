@@ -12,6 +12,7 @@ using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
+using OnlyR.Core.Enums;
 
 namespace OnlyR.ViewModel;
 
@@ -32,6 +33,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private readonly ICommandLineService _commandLineService;
     private readonly LanguageItem[] _languages;
     private readonly MaxSilenceTimeItem[] _maxSilenceTimes;
+    private readonly CodecItem[] _codecs;
 
     public SettingsPageViewModel(
         IAudioService audioService, 
@@ -51,6 +53,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
         _recordingLifetimes = GenerateRecordingLifeTimes();
         _languages = GetSupportedLanguages();
         _maxSilenceTimes = GetMaxSilenceTimes();
+        _codecs = GenerateCodecItems();
 
         NavigateRecordingCommand = new RelayCommand(NavigateRecording);
         ShowRecordingsCommand = new RelayCommand(ShowRecordings);
@@ -71,6 +74,21 @@ public class SettingsPageViewModel : ObservableObject, IPage
     public IEnumerable<RecordingLifeTimeItem> RecordingLifeTimes => _recordingLifetimes;
 
     public IEnumerable<MaxSilenceTimeItem> MaxSilenceTimeItems => _maxSilenceTimes;
+
+    public IEnumerable<CodecItem> Codecs => _codecs;
+
+    public AudioCodec Codec
+    {
+        get => _optionsService.Options.Codec;
+        set
+        {
+            if (_optionsService.Options.Codec != value)
+            {
+                _optionsService.Options.Codec = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     public int MaxSilenceTimeSeconds
     {
@@ -298,6 +316,12 @@ public class SettingsPageViewModel : ObservableObject, IPage
     {
         // nothing to do
     }
+
+    private static CodecItem[] GenerateCodecItems() =>
+    [
+        new("MP3", AudioCodec.Mp3),
+        new("WAV", AudioCodec.Wav)
+    ];
 
     private static RecordingLifeTimeItem[] GenerateRecordingLifeTimes()
     {

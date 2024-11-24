@@ -78,6 +78,7 @@ namespace OnlyR.Services.Audio
                 SampleRate = optionsService.Options.SampleRate,
                 ChannelCount = optionsService.Options.ChannelCount,
                 Mp3BitRate = optionsService.Options.Mp3BitRate,
+                Codec = optionsService.Options.Codec,
                 TrackTitle = GetTrackTitle(candidateFile),
                 AlbumName = GetAlbumName(candidateFile),
                 Genre = optionsService.Options.Genre,

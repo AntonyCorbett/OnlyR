@@ -113,6 +113,16 @@
                     Style="{StaticResource SettingsCheckBox}" />
 
                 <ComboBox
+                    materialDesign:HintAssist.Hint="Audio Format"
+                    AutomationProperties.AutomationId="AudioFormat"
+                    AutomationProperties.Name="Audio Format"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Codecs}"
+                    SelectedValue="{Binding Codec, Mode=TwoWay}"
+                    SelectedValuePath="Codec"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
                     AutomationProperties.AutomationId="SampleRate"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"

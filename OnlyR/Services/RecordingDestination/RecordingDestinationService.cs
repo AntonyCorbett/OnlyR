@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
@@ -48,7 +49,7 @@ namespace OnlyR.Services.RecordingDestination
         {
             PathAndTrackNumber? result = null;
 
-            var path = Directory.Exists(folder) ? null : GenerateCandidateFilePath(folder, dt, 1);
+            var path = Directory.Exists(folder) ? null : GenerateCandidateFilePath(folder, dt, 1, optionsService.Options.Codec);
             if (path != null)
             {
                 result = new PathAndTrackNumber(path, 1);
@@ -59,7 +60,7 @@ namespace OnlyR.Services.RecordingDestination
 
                 for (int increment = 1; increment <= maxFileCount && result == null; ++increment)
                 {
-                    var candidateFile = GenerateCandidateFilePath(folder, dt, increment);
+                    var candidateFile = GenerateCandidateFilePath(folder, dt, increment, optionsService.Options.Codec);
                     if (!File.Exists(candidateFile))
                     {
                         result = new PathAndTrackNumber(candidateFile, increment);
@@ -70,11 +71,17 @@ namespace OnlyR.Services.RecordingDestination
             return result;
         }
 
-        private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment)
+        private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment, AudioCodec codec)
         {
+            var fileExtension = codec switch
+            {
+                AudioCodec.Mp3 => "mp3",
+                AudioCodec.Wav => "wav",
+                _ => throw new NotSupportedException("Unsupported codec")
+            };
             return Path.Combine(
                 folder,
-                $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.mp3");
+                $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.{fileExtension}");
         }
 
         /// <summary>
