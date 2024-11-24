@@ -100,7 +100,7 @@ namespace OnlyR.Core.Recorder
                         _mp3Writer = new LameMP3FileWriter(
                             recordingConfig.DestFilePath,
                             _waveSource.WaveFormat,
-                            recordingConfig.Mp3BitRate,
+                            recordingConfig.Mp3BitRate!.Value,
                             CreateTag(recordingConfig));
                         break;
                     case AudioCodec.Wav:

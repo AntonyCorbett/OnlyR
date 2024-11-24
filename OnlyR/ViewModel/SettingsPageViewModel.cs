@@ -34,6 +34,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private readonly LanguageItem[] _languages;
     private readonly MaxSilenceTimeItem[] _maxSilenceTimes;
     private readonly CodecItem[] _codecs;
+    private bool _showBitRate;
 
     public SettingsPageViewModel(
         IAudioService audioService, 
@@ -55,9 +56,25 @@ public class SettingsPageViewModel : ObservableObject, IPage
         _maxSilenceTimes = GetMaxSilenceTimes();
         _codecs = GenerateCodecItems();
 
+        // Initialize ShowBitRate based on current codec
+        _showBitRate = _optionsService.Options.Codec == AudioCodec.Mp3;
+
         NavigateRecordingCommand = new RelayCommand(NavigateRecording);
         ShowRecordingsCommand = new RelayCommand(ShowRecordings);
         SelectDestinationFolderCommand = new RelayCommand(SelectDestinationFolder);
+    }
+
+    public bool ShowBitRate
+    {
+        get => _showBitRate;
+        private set
+        {
+            if (_showBitRate != value)
+            {
+                _showBitRate = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     public static string PageName => "SettingsPage";
@@ -85,7 +102,9 @@ public class SettingsPageViewModel : ObservableObject, IPage
             if (_optionsService.Options.Codec != value)
             {
                 _optionsService.Options.Codec = value;
+                ShowBitRate = value == AudioCodec.Mp3;
                 OnPropertyChanged();
+                Save(); // Save changes immediately
             }
         }
     }

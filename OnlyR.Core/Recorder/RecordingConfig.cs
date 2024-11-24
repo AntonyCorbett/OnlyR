@@ -51,7 +51,7 @@ namespace OnlyR.Core.Recorder
         /// <summary>
         /// The bit rate at which we want to encode to MP3.
         /// </summary>
-        public int Mp3BitRate { get; set; }
+        public int? Mp3BitRate { get; set; }
 
         /// <summary>
         /// The recording audio codec.

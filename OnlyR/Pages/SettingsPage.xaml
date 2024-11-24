@@ -48,6 +48,8 @@
             <Setter Property="FontSize" Value="11" />
         </Style>
 
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -150,7 +152,8 @@
                     ItemsSource="{Binding BitRates}"
                     SelectedValue="{Binding BitRate, Mode=TwoWay}"
                     SelectedValuePath="ActualBitRate"
-                    Style="{StaticResource SettingsComboStyle}" />
+                    Style="{StaticResource SettingsComboStyle}"
+                    Visibility="{Binding ShowBitRate, Converter={StaticResource BoolToVis}, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"
