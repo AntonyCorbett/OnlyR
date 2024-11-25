@@ -106,8 +106,7 @@ namespace OnlyR.Services.Options
         /// </summary>
         public void Sanitize()
         {
-            Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount),
-                "ValidChannelCounts.Contains(DefaultChannelCount)");
+            Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount), "ValidChannelCounts.Contains(DefaultChannelCount)");
             Debug.Assert(ValidSampleRates.Contains(DefaultSampleRate), "ValidSampleRates.Contains(DefaultSampleRate)");
             Debug.Assert(ValidMp3BitRates.Contains(DefaultMp3BitRate), "ValidMp3BitRates.Contains(DefaultMp3BitRate)");
 
