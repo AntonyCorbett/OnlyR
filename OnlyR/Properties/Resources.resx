@@ -332,4 +332,7 @@
   <data name="X_SECS" xml:space="preserve">
     <value>{0} seconds</value>
   </data>
+  <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
+    <value>Audio Format</value>
+  </data>
 </root>

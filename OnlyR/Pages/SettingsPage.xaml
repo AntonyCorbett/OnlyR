@@ -115,9 +115,9 @@
                     Style="{StaticResource SettingsCheckBox}" />
 
                 <ComboBox
-                    materialDesign:HintAssist.Hint="Audio Format"
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_AUDIO_FORMAT}"
                     AutomationProperties.AutomationId="AudioFormat"
-                    AutomationProperties.Name="Audio Format"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_AUDIO_FORMAT}"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding Codecs}"
                     SelectedValue="{Binding Codec, Mode=TwoWay}"
