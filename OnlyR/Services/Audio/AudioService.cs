@@ -87,6 +87,10 @@ namespace OnlyR.Services.Audio
             _audioRecorder.Start(recordingConfig);
         }
 
+        /// <summary>
+        /// Stops recording
+        /// </summary>
+        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
         public void StopRecording(bool fadeOut)
         {
             _audioRecorder.Stop(fadeOut);
