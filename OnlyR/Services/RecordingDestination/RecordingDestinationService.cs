@@ -38,7 +38,7 @@ namespace OnlyR.Services.RecordingDestination
             var result = new RecordingCandidate(
                 dt, 
                 finalPathAndTrack.TrackNumber, 
-                GetTempRecordingFile(),
+                GetTempRecordingFile(optionsService.Options.Codec),
                 finalPathAndTrack.FilePath);
 
             Log.Logger.Information("New candidate = {@Candidate}", result);
@@ -88,10 +88,10 @@ namespace OnlyR.Services.RecordingDestination
         /// Gets a file name that can be used to temporarily store recording data
         /// </summary>
         /// <returns>File name (full path)</returns>
-        private static string GetTempRecordingFile()
+        private static string GetTempRecordingFile(AudioCodec codec)
         {
             var folder = FileUtils.GetTempRecordingFolder();
-            var file = string.Concat(Guid.NewGuid().ToString("N"), ".mp3");
+            var file = string.Concat(Guid.NewGuid().ToString("N"), $".{codec.GetExtensionFormat()}");
             return Path.Combine(folder, file);
         }
     }

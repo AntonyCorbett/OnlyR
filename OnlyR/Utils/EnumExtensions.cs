@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 using OnlyR.Core.Enums;
 
 namespace OnlyR.Utils
@@ -28,6 +30,25 @@ namespace OnlyR.Utils
                 case RecordingStatus.Unknown:
                     throw new ArgumentException(nameof(value));
             }
+        }
+        
+        /// <summary>
+        /// Gets the extension format for the <see cref="AudioCodec"/> enum value
+        /// </summary>
+        /// <param name="enumValue">Audio codec enum value</param>
+        /// <returns>Extension format</returns>
+        public static string GetExtensionFormat(this AudioCodec enumValue)
+        {
+            var enumAttribute = enumValue.GetType()
+                .GetMember(enumValue.ToString())[0]
+                .GetCustomAttribute<EnumMemberAttribute>();
+            
+            if (enumAttribute == null || string.IsNullOrWhiteSpace(enumAttribute.Value))
+            {
+                throw new ArgumentException(nameof(enumValue));
+            }
+            
+            return enumAttribute.Value.ToLower();
         }
     }
 }

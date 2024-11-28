@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using OnlyR.Core.Enums;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using Serilog;
@@ -308,7 +310,15 @@ namespace OnlyR.Services.PurgeRecordings
 
             foreach (var folder in folders)
             {
-                var files = Directory.EnumerateFiles(folder, "*.mp3");
+                var fileExtensions = Enum
+                    .GetValues<AudioCodec>()
+                    .Select(f => f.GetExtensionFormat())
+                    .ToArray();
+                        
+                var files = Directory
+                    .EnumerateFiles(folder)
+                    .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
                 foreach (var file in files)
                 {
                     Log.Logger.Debug($"Found file: {file}");
