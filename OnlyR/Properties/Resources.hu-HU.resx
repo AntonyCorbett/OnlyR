@@ -332,7 +332,4 @@
   <data name="X_SECS" xml:space="preserve">
     <value>{0} másodperc</value>
   </data>
-  <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
-    <value>Hang formátum</value>
-  </data>
 </root>
