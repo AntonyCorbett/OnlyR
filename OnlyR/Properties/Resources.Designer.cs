@@ -384,7 +384,7 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Audio Format.
+        ///   Looks up a localized string similar to Audio format.
         /// </summary>
         public static string SETTINGS_AUDIO_FORMAT {
             get {

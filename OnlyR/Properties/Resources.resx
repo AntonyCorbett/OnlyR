@@ -333,6 +333,6 @@
     <value>{0} seconds</value>
   </data>
   <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
-    <value>Audio Format</value>
+    <value>Audio format</value>
   </data>
 </root>
