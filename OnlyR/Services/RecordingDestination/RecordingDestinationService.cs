@@ -73,12 +73,7 @@ namespace OnlyR.Services.RecordingDestination
 
         private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment, AudioCodec codec)
         {
-            var fileExtension = codec switch
-            {
-                AudioCodec.Mp3 => "mp3",
-                AudioCodec.Wav => "wav",
-                _ => throw new NotSupportedException("Unsupported codec")
-            };
+            var fileExtension = $"{codec.GetExtensionFormat()}";
             return Path.Combine(
                 folder,
                 $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.{fileExtension}");
