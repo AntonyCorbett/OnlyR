@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using OnlyR.Core.Enums;
 using OnlyR.Exceptions;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
@@ -80,13 +82,21 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
             throw new NoRecordingsException();
         }
 
-        var files = Directory.GetFiles(folder, "*.mp3");
-        if (files.Length == 0)
+        var fileExtensions = Enum
+            .GetValues<AudioCodec>()
+            .Select(f => f.GetExtensionFormat())
+            .ToArray();
+        
+        var files = Directory
+            .EnumerateFiles(folder)
+            .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+        if (files.Count == 0)
         {
             throw new NoRecordingsException();
         }
 
-        Log.Logger.Debug($"Recordings found = {files.Length}");
+        Log.Logger.Debug($"Recordings found = {files.Count}");
 
         var result = new ConcurrentBag<string>();
 

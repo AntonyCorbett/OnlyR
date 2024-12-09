@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using OnlyR.Core.Enums;
 using OnlyR.Utils;
 
 namespace OnlyR.Services.Options
@@ -36,6 +37,7 @@ namespace OnlyR.Services.Options
             DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
             RecordingsLifeTimeDays = 0; // forever
             SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
+            Codec = AudioCodec.Mp3; // default to MP3
         }
 
         public int MaxRecordingsInOneFolder { get; set; }
@@ -45,6 +47,8 @@ namespace OnlyR.Services.Options
         public int ChannelCount { get; set; }
 
         public int Mp3BitRate { get; set; }
+
+        public AudioCodec Codec { get; set; }
 
         public string? Genre { get; set; }
 
@@ -96,7 +100,7 @@ namespace OnlyR.Services.Options
         {
             return ValidMp3BitRates;
         }
-        
+
         /// <summary>
         /// Validates the data, correcting automatically as required
         /// </summary>
@@ -154,6 +158,12 @@ namespace OnlyR.Services.Options
             if (MaxSilenceTimeSeconds < 0)
             {
                 MaxSilenceTimeSeconds = 0;
+            }
+
+            // Ensure codec is valid
+            if (Codec != AudioCodec.Mp3 && Codec != AudioCodec.Wav)
+            {
+                Codec = AudioCodec.Mp3;
             }
         }
     }

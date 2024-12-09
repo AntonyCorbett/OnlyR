@@ -48,6 +48,8 @@
             <Setter Property="FontSize" Value="11" />
         </Style>
 
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -113,6 +115,16 @@
                     Style="{StaticResource SettingsCheckBox}" />
 
                 <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_AUDIO_FORMAT}"
+                    AutomationProperties.AutomationId="AudioFormat"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_AUDIO_FORMAT}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding Codecs}"
+                    SelectedValue="{Binding Codec, Mode=TwoWay}"
+                    SelectedValuePath="Codec"
+                    Style="{StaticResource SettingsComboStyle}" />
+
+                <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
                     AutomationProperties.AutomationId="SampleRate"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SAMPLE_RATE}"
@@ -140,7 +152,8 @@
                     ItemsSource="{Binding BitRates}"
                     SelectedValue="{Binding BitRate, Mode=TwoWay}"
                     SelectedValuePath="ActualBitRate"
-                    Style="{StaticResource SettingsComboStyle}" />
+                    Style="{StaticResource SettingsComboStyle}"
+                    Visibility="{Binding ShowBitRate, Converter={StaticResource BoolToVis}, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_MAX_RECORDING_TIME}"

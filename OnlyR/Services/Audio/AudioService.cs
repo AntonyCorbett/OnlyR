@@ -78,6 +78,7 @@ namespace OnlyR.Services.Audio
                 SampleRate = optionsService.Options.SampleRate,
                 ChannelCount = optionsService.Options.ChannelCount,
                 Mp3BitRate = optionsService.Options.Mp3BitRate,
+                Codec = optionsService.Options.Codec,
                 TrackTitle = GetTrackTitle(candidateFile),
                 AlbumName = GetAlbumName(candidateFile),
                 Genre = optionsService.Options.Genre,
@@ -86,6 +87,10 @@ namespace OnlyR.Services.Audio
             _audioRecorder.Start(recordingConfig);
         }
 
+        /// <summary>
+        /// Stops recording
+        /// </summary>
+        /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
         public void StopRecording(bool fadeOut)
         {
             _audioRecorder.Stop(fadeOut);

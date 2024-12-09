@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;
@@ -20,7 +21,7 @@ namespace OnlyR.Core.Recorder
         private const int RequiredReportingIntervalMs = 40;
         private const int VuSpeed = 5;
 
-        private LameMP3FileWriter? _mp3Writer;
+        private Stream? _audioWriter;
         private IWaveIn? _waveSource;
         private WaveOutEvent? _silenceWaveOut;
         private SampleAggregator? _sampleAggregator;
@@ -92,12 +93,17 @@ namespace OnlyR.Core.Recorder
 
                 _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
                 _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
-                
-                _mp3Writer = new LameMP3FileWriter(
-                    recordingConfig.DestFilePath,
-                    _waveSource.WaveFormat,
-                    recordingConfig.Mp3BitRate,
-                    CreateTag(recordingConfig));
+
+                _audioWriter = recordingConfig.Codec switch
+                {
+                    AudioCodec.Mp3 => new LameMP3FileWriter(
+                        recordingConfig.DestFilePath,
+                        _waveSource.WaveFormat,
+                        recordingConfig.Mp3BitRate!.Value,
+                        CreateTag(recordingConfig)),
+                    AudioCodec.Wav => new WaveFileWriter(recordingConfig.DestFilePath, _waveSource.WaveFormat),
+                    _ => throw new NotSupportedException("Unsupported codec"),
+                };
 
                 _waveSource.StartRecording();
 
@@ -223,7 +229,7 @@ namespace OnlyR.Core.Recorder
 
             AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
 
-            _mp3Writer?.Write(buffer, 0, bytesRecorded);
+            _audioWriter?.Write(buffer, 0, bytesRecorded);
         }
 
         private void AddToSampleAggregator(byte[] buffer, int bytesRecorded, bool isFloatingPointAudio)
@@ -284,7 +290,7 @@ namespace OnlyR.Core.Recorder
 
         private void Cleanup()
         {
-            _mp3Writer?.Flush();
+            _audioWriter?.Flush();
 
             _waveSource?.Dispose();
             _waveSource = null;
@@ -292,8 +298,8 @@ namespace OnlyR.Core.Recorder
             _silenceWaveOut?.Dispose();
             _silenceWaveOut = null;
 
-            _mp3Writer?.Dispose();
-            _mp3Writer = null;
+            _audioWriter?.Dispose();
+            _audioWriter = null;
 
             _tempRecordingFilePath = null;
         }
