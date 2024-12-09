@@ -319,6 +319,7 @@ namespace OnlyR.Services.PurgeRecordings
                     .EnumerateFiles(folder)
                     .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
+
                 foreach (var file in files)
                 {
                     Log.Logger.Debug($"Found file: {file}");

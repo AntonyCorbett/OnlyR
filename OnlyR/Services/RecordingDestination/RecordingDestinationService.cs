@@ -59,9 +59,8 @@ namespace OnlyR.Services.RecordingDestination
 
             var files = Directory.EnumerateFiles(
                     folder,
-                    $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - *.*")
-                .Where(f => extensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+                    $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int) dt.DayOfWeek]} {dt:dd MMMM yyyy} - *.*")
+                .Where(f => extensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 
             var highestTrack = 0;
             foreach (var file in files)

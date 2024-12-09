@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using OnlyR.Core.Enums;
@@ -48,7 +49,7 @@ namespace OnlyR.Utils
                 throw new ArgumentException(nameof(enumValue));
             }
             
-            return enumAttribute.Value.ToLower();
+            return enumAttribute.Value.ToLower(CultureInfo.InvariantCulture);
         }
     }
 }
