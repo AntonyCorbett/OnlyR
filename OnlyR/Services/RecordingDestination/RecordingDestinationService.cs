@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.Options;
@@ -59,7 +60,7 @@ namespace OnlyR.Services.RecordingDestination
 
             var files = Directory.EnumerateFiles(
                     folder,
-                    $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int) dt.DayOfWeek]} {dt:dd MMMM yyyy} - *.*")
+                    $"{GenerateCoreCandidateFileName(dt)} - *.*")
                 .Where(f => extensions.Any(ext => f.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 
             var highestTrack = 0;
@@ -87,7 +88,10 @@ namespace OnlyR.Services.RecordingDestination
         private static string GenerateCandidateFilePath(string folder, DateTime dt, int increment, AudioCodec codec) =>
             Path.Combine(
                 folder,
-                $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy} - {increment:D3}.{codec.GetExtensionFormat()}");
+                $"{GenerateCoreCandidateFileName(dt)} - {increment:D3}.{codec.GetExtensionFormat()}");
+        
+        private static string GenerateCoreCandidateFileName(DateTime dt)
+            => $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy}";
 
         /// <summary>
         /// Gets a file name that can be used to temporarily store recording data

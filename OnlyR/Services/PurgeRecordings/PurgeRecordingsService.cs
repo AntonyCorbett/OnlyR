@@ -10,425 +10,424 @@ using OnlyR.Services.Options;
 using OnlyR.Utils;
 using Serilog;
 
-namespace OnlyR.Services.PurgeRecordings
+namespace OnlyR.Services.PurgeRecordings;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposable
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
-    internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposable
+    private const int MaxFileDeletionsInBatch = 20;
+
+    private readonly IOptionsService _optionsService;
+    private readonly ICommandLineService _commandLineService;
+    private readonly DispatcherTimer _timer = new(DispatcherPriority.Background);
+    private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan _backoffTimerInterval = TimeSpan.FromMinutes(15);
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private PurgeServiceJob _lastJob = PurgeServiceJob.Nothing;
+    private bool _allFilesDone;
+
+    public PurgeRecordingsService(
+        IOptionsService optionsService,
+        ICommandLineService commandLineService)
     {
-        private const int MaxFileDeletionsInBatch = 20;
+        _optionsService = optionsService;
+        _commandLineService = commandLineService;
 
-        private readonly IOptionsService _optionsService;
-        private readonly ICommandLineService _commandLineService;
-        private readonly DispatcherTimer _timer = new(DispatcherPriority.Background);
-        private readonly TimeSpan _initialTimerInterval = TimeSpan.FromMinutes(5);
-        private readonly TimeSpan _backoffTimerInterval = TimeSpan.FromMinutes(15);
-        private readonly CancellationTokenSource _cancellationTokenSource = new();
-        private PurgeServiceJob _lastJob = PurgeServiceJob.Nothing;
-        private bool _allFilesDone;
+        InitTimer();
+    }
 
-        public PurgeRecordingsService(
-            IOptionsService optionsService,
-            ICommandLineService commandLineService)
+    public void Close()
+    {
+        // get a chance to clean up...
+        _cancellationTokenSource.Cancel();
+    }
+
+    private void InitTimer()
+    {
+        _timer.Interval = _initialTimerInterval;
+        _timer.Tick += HandleTimerTick;
+        _timer.Start();
+    }
+
+    private async void HandleTimerTick(object? sender, EventArgs e)
+    {
+        _timer.Stop();
+
+        if (_cancellationTokenSource.IsCancellationRequested)
         {
-            _optionsService = optionsService;
-            _commandLineService = commandLineService;
-
-            InitTimer();
+            return;
         }
 
-        public void Close()
-        {
-            // get a chance to clean up...
-            _cancellationTokenSource.Cancel();
-        }
+        var days = _optionsService.Options.RecordingsLifeTimeDays;
 
-        private void InitTimer()
+        if (days == 0)
         {
-            _timer.Interval = _initialTimerInterval;
-            _timer.Tick += HandleTimerTick;
+            _timer.Interval = _backoffTimerInterval;
+            _timer.Start();
+            return;
+        }
+            
+        var itemsDeletedCount = 0;
+        try
+        {
+            switch (_lastJob)
+            {
+                case PurgeServiceJob.FolderPurge:
+                case PurgeServiceJob.Nothing:
+                    Log.Logger.Information($"Starting purge of old recordings (older than {days} days)");
+                    _lastJob = PurgeServiceJob.FilePurge;
+                    itemsDeletedCount = await PurgeFilesInternal(days);
+                    _allFilesDone = itemsDeletedCount == 0;
+                    break;
+
+                case PurgeServiceJob.FilePurge:
+                    Log.Logger.Information("Starting removal of empty folders");
+                    _lastJob = PurgeServiceJob.FolderPurge;
+                    itemsDeletedCount = await RemoveEmptyFolders();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Error(ex, "Could not purge recordings");
+        }
+        finally
+        {
+            AfterPurge(itemsDeletedCount);
+        }
+    }
+
+    private void AfterPurge(int itemsDeletedCount)
+    {
+        if (_cancellationTokenSource.IsCancellationRequested)
+        {
+            Log.Logger.Information($"Purge cancelled: ({itemsDeletedCount} items deleted)");
+        }
+        else
+        {
+            Log.Logger.Information($"Completed purge: ({itemsDeletedCount} items deleted)");
+
+            if (_lastJob == PurgeServiceJob.FolderPurge && _allFilesDone)
+            {
+                // probably no need to do further work in this session
+                // (unless user changes settings)...
+                Log.Logger.Debug("Purge activity backing off in this session");
+                _timer.Interval = _backoffTimerInterval;
+            }
+
             _timer.Start();
         }
-
-        private async void HandleTimerTick(object? sender, EventArgs e)
-        {
-            _timer.Stop();
-
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                return;
-            }
-
-            var days = _optionsService.Options.RecordingsLifeTimeDays;
-
-            if (days == 0)
-            {
-                _timer.Interval = _backoffTimerInterval;
-                _timer.Start();
-                return;
-            }
-            
-            var itemsDeletedCount = 0;
-            try
-            {
-                switch (_lastJob)
-                {
-                    case PurgeServiceJob.FolderPurge:
-                    case PurgeServiceJob.Nothing:
-                        Log.Logger.Information($"Starting purge of old recordings (older than {days} days)");
-                        _lastJob = PurgeServiceJob.FilePurge;
-                        itemsDeletedCount = await PurgeFilesInternal(days);
-                        _allFilesDone = itemsDeletedCount == 0;
-                        break;
-
-                    case PurgeServiceJob.FilePurge:
-                        Log.Logger.Information("Starting removal of empty folders");
-                        _lastJob = PurgeServiceJob.FolderPurge;
-                        itemsDeletedCount = await RemoveEmptyFolders();
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, "Could not purge recordings");
-            }
-            finally
-            {
-                AfterPurge(itemsDeletedCount);
-            }
-        }
-
-        private void AfterPurge(int itemsDeletedCount)
-        {
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                Log.Logger.Information($"Purge cancelled: ({itemsDeletedCount} items deleted)");
-            }
-            else
-            {
-                Log.Logger.Information($"Completed purge: ({itemsDeletedCount} items deleted)");
-
-                if (_lastJob == PurgeServiceJob.FolderPurge && _allFilesDone)
-                {
-                    // probably no need to do further work in this session
-                    // (unless user changes settings)...
-                    Log.Logger.Debug("Purge activity backing off in this session");
-                    _timer.Interval = _backoffTimerInterval;
-                }
-
-                _timer.Start();
-            }
-        }
+    }
         
-        private Task<int> RemoveEmptyFolders()
-        {
-            var t = Task.Run(
-                () => DeleteFolders(GetEmptyFolders()),
-                _cancellationTokenSource.Token);
+    private Task<int> RemoveEmptyFolders()
+    {
+        var t = Task.Run(
+            () => DeleteFolders(GetEmptyFolders()),
+            _cancellationTokenSource.Token);
 
-            return t;
+        return t;
+    }
+
+    private int DeleteFolders(IReadOnlyCollection<string>? emptyFolders)
+    {
+        if (_cancellationTokenSource.IsCancellationRequested || emptyFolders == null)
+        {
+            return 0;
         }
 
-        private int DeleteFolders(IReadOnlyCollection<string>? emptyFolders)
+        var count = 0;
+
+        foreach (var candidate in emptyFolders)
         {
-            if (_cancellationTokenSource.IsCancellationRequested || emptyFolders == null)
-            {
-                return 0;
-            }
-
-            var count = 0;
-
-            foreach (var candidate in emptyFolders)
-            {
-                if (_cancellationTokenSource.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                Log.Logger.Debug($"Deleting folder: {candidate}");
-                FileUtils.SafeDeleteFolder(candidate);
-
-                if (!Directory.Exists(candidate))
-                {
-                    ++count;
-                }
-            }
-
-            return count;
-        }
-
-        // returns number of files deleted
-        private Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
-        {
-            var t = Task.Run(
-                () =>
-                {
-                    var oldFileDate = DateTime.Now.AddDays(-recordingsLifeTimeDays);
-                    return DeleteCandidates(GetPurgeCandidates(oldFileDate));
-                }, 
-                _cancellationTokenSource.Token);
-
-            return t;
-        }
-
-        private int DeleteCandidates(IEnumerable<string> candidatePaths)
-        {
-            if (_cancellationTokenSource.IsCancellationRequested || candidatePaths == null)
-            {
-                return 0;
-            }
-
-            var count = 0;
-
-            foreach (var candidate in candidatePaths)
-            {
-                if (_cancellationTokenSource.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                Log.Logger.Debug($"Deleting file: {candidate}");
-                FileUtils.SafeDeleteFile(candidate);
-
-                if (!File.Exists(candidate))
-                {
-                    ++count;
-
-                    if (count == MaxFileDeletionsInBatch)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            return count;
-        }
-
-        private IReadOnlyCollection<string> GetEmptyFolders()
-        {
-            var result = new List<string>();
-
             if (_cancellationTokenSource.IsCancellationRequested)
-                
             {
-                return result;
+                break;
             }
-            
-            var rootFolder = FileUtils.GetRootDestinationFolder(
-                _commandLineService.OptionsIdentifier,
-                _optionsService.Options.DestinationFolder);
 
-            if (!Directory.Exists(rootFolder))
+            Log.Logger.Debug($"Deleting folder: {candidate}");
+            FileUtils.SafeDeleteFolder(candidate);
+
+            if (!Directory.Exists(candidate))
             {
-                return result;
+                ++count;
             }
-            
-            var yearSubFolders = Directory.GetDirectories(rootFolder);
-            foreach (var yearFolder in yearSubFolders)
+        }
+
+        return count;
+    }
+
+    // returns number of files deleted
+    private Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
+    {
+        var t = Task.Run(
+            () =>
             {
-                if (_cancellationTokenSource.IsCancellationRequested)
+                var oldFileDate = DateTime.Now.AddDays(-recordingsLifeTimeDays);
+                return DeleteCandidates(GetPurgeCandidates(oldFileDate));
+            }, 
+            _cancellationTokenSource.Token);
+
+        return t;
+    }
+
+    private int DeleteCandidates(IEnumerable<string> candidatePaths)
+    {
+        if (_cancellationTokenSource.IsCancellationRequested || candidatePaths == null)
+        {
+            return 0;
+        }
+
+        var count = 0;
+
+        foreach (var candidate in candidatePaths)
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+
+            Log.Logger.Debug($"Deleting file: {candidate}");
+            FileUtils.SafeDeleteFile(candidate);
+
+            if (!File.Exists(candidate))
+            {
+                ++count;
+
+                if (count == MaxFileDeletionsInBatch)
                 {
                     break;
                 }
-
-                var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
-                if (yearOfFolder == null)
-                {
-                    continue;
-                }
-
-                if (FileUtils.IsDirectoryEmpty(yearFolder) && yearOfFolder != DateTime.Now.Year)
-                {
-                    Log.Logger.Debug($"Found empty folder: {yearFolder}");
-                    result.Add(yearFolder);
-                }
-
-                var monthSubFolders = Directory.GetDirectories(yearFolder);
-                foreach (var monthFolder in monthSubFolders)
-                {
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
-                    if (monthOfFolder == null)
-                    {
-                        continue;
-                    }
-
-                    if (FileUtils.IsDirectoryEmpty(monthFolder) && 
-                        (yearOfFolder != DateTime.Now.Year || monthOfFolder != DateTime.Now.Month))
-                    {
-                        Log.Logger.Debug($"Found empty folder: {monthFolder}");
-                        result.Add(monthFolder);
-                    }
-
-                    var dateSubFolders = Directory.GetDirectories(monthFolder);
-                    foreach (var dateFolder in dateSubFolders)
-                    {
-                        if (_cancellationTokenSource.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        var dateOfFolder = FileUtils.ParseDateFromFolderName(
-                            Path.GetFileName(dateFolder),
-                            yearOfFolder.Value,
-                            monthOfFolder.Value);
-
-                        if (dateOfFolder == null)
-                        {
-                            continue;
-                        }
-
-                        if (FileUtils.IsDirectoryEmpty(dateFolder) &&
-                            (yearOfFolder != DateTime.Now.Year || 
-                             monthOfFolder != DateTime.Now.Month || 
-                             dateOfFolder != DateTime.Today.Date))
-                        {
-                            Log.Logger.Debug($"Found empty folder: {dateFolder}");
-                            result.Add(dateFolder);
-                        }
-                    }
-                }
             }
+        }
 
+        return count;
+    }
+
+    private IReadOnlyCollection<string> GetEmptyFolders()
+    {
+        var result = new List<string>();
+
+        if (_cancellationTokenSource.IsCancellationRequested)
+                
+        {
             return result;
         }
+            
+        var rootFolder = FileUtils.GetRootDestinationFolder(
+            _commandLineService.OptionsIdentifier,
+            _optionsService.Options.DestinationFolder);
 
-        private IEnumerable<string> GetPurgeCandidates(DateTime oldFileDate)
+        if (!Directory.Exists(rootFolder))
         {
-            if (_cancellationTokenSource.IsCancellationRequested)
-            {
-                yield break;
-            }
-
-            var folders = GetPurgeCandidateFolders(oldFileDate);
-
-            foreach (var folder in folders)
-            {
-                var fileExtensions = Enum
-                    .GetValues<AudioCodec>()
-                    .Select(f => f.GetExtensionFormat())
-                    .ToArray();
-                        
-                var files = Directory
-                    .EnumerateFiles(folder)
-                    .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
-                    .ToList();
-
-                foreach (var file in files)
-                {
-                    Log.Logger.Debug($"Found file: {file}");
-                    yield return file;
-                }
-            }
+            return result;
         }
-
-        private IEnumerable<string> GetPurgeCandidateFolders(DateTime oldFileDate)
+            
+        var yearSubFolders = Directory.GetDirectories(rootFolder);
+        foreach (var yearFolder in yearSubFolders)
         {
             if (_cancellationTokenSource.IsCancellationRequested)
             {
-                yield break;
+                break;
             }
 
-            var rootFolder = FileUtils.GetRootDestinationFolder(
-                _commandLineService.OptionsIdentifier,
-                _optionsService.Options.DestinationFolder);
-
-            if (!Directory.Exists(rootFolder))
+            var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
+            if (yearOfFolder == null)
             {
-                yield break;
+                continue;
             }
 
-            var yearSubFolders = Directory.EnumerateDirectories(rootFolder);
-            foreach (var yearFolder in yearSubFolders)
+            if (FileUtils.IsDirectoryEmpty(yearFolder) && yearOfFolder != DateTime.Now.Year)
+            {
+                Log.Logger.Debug($"Found empty folder: {yearFolder}");
+                result.Add(yearFolder);
+            }
+
+            var monthSubFolders = Directory.GetDirectories(yearFolder);
+            foreach (var monthFolder in monthSubFolders)
             {
                 if (_cancellationTokenSource.IsCancellationRequested)
                 {
                     break;
                 }
 
-                var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
-                if (yearOfFolder == null)
+                var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
+                if (monthOfFolder == null)
                 {
                     continue;
                 }
 
-                if (!YearFolderMayContainCandidates(yearOfFolder.Value, oldFileDate))
+                if (FileUtils.IsDirectoryEmpty(monthFolder) && 
+                    (yearOfFolder != DateTime.Now.Year || monthOfFolder != DateTime.Now.Month))
                 {
-                    continue;
+                    Log.Logger.Debug($"Found empty folder: {monthFolder}");
+                    result.Add(monthFolder);
                 }
 
-                if (_cancellationTokenSource.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                var monthSubFolders = Directory.EnumerateDirectories(yearFolder);
-                foreach (var monthFolder in monthSubFolders)
+                var dateSubFolders = Directory.GetDirectories(monthFolder);
+                foreach (var dateFolder in dateSubFolders)
                 {
                     if (_cancellationTokenSource.IsCancellationRequested)
                     {
                         break;
                     }
 
-                    var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
-                    if (monthOfFolder == null)
+                    var dateOfFolder = FileUtils.ParseDateFromFolderName(
+                        Path.GetFileName(dateFolder),
+                        yearOfFolder.Value,
+                        monthOfFolder.Value);
+
+                    if (dateOfFolder == null)
                     {
                         continue;
                     }
 
-                    if (!MonthFolderMayContainCandidates(yearOfFolder.Value, monthOfFolder.Value, oldFileDate))
+                    if (FileUtils.IsDirectoryEmpty(dateFolder) &&
+                        (yearOfFolder != DateTime.Now.Year || 
+                         monthOfFolder != DateTime.Now.Month || 
+                         dateOfFolder != DateTime.Today.Date))
                     {
-                        continue;
-                    }
-
-                    var dateSubFolders = Directory.EnumerateDirectories(monthFolder);
-                    foreach (var dateFolder in dateSubFolders)
-                    {
-                        if (_cancellationTokenSource.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        var dateOfFolder = FileUtils.ParseDateFromFolderName(
-                            Path.GetFileName(dateFolder), 
-                            yearOfFolder.Value, 
-                            monthOfFolder.Value);
-
-                        if (dateOfFolder == null)
-                        {
-                            continue;
-                        }
-
-                        if (dateOfFolder.Value.Date < oldFileDate.Date)
-                        {
-                            Log.Logger.Debug($"Found folder: {dateFolder}");
-                            yield return dateFolder;
-                        }
+                        Log.Logger.Debug($"Found empty folder: {dateFolder}");
+                        result.Add(dateFolder);
                     }
                 }
             }
         }
 
-        private static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
+        return result;
+    }
+
+    private IEnumerable<string> GetPurgeCandidates(DateTime oldFileDate)
+    {
+        if (_cancellationTokenSource.IsCancellationRequested)
         {
-            return yearOfFolder < oldFileDate.Year ||
-                   (yearOfFolder == oldFileDate.Year && monthOfFolder <= oldFileDate.Month);
+            yield break;
         }
 
-        private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
+        var folders = GetPurgeCandidateFolders(oldFileDate);
+
+        var fileExtensions = Enum
+            .GetValues<AudioCodec>()
+            .Select(f => f.GetExtensionFormat())
+            .ToArray();
+
+        foreach (var folder in folders)
         {
-            return oldFileDate.Year >= yearOfFolder;
+            var files = Directory
+                .EnumerateFiles(folder)
+                .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            foreach (var file in files)
+            {
+                Log.Logger.Debug($"Found file: {file}");
+                yield return file;
+            }
+        }
+    }
+
+    private IEnumerable<string> GetPurgeCandidateFolders(DateTime oldFileDate)
+    {
+        if (_cancellationTokenSource.IsCancellationRequested)
+        {
+            yield break;
         }
 
-        public void Dispose()
+        var rootFolder = FileUtils.GetRootDestinationFolder(
+            _commandLineService.OptionsIdentifier,
+            _optionsService.Options.DestinationFolder);
+
+        if (!Directory.Exists(rootFolder))
         {
-            _cancellationTokenSource.Dispose();
+            yield break;
         }
+
+        var yearSubFolders = Directory.EnumerateDirectories(rootFolder);
+        foreach (var yearFolder in yearSubFolders)
+        {
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+
+            var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
+            if (yearOfFolder == null)
+            {
+                continue;
+            }
+
+            if (!YearFolderMayContainCandidates(yearOfFolder.Value, oldFileDate))
+            {
+                continue;
+            }
+
+            if (_cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+
+            var monthSubFolders = Directory.EnumerateDirectories(yearFolder);
+            foreach (var monthFolder in monthSubFolders)
+            {
+                if (_cancellationTokenSource.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
+                if (monthOfFolder == null)
+                {
+                    continue;
+                }
+
+                if (!MonthFolderMayContainCandidates(yearOfFolder.Value, monthOfFolder.Value, oldFileDate))
+                {
+                    continue;
+                }
+
+                var dateSubFolders = Directory.EnumerateDirectories(monthFolder);
+                foreach (var dateFolder in dateSubFolders)
+                {
+                    if (_cancellationTokenSource.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    var dateOfFolder = FileUtils.ParseDateFromFolderName(
+                        Path.GetFileName(dateFolder), 
+                        yearOfFolder.Value, 
+                        monthOfFolder.Value);
+
+                    if (dateOfFolder == null)
+                    {
+                        continue;
+                    }
+
+                    if (dateOfFolder.Value.Date < oldFileDate.Date)
+                    {
+                        Log.Logger.Debug($"Found folder: {dateFolder}");
+                        yield return dateFolder;
+                    }
+                }
+            }
+        }
+    }
+
+    private static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
+    {
+        return yearOfFolder < oldFileDate.Year ||
+               (yearOfFolder == oldFileDate.Year && monthOfFolder <= oldFileDate.Month);
+    }
+
+    private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
+    {
+        return oldFileDate.Year >= yearOfFolder;
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Dispose();
     }
 }
