@@ -264,26 +264,6 @@ public sealed class AudioRecorder : IDisposable
         }
     }
 
-    //private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
-    //{
-    //    // as audio samples are provided by WaveIn, we hook in here 
-    //    // and write them to disk, (encoding to MP3 on the fly if needed)
-    //    var buffer = waveInEventArgs.Buffer;
-    //    var bytesRecorded = waveInEventArgs.BytesRecorded;
-
-    //    var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
-
-    //    if (_fader?.Active == true)
-    //    {
-    //        // we're fading out...
-    //        _fader.FadeBuffer(buffer, bytesRecorded, isFloatingPointAudio);
-    //    }
-
-    //    AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
-
-    //    _audioWriter?.Write(buffer, 0, bytesRecorded);
-    //}
-
     private void AddToSampleAggregator(byte[] buffer, int bytesRecorded, bool isFloatingPointAudio)
     {
         var buff = new WaveBuffer(buffer);
