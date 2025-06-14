@@ -14,7 +14,7 @@ namespace OnlyR.Services.Options
     public class Options
     {
         private const int DefaultMaxRecordings = 999;
-        private const int DefaultRecordingDevice = 0;
+        private const int DefaultRecordingDevice = -1;
         private const int DefaultMaxRecordingSeconds = 0; // no limit
         private const int DefaultSampleRate = 44100;
         private const int DefaultChannelCount = 1;
@@ -145,7 +145,7 @@ namespace OnlyR.Services.Options
                 MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
             }
 
-            if (RecordingDevice < 0)
+            if (RecordingDevice < DefaultRecordingDevice)
             {
                 RecordingDevice = DefaultRecordingDevice;
             }

@@ -50,7 +50,9 @@ namespace OnlyR.Services.Audio
         public RecordingDeviceItem[] GetRecordingDeviceList()
         {
             var devices = AudioRecorder.GetRecordingDeviceList();
-            return devices.Select(Convert).ToArray();
+            var result = devices.Select(Convert).ToList();
+            result.Insert(0, new RecordingDeviceItem(RecordingConfig.EmptyRecordingDeviceId, Properties.Resources.NOT_SPECIFIED));
+            return result.ToArray();
         }
 
         private RecordingDeviceItem Convert(RecordingDeviceInfo deviceInfo)

@@ -1,76 +1,77 @@
 ﻿using System;
 using OnlyR.Core.Enums;
 
-namespace OnlyR.Core.Recorder
+namespace OnlyR.Core.Recorder;
+
+/// <summary>
+/// Configuration of a recording
+/// </summary>
+public class RecordingConfig
 {
+    public static int EmptyRecordingDeviceId { get; } = -1;
+
     /// <summary>
-    /// Configuration of a recording
+    /// The audio recording device Id.
     /// </summary>
-    public class RecordingConfig
-    {
-        /// <summary>
-        /// The audio recording device Id.
-        /// </summary>
-        public int RecordingDevice { get; set; }
+    public int RecordingDevice { get; set; } = EmptyRecordingDeviceId;
 
-        /// <summary>
-        /// Record "what you hear"
-        /// </summary>
-        public bool UseLoopbackCapture { get; set; }
+    /// <summary>
+    /// Record "what you hear"
+    /// </summary>
+    public bool UseLoopbackCapture { get; set; }
 
-        /// <summary>
-        /// The date of the recording (the start date).
-        /// </summary>
-        public DateTime RecordingDate { get; set; }
+    /// <summary>
+    /// The date of the recording (the start date).
+    /// </summary>
+    public DateTime RecordingDate { get; set; }
 
-        /// <summary>
-        /// The track number.
-        /// </summary>
-        public int TrackNumber { get; set; }
+    /// <summary>
+    /// The track number.
+    /// </summary>
+    public int TrackNumber { get; set; }
 
-        /// <summary>
-        /// The destination file path (a temporary location).
-        /// </summary>
-        public string? DestFilePath { get; set; }
+    /// <summary>
+    /// The destination file path (a temporary location).
+    /// </summary>
+    public string? DestFilePath { get; set; }
 
-        /// <summary>
-        /// The final file path.
-        /// </summary>
-        public string? FinalFilePath { get; set; }
+    /// <summary>
+    /// The final file path.
+    /// </summary>
+    public string? FinalFilePath { get; set; }
 
-        /// <summary>
-        /// The audio sample rate.
-        /// </summary>
-        public int SampleRate { get; set; }
+    /// <summary>
+    /// The audio sample rate.
+    /// </summary>
+    public int SampleRate { get; set; }
 
-        /// <summary>
-        ///  The channel count.
-        /// </summary>
-        public int ChannelCount { get; set; }
+    /// <summary>
+    ///  The channel count.
+    /// </summary>
+    public int ChannelCount { get; set; }
 
-        /// <summary>
-        /// The bit rate at which we want to encode to MP3.
-        /// </summary>
-        public int? Mp3BitRate { get; set; }
+    /// <summary>
+    /// The bit rate at which we want to encode to MP3.
+    /// </summary>
+    public int? Mp3BitRate { get; set; }
 
-        /// <summary>
-        /// The recording audio codec.
-        /// </summary>
-        public AudioCodec Codec { get; set; }
+    /// <summary>
+    /// The recording audio codec.
+    /// </summary>
+    public AudioCodec Codec { get; set; }
 
-        /// <summary>
-        /// The title of the track (used in file name and written to MP3 tag title).
-        /// </summary>
-        public string? TrackTitle { get; set; }
+    /// <summary>
+    /// The title of the track (used in file name and written to MP3 tag title).
+    /// </summary>
+    public string? TrackTitle { get; set; }
 
-        /// <summary>
-        /// Album name (written to MP3 tag).
-        /// </summary>
-        public string? AlbumName { get; set; }
+    /// <summary>
+    /// Album name (written to MP3 tag).
+    /// </summary>
+    public string? AlbumName { get; set; }
 
-        /// <summary>
-        /// Genre (written to MP3 tag).
-        /// </summary>
-        public string? Genre { get; set; }
-    }
+    /// <summary>
+    /// Genre (written to MP3 tag).
+    /// </summary>
+    public string? Genre { get; set; }
 }

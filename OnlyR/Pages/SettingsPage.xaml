@@ -101,7 +101,6 @@
                     AutomationProperties.AutomationId="RecordingDevice"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
                     DisplayMemberPath="DeviceName"
-                    IsEnabled="{Binding NotUsingLoopbackCapture}"
                     ItemsSource="{Binding RecordingDevices}"
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"
                     SelectedValuePath="DeviceId"

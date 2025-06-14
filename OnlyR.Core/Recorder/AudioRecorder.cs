@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using NAudio.Lame;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Models;
@@ -22,21 +23,19 @@ public sealed class AudioRecorder : IDisposable
     private const int RequiredReportingIntervalMs = 40;
     private const int VuSpeed = 5;
 
+    private MixingSampleProvider? _mixingSampleProvider;
+
     private Stream? _audioWriter;
-    private IWaveIn? _waveSource;
+    private WasapiLoopbackCapture? _captureSource;
+    private WaveIn? _deviceSource;
     private WaveOutEvent? _silenceWaveOut;
     private SampleAggregator? _sampleAggregator;
     private VolumeFader? _fader;
-    private RecordingStatus _recordingStatus;
+    private RecordingStatus _recordingStatus = RecordingStatus.NotRecording;
     private string? _tempRecordingFilePath;
     private string? _finalRecordingFilePath;
 
     private int _dampedLevel;
-
-    public AudioRecorder()
-    {
-        _recordingStatus = RecordingStatus.NotRecording;
-    }
 
     public event EventHandler<RecordingProgressEventArgs>? ProgressEvent;
 
@@ -46,7 +45,7 @@ public sealed class AudioRecorder : IDisposable
     /// Gets a list of Windows recording devices.
     /// </summary>
     /// <returns>Collection of devices.</returns>
-    public static IEnumerable<RecordingDeviceInfo> GetRecordingDeviceList()
+    public static IList<RecordingDeviceInfo> GetRecordingDeviceList()
     {
         var result = new List<RecordingDeviceInfo>();
 
@@ -74,39 +73,56 @@ public sealed class AudioRecorder : IDisposable
         if (_recordingStatus == RecordingStatus.NotRecording)
         {
             CheckRecordingDevice(recordingConfig);
+            
+            var mixingSampleProviders = new List<ISampleProvider>();
 
             if (recordingConfig.UseLoopbackCapture)
             {
-                _waveSource = new WasapiLoopbackCapture();
+                _captureSource = new WasapiLoopbackCapture();
                 ConfigureSilenceOut();
+
+                // Convert WasapiLoopbackCapture to ISampleProvider
+                var waveProvider = new WaveInProvider(_captureSource);
+                var sampleProvider = new WaveToSampleProvider(waveProvider);
+                mixingSampleProviders.Add(sampleProvider);
             }
-            else
+
+            if (recordingConfig.RecordingDevice != RecordingConfig.EmptyRecordingDeviceId)
             {
-                _waveSource = new WaveIn
+                _deviceSource = new WaveIn
                 {
-                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
+                    WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
                     DeviceNumber = recordingConfig.RecordingDevice,
                 };
+
+                var waveProvider = new WaveInProvider(_deviceSource);
+                var sampleProvider = new WaveToSampleProvider(waveProvider);
+                mixingSampleProviders.Add(sampleProvider);
             }
 
-            InitAggregator(_waveSource.WaveFormat.SampleRate);
-            InitFader(_waveSource.WaveFormat.SampleRate);
+            _mixingSampleProvider = new MixingSampleProvider(mixingSampleProviders);
+            _mixingSampleProvider.ReadFully = true; // ensure we read all samples
 
-            _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
-            _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+            InitAggregator(_mixingSampleProvider.WaveFormat.SampleRate);
+            InitFader(_mixingSampleProvider.WaveFormat.SampleRate);
+
+            SubscribeHandlers();
+
+            var format = _deviceSource?.WaveFormat ?? _captureSource!.WaveFormat;
 
             _audioWriter = recordingConfig.Codec switch
-            {
-                AudioCodec.Mp3 => new LameMP3FileWriter(
-                    recordingConfig.DestFilePath,
-                    _waveSource.WaveFormat,
-                    recordingConfig.Mp3BitRate!.Value,
-                    CreateTag(recordingConfig)),
-                AudioCodec.Wav => new WaveFileWriter(recordingConfig.DestFilePath, _waveSource.WaveFormat),
-                _ => throw new NotSupportedException("Unsupported codec"),
-            };
+                {
+                    AudioCodec.Mp3 => new LameMP3FileWriter(
+                        recordingConfig.DestFilePath,
+                        format,
+                        recordingConfig.Mp3BitRate!.Value,
+                        CreateTag(recordingConfig)),
+                    AudioCodec.Wav => new WaveFileWriter(recordingConfig.DestFilePath, format),
+                    _ => throw new NotSupportedException("Unsupported codec"),
+                };
 
-            _waveSource.StartRecording();
+            _deviceSource?.StartRecording();
+            _captureSource?.StartRecording();
 
             _tempRecordingFilePath = recordingConfig.DestFilePath;
             _finalRecordingFilePath = recordingConfig.FinalFilePath;
@@ -150,7 +166,9 @@ public sealed class AudioRecorder : IDisposable
             }
             else
             {
-                _waveSource?.StopRecording();
+                _deviceSource?.StopRecording();
+                _captureSource?.StopRecording();
+
                 _silenceWaveOut?.Stop();
             }
         }
@@ -171,15 +189,15 @@ public sealed class AudioRecorder : IDisposable
 
     private static void CheckRecordingDevice(RecordingConfig recordingConfig)
     {
-        var deviceCount = WaveIn.DeviceCount;
-        if (deviceCount == 0)
+        if (recordingConfig.RecordingDevice >= WaveIn.DeviceCount)
         {
-            throw new NoDevicesException();
+            recordingConfig.RecordingDevice = RecordingConfig.EmptyRecordingDeviceId;
         }
 
-        if (!recordingConfig.UseLoopbackCapture && recordingConfig.RecordingDevice >= deviceCount)
+        if (recordingConfig.RecordingDevice == RecordingConfig.EmptyRecordingDeviceId && 
+            !recordingConfig.UseLoopbackCapture)
         {
-            recordingConfig.RecordingDevice = 0;
+            throw new NoDevicesException();
         }
     }
 
@@ -214,23 +232,57 @@ public sealed class AudioRecorder : IDisposable
 
     private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
     {
-        // as audio samples are provided by WaveIn, we hook in here 
-        // and write them to disk, (encoding to MP3 on the fly if needed)
-        var buffer = waveInEventArgs.Buffer;
-        var bytesRecorded = waveInEventArgs.BytesRecorded;
+        if (_mixingSampleProvider == null) return;
 
-        var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
+        // Create a buffer for the floating-point samples
+        var sampleCount = waveInEventArgs.BytesRecorded / 4; // 4 bytes per float
+        var floatBuffer = new float[sampleCount];
 
-        if (_fader?.Active == true)
+        // Read from the mixing provider
+        var samplesRead = _mixingSampleProvider.Read(floatBuffer, 0, sampleCount);
+
+        if (samplesRead > 0)
         {
-            // we're fading out...
-            _fader.FadeBuffer(buffer, bytesRecorded, isFloatingPointAudio);
+            // Apply fading if active
+            if (_fader?.Active == true)
+            {
+                _fader.FadeBuffer(floatBuffer, samplesRead);
+            }
+
+            // Add to sample aggregator for VU meter
+            for (var i = 0; i < samplesRead; i++)
+            {
+                _sampleAggregator?.Add(floatBuffer[i]);
+            }
+
+            // Convert float samples to bytes for the audio writer
+            var bytesBuffer = new byte[samplesRead * 4];
+            Buffer.BlockCopy(floatBuffer, 0, bytesBuffer, 0, samplesRead * 4);
+
+            // Write to the output file
+            _audioWriter?.Write(bytesBuffer, 0, samplesRead * 4);
         }
-
-        AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
-
-        _audioWriter?.Write(buffer, 0, bytesRecorded);
     }
+
+    //private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
+    //{
+    //    // as audio samples are provided by WaveIn, we hook in here 
+    //    // and write them to disk, (encoding to MP3 on the fly if needed)
+    //    var buffer = waveInEventArgs.Buffer;
+    //    var bytesRecorded = waveInEventArgs.BytesRecorded;
+
+    //    var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
+
+    //    if (_fader?.Active == true)
+    //    {
+    //        // we're fading out...
+    //        _fader.FadeBuffer(buffer, bytesRecorded, isFloatingPointAudio);
+    //    }
+
+    //    AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
+
+    //    _audioWriter?.Write(buffer, 0, bytesRecorded);
+    //}
 
     private void AddToSampleAggregator(byte[] buffer, int bytesRecorded, bool isFloatingPointAudio)
     {
@@ -284,17 +336,55 @@ public sealed class AudioRecorder : IDisposable
 
     private void FadeCompleteHandler(object? sender, System.EventArgs e)
     {
-        _waveSource?.StopRecording();
+        _deviceSource?.StopRecording();
+        _captureSource?.StopRecording();
         _silenceWaveOut?.Stop();
+    }
+
+    private void SubscribeHandlers()
+    {
+        // either _deviceSource or _captureSource events will be subscribed (not both)
+        if (_deviceSource != null)
+        {
+            _deviceSource.DataAvailable += WaveSourceDataAvailableHandler;
+            _deviceSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+        }
+        else if(_captureSource != null)
+        {
+            _captureSource.DataAvailable += WaveSourceDataAvailableHandler;
+            _captureSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+        }
+    }
+
+    private void UnsubscribeHandlers()
+    {
+        // either _deviceSource or _captureSource events will be subscribed (not both)
+        if (_deviceSource != null)
+        {
+            _deviceSource.DataAvailable -= WaveSourceDataAvailableHandler;
+            _deviceSource.RecordingStopped -= WaveSourceRecordingStoppedHandler;
+        }
+        else if (_captureSource != null)
+        {
+            _captureSource.DataAvailable -= WaveSourceDataAvailableHandler;
+            _captureSource.RecordingStopped -= WaveSourceRecordingStoppedHandler;
+        }
     }
 
     private void Cleanup()
     {
         _audioWriter?.Flush();
 
-        _waveSource?.Dispose();
-        _waveSource = null;
+        UnsubscribeHandlers();
 
+        _mixingSampleProvider?.RemoveAllMixerInputs();
+            
+        _deviceSource?.Dispose();
+        _deviceSource = null;
+        
+        _captureSource?.Dispose();
+        _captureSource = null;
+        
         _silenceWaveOut?.Dispose();
         _silenceWaveOut = null;
 
