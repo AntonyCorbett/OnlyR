@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Core.Enums;
+using OnlyR.Core.Recorder;
 using OnlyR.Exceptions;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
@@ -82,13 +83,20 @@ namespace OnlyR.ViewModel
             _statusStr = Properties.Resources.NOT_RECORDING;
 
             // bind commands...
-            StartRecordingCommand = new RelayCommand(StartRecording);
+            StartRecordingCommand = new RelayCommand(StartRecording, CanStartRecording);
             StopRecordingCommand = new RelayCommand(StopRecording);
             NavigateSettingsCommand = new RelayCommand(NavigateSettings);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
             SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
 
             WeakReferenceMessenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
+        }
+
+        private bool CanStartRecording()
+        {
+            return
+                _optionsService.Options.RecordingDevice != RecordingConfig.EmptyRecordingDeviceId ||
+                _optionsService.Options.UseLoopbackCapture;
         }
 
         private void OnNavigate(object recipient, NavigateMessage message)
@@ -98,6 +106,7 @@ namespace OnlyR.ViewModel
             {
                 OnPropertyChanged(nameof(MaxRecordingTimeString));
                 OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
+                StartRecordingCommand.NotifyCanExecuteChanged();
             }
         }
 
