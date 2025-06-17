@@ -76,9 +76,15 @@ public sealed class AudioRecorder : IDisposable
             
             var mixingSampleProviders = new List<ISampleProvider>();
 
+            // Create a consistent wave format for both sources
+            var waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(
+                recordingConfig.SampleRate,
+                recordingConfig.ChannelCount);
+
             if (recordingConfig.UseLoopbackCapture)
             {
                 _captureSource = new WasapiLoopbackCapture();
+                _captureSource.WaveFormat = waveFormat;
                 ConfigureSilenceOut();
 
                 // Convert WasapiLoopbackCapture to ISampleProvider
@@ -91,7 +97,7 @@ public sealed class AudioRecorder : IDisposable
             {
                 _deviceSource = new WaveIn
                 {
-                    WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
+                    WaveFormat = waveFormat,
                     DeviceNumber = recordingConfig.RecordingDevice,
                 };
 
@@ -99,6 +105,8 @@ public sealed class AudioRecorder : IDisposable
                 var sampleProvider = new WaveToSampleProvider(waveProvider);
                 mixingSampleProviders.Add(sampleProvider);
             }
+
+            // note - sample rate and channel count must be the same for both sources
 
             _mixingSampleProvider = new MixingSampleProvider(mixingSampleProviders);
             _mixingSampleProvider.ReadFully = true; // ensure we read all samples

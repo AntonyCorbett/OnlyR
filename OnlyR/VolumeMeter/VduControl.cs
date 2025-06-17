@@ -98,7 +98,7 @@ namespace OnlyR.VolumeMeter
                 return;
             }
 
-            var numBlocksLit = VolumeLevel * _levelsCount / 100;
+            var numBlocksLit = Math.Min(_levelsCount, VolumeLevel * _levelsCount / 100);
             _image.Source = _bitmaps[numBlocksLit] ?? CreateBitmap(numBlocksLit);
         }
 
