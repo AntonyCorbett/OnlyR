@@ -11,5 +11,7 @@
         public string LanguageId { get; }
 
         public string LanguageName { get; }
+
+        public override string ToString() => LanguageName;
     }
 }

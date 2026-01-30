@@ -634,5 +634,23 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("X_SECS", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MP3.
+        /// </summary>
+        public static string CODEC_MP3 {
+            get {
+                return ResourceManager.GetString("CODEC_MP3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WAV.
+        /// </summary>
+        public static string CODEC_WAV {
+            get {
+                return ResourceManager.GetString("CODEC_WAV", resourceCulture);
+            }
+        }
     }
 }

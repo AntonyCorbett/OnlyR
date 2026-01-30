@@ -17,8 +17,8 @@
     Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
     mc:Ignorable="d">
 
-    <Grid>
-        <ContentControl Content="{Binding CurrentPage}" />
+    <Grid KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Cycle">
+        <ContentControl Content="{Binding CurrentPage}" KeyboardNavigation.IsTabStop="False" />
         <materialDesign:Snackbar Padding="10,0,10,0" MessageQueue="{Binding TheSnackbarMessageQueue}" />
     </Grid>
 

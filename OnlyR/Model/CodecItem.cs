@@ -16,5 +16,7 @@ namespace OnlyR.Model
         public string Name { get; }
 
         public AudioCodec Codec { get; }
+
+        public override string ToString() => Name;
     }
 }
