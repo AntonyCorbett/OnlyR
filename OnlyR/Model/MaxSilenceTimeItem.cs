@@ -12,5 +12,7 @@
         public string Name { get; }
 
         public int Seconds { get; }
+
+        public override string ToString() => Name;
     }
 }

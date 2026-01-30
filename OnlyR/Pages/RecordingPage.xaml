@@ -99,7 +99,7 @@
         </EventTrigger>
     </UserControl.Triggers>
 
-    <Grid>
+    <Grid KeyboardNavigation.IsTabStop="False">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="86*" />
             <ColumnDefinition Width="235*" />
@@ -110,16 +110,17 @@
             Grid.Row="0"
             Grid.Column="0"
             Margin="10,10,0,10"
+            AutomationProperties.AutomationId="VolumeControl"
+            AutomationProperties.Name="Volume Level"
             VolumeLevel="{Binding VolumeLevelAsPercentage, Mode=OneWay}" />
 
-        <Grid Grid.Column="1" Margin="10,10,10,12">
+        <Grid Grid.Column="1" Margin="10,10,10,12" KeyboardNavigation.IsTabStop="False">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Button
-                behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
                 AutomationProperties.AutomationId="StartBtn"
                 AutomationProperties.Name="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
                 Command="{Binding StartRecordingCommand}"
@@ -142,7 +143,6 @@
 
             <!--  ReSharper disable once Xaml.MissingGridIndex  -->
             <Button
-                behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
                 AutomationProperties.AutomationId="StopBtn"
                 AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
                 Command="{Binding StopRecordingCommand}"
@@ -159,25 +159,29 @@
             <materialDesign:Card
                 Grid.Row="1"
                 Padding="10"
-                VerticalAlignment="Stretch">
-                <DockPanel>
+                VerticalAlignment="Stretch"
+                KeyboardNavigation.IsTabStop="False">
+                <DockPanel KeyboardNavigation.IsTabStop="False">
                     <TextBlock
                         DockPanel.Dock="Top"
                         Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
                         Text="{Binding StatusStr}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        KeyboardNavigation.IsTabStop="False" />
                     <TextBlock
                         DockPanel.Dock="Top"
                         FontSize="32"
                         Text="{Binding ElapsedTimeStr}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        KeyboardNavigation.IsTabStop="False" />
                     <TextBlock
                         DockPanel.Dock="Top"
                         Foreground="Crimson"
                         Text="{Binding ErrorMsg}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        KeyboardNavigation.IsTabStop="False" />
 
-                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" KeyboardNavigation.IsTabStop="False">
                         <Button
                             Margin="0,0,10,0"
                             materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsCopying}"

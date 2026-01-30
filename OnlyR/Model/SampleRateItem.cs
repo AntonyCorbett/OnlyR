@@ -14,5 +14,7 @@
         public string Name { get; }
 
         public int ActualSampleRate { get; }
+
+        public override string ToString() => Name;
     }
 }

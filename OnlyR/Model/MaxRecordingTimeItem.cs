@@ -14,5 +14,7 @@
         public string Name { get; }
 
         public int ActualSeconds { get; }
+
+        public override string ToString() => Name;
     }
 }

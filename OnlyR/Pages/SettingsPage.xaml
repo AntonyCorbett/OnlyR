@@ -34,6 +34,8 @@
             <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="Minimum" Value="1" />
             <Setter Property="Maximum" Value="90" />
+            <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
         </Style>
 
         <Style
@@ -66,7 +68,7 @@
         </EventTrigger>
     </UserControl.Triggers>
 
-    <Grid>
+    <Grid KeyboardNavigation.IsTabStop="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="35" />
             <RowDefinition Height="326*" />
@@ -87,14 +89,16 @@
         <ScrollViewer
             Grid.Row="1"
             Grid.Column="0"
-            PanningMode="VerticalOnly">
-            <StackPanel Margin="5,0,5,10" Orientation="Vertical">
+            PanningMode="VerticalOnly"
+            KeyboardNavigation.IsTabStop="False">
+            <StackPanel Margin="5,0,5,10" Orientation="Vertical" KeyboardNavigation.IsTabStop="False">
 
                 <TextBlock
                     Margin="0,10,0,10"
                     FontSize="10"
                     Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
-                    Text="{Binding AppVersionStr}" />
+                    Text="{Binding AppVersionStr}"
+                    KeyboardNavigation.IsTabStop="False" />
 
                 <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
@@ -175,12 +179,26 @@
                     SelectedValuePath="Seconds"
                     Style="{StaticResource SettingsComboStyle}" />
 
-                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
+                <Label
+                    AutomationProperties.AutomationId="SilenceLabel"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    KeyboardNavigation.IsTabStop="False"
+                    x:Name="SilenceLabel" />
                 <Slider
+                    Margin="0,0,0,10"
+                    Orientation="Horizontal"
+                    Minimum="1"
+                    Maximum="90"
                     AutomationProperties.AutomationId="SilenceDetectionVolume"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
-                    Style="{StaticResource SliderStyle}"
-                    Value="{Binding SilenceAsVolumePercentage}" />
+                    AutomationProperties.HelpText="调整静音检测的音量百分比阈值"
+                    AutomationProperties.LabeledBy="{Binding ElementName=SilenceLabel}"
+                    IsTabStop="True"
+                    Focusable="True"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1"
+                    Value="{Binding SilenceAsVolumePercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox
                     AutomationProperties.AutomationId="FadeOut"
@@ -225,22 +243,24 @@
                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                     Text="{Binding Genre, Mode=TwoWay}" />
 
-                <DockPanel LastChildFill="True">
+                <DockPanel LastChildFill="True" KeyboardNavigation.IsTabStop="False" KeyboardNavigation.TabNavigation="Local">
                     <Button
                         Height="26"
                         Margin="10,0,5,10"
                         VerticalAlignment="Bottom"
                         AutomationProperties.AutomationId="SelectDestinationFolder"
-                        AutomationProperties.Name="{Binding SelectDestinationFolderCommand}"
+                        AutomationProperties.Name="选择录音文件夹"
+                        AutomationProperties.HelpText="打开文件夹选择对话框"
                         Command="{Binding SelectDestinationFolderCommand}"
-                        DockPanel.Dock="Right">
+                        DockPanel.Dock="Right"
+                        KeyboardNavigation.IsTabStop="True">
                         ...
                     </Button>
                     <TextBox
                         Margin="0,10,0,10"
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
                         AutomationProperties.AutomationId="EditDestinationFolder"
-                        AutomationProperties.Name="SETTINGS_RECORDINGS_FOLDER"
+                        AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
                         DockPanel.Dock="Left"
                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                         Text="{Binding DestinationFolder, Mode=TwoWay}" />
@@ -262,7 +282,8 @@
                         Height="24"
                         Margin="0,0,6,0"
                         VerticalAlignment="Center"
-                        Kind="Translate" />
+                        Kind="Translate"
+                        KeyboardNavigation.IsTabStop="False" />
                     <ComboBox
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
                         AutomationProperties.AutomationId="Language"
@@ -277,7 +298,8 @@
                 <TextBlock
                     Style="{StaticResource MiscNotesStyle}"
                     Text="{x:Static resx:Resources.RESTART_LANGUAGE}"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap"
+                    KeyboardNavigation.IsTabStop="False" />
 
             </StackPanel>
         </ScrollViewer>

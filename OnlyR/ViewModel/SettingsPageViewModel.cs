@@ -7,12 +7,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.ViewModel.Messages;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using OnlyR.Core.Enums;
+using System.Windows.Forms;
 
 namespace OnlyR.ViewModel;
 
@@ -129,6 +129,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
             if (_optionsService.Options.SilenceAsVolumePercentage != value)
             {
                 _optionsService.Options.SilenceAsVolumePercentage = value;
+                OnPropertyChanged();
             }
         }
     }
@@ -338,8 +339,8 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     private static CodecItem[] GenerateCodecItems() =>
     [
-        new("MP3", AudioCodec.Mp3),
-        new("WAV", AudioCodec.Wav)
+        new(Properties.Resources.CODEC_MP3, AudioCodec.Mp3),
+        new(Properties.Resources.CODEC_WAV, AudioCodec.Wav)
     ];
 
     private static RecordingLifeTimeItem[] GenerateRecordingLifeTimes()
@@ -424,14 +425,27 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     private void SelectDestinationFolder()
     {
-#pragma warning disable CA1416 // Validate platform compatibility
-        using var d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
-        var result = d.ShowDialog();
-        if (result == CommonFileDialogResult.Ok)
+        try
         {
-            DestinationFolder = d.FileName;
+            using var dialog = new FolderBrowserDialog
+            {
+                Description = Properties.Resources.SELECT_DEST_FOLDER,
+                SelectedPath = DestinationFolder,
+                ShowNewFolderButton = true,
+                UseDescriptionForTitle = true
+            };
+            
+            var result = dialog.ShowDialog();
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.SelectedPath))
+            {
+                DestinationFolder = dialog.SelectedPath;
+                OnPropertyChanged(nameof(DestinationFolder));
+            }
         }
-#pragma warning restore CA1416 // Validate platform compatibility
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error selecting destination folder: {ex.Message}");
+        }
     }
 
     private void ShowRecordings()
@@ -491,6 +505,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private static LanguageItem CreateLanguageItem(string name)
     {
         var ci = new CultureInfo(name);
-        return new LanguageItem(ci.Name, ci.EnglishName);
+        // 使用本地语言名称而不是英文名称，这样屏幕阅读器可以正确朗读
+        return new LanguageItem(ci.Name, ci.NativeName);
     }
 }

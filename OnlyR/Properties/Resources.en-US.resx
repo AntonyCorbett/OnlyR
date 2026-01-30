@@ -233,6 +233,10 @@
     <value>Always on top</value>
     <comment>Settings page checkbox title</comment>
   </data>
+  <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
+    <value>Audio format</value>
+    <comment>Settings page combobox title</comment>
+  </data>
   <data name="SETTINGS_BIT_RATE" xml:space="preserve">
     <value>Bit rate</value>
     <comment>Settings page combobox title</comment>
@@ -331,5 +335,13 @@
   </data>
   <data name="X_SECS" xml:space="preserve">
     <value>{0} seconds</value>
+  </data>
+  <data name="CODEC_MP3" xml:space="preserve">
+    <value>MP3</value>
+    <comment>Audio codec format name</comment>
+  </data>
+  <data name="CODEC_WAV" xml:space="preserve">
+    <value>WAV</value>
+    <comment>Audio codec format name</comment>
   </data>
 </root>

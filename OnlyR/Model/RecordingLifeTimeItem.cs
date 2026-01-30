@@ -11,5 +11,7 @@
         public string Description { get; }
 
         public int Days { get; }
+
+        public override string ToString() => Description;
     }
 }
