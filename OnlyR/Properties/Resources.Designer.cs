@@ -303,6 +303,24 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paused.
+        /// </summary>
+        public static string PAUSED {
+            get {
+                return ResourceManager.GetString("PAUSED", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pause recording.
+        /// </summary>
+        public static string PAUSE_RECORDING_TOOLTIP {
+            get {
+                return ResourceManager.GetString("PAUSE_RECORDING_TOOLTIP", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Recording.
         /// </summary>
         public static string RECORDING {
@@ -337,7 +355,16 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("RESTART_LANGUAGE", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Resume recording.
+        /// </summary>
+        public static string RESUME_RECORDING_TOOLTIP {
+            get {
+                return ResourceManager.GetString("RESUME_RECORDING_TOOLTIP", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Save today&apos;s recordings to drive {0}.
         /// </summary>

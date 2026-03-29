@@ -15,10 +15,18 @@ namespace OnlyR.Services.Audio
 
         event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
+        event EventHandler PausedEvent;
+
+        event EventHandler ResumedEvent;
+
         RecordingDeviceItem[] GetRecordingDeviceList();
 
         void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
 
         void StopRecording(bool fadeOut);
+
+        void PauseRecording();
+
+        void ResumeRecording();
     }
 }

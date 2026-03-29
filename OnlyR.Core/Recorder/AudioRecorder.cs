@@ -28,6 +28,7 @@ public sealed class AudioRecorder : IDisposable
     private SampleAggregator? _sampleAggregator;
     private VolumeFader? _fader;
     private RecordingStatus _recordingStatus;
+    private bool _isPaused;
     private string? _tempRecordingFilePath;
     private string? _finalRecordingFilePath;
 
@@ -136,20 +137,57 @@ public sealed class AudioRecorder : IDisposable
     }
 
     /// <summary>
+    /// Pauses the current recording. Audio data is discarded until resumed.
+    /// </summary>
+    public void Pause()
+    {
+        if (_recordingStatus == RecordingStatus.Recording)
+        {
+            _isPaused = true;
+
+            OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Paused)
+            {
+                TempRecordingPath = _tempRecordingFilePath,
+                FinalRecordingPath = _finalRecordingFilePath,
+            });
+        }
+    }
+
+    /// <summary>
+    /// Resumes a paused recording.
+    /// </summary>
+    public void Resume()
+    {
+        if (_recordingStatus == RecordingStatus.Paused)
+        {
+            _isPaused = false;
+
+            OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.Recording)
+            {
+                TempRecordingPath = _tempRecordingFilePath,
+                FinalRecordingPath = _finalRecordingFilePath,
+            });
+        }
+    }
+
+    /// <summary>
     /// Stop recording.
     /// </summary>
     /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
     public void Stop(bool fadeOut)
     {
-        if (_recordingStatus == RecordingStatus.Recording)
+        if (this._recordingStatus is RecordingStatus.Recording or RecordingStatus.Paused)
         {
+            var wasPaused = _isPaused;
+            _isPaused = false;
+
             OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.StopRequested)
             {
                 TempRecordingPath = _tempRecordingFilePath,
                 FinalRecordingPath = _finalRecordingFilePath,
             });
 
-            if (fadeOut)
+            if (fadeOut && !wasPaused)
             {
                 _fader?.Start();
             }
@@ -218,7 +256,12 @@ public sealed class AudioRecorder : IDisposable
 
     private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
     {
-        // as audio samples are provided by WaveIn, we hook in here 
+        if (_isPaused)
+        {
+            return;
+        }
+
+        // as audio samples are provided by WaveIn, we hook in here
         // and write them to disk, (encoding to MP3 on the fly if needed)
         var buffer = waveInEventArgs.Buffer;
         var bytesRecorded = waveInEventArgs.BytesRecorded;
@@ -294,6 +337,8 @@ public sealed class AudioRecorder : IDisposable
 
     private void Cleanup()
     {
+        _isPaused = false;
+
         _audioWriter?.Flush();
 
         _waveSource?.Dispose();

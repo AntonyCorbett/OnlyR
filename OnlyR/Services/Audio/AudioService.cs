@@ -21,6 +21,7 @@ namespace OnlyR.Services.Audio
         private readonly AudioRecorder _audioRecorder;
         private readonly IOptionsService _optionsService;
         private RecordingCandidate? _currentRecording;
+        private bool _hasStarted;
 
         public AudioService(IOptionsService optionsService)
         {
@@ -37,6 +38,10 @@ namespace OnlyR.Services.Audio
         public event EventHandler? StopRequested;
 
         public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
+
+        public event EventHandler? PausedEvent;
+
+        public event EventHandler? ResumedEvent;
 
         public void Dispose()
         {
@@ -96,6 +101,22 @@ namespace OnlyR.Services.Audio
             _audioRecorder.Stop(fadeOut);
         }
 
+        /// <summary>
+        /// Pauses the current recording.
+        /// </summary>
+        public void PauseRecording()
+        {
+            _audioRecorder.Pause();
+        }
+
+        /// <summary>
+        /// Resumes a paused recording.
+        /// </summary>
+        public void ResumeRecording()
+        {
+            _audioRecorder.Resume();
+        }
+
         private static string GetAlbumName(RecordingCandidate candidate)
         {
             return candidate.RecordingDate.ToString("MMM yyyy", CultureInfo.CurrentCulture);
@@ -116,13 +137,27 @@ namespace OnlyR.Services.Audio
             switch (recordingStatusChangeEventArgs.RecordingStatus)
             {
                 case RecordingStatus.NotRecording:
+                    _hasStarted = false;
                     ClearPathOfUnfinishedRecording();
                     OnStoppedEvent();
                     break;
 
                 case RecordingStatus.Recording:
-                    StorePathOfUnfinishedRecording(recordingStatusChangeEventArgs);
-                    OnStartedEvent();
+                    if (!_hasStarted)
+                    {
+                        _hasStarted = true;
+                        StorePathOfUnfinishedRecording(recordingStatusChangeEventArgs);
+                        OnStartedEvent();
+                    }
+                    else
+                    {
+                        OnResumedEvent();
+                    }
+
+                    break;
+
+                case RecordingStatus.Paused:
+                    OnPausedEvent();
                     break;
 
                 case RecordingStatus.StopRequested:
@@ -170,6 +205,16 @@ namespace OnlyR.Services.Audio
             }
 
             FileUtils.MoveFile(_currentRecording.TempPath, _currentRecording.FinalPath);
+        }
+
+        private void OnPausedEvent()
+        {
+            PausedEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnResumedEvent()
+        {
+            ResumedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnStopRequested()
