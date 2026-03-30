@@ -13,7 +13,7 @@
     <!-- OnlyR -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
-    <PackageVersion Include="MaterialDesignThemes" Version="5.3.1" />
+    <PackageVersion Include="MaterialDesignThemes" Version="4.8.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
