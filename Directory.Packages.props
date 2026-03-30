@@ -6,27 +6,27 @@
   <ItemGroup>
     <!-- OnlyR.Core -->
     <PackageVersion Include="NAudio.Lame" Version="2.1.0" />
-    <PackageVersion Include="NAudio.Wasapi" Version="2.2.1" />
-    <PackageVersion Include="NAudio.WinForms" Version="2.2.1" />
-    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="8.0.7" />
+    <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
+    <PackageVersion Include="NAudio.WinForms" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.5" />
 
     <!-- OnlyR -->
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
-    <PackageVersion Include="MaterialDesignThemes" Version="4.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="MaterialDesignThemes" Version="5.3.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
 
     <!-- OnlyR.Tests -->
-    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageVersion Include="Moq" Version="4.20.70" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="3.5.1" />
-    <PackageVersion Include="MSTest.TestFramework" Version="3.5.1" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.1.0" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.1.0" />
 
     <!-- Shared -->
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.12.9" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
   </ItemGroup>
 </Project>
