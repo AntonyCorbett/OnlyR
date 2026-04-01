@@ -438,6 +438,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show pause control.
+        /// </summary>
+        public static string SETTINGS_SHOW_PAUSE_BUTTON {
+            get {
+                return ResourceManager.GetString("SETTINGS_SHOW_PAUSE_BUTTON", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Fade out recordings.
         /// </summary>
         public static string SETTINGS_FADE_OUT {

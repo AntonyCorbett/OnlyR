@@ -140,8 +140,26 @@
                 </StackPanel>
             </Button>
 
+            <!--  Stop button only (when pause control is hidden)  -->
             <!--  ReSharper disable once Xaml.MissingGridIndex  -->
-            <Grid Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}">
+            <Button
+                behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
+                AutomationProperties.AutomationId="StopBtn"
+                AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                Command="{Binding StopRecordingCommand}"
+                IsEnabled="{Binding IsRecording}"
+                Style="{StaticResource StopRecordingBtnStyle}"
+                ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                Visibility="{Binding Path=ShowStopOnly, Converter={StaticResource BoolToVis}}">
+                <materialDesign:PackIcon
+                    Width="56"
+                    Height="56"
+                    Kind="Stop" />
+            </Button>
+
+            <!--  Stop + Pause/Resume buttons (when pause control is enabled)  -->
+            <!--  ReSharper disable once Xaml.MissingGridIndex  -->
+            <Grid Visibility="{Binding Path=ShowStopAndPause, Converter={StaticResource BoolToVis}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="5" />

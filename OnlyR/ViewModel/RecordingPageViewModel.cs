@@ -97,11 +97,13 @@ namespace OnlyR.ViewModel
 
         private void OnNavigate(object recipient, NavigateMessage message)
         {
-            if (message.OriginalPageName == SettingsPageViewModel.PageName 
+            if (message.OriginalPageName == SettingsPageViewModel.PageName
                 && message.TargetPageName == PageName)
             {
                 OnPropertyChanged(nameof(MaxRecordingTimeString));
                 OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
+                OnPropertyChanged(nameof(ShowStopOnly));
+                OnPropertyChanged(nameof(ShowStopAndPause));
             }
         }
 
@@ -150,6 +152,10 @@ namespace OnlyR.ViewModel
         public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
                                        RecordingStatus != RecordingStatus.StopRequested &&
                                        RecordingStatus != RecordingStatus.Paused;
+
+        public bool ShowStopOnly => IsRecordingOrStopping && !_optionsService.Options.ShowPauseRecordingButton;
+
+        public bool ShowStopAndPause => IsRecordingOrStopping && _optionsService.Options.ShowPauseRecordingButton;
 
         public int VolumeLevelAsPercentage
         {
@@ -203,6 +209,8 @@ namespace OnlyR.ViewModel
                     OnPropertyChanged(nameof(IsRecordingOrPaused));
                     OnPropertyChanged(nameof(IsReadyToRecord));
                     OnPropertyChanged(nameof(IsRecordingOrStopping));
+                    OnPropertyChanged(nameof(ShowStopOnly));
+                    OnPropertyChanged(nameof(ShowStopAndPause));
                     OnPropertyChanged(nameof(IsSaveEnabled));
                 }
             }

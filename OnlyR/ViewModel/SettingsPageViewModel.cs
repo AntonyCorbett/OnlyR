@@ -184,6 +184,18 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
+    public bool ShowPauseRecordingButton
+    {
+        get => _optionsService.Options.ShowPauseRecordingButton;
+        set
+        {
+            if (_optionsService.Options.ShowPauseRecordingButton != value)
+            {
+                _optionsService.Options.ShowPauseRecordingButton = value;
+            }
+        }
+    }
+
     public bool StartRecordingOnLaunch
     {
         get => _optionsService.Options.StartRecordingOnLaunch;

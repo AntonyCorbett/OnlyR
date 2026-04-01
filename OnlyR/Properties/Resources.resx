@@ -250,6 +250,9 @@
     <value>Channels</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
+    <value>Show pause control</value>
+  </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Fade out recordings</value>
     <comment>Settings page checkbox title</comment>
