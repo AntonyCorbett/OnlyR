@@ -23,6 +23,7 @@
             BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}"
             TargetType="{x:Type ComboBox}">
             <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="materialDesign:ComboBoxAssist.ClassicMode" Value="true" />
         </Style>
 
         <Style
