@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -378,12 +378,14 @@ namespace OnlyR.ViewModel
             RecordingStatus = RecordingStatus.NotRecording;
             VolumeLevelAsPercentage = 0;
             _stopwatch.Stop();
+            OnPropertyChanged(nameof(ElapsedTimeStr));
         }
 
         private void AudioStartedHandler(object? sender, EventArgs e)
         {
             Log.Logger.Information("Started recording");
             RecordingStatus = RecordingStatus.Recording;
+            OnPropertyChanged(nameof(ElapsedTimeStr));
         }
 
         private void AudioPausedHandler(object? sender, EventArgs e)
@@ -392,6 +394,7 @@ namespace OnlyR.ViewModel
             RecordingStatus = RecordingStatus.Paused;
             _stopwatch.Stop();
             VolumeLevelAsPercentage = 0;
+            OnPropertyChanged(nameof(ElapsedTimeStr));
         }
 
         private void AudioResumedHandler(object? sender, EventArgs e)
@@ -400,6 +403,7 @@ namespace OnlyR.ViewModel
             RecordingStatus = RecordingStatus.Recording;
             _stopwatch.Start();
             _silenceService.Reset();
+            OnPropertyChanged(nameof(ElapsedTimeStr));
         }
 
         private void PauseResumeRecording()
@@ -440,6 +444,7 @@ namespace OnlyR.ViewModel
 
                 _audioService.StartRecording(candidateFile, _optionsService);
                 _stopwatch.Restart();
+                OnPropertyChanged(nameof(ElapsedTimeStr));
             }
             catch (Exception ex)
             {
@@ -610,3 +615,6 @@ namespace OnlyR.ViewModel
         }
     }
 }
+
+
+
