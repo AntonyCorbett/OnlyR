@@ -64,6 +64,8 @@ namespace OnlyR.Services.Options
 
         public bool FadeOut { get; set; }
 
+        public bool ShowPauseRecordingButton { get; set; }
+
         public bool StartRecordingOnLaunch { get; set; }
 
         public string DestinationFolder { get; set; }

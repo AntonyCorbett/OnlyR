@@ -34,6 +34,10 @@ internal sealed class MockAudioService : IAudioService
 
     public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
 
+    public event EventHandler? PausedEvent;
+
+    public event EventHandler? ResumedEvent;
+
     public RecordingDeviceItem[] GetRecordingDeviceList()
     {
         return new[]
@@ -60,6 +64,26 @@ internal sealed class MockAudioService : IAudioService
 
         _timer.Stop();
         OnStoppedEvent();
+    }
+
+    public void PauseRecording()
+    {
+        if (_status == RecordingStatus.Recording)
+        {
+            _status = RecordingStatus.Paused;
+            _timer.Stop();
+            PausedEvent?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public void ResumeRecording()
+    {
+        if (_status == RecordingStatus.Paused)
+        {
+            _status = RecordingStatus.Recording;
+            _timer.Start();
+            ResumedEvent?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void OnStartedEvent()

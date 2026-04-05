@@ -81,9 +81,13 @@ namespace OnlyR.ViewModel
 
             _statusStr = Properties.Resources.NOT_RECORDING;
 
+            _audioService.PausedEvent += AudioPausedHandler;
+            _audioService.ResumedEvent += AudioResumedHandler;
+
             // bind commands...
             StartRecordingCommand = new RelayCommand(StartRecording);
             StopRecordingCommand = new RelayCommand(StopRecording);
+            PauseResumeRecordingCommand = new RelayCommand(PauseResumeRecording);
             NavigateSettingsCommand = new RelayCommand(NavigateSettings);
             ShowRecordingsCommand = new RelayCommand(ShowRecordings);
             SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
@@ -93,11 +97,13 @@ namespace OnlyR.ViewModel
 
         private void OnNavigate(object recipient, NavigateMessage message)
         {
-            if (message.OriginalPageName == SettingsPageViewModel.PageName 
+            if (message.OriginalPageName == SettingsPageViewModel.PageName
                 && message.TargetPageName == PageName)
             {
                 OnPropertyChanged(nameof(MaxRecordingTimeString));
                 OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
+                OnPropertyChanged(nameof(ShowStopOnly));
+                OnPropertyChanged(nameof(ShowStopAndPause));
             }
         }
 
@@ -107,6 +113,8 @@ namespace OnlyR.ViewModel
         public RelayCommand StartRecordingCommand { get; }
 
         public RelayCommand StopRecordingCommand { get; }
+
+        public RelayCommand PauseResumeRecordingCommand { get; }
 
         public RelayCommand NavigateSettingsCommand { get; }
 
@@ -129,14 +137,25 @@ namespace OnlyR.ViewModel
         }
 
         public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
-                                             RecordingStatus == RecordingStatus.StopRequested;
+                                             RecordingStatus == RecordingStatus.StopRequested ||
+                                             RecordingStatus == RecordingStatus.Paused;
 
         public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
 
         public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
 
+        public bool IsPaused => RecordingStatus == RecordingStatus.Paused;
+
+        public bool IsRecordingOrPaused => RecordingStatus == RecordingStatus.Recording ||
+                                           RecordingStatus == RecordingStatus.Paused;
+
         public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
-                                       RecordingStatus != RecordingStatus.StopRequested;
+                                       RecordingStatus != RecordingStatus.StopRequested &&
+                                       RecordingStatus != RecordingStatus.Paused;
+
+        public bool ShowStopOnly => IsRecordingOrStopping && !_optionsService.Options.ShowPauseRecordingButton;
+
+        public bool ShowStopAndPause => IsRecordingOrStopping && _optionsService.Options.ShowPauseRecordingButton;
 
         public int VolumeLevelAsPercentage
         {
@@ -186,8 +205,12 @@ namespace OnlyR.ViewModel
                     OnPropertyChanged(nameof(RecordingStatus));
                     OnPropertyChanged(nameof(IsNotRecording));
                     OnPropertyChanged(nameof(IsRecording));
+                    OnPropertyChanged(nameof(IsPaused));
+                    OnPropertyChanged(nameof(IsRecordingOrPaused));
                     OnPropertyChanged(nameof(IsReadyToRecord));
                     OnPropertyChanged(nameof(IsRecordingOrStopping));
+                    OnPropertyChanged(nameof(ShowStopOnly));
+                    OnPropertyChanged(nameof(ShowStopAndPause));
                     OnPropertyChanged(nameof(IsSaveEnabled));
                 }
             }
@@ -246,7 +269,7 @@ namespace OnlyR.ViewModel
         {
             get
             {
-                if (_stopwatch.IsRunning)
+                if (_stopwatch.IsRunning || _recordingStatus == RecordingStatus.Paused)
                 {
                     return _stopwatch.Elapsed;
                 }
@@ -361,6 +384,43 @@ namespace OnlyR.ViewModel
         {
             Log.Logger.Information("Started recording");
             RecordingStatus = RecordingStatus.Recording;
+        }
+
+        private void AudioPausedHandler(object? sender, EventArgs e)
+        {
+            Log.Logger.Information("Paused recording");
+            RecordingStatus = RecordingStatus.Paused;
+            _stopwatch.Stop();
+            VolumeLevelAsPercentage = 0;
+        }
+
+        private void AudioResumedHandler(object? sender, EventArgs e)
+        {
+            Log.Logger.Information("Resumed recording");
+            RecordingStatus = RecordingStatus.Recording;
+            _stopwatch.Start();
+            _silenceService.Reset();
+        }
+
+        private void PauseResumeRecording()
+        {
+            try
+            {
+                ClearErrorMsg();
+
+                if (RecordingStatus == RecordingStatus.Recording)
+                {
+                    _audioService.PauseRecording();
+                }
+                else if (RecordingStatus == RecordingStatus.Paused)
+                {
+                    _audioService.ResumeRecording();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Logger.Error(ex, "Error pausing/resuming recording");
+            }
         }
 
         private void StartRecording()

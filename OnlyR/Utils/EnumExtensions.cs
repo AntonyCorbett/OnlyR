@@ -25,6 +25,8 @@ namespace OnlyR.Utils
                     return Properties.Resources.RECORDING;
                 case RecordingStatus.StopRequested:
                     return Properties.Resources.STOPPING;
+                case RecordingStatus.Paused:
+                    return Properties.Resources.PAUSED;
 
                 default:
                 // ReSharper disable once RedundantCaseLabel

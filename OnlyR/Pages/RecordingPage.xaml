@@ -140,6 +140,7 @@
                 </StackPanel>
             </Button>
 
+            <!--  Stop button only (when pause control is hidden)  -->
             <!--  ReSharper disable once Xaml.MissingGridIndex  -->
             <Button
                 behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
@@ -149,12 +150,72 @@
                 IsEnabled="{Binding IsRecording}"
                 Style="{StaticResource StopRecordingBtnStyle}"
                 ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
-                Visibility="{Binding Path=IsRecordingOrStopping, Converter={StaticResource BoolToVis}}">
+                Visibility="{Binding Path=ShowStopOnly, Converter={StaticResource BoolToVis}}">
                 <materialDesign:PackIcon
                     Width="56"
                     Height="56"
                     Kind="Stop" />
             </Button>
+
+            <!--  Stop + Pause/Resume buttons (when pause control is enabled)  -->
+            <!--  ReSharper disable once Xaml.MissingGridIndex  -->
+            <Grid Visibility="{Binding Path=ShowStopAndPause, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    Height="85"
+                    VerticalAlignment="Top"
+                    behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
+                    AutomationProperties.AutomationId="StopBtn"
+                    AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
+                    Command="{Binding StopRecordingCommand}"
+                    IsEnabled="{Binding IsRecordingOrPaused}"
+                    Style="{StaticResource MaterialDesignRaisedAccentButton}"
+                    ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}">
+                    <materialDesign:PackIcon
+                        Width="44"
+                        Height="44"
+                        Kind="Stop" />
+                </Button>
+
+                <Button
+                    Grid.Column="2"
+                    Height="85"
+                    VerticalAlignment="Top"
+                    AutomationProperties.AutomationId="PauseResumeBtn"
+                    Command="{Binding PauseResumeRecordingCommand}"
+                    IsEnabled="{Binding IsRecordingOrPaused}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                            <Setter Property="ToolTip" Value="{x:Static resx:Resources.PAUSE_RECORDING_TOOLTIP}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                    <Setter Property="ToolTip" Value="{x:Static resx:Resources.RESUME_RECORDING_TOOLTIP}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <materialDesign:PackIcon
+                        Width="44"
+                        Height="44">
+                        <materialDesign:PackIcon.Style>
+                            <Style TargetType="materialDesign:PackIcon">
+                                <Setter Property="Kind" Value="Pause" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                        <Setter Property="Kind" Value="Play" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </materialDesign:PackIcon.Style>
+                    </materialDesign:PackIcon>
+                </Button>
+            </Grid>
 
             <materialDesign:Card
                 Grid.Row="1"

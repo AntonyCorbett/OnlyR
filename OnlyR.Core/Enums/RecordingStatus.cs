@@ -10,5 +10,6 @@
         NotRecording,
         StopRequested,
         Recording,
+        Paused
     }
 }

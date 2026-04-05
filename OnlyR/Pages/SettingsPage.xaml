@@ -190,6 +190,13 @@
                     Style="{StaticResource SettingsCheckBox}" />
 
                 <CheckBox
+                    AutomationProperties.AutomationId="ShowPauseButton"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SHOW_PAUSE_BUTTON}"
+                    Content="{x:Static resx:Resources.SETTINGS_SHOW_PAUSE_BUTTON}"
+                    IsChecked="{Binding ShowPauseRecordingButton, Mode=TwoWay}"
+                    Style="{StaticResource SettingsCheckBox}" />
+
+                <CheckBox
                     AutomationProperties.AutomationId="StartOnLaunch"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
                     Content="{x:Static resx:Resources.SETTINGS_START_ON_LAUNCH}"
