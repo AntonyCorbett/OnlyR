@@ -201,6 +201,12 @@
   <data name="ONE_MIN" xml:space="preserve">
     <value>1 minuto</value>
   </data>
+  <data name="PAUSED" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Pause recording</value>
+  </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Grabando</value>
   </data>
@@ -215,6 +221,9 @@
   <data name="RESTART_LANGUAGE" xml:space="preserve">
     <value>Por favor, reinicia OnlyR después de cambiar el idioma.</value>
     <comment>See Settings page</comment>
+  </data>
+  <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Resume recording</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Guardar las grabaciones de hoy en unidad {0}</value>
@@ -240,6 +249,9 @@
   <data name="SETTINGS_CHANNELS" xml:space="preserve">
     <value>Canales</value>
     <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
+    <value>Show pause control</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Desvanecer grabaciones</value>
@@ -331,5 +343,8 @@
   </data>
   <data name="X_SECS" xml:space="preserve">
     <value>{0} segundos</value>
+  </data>
+  <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
+    <value>Formato de audio</value>
   </data>
 </root>
