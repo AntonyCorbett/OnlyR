@@ -2,10 +2,10 @@ name: App CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths: ['**/*.csproj', '**/*.cs', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
   pull_request:
-    branches: [main]
+    branches: [master]
     types: [opened, synchronize, reopened]
     paths: ['**/*.csproj', '**/*.cs', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
 
