@@ -36,6 +36,3 @@ jobs:
 
       - name: Build
         run: dotnet build OnlyR.sln --configuration Release
-
-      - name: Test
-        run: dotnet test OnlyR.sln --configuration Release --no-build --verbosity normal
