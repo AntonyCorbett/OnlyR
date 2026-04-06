@@ -202,10 +202,10 @@
     <value>1 minuto</value>
   </data>
   <data name="PAUSED" xml:space="preserve">
-    <value>Paused</value>
+    <value>Em pausa</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>Pausar gravação</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>A gravar</value>
@@ -223,7 +223,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>Continuar gravação</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Guardar as gravações de hoje no disco {0}</value>
@@ -251,7 +251,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>Mostrar controlo de pausa</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Desvanecer gravações gradualmente</value>
