@@ -35,4 +35,4 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build
-        run: dotnet build OnlyR.sln --configuration Release
+        run: dotnet build OnlyR.slnx --configuration Release
