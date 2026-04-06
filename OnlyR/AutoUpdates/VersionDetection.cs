@@ -28,17 +28,16 @@ internal static class VersionDetection
             client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
 
             var response = client.GetAsync(LatestReleaseApiUrl).Result;
-            if (response.IsSuccessStatusCode)
+            response.EnsureSuccessStatusCode();
+
+            var content = response.Content.ReadAsStringAsync().Result;
+            using var document = JsonDocument.Parse(content);
+            if (document.RootElement.TryGetProperty("tag_name", out var tagNameElement))
             {
-                var content = response.Content.ReadAsStringAsync().Result;
-                using var document = JsonDocument.Parse(content);
-                if (document.RootElement.TryGetProperty("tag_name", out var tagNameElement))
+                var tagName = tagNameElement.GetString();
+                if (!string.IsNullOrWhiteSpace(tagName))
                 {
-                    var tagName = tagNameElement.GetString();
-                    if (!string.IsNullOrWhiteSpace(tagName))
-                    {
-                        version = tagName.Trim().TrimStart('v', 'V');
-                    }
+                    version = tagName.Trim().TrimStart('v', 'V');
                 }
             }
         }
@@ -62,6 +61,7 @@ internal static class VersionDetection
         var tokens = versionString.Split('.');
         if (tokens.Length != 4)
         {
+            Log.Logger.Error("Invalid version string format. Expected format: major.minor.build.revision. Value: {VersionString}", versionString);
             return null;
         }
 
@@ -70,6 +70,7 @@ internal static class VersionDetection
             !int.TryParse(tokens[2], out var build) ||
             !int.TryParse(tokens[3], out var revision))
         {
+            Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
             return null;
         }
 
