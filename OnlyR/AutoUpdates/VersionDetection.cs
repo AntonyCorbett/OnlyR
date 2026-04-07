@@ -53,7 +53,14 @@ internal static class VersionDetection
     public static Version? GetLatestReleaseVersion()
     {
         var versionString = GetLatestReleaseVersionString();
-        return ParseVersionString(versionString);
+        var version = ParseVersionString(versionString);
+
+        if (versionString != null && version == null)
+        {
+            Log.Logger.Error("Failed to parse version string {VersionString}", versionString);
+        }
+
+        return version;
     }
 
     public static Version? ParseVersionString(string? versionString)
@@ -66,7 +73,6 @@ internal static class VersionDetection
         var tokens = versionString.Split('.');
         if (tokens.Length != 4)
         {
-            Log.Logger.Error("Invalid version string format. Expected format: major.minor.build.revision. Value: {VersionString}", versionString);
             return null;
         }
 
@@ -80,11 +86,9 @@ internal static class VersionDetection
                 return new Version(major, minor, build, revision);
             }
 
-            Log.Logger.Error("Version string contains negative numbers {VersionString} ", versionString);
             return null;
         }
 
-        Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
         return null;
     }
 
