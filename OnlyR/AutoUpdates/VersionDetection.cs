@@ -10,11 +10,11 @@ namespace OnlyR.AutoUpdates
     /// Used to get the installed OnlyR version and the
     /// latest OnlyR release version from the github webpage.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     internal static class VersionDetection
     {
         public static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
 
+        [ExcludeFromCodeCoverage]
         public static string? GetLatestReleaseVersionString()
         {
             string? version = null;
@@ -50,7 +50,11 @@ namespace OnlyR.AutoUpdates
         public static Version? GetLatestReleaseVersion()
         {
             var versionString = GetLatestReleaseVersionString();
+            return ParseVersionString(versionString);
+        }
 
+        public static Version? ParseVersionString(string? versionString)
+        {
             if (string.IsNullOrEmpty(versionString))
             {
                 return null;
