@@ -5,7 +5,7 @@ using OnlyR.Utils;
 
 namespace OnlyR.Tests;
 
-public class TestEnumExtensionsCodec
+public sealed class TestEnumExtensionsCodec
 {
     [Test]
     public async Task UnknownStatusThrowsArgumentException() =>

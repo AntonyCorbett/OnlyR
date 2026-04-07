@@ -9,7 +9,7 @@ using OnlyR.Utils;
 
 namespace OnlyR.Tests;
 
-public class TestRecordingDestinationService
+public sealed class TestRecordingDestinationService
 {
     private string tempDir = string.Empty;
 

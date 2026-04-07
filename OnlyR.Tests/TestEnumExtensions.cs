@@ -5,7 +5,7 @@ using OnlyR.Utils;
 
 namespace OnlyR.Tests;
 
-public class TestEnumExtensions
+public sealed class TestEnumExtensions
 {
     [Test]
     public async Task ValidDescriptions()
@@ -18,7 +18,7 @@ public class TestEnumExtensions
             }
 
             var description = status.GetDescriptiveText();
-            await Assert.That(description).IsNotNull();
+            await Assert.That(description).IsNotNull().And.IsNotEmpty();
         }
     }
 }

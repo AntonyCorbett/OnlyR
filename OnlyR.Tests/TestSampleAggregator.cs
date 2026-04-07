@@ -5,7 +5,7 @@ using OnlyR.Core.Samples;
 
 namespace OnlyR.Tests;
 
-public class TestSampleAggregator
+public sealed class TestSampleAggregator
 {
     [Test]
     public async Task ConstructorClampsLowInterval()

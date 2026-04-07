@@ -45,6 +45,7 @@ public sealed class TestExceptions
         var ex = new NoSpaceException('C');
         await Assert.That(ex.Message).IsNotNull();
         await Assert.That(ex.Message).IsNotEmpty();
+        await Assert.That(ex.Message).Contains("C");
     }
 
     [Test]

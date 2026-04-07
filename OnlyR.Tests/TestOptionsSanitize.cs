@@ -4,7 +4,7 @@ using OnlyR.Services.Options;
 
 namespace OnlyR.Tests;
 
-public class TestOptionsSanitize
+public sealed class TestOptionsSanitize
 {
     [Test]
     public async Task SanitizeMaxRecordingsInOneFolderTooLow()
