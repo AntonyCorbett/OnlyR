@@ -27,7 +27,10 @@ public class TestSettingsPageViewModel
                 result = vm.MaxRecordingTimes.Count();
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -50,7 +53,10 @@ public class TestSettingsPageViewModel
                 result = vm.MaxRecordingTimes.First().ActualSeconds;
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -73,7 +79,10 @@ public class TestSettingsPageViewModel
                 result = vm.RecordingLifeTimes.Count();
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -96,7 +105,10 @@ public class TestSettingsPageViewModel
                 result = vm.MaxSilenceTimeItems.Count();
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -119,7 +131,10 @@ public class TestSettingsPageViewModel
                 result = vm.Codecs.Count();
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -142,7 +157,10 @@ public class TestSettingsPageViewModel
                 result = vm.AppVersionStr;
                 tcs.SetResult();
             }
-            catch (Exception ex) { tcs.SetException(ex); }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
         });
         t.SetApartmentState(ApartmentState.STA);
         t.Start();
@@ -158,9 +176,9 @@ public class TestSettingsPageViewModel
 
         var optionsMock = Mock.Of<IOptionsService>();
         optionsMock.Options.Returns(new Options());
-        optionsMock.GetSupportedSampleRates().Returns(new[] { new SampleRateItem("44.1 kHz", 44100) });
-        optionsMock.GetSupportedChannels().Returns(new[] { new ChannelItem("Mono", 1) });
-        optionsMock.GetSupportedMp3BitRates().Returns(new[] { new BitRateItem("96 kbps", 96) });
+        optionsMock.GetSupportedSampleRates().Returns([new SampleRateItem("44.1 kHz", 44100)]);
+        optionsMock.GetSupportedChannels().Returns([new ChannelItem("Mono", 1)]);
+        optionsMock.GetSupportedMp3BitRates().Returns([new BitRateItem("96 kbps", 96)]);
 
         var commandLineMock = Mock.Of<ICommandLineService>();
 

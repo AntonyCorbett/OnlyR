@@ -8,10 +8,8 @@ namespace OnlyR.Tests;
 public class TestEnumExtensionsCodec
 {
     [Test]
-    public async Task UnknownStatusThrowsArgumentException()
-    {
+    public async Task UnknownStatusThrowsArgumentException() =>
         await Assert.That(() => RecordingStatus.Unknown.GetDescriptiveText()).Throws<ArgumentException>();
-    }
 
     [Test]
     public async Task GetExtensionFormatMp3()

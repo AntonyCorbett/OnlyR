@@ -24,9 +24,10 @@ public class TestOptionsStaticHelpers
     public async Task GetSupportedChannels()
     {
         var result = Options.GetSupportedChannels();
-        await Assert.That(result.Count()).IsEqualTo(2);
-        await Assert.That(result.Contains(1)).IsTrue();
-        await Assert.That(result.Contains(2)).IsTrue();
+        var enumerable = result as int[] ?? result.ToArray();
+        await Assert.That(enumerable.Length).IsEqualTo(2);
+        await Assert.That(enumerable.Contains(1)).IsTrue();
+        await Assert.That(enumerable.Contains(2)).IsTrue();
     }
 
     [Test]
