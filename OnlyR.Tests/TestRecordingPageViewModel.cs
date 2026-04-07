@@ -17,7 +17,7 @@ using OnlyR.ViewModel;
 
 namespace OnlyR.Tests;
 
-public class TestRecordingPageViewModel
+public sealed class TestRecordingPageViewModel
 {
     [Test]
     public async Task InitialStatusIsNotRecording()
@@ -337,7 +337,312 @@ public class TestRecordingPageViewModel
         await Assert.That(result).IsEqualTo("00:00:00");
     }
 
-    private static RecordingPageViewModel CreateViewModel(Options? options = null)
+    [Test]
+    public async Task IsPausedWhenStatusPaused()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Paused;
+                result = vm.IsPaused;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsRecordingOrPausedWhenRecording()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Recording;
+                result = vm.IsRecordingOrPaused;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsRecordingOrPausedWhenPaused()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Paused;
+                result = vm.IsRecordingOrPaused;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsMaxRecordingTimeSpecifiedWhenSet()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 300 });
+                result = vm.IsMaxRecordingTimeSpecified;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsMaxRecordingTimeSpecifiedWhenZero()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 0 });
+                result = vm.IsMaxRecordingTimeSpecified;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task NoSettingsReturnsCommandLineValue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoSettings.Returns(true);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                result = vm.NoSettings;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task NoFolderReturnsCommandLineValue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoFolder.Returns(true);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                result = vm.NoFolder;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task NoSaveReturnsCommandLineValue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoSave.Returns(true);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                result = vm.NoSave;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsSaveEnabledWhenNotCopyingNotRecording()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.IsSaveEnabled;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsSaveEnabledFalseWhenCopying()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.IsCopying = true;
+                result = vm.IsSaveEnabled;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task ErrorMsgSetterNotifiesPropertyChanged()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.ErrorMsg = "Test error";
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties).IsNotNull();
+        await Assert.That(changedProperties!).Contains("ErrorMsg");
+    }
+
+    private static RecordingPageViewModel CreateViewModel(Options? options = null, Mock<ICommandLineService>? cmdLineMock = null)
     {
         var audioService = new MockAudioService();
 
@@ -348,7 +653,7 @@ public class TestRecordingPageViewModel
         destMock.GetRecordingFileCandidate(Any<IOptionsService>(), Any<DateTime>(), Any<string?>())
             .Returns(new RecordingCandidate(DateTime.Now, 1, ".", "."));
 
-        var commandLineMock = Mock.Of<ICommandLineService>();
+        var commandLineMock = cmdLineMock ?? Mock.Of<ICommandLineService>();
         var copyMock = Mock.Of<ICopyRecordingsService>();
         var snackbarMock = Mock.Of<ISnackbarService>();
         var silenceMock = Mock.Of<ISilenceService>();

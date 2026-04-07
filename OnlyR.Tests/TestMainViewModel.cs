@@ -16,7 +16,7 @@ using OnlyR.ViewModel;
 
 namespace OnlyR.Tests;
 
-public class TestMainViewModel
+public sealed class TestMainViewModel
 {
     [Test]
     [NotInParallel("WpfApp")]
@@ -96,12 +96,134 @@ public class TestMainViewModel
             statusAfterStop);
     }
 
-    private static MainViewModel CreateMainViewModel()
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task CurrentPageNameMatchesRecordingPage()
     {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                result = vm.CurrentPageName;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(RecordingPageViewModel.PageName);
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task AlwaysOnTopReturnsOptionsValue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel(new Options { AlwaysOnTop = true });
+                result = vm.AlwaysOnTop;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task ClosingWhenNotRecordingDoesNotCancel()
+    {
+        bool? cancelValue = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                var args = new System.ComponentModel.CancelEventArgs();
+                vm.Closing(this, args);
+                cancelValue = args.Cancel;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(cancelValue).IsFalse();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task ClosingWhenRecordingAndAllowCloseCancels()
+    {
+        bool? cancelValue = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var options = new Options { AllowCloseWhenRecording = true };
+                var vm = CreateMainViewModel(options);
+
+                // Start recording
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                rvm.StartRecordingCommand.Execute(null);
+
+                var args = new System.ComponentModel.CancelEventArgs();
+                vm.Closing(this, args);
+                cancelValue = args.Cancel;
+
+                // Stop recording to clean up
+                rvm.StopRecordingCommand.Execute(null);
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(cancelValue).IsTrue();
+    }
+
+    private static MainViewModel CreateMainViewModel(Options? options = null)
+    {
+        CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Reset();
         var audioService = new MockAudioService();
 
         var optionsMock = Mock.Of<IOptionsService>();
-        optionsMock.Options.Returns(new Options());
+        optionsMock.Options.Returns(options ?? new Options());
 
         var destMock = Mock.Of<IRecordingDestinationService>();
         destMock.GetRecordingFileCandidate(Any<IOptionsService>(), Any<DateTime>(), Any<string?>())
