@@ -69,6 +69,20 @@ public sealed class TestVersionDetection
         await Assert.That(result).IsEqualTo(new Version(0, 0, 0, 0));
     }
 
+    [Test]
+    public async Task ParseVersionStringNegativeMajor()
+    {
+        var result = VersionDetection.ParseVersionString("-1.2.3.4");
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
+    public async Task ParseVersionStringNegativeRevision()
+    {
+        var result = VersionDetection.ParseVersionString("1.2.3.-4");
+        await Assert.That(result).IsNull();
+    }
+
     // ========================================================================
     // ExtractVersionFromTagName
     // ========================================================================
@@ -119,6 +133,13 @@ public sealed class TestVersionDetection
     public async Task ExtractVersionFromTagNameTrimsWhitespaceAndV()
     {
         var result = VersionDetection.ExtractVersionFromTagName(" v1.2.3.4 ");
+        await Assert.That(result).IsEqualTo("1.2.3.4");
+    }
+
+    [Test]
+    public async Task ExtractVersionFromTagNameDoubleVPrefix()
+    {
+        var result = VersionDetection.ExtractVersionFromTagName("vv1.2.3.4");
         await Assert.That(result).IsEqualTo("1.2.3.4");
     }
 

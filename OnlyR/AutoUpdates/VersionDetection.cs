@@ -75,7 +75,13 @@ internal static class VersionDetection
             int.TryParse(tokens[2], out var build) &&
             int.TryParse(tokens[3], out var revision))
         {
-            return new Version(major, minor, build, revision);
+            if (major >= 0 && minor >= 0 && build >= 0 && revision >= 0)
+            {
+                return new Version(major, minor, build, revision);
+            }
+
+            Log.Logger.Error("Version string contains negative numbers {VersionString} ", versionString);
+            return null;
         }
 
         Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
