@@ -74,7 +74,7 @@ public sealed class TestOptionsService
         try
         {
             await Assert.That(result).IsNotNull();
-            await Assert.That(result!.Length).IsGreaterThan(0);
+            await Assert.That(result.Length).IsGreaterThan(0);
         }
         finally
         {
@@ -99,7 +99,7 @@ public sealed class TestOptionsService
         try
         {
             await Assert.That(result).IsNotNull();
-            await Assert.That(result!.Length).IsGreaterThan(0);
+            await Assert.That(result.Length).IsGreaterThan(0);
         }
         finally
         {
@@ -124,7 +124,7 @@ public sealed class TestOptionsService
         try
         {
             await Assert.That(result).IsNotNull();
-            await Assert.That(result!.Length).IsGreaterThan(0);
+            await Assert.That(result.Length).IsGreaterThan(0);
         }
         finally
         {
@@ -142,8 +142,7 @@ public sealed class TestOptionsService
             var cmdMock = Mock.Of<ICommandLineService>();
             cmdMock.OptionsIdentifier.Returns(identifier);
 
-            var svc = new OptionsService(cmdMock.Object);
-            svc.Options.Culture = "fr-FR";
+            var svc = new OptionsService(cmdMock.Object) { Options = { Culture = "fr-FR" } };
             return svc.Culture;
         });
 
@@ -167,8 +166,7 @@ public sealed class TestOptionsService
             var cmdMock = Mock.Of<ICommandLineService>();
             cmdMock.OptionsIdentifier.Returns(identifier);
 
-            var svc = new OptionsService(cmdMock.Object);
-            svc.Culture = "de-DE";
+            var svc = new OptionsService(cmdMock.Object) { Culture = "de-DE" };
             return svc.Options.Culture;
         });
 
@@ -192,8 +190,7 @@ public sealed class TestOptionsService
             var cmdMock = Mock.Of<ICommandLineService>();
             cmdMock.OptionsIdentifier.Returns(identifier);
 
-            var svc = new OptionsService(cmdMock.Object);
-            svc.Options.MaxRecordingTimeSeconds = 999;
+            var svc = new OptionsService(cmdMock.Object) { Options = { MaxRecordingTimeSeconds = 999 } };
             svc.Save();
 
             var svc2 = new OptionsService(cmdMock.Object);
@@ -252,7 +249,7 @@ public sealed class TestOptionsService
         try
         {
             await Assert.That(result).IsNotNull();
-            await Assert.That(result!.SampleRate).IsGreaterThan(0);
+            await Assert.That(result.SampleRate).IsGreaterThan(0);
             await Assert.That(result.ChannelCount).IsGreaterThan(0);
         }
         finally

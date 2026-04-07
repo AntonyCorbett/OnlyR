@@ -2,9 +2,11 @@ using System;
 using System.Threading.Tasks;
 using OnlyR.Core.Recorder;
 using OnlyR.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace OnlyR.Tests;
 
+[SuppressMessage("Usage", "CA2201:Do not raise reserved exception types")]
 public sealed class TestExceptions
 {
     [Test]

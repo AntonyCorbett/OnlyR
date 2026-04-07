@@ -503,7 +503,7 @@ public sealed class TestFileUtils
     public async Task SafeDeleteFileActuallyDeletesFile()
     {
         var filePath = Path.Combine(tempDir, "toDeleteActual.txt");
-        File.WriteAllText(filePath, "content");
+        await File.WriteAllTextAsync(filePath, "content");
         FileUtils.SafeDeleteFile(filePath);
         await Assert.That(File.Exists(filePath)).IsFalse();
     }

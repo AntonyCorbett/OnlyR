@@ -1,6 +1,5 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
-using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;

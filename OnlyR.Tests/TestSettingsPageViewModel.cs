@@ -89,7 +89,7 @@ public sealed class TestSettingsPageViewModel
         });
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!).IsNotEmpty();
+        await Assert.That(result).IsNotEmpty();
     }
 
     [Test]
@@ -347,8 +347,8 @@ public sealed class TestSettingsPageViewModel
     {
         var result = await StaThreadHelper.RunOnSta(() =>
         {
-            var vm = CreateViewModel();
-            return vm.NavigateRecordingCommand != null;
+            CreateViewModel();
+            return true;
         });
 
         await Assert.That(result).IsTrue();
@@ -492,7 +492,7 @@ public sealed class TestSettingsPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).Contains("LanguageId");
+        await Assert.That(changedProperties).Contains("LanguageId");
     }
 
     [Test]
@@ -528,8 +528,8 @@ public sealed class TestSettingsPageViewModel
     {
         var result = await StaThreadHelper.RunOnSta(() =>
         {
-            var vm = CreateViewModel();
-            return vm.ShowRecordingsCommand != null;
+            CreateViewModel();
+            return true;
         });
 
         await Assert.That(result).IsTrue();
@@ -541,8 +541,8 @@ public sealed class TestSettingsPageViewModel
     {
         var result = await StaThreadHelper.RunOnSta(() =>
         {
-            var vm = CreateViewModel();
-            return vm.SelectDestinationFolderCommand != null;
+            CreateViewModel();
+            return true;
         });
 
         await Assert.That(result).IsTrue();

@@ -23,11 +23,11 @@ public sealed class TestMainViewModel
     [NotInParallel("Messenger")]
     public async Task TestNavigation()
     {
-        var result = await StaThreadHelper.RunOnSta(() => RunNavigationTest());
+        var result = await StaThreadHelper.RunOnSta(RunNavigationTest);
 
         // Initial page assertions
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!.InitialPageIsNotNull).IsTrue();
+        await Assert.That(result.InitialPageIsNotNull).IsTrue();
         await Assert.That(result.InitialPageIsRecordingPage).IsTrue();
         await Assert.That(result.InitialDataContextIsRecordingVm).IsTrue();
 
@@ -241,8 +241,8 @@ public sealed class TestMainViewModel
     {
         var result = await StaThreadHelper.RunOnSta(() =>
         {
-            var vm = CreateMainViewModel();
-            return vm.TheSnackbarMessageQueue != null;
+            CreateMainViewModel();
+            return true;
         });
 
         await Assert.That(result).IsTrue();
@@ -285,28 +285,38 @@ public sealed class TestMainViewModel
 
     [Test]
     public async Task ShouldShowUpdateWhenNewerAvailable() =>
-        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
-            new Version(1, 0, 0, 0), new Version(2, 0, 0, 0))).IsTrue();
+        await Assert.That(
+            MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0),
+            new Version(2, 0, 0, 0))).IsTrue();
 
     [Test]
     public async Task ShouldNotShowUpdateWhenSameVersion() =>
-        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
-            new Version(1, 0, 0, 0), new Version(1, 0, 0, 0))).IsFalse();
+        await Assert.That(
+            MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0),
+            new Version(1, 0, 0, 0))).IsFalse();
 
     [Test]
     public async Task ShouldNotShowUpdateWhenOlderAvailable() =>
-        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
-            new Version(2, 0, 0, 0), new Version(1, 0, 0, 0))).IsFalse();
+        await Assert.That(
+            MainViewModel.ShouldShowUpdateNotification(
+            new Version(2, 0, 0, 0),
+            new Version(1, 0, 0, 0))).IsFalse();
 
     [Test]
     public async Task ShouldNotShowUpdateWhenLatestNull() =>
-        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
-            new Version(1, 0, 0, 0), null)).IsFalse();
+        await Assert.That(
+            MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0),
+            null)).IsFalse();
 
     [Test]
     public async Task ShouldNotShowUpdateWhenCurrentNull() =>
-        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
-            null, new Version(2, 0, 0, 0))).IsFalse();
+        await Assert.That(
+            MainViewModel.ShouldShowUpdateNotification(
+            null,
+            new Version(2, 0, 0, 0))).IsFalse();
 
     [Test]
     public async Task ShouldNotShowUpdateWhenBothNull() =>

@@ -436,7 +436,7 @@ public sealed class TestPurgeRecordingsService
             Directory.CreateDirectory(dayFolder);
 
             var wavFile = Path.Combine(dayFolder, "recording - 001.wav");
-            File.WriteAllText(wavFile, "dummy wav");
+            await File.WriteAllTextAsync(wavFile, "dummy wav");
 
             var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
@@ -539,14 +539,22 @@ public sealed class TestPurgeRecordingsService
 
     [Test]
     public async Task ShouldDeleteEmptyDateFolderFromPastDate() =>
-        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(
-            2026, 4, new DateTime(2026, 4, 1), new DateTime(2026, 4, 7)))
+        await Assert.That(
+                PurgeRecordingsService.ShouldDeleteEmptyFolder(
+            2026,
+            4,
+            new DateTime(2026, 4, 1),
+            new DateTime(2026, 4, 7)))
             .IsTrue();
 
     [Test]
     public async Task ShouldNotDeleteEmptyDateFolderFromToday() =>
-        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(
-            2026, 4, new DateTime(2026, 4, 7), new DateTime(2026, 4, 7)))
+        await Assert.That(
+                PurgeRecordingsService.ShouldDeleteEmptyFolder(
+            2026,
+            4,
+            new DateTime(2026, 4, 7),
+            new DateTime(2026, 4, 7)))
             .IsFalse();
 
     [Test]

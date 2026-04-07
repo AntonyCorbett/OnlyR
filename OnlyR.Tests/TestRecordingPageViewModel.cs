@@ -77,7 +77,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(changedProperties).IsNotNull();
-        await Assert.That(changedProperties!).Contains("RecordingStatus");
+        await Assert.That(changedProperties).Contains("RecordingStatus");
         await Assert.That(changedProperties).Contains("IsNotRecording");
         await Assert.That(changedProperties).Contains("IsRecording");
         await Assert.That(changedProperties).Contains("IsRecordingOrStopping");
@@ -99,7 +99,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!.ShowStopOnly).IsTrue();
+        await Assert.That(result.ShowStopOnly).IsTrue();
         await Assert.That(result.ShowStopAndPause).IsFalse();
     }
 
@@ -115,7 +115,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!.ShowStopAndPause).IsTrue();
+        await Assert.That(result.ShowStopAndPause).IsTrue();
         await Assert.That(result.ShowStopOnly).IsFalse();
     }
 
@@ -335,7 +335,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(changedProperties).IsNotNull();
-        await Assert.That(changedProperties!).Contains("ErrorMsg");
+        await Assert.That(changedProperties).Contains("ErrorMsg");
     }
 
     [Test]
@@ -412,7 +412,7 @@ public sealed class TestRecordingPageViewModel
 
     private static RecordingPageViewModel CreateViewModel(Options? options = null, Mock<ICommandLineService>? cmdLineMock = null)
     {
-        CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Reset();
+        WeakReferenceMessenger.Default.Reset();
         var audioService = new MockAudioService();
 
         var optionsMock = Mock.Of<IOptionsService>();
@@ -455,7 +455,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).Contains("VolumeLevelAsPercentage");
+        await Assert.That(changedProperties).Contains("VolumeLevelAsPercentage");
     }
 
     [Test]
@@ -477,7 +477,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).DoesNotContain("VolumeLevelAsPercentage");
+        await Assert.That(changedProperties).DoesNotContain("VolumeLevelAsPercentage");
     }
 
     [Test]
@@ -498,8 +498,8 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).Contains("IsCopying");
-        await Assert.That(changedProperties!).Contains("IsSaveEnabled");
+        await Assert.That(changedProperties).Contains("IsCopying");
+        await Assert.That(changedProperties).Contains("IsSaveEnabled");
     }
 
     [Test]
@@ -520,7 +520,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).DoesNotContain("IsCopying");
+        await Assert.That(changedProperties).DoesNotContain("IsCopying");
     }
 
     [Test]
@@ -542,7 +542,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).DoesNotContain("StatusStr");
+        await Assert.That(changedProperties).DoesNotContain("StatusStr");
     }
 
     [Test]
@@ -563,7 +563,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).DoesNotContain("ErrorMsg");
+        await Assert.That(changedProperties).DoesNotContain("ErrorMsg");
     }
 
     [Test]
@@ -584,7 +584,7 @@ public sealed class TestRecordingPageViewModel
             return props;
         });
 
-        await Assert.That(changedProperties!).DoesNotContain("RecordingStatus");
+        await Assert.That(changedProperties).DoesNotContain("RecordingStatus");
     }
 
     [Test]
@@ -651,7 +651,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!).IsNotEmpty();
+        await Assert.That(result).IsNotEmpty();
         await Assert.That(result).Contains("E");
     }
 
@@ -668,7 +668,7 @@ public sealed class TestRecordingPageViewModel
         });
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result!).Contains(",");
+        await Assert.That(result).Contains(",");
     }
 
     [Test]
