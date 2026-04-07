@@ -70,20 +70,18 @@ internal static class VersionDetection
             return null;
         }
 
-        if (!int.TryParse(tokens[0], out var major) ||
-            !int.TryParse(tokens[1], out var minor) ||
-            !int.TryParse(tokens[2], out var build) ||
-            !int.TryParse(tokens[3], out var revision))
+        if (int.TryParse(tokens[0], out var major) &&
+            int.TryParse(tokens[1], out var minor) &&
+            int.TryParse(tokens[2], out var build) &&
+            int.TryParse(tokens[3], out var revision))
         {
-            Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
-            return null;
+            return new Version(major, minor, build, revision);
         }
 
-        return new Version(major, minor, build, revision);
+        Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
+        return null;
     }
 
-    public static Version? GetCurrentVersion()
-    {
-        return Assembly.GetExecutingAssembly().GetName().Version;
-    }
+    public static Version? GetCurrentVersion() =>
+        Assembly.GetExecutingAssembly().GetName().Version;
 }
