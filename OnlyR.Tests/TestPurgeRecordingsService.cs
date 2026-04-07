@@ -588,6 +588,71 @@ public sealed class TestPurgeRecordingsService
         }
     }
 
+    // ========================================================================
+    // GetNextPurgeJob
+    // ========================================================================
+
+    [Test]
+    public async Task GetNextPurgeJobFromNothingIsFilePurge() =>
+        await Assert.That(PurgeRecordingsService.GetNextPurgeJob(PurgeServiceJob.Nothing))
+            .IsEqualTo(PurgeServiceJob.FilePurge);
+
+    [Test]
+    public async Task GetNextPurgeJobFromFilePurgeIsFolderPurge() =>
+        await Assert.That(PurgeRecordingsService.GetNextPurgeJob(PurgeServiceJob.FilePurge))
+            .IsEqualTo(PurgeServiceJob.FolderPurge);
+
+    [Test]
+    public async Task GetNextPurgeJobFromFolderPurgeIsFilePurge() =>
+        await Assert.That(PurgeRecordingsService.GetNextPurgeJob(PurgeServiceJob.FolderPurge))
+            .IsEqualTo(PurgeServiceJob.FilePurge);
+
+    // ========================================================================
+    // ShouldDeleteEmptyFolder
+    // ========================================================================
+
+    [Test]
+    public async Task ShouldDeleteEmptyFolderNullYear() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(null, null, null, DateTime.Now))
+            .IsFalse();
+
+    [Test]
+    public async Task ShouldDeleteEmptyYearFolderFromPastYear() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(2020, null, null, new DateTime(2026, 4, 7)))
+            .IsTrue();
+
+    [Test]
+    public async Task ShouldNotDeleteEmptyYearFolderFromCurrentYear() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(2026, null, null, new DateTime(2026, 4, 7)))
+            .IsFalse();
+
+    [Test]
+    public async Task ShouldDeleteEmptyMonthFolderFromPastMonth() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(2026, 1, null, new DateTime(2026, 4, 7)))
+            .IsTrue();
+
+    [Test]
+    public async Task ShouldNotDeleteEmptyMonthFolderFromCurrentMonth() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(2026, 4, null, new DateTime(2026, 4, 7)))
+            .IsFalse();
+
+    [Test]
+    public async Task ShouldDeleteEmptyDateFolderFromPastDate() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(
+            2026, 4, new DateTime(2026, 4, 1), new DateTime(2026, 4, 7)))
+            .IsTrue();
+
+    [Test]
+    public async Task ShouldNotDeleteEmptyDateFolderFromToday() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(
+            2026, 4, new DateTime(2026, 4, 7), new DateTime(2026, 4, 7)))
+            .IsFalse();
+
+    [Test]
+    public async Task ShouldDeleteEmptyMonthFolderFromPastYear() =>
+        await Assert.That(PurgeRecordingsService.ShouldDeleteEmptyFolder(2025, 12, null, new DateTime(2026, 4, 7)))
+            .IsTrue();
+
     [Test]
     public async Task RemoveEmptyFoldersKeepsNonEmptyFolder()
     {

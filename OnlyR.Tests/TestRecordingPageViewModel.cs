@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using OnlyR.Core.Enums;
+using OnlyR.Exceptions;
 using OnlyR.Model;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -1278,6 +1279,96 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task PageNameIsRecordingPage() =>
         await Assert.That(RecordingPageViewModel.PageName).IsEqualTo("RecordingPage");
+
+    // ========================================================================
+    // GetAutoStopReason
+    // ========================================================================
+
+    [Test]
+    public async Task AutoStopNoneWhenUnderLimits() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(30, 60, 0, 30))
+            .IsEqualTo(AutoStopReason.None);
+
+    [Test]
+    public async Task AutoStopNoneWhenLimitsDisabled() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(100, 0, 50, 0))
+            .IsEqualTo(AutoStopReason.None);
+
+    [Test]
+    public async Task AutoStopTimeLimitWhenExceeded() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(61, 60, 0, 30))
+            .IsEqualTo(AutoStopReason.TimeLimit);
+
+    [Test]
+    public async Task AutoStopTimeLimitNotWhenAtExactLimit() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(60, 60, 0, 30))
+            .IsEqualTo(AutoStopReason.None);
+
+    [Test]
+    public async Task AutoStopSilenceWhenExceeded() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(10, 0, 31, 30))
+            .IsEqualTo(AutoStopReason.Silence);
+
+    [Test]
+    public async Task AutoStopSilenceNotWhenDisabled() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(10, 0, 31, 0))
+            .IsEqualTo(AutoStopReason.None);
+
+    [Test]
+    public async Task AutoStopTimeLimitTakesPriorityOverSilence() =>
+        await Assert.That(RecordingPageViewModel.GetAutoStopReason(61, 60, 31, 30))
+            .IsEqualTo(AutoStopReason.TimeLimit);
+
+    // ========================================================================
+    // GetCopyErrorMessages
+    // ========================================================================
+
+    [Test]
+    public async Task CopyErrorNoRecordingsException()
+    {
+        var ex = new NoRecordingsException();
+        var messages = RecordingPageViewModel.GetCopyErrorMessages(ex);
+        await Assert.That(messages.Length).IsEqualTo(1);
+        await Assert.That(messages[0]).IsEqualTo(ex.Message);
+    }
+
+    [Test]
+    public async Task CopyErrorAggregateWithNoSpaceException()
+    {
+        var inner = new NoSpaceException('D');
+        var agg = new AggregateException(inner);
+        var messages = RecordingPageViewModel.GetCopyErrorMessages(agg);
+        await Assert.That(messages.Length).IsEqualTo(1);
+        await Assert.That(messages[0]).IsEqualTo(inner.Message);
+    }
+
+    [Test]
+    public async Task CopyErrorAggregateWithOtherException()
+    {
+        var agg = new AggregateException(new InvalidOperationException("bad"));
+        var messages = RecordingPageViewModel.GetCopyErrorMessages(agg);
+        await Assert.That(messages.Length).IsEqualTo(1);
+        await Assert.That(messages[0]).IsNotEmpty();
+    }
+
+    [Test]
+    public async Task CopyErrorAggregateWithMixedExceptions()
+    {
+        var agg = new AggregateException(
+            new NoSpaceException('E'),
+            new InvalidOperationException("fail"));
+        var messages = RecordingPageViewModel.GetCopyErrorMessages(agg);
+        await Assert.That(messages.Length).IsEqualTo(2);
+    }
+
+    [Test]
+    public async Task CopyErrorGenericException()
+    {
+        var ex = new InvalidOperationException("something broke");
+        var messages = RecordingPageViewModel.GetCopyErrorMessages(ex);
+        await Assert.That(messages.Length).IsEqualTo(1);
+        await Assert.That(messages[0]).IsNotEmpty();
+    }
 
     private sealed record ShowStopResult(bool ShowStopOnly, bool ShowStopAndPause);
 }

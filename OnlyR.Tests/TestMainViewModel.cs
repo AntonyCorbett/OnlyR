@@ -463,6 +463,39 @@ public sealed class TestMainViewModel
         await Assert.That(success).IsTrue();
     }
 
+    // ========================================================================
+    // ShouldShowUpdateNotification
+    // ========================================================================
+
+    [Test]
+    public async Task ShouldShowUpdateWhenNewerAvailable() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0), new Version(2, 0, 0, 0))).IsTrue();
+
+    [Test]
+    public async Task ShouldNotShowUpdateWhenSameVersion() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0), new Version(1, 0, 0, 0))).IsFalse();
+
+    [Test]
+    public async Task ShouldNotShowUpdateWhenOlderAvailable() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
+            new Version(2, 0, 0, 0), new Version(1, 0, 0, 0))).IsFalse();
+
+    [Test]
+    public async Task ShouldNotShowUpdateWhenLatestNull() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
+            new Version(1, 0, 0, 0), null)).IsFalse();
+
+    [Test]
+    public async Task ShouldNotShowUpdateWhenCurrentNull() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(
+            null, new Version(2, 0, 0, 0))).IsFalse();
+
+    [Test]
+    public async Task ShouldNotShowUpdateWhenBothNull() =>
+        await Assert.That(MainViewModel.ShouldShowUpdateNotification(null, null)).IsFalse();
+
     private static MainViewModel CreateMainViewModel(Options? options = null)
     {
         CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Reset();

@@ -17,8 +17,6 @@ namespace OnlyR.AutoUpdates
         [ExcludeFromCodeCoverage]
         public static string? GetLatestReleaseVersionString()
         {
-            string? version = null;
-
             try
             {
 #pragma warning disable U2U1025 // Avoid instantiating HttpClient
@@ -28,15 +26,7 @@ namespace OnlyR.AutoUpdates
                 var response = client.GetAsync(LatestReleaseUrl).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    var latestVersionUri = response.RequestMessage?.RequestUri;
-                    if (latestVersionUri != null)
-                    {
-                        var segments = latestVersionUri.Segments;
-                        if (segments.Length > 0)
-                        {
-                            version = segments[^1];
-                        }
-                    }
+                    return ExtractVersionFromUri(response.RequestMessage?.RequestUri);
                 }
             }
             catch (Exception ex)
@@ -44,7 +34,23 @@ namespace OnlyR.AutoUpdates
                 Log.Logger.Error(ex, "Getting latest release version");
             }
 
-            return version;
+            return null;
+        }
+
+        public static string? ExtractVersionFromUri(Uri? uri)
+        {
+            if (uri == null)
+            {
+                return null;
+            }
+
+            var segments = uri.Segments;
+            if (segments.Length == 0)
+            {
+                return null;
+            }
+
+            return segments[^1];
         }
 
         public static Version? GetLatestReleaseVersion()

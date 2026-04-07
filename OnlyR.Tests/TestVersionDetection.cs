@@ -69,6 +69,45 @@ public sealed class TestVersionDetection
         await Assert.That(result).IsEqualTo(new Version(0, 0, 0, 0));
     }
 
+    // ========================================================================
+    // ExtractVersionFromUri
+    // ========================================================================
+
+    [Test]
+    public async Task ExtractVersionFromUriNull()
+    {
+        var result = VersionDetection.ExtractVersionFromUri(null);
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
+    public async Task ExtractVersionFromUriWithSegments()
+    {
+        var uri = new Uri("https://github.com/AntonyCorbett/OnlyR/releases/tag/1.2.3.4");
+        var result = VersionDetection.ExtractVersionFromUri(uri);
+        await Assert.That(result).IsEqualTo("1.2.3.4");
+    }
+
+    [Test]
+    public async Task ExtractVersionFromUriRootOnly()
+    {
+        var uri = new Uri("https://example.com");
+        var result = VersionDetection.ExtractVersionFromUri(uri);
+        await Assert.That(result).IsNotNull();
+    }
+
+    [Test]
+    public async Task ExtractVersionFromUriReturnsLastSegment()
+    {
+        var uri = new Uri("https://github.com/owner/repo/releases/tag/5.6.7.8");
+        var result = VersionDetection.ExtractVersionFromUri(uri);
+        await Assert.That(result).IsEqualTo("5.6.7.8");
+    }
+
+    // ========================================================================
+    // GetCurrentVersion / LatestReleaseUrl
+    // ========================================================================
+
     [Test]
     public async Task GetCurrentVersionReturnsNonNull()
     {

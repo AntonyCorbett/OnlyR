@@ -177,13 +177,18 @@ namespace OnlyR.ViewModel
         {
             Task.Delay(2000).ContinueWith(_ =>
             {
-                var latestVersion = VersionDetection.GetLatestReleaseVersion();
-                if (latestVersion != null && latestVersion > VersionDetection.GetCurrentVersion())
+                if (ShouldShowUpdateNotification(
+                        VersionDetection.GetCurrentVersion(),
+                        VersionDetection.GetLatestReleaseVersion()))
                 {
-                    // there is a new version....
                     _snackbarService.Enqueue("Update available", Properties.Resources.VIEW, LaunchWebPage);
                 }
             });
+        }
+
+        internal static bool ShouldShowUpdateNotification(Version? current, Version? latest)
+        {
+            return latest != null && current != null && latest > current;
         }
 
         private void LaunchWebPage()
