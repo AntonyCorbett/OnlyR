@@ -61,7 +61,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         }
     }
 
-    private static long GetSpaceNeed(IEnumerable<string> srcFiles)
+    internal static long GetSpaceNeed(IEnumerable<string> srcFiles)
     {
         long totalSize = 0;
 
@@ -113,12 +113,12 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         return result.ToArray();
     }
         
-    private static bool CanCopyFile(string filePath)
+    internal static bool CanCopyFile(string filePath)
     {
         return File.Exists(filePath) && !IsFileLocked(filePath);
     }
 
-    private static bool IsFileLocked(string filePath)
+    internal static bool IsFileLocked(string filePath)
     {
         FileStream? stream = null;
 
@@ -177,7 +177,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         }
     }
 
-    private string? GetRecordingsFolder()
+    internal string? GetRecordingsFolder()
     {
         Log.Logger.Debug("Getting recordings folder for today");
 

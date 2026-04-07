@@ -132,7 +132,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
     }
         
-    private Task<int> RemoveEmptyFolders()
+    internal Task<int> RemoveEmptyFolders()
     {
         var t = Task.Run(
             () => DeleteFolders(GetEmptyFolders()),
@@ -170,7 +170,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
     }
 
     // returns number of files deleted
-    private Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
+    internal Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
     {
         var t = Task.Run(
             () =>
@@ -424,13 +424,13 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
     }
 
-    private static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
+    internal static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
     {
         return yearOfFolder < oldFileDate.Year ||
                (yearOfFolder == oldFileDate.Year && monthOfFolder <= oldFileDate.Month);
     }
 
-    private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
+    internal static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
     {
         return oldFileDate.Year >= yearOfFolder;
     }
