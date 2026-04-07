@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Reflection;
 using Serilog;
@@ -6,9 +7,10 @@ using Serilog;
 namespace OnlyR.AutoUpdates
 {
     /// <summary>
-    /// Used to get the installed OnlyR version and the 
+    /// Used to get the installed OnlyR version and the
     /// latest OnlyR release version from the github webpage.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static class VersionDetection
     {
         public static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";

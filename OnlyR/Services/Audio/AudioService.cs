@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace OnlyR.Services.Audio
     /// Interface to the audio recording functions
     /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
+    [ExcludeFromCodeCoverage]
     public sealed class AudioService : IAudioService, IDisposable
     {
         private readonly AudioRecorder _audioRecorder;

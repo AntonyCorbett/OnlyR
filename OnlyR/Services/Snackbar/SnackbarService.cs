@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using MaterialDesignThemes.Wpf;
 
@@ -7,6 +8,7 @@ namespace OnlyR.Services.Snackbar;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 // ReSharper disable once ClassNeverInstantiated.Global
+[ExcludeFromCodeCoverage]
 public sealed class SnackbarService : ISnackbarService, IDisposable
 {
 
