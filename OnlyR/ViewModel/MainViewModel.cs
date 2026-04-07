@@ -38,6 +38,8 @@ namespace OnlyR.ViewModel
         private readonly (string TempPath, string FinalPath)? _unfinishedRecordingFileFoundOnStartup;
         private FrameworkElement? _currentPage;
 
+        private static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
+
         public MainViewModel(
            IAudioService audioService,
            IOptionsService optionsService,
@@ -195,7 +197,7 @@ namespace OnlyR.ViewModel
         {
             var psi = new ProcessStartInfo
             {
-                FileName = VersionDetection.LatestReleaseUrl,
+                FileName = LatestReleaseUrl,
                 UseShellExecute = true
             };
 

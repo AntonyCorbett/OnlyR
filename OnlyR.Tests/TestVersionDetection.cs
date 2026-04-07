@@ -70,42 +70,60 @@ public sealed class TestVersionDetection
     }
 
     // ========================================================================
-    // ExtractVersionFromUri
+    // ExtractVersionFromTagName
     // ========================================================================
 
     [Test]
-    public async Task ExtractVersionFromUriNull()
+    public async Task ExtractVersionFromTagNameNull()
     {
-        var result = VersionDetection.ExtractVersionFromUri(null);
+        var result = VersionDetection.ExtractVersionFromTagName(null);
         await Assert.That(result).IsNull();
     }
 
     [Test]
-    public async Task ExtractVersionFromUriWithSegments()
+    public async Task ExtractVersionFromTagNameEmpty()
     {
-        var uri = new Uri("https://github.com/AntonyCorbett/OnlyR/releases/tag/1.2.3.4");
-        var result = VersionDetection.ExtractVersionFromUri(uri);
+        var result = VersionDetection.ExtractVersionFromTagName(string.Empty);
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
+    public async Task ExtractVersionFromTagNameWhitespace()
+    {
+        var result = VersionDetection.ExtractVersionFromTagName("   ");
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
+    public async Task ExtractVersionFromTagNameStripsLowercaseV()
+    {
+        var result = VersionDetection.ExtractVersionFromTagName("v1.2.3.4");
         await Assert.That(result).IsEqualTo("1.2.3.4");
     }
 
     [Test]
-    public async Task ExtractVersionFromUriRootOnly()
+    public async Task ExtractVersionFromTagNameStripsUppercaseV()
     {
-        var uri = new Uri("https://example.com");
-        var result = VersionDetection.ExtractVersionFromUri(uri);
-        await Assert.That(result).IsNotNull();
+        var result = VersionDetection.ExtractVersionFromTagName("V1.2.3.4");
+        await Assert.That(result).IsEqualTo("1.2.3.4");
     }
 
     [Test]
-    public async Task ExtractVersionFromUriReturnsLastSegment()
+    public async Task ExtractVersionFromTagNameNoPrefix()
     {
-        var uri = new Uri("https://github.com/owner/repo/releases/tag/5.6.7.8");
-        var result = VersionDetection.ExtractVersionFromUri(uri);
-        await Assert.That(result).IsEqualTo("5.6.7.8");
+        var result = VersionDetection.ExtractVersionFromTagName("1.2.3.4");
+        await Assert.That(result).IsEqualTo("1.2.3.4");
+    }
+
+    [Test]
+    public async Task ExtractVersionFromTagNameTrimsWhitespaceAndV()
+    {
+        var result = VersionDetection.ExtractVersionFromTagName(" v1.2.3.4 ");
+        await Assert.That(result).IsEqualTo("1.2.3.4");
     }
 
     // ========================================================================
-    // GetCurrentVersion / LatestReleaseUrl
+    // GetCurrentVersion
     // ========================================================================
 
     [Test]
@@ -114,8 +132,4 @@ public sealed class TestVersionDetection
         var result = VersionDetection.GetCurrentVersion();
         await Assert.That(result).IsNotNull();
     }
-
-    [Test]
-    public async Task LatestReleaseUrlIsNotEmpty() =>
-        await Assert.That(VersionDetection.LatestReleaseUrl).IsNotEmpty();
 }

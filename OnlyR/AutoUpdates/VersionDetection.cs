@@ -1,32 +1,42 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.Json;
 using Serilog;
 
 namespace OnlyR.AutoUpdates;
 
 /// <summary>
 /// Used to get the installed OnlyR version and the
-/// latest OnlyR release version from the github webpage.
+/// latest OnlyR release version from the GitHub REST API.
 /// </summary>
 internal static class VersionDetection
 {
-    public static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
+    private static string LatestReleaseApiUrl => "https://api.github.com/repos/AntonyCorbett/OnlyR/releases/latest";
 
     [ExcludeFromCodeCoverage]
-    public static string? GetLatestReleaseVersionString()
+    private static string? GetLatestReleaseVersionString()
     {
+        string? version = null;
+
         try
         {
 #pragma warning disable U2U1025 // Avoid instantiating HttpClient
             using var client = new HttpClient();
 #pragma warning restore U2U1025 // Avoid instantiating HttpClient
 
-            var response = client.GetAsync(LatestReleaseUrl).Result;
-            if (response.IsSuccessStatusCode)
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("OnlyR");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+
+            var response = client.GetAsync(LatestReleaseApiUrl).Result;
+            response.EnsureSuccessStatusCode();
+
+            var content = response.Content.ReadAsStringAsync().Result;
+            using var document = JsonDocument.Parse(content);
+            if (document.RootElement.TryGetProperty("tag_name", out var tagNameElement))
             {
-                return ExtractVersionFromUri(response.RequestMessage?.RequestUri);
+                version = ExtractVersionFromTagName(tagNameElement.GetString());
             }
         }
         catch (Exception ex)
@@ -34,24 +44,11 @@ internal static class VersionDetection
             Log.Logger.Error(ex, "Getting latest release version");
         }
 
-        return null;
+        return version;
     }
 
-    public static string? ExtractVersionFromUri(Uri? uri)
-    {
-        if (uri == null)
-        {
-            return null;
-        }
-
-        var segments = uri.Segments;
-        if (segments.Length == 0)
-        {
-            return null;
-        }
-
-        return segments[^1];
-    }
+    public static string? ExtractVersionFromTagName(string? tagName) =>
+        string.IsNullOrWhiteSpace(tagName) ? null : tagName.Trim().TrimStart('v', 'V');
 
     public static Version? GetLatestReleaseVersion()
     {
@@ -69,6 +66,7 @@ internal static class VersionDetection
         var tokens = versionString.Split('.');
         if (tokens.Length != 4)
         {
+            Log.Logger.Error("Invalid version string format. Expected format: major.minor.build.revision. Value: {VersionString}", versionString);
             return null;
         }
 
@@ -77,6 +75,7 @@ internal static class VersionDetection
             !int.TryParse(tokens[2], out var build) ||
             !int.TryParse(tokens[3], out var revision))
         {
+            Log.Logger.Error("Failed to parse version string as integers {VersionString} ", versionString);
             return null;
         }
 
