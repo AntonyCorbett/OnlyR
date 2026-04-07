@@ -9,6 +9,7 @@
     <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
     <PackageVersion Include="NAudio.WinForms" Version="2.3.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.5" />
+
     <!-- OnlyR -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
@@ -19,10 +20,12 @@
     <PackageVersion Include="WinCopies.WindowsAPICodePack.Shell" Version="2.12.0.2" />
 
     <!-- OnlyR.Tests -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
     <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="Rocks" Version="10.1.0" />
     <PackageVersion Include="TUnit" Version="1.28.7" />
     <PackageVersion Include="TUnit.Mocks" Version="1.28.7-beta" />
+
     <!-- Shared -->
     <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
   </ItemGroup>
