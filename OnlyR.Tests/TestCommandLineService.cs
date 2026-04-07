@@ -53,4 +53,54 @@ public sealed class TestCommandLineService
         var svc = new CommandLineService();
         await Assert.That(svc.NoCopy).IsFalse();
     }
+
+    [Test]
+    public async Task ParseNoGpuFlag()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--nogpu"]);
+        await Assert.That(svc.NoGpu).IsTrue();
+    }
+
+    [Test]
+    public async Task ParseIdParameter()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--id", "myIdentifier"]);
+        await Assert.That(svc.OptionsIdentifier).IsEqualTo("myIdentifier");
+    }
+
+    [Test]
+    public async Task ParseNoSettingsFlag()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--nosettings"]);
+        await Assert.That(svc.NoSettings).IsTrue();
+    }
+
+    [Test]
+    public async Task ParseNoFolderFlag()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--nofolder"]);
+        await Assert.That(svc.NoFolder).IsTrue();
+    }
+
+    [Test]
+    public async Task ParseNoSaveFlag()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--nosave"]);
+        await Assert.That(svc.NoSave).IsTrue();
+    }
+
+    [Test]
+    public async Task ParseMultipleFlags()
+    {
+        var svc = new CommandLineService();
+        svc.Parse(["app.exe", "--nogpu", "--nosettings", "--id", "test123"]);
+        await Assert.That(svc.NoGpu).IsTrue();
+        await Assert.That(svc.NoSettings).IsTrue();
+        await Assert.That(svc.OptionsIdentifier).IsEqualTo("test123");
+    }
 }
