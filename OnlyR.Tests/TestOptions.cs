@@ -1,34 +1,33 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using OnlyR.Services.Options;
 
 namespace OnlyR.Tests
 {
-    [TestClass]
     public class TestOptions
     {
-        private readonly int _badIntValue = -100;
+        private const int BadIntValue = -100;
 
-        [TestMethod]
-        public void TestSanitize()
+        [Test]
+        public async Task TestSanitize()
         {
             var options = new Options
             {
-                ChannelCount = _badIntValue,
-                MaxRecordingTimeSeconds = _badIntValue,
-                MaxRecordingsInOneFolder = _badIntValue,
-                Mp3BitRate = _badIntValue,
-                RecordingDevice = _badIntValue,
-                SampleRate = _badIntValue,
+                ChannelCount = BadIntValue,
+                MaxRecordingTimeSeconds = BadIntValue,
+                MaxRecordingsInOneFolder = BadIntValue,
+                Mp3BitRate = BadIntValue,
+                RecordingDevice = BadIntValue,
+                SampleRate = BadIntValue,
             };
 
             options.Sanitize();
 
-            Assert.AreNotEqual(options.ChannelCount, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingTimeSeconds, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingsInOneFolder, _badIntValue);
-            Assert.AreNotEqual(options.Mp3BitRate, _badIntValue);
-            Assert.AreNotEqual(options.RecordingDevice, _badIntValue);
-            Assert.AreNotEqual(options.SampleRate, _badIntValue);
+            await Assert.That(options.ChannelCount).IsNotEqualTo(BadIntValue);
+            await Assert.That(options.MaxRecordingTimeSeconds).IsNotEqualTo(BadIntValue);
+            await Assert.That(options.MaxRecordingsInOneFolder).IsNotEqualTo(BadIntValue);
+            await Assert.That(options.Mp3BitRate).IsNotEqualTo(BadIntValue);
+            await Assert.That(options.RecordingDevice).IsNotEqualTo(BadIntValue);
+            await Assert.That(options.SampleRate).IsNotEqualTo(BadIntValue);
         }
     }
 }

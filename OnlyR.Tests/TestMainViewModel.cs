@@ -1,8 +1,15 @@
-﻿using System.Threading;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using OnlyR.Core.Enums;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OnlyR.Model;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.Options;
+using OnlyR.Services.PurgeRecordings;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
 
@@ -10,105 +17,129 @@ namespace OnlyR.Tests
 {
 #pragma warning disable CA1416 // Validate platform compatibility
 
-    [TestClass]
     public class TestMainViewModel
     {
-        [ClassInitialize]
-        public static void ClassInit(TestContext _)
+        [Before(Class)]
+        public static void ClassInit(ClassHookContext context)
         {
             Application.LoadComponent(
                 new Uri("/OnlyR;component/App.xaml", UriKind.Relative));
         }
 
-        [TestMethod]
-        public void TestNavigation()
+        [Test]
+        public async Task TestNavigation()
         {
-            var success = false;
+            NavigationTestResult? result = null;
 
+            var tcs = new TaskCompletionSource();
             var t = new Thread(() =>
             {
-                var vm = CreateMainViewModel();
-
-                OpenOnRecordingPage(vm);
-                NavToOptionsPage(vm);
-                NavToRecordingsPage(vm);
-                StartRecording(vm);
-
-                success = true;
+                try
+                {
+                    result = RunNavigationTest();
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
             });
 
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
-            t.Join();
+            await tcs.Task;
 
-            Assert.IsTrue(success);
+            // Initial page assertions
+            await Assert.That(result).IsNotNull();
+            await Assert.That(result!.InitialPageIsNotNull).IsTrue();
+            await Assert.That(result.InitialPageIsRecordingPage).IsTrue();
+            await Assert.That(result.InitialDataContextIsRecordingVm).IsTrue();
+
+            // Navigation assertions
+            await Assert.That(result.AfterNavToSettingsIsSettingsPage).IsTrue();
+            await Assert.That(result.AfterNavBackIsRecordingPage).IsTrue();
+
+            // Recording assertions
+            await Assert.That(result.ElapsedTimeBeforeRecording).IsEqualTo(TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
+            await Assert.That(result.StatusAfterStart).IsEqualTo(RecordingStatus.Recording);
+            await Assert.That(result.StatusAfterStop).IsEqualTo(RecordingStatus.NotRecording);
         }
 
-        private static void StartRecording(MainViewModel vm)
+        private static NavigationTestResult RunNavigationTest()
         {
-            Assert.IsNotNull(vm.CurrentPage);
+            var vm = CreateMainViewModel();
 
-            var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
-            
-            Assert.AreEqual(rvm.ElapsedTimeStr, TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
-            rvm.StartRecordingCommand.Execute(null);
+            // Open on recording page
+            var initialPageIsNotNull = vm.CurrentPage != null;
+            var initialPageIsRecordingPage = vm.CurrentPage is Pages.RecordingPage;
+            var initialDataContextIsRecordingVm = vm.CurrentPage?.DataContext is RecordingPageViewModel;
 
-            Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.Recording);
-
-            rvm.StopRecordingCommand.Execute(null);
-            Assert.IsTrue(rvm.RecordingStatus == RecordingStatus.NotRecording);
-        }
-
-        private static void NavToRecordingsPage(MainViewModel vm)
-        {
-            Assert.IsNotNull(vm.CurrentPage);
-
-            var svm = (SettingsPageViewModel)vm.CurrentPage.DataContext;
-            svm.NavigateRecordingCommand.Execute(null);
-
-            Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
-        }
-
-        private static void NavToOptionsPage(MainViewModel vm)
-        {
-            Assert.IsNotNull(vm.CurrentPage);
-
-            var rvm = (RecordingPageViewModel)vm.CurrentPage.DataContext;
+            // Navigate to options
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
             rvm.NavigateSettingsCommand.Execute(null);
+            var afterNavToSettingsIsSettingsPage = vm.CurrentPage is Pages.SettingsPage;
 
-            Assert.IsTrue(vm.CurrentPage is Pages.SettingsPage);
-        }
+            // Navigate back to recording
+            var svm = (SettingsPageViewModel)vm.CurrentPage!.DataContext!;
+            svm.NavigateRecordingCommand.Execute(null);
+            var afterNavBackIsRecordingPage = vm.CurrentPage is Pages.RecordingPage;
 
-        private static void OpenOnRecordingPage(MainViewModel vm)
-        {
-            // open on recording page...
-            
-            Assert.IsTrue(vm.CurrentPage != null);
-            Assert.IsTrue(vm.CurrentPage is Pages.RecordingPage);
-            Assert.IsTrue(vm.CurrentPage.DataContext is RecordingPageViewModel);
+            // Start and stop recording
+            rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            var elapsedTimeBeforeRecording = rvm.ElapsedTimeStr;
+            rvm.StartRecordingCommand.Execute(null);
+            var statusAfterStart = rvm.RecordingStatus;
+            rvm.StopRecordingCommand.Execute(null);
+            var statusAfterStop = rvm.RecordingStatus;
+
+            return new NavigationTestResult(
+                initialPageIsNotNull,
+                initialPageIsRecordingPage,
+                initialDataContextIsRecordingVm,
+                afterNavToSettingsIsSettingsPage,
+                afterNavBackIsRecordingPage,
+                elapsedTimeBeforeRecording,
+                statusAfterStart,
+                statusAfterStop);
         }
 
         private static MainViewModel CreateMainViewModel()
         {
-            var audioService = MockGenerator.CreateAudioService();
-            var optionsService = MockGenerator.CreateOptionsService();
-            var destService = MockGenerator.CreateRecordingsDestinationService();
-            var commandLineService = MockGenerator.CreateCommandLineService();
-            var copyService = MockGenerator.CreateCopyRecordingsService();
-            var snackbarService = MockGenerator.CreateSnackbarService();
-            var purgeRecordingsService = MockGenerator.CreatePurgeRecordingsService();
-            var silenceService = MockGenerator.CreateSilenceService();
+            var audioService = new MockAudioService();
+
+            var optionsMock = Mock.Of<IOptionsService>();
+            optionsMock.Options.Returns(new Options());
+
+            var destMock = Mock.Of<IRecordingDestinationService>();
+            destMock.GetRecordingFileCandidate(Any<IOptionsService>(), Any<DateTime>(), Any<string?>())
+                .Returns(new RecordingCandidate(DateTime.Now, 1, ".", "."));
+
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            var copyMock = Mock.Of<ICopyRecordingsService>();
+            var snackbarMock = Mock.Of<ISnackbarService>();
+            var purgeMock = Mock.Of<IPurgeRecordingsService>();
+            var silenceMock = Mock.Of<ISilenceService>();
 
             return new MainViewModel(
                 audioService,
-                optionsService.Object,
-                commandLineService.Object,
-                destService.Object,
-                copyService.Object,
-                snackbarService.Object,
-                purgeRecordingsService.Object,
-                silenceService.Object);
+                optionsMock.Object,
+                commandLineMock.Object,
+                destMock.Object,
+                copyMock.Object,
+                snackbarMock.Object,
+                purgeMock.Object,
+                silenceMock.Object);
         }
+
+        private sealed record NavigationTestResult(
+            bool InitialPageIsNotNull,
+            bool InitialPageIsRecordingPage,
+            bool InitialDataContextIsRecordingVm,
+            bool AfterNavToSettingsIsSettingsPage,
+            bool AfterNavBackIsRecordingPage,
+            string ElapsedTimeBeforeRecording,
+            RecordingStatus StatusAfterStart,
+            RecordingStatus StatusAfterStop);
     }
 
 #pragma warning restore CA1416 // Validate platform compatibility

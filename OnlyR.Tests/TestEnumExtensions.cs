@@ -1,24 +1,24 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Utils;
 
 namespace OnlyR.Tests
 {
-    [TestClass]
     public class TestEnumExtensions
     {
-        [TestMethod]
-#pragma warning disable S2699 // Tests should include assertions
-        public void ValidDescriptions()
-#pragma warning restore S2699 // Tests should include assertions
+        [Test]
+        public async Task ValidDescriptions()
         {
-            foreach (RecordingStatus status in Enum.GetValues(typeof(RecordingStatus)))
+            foreach (var status in Enum.GetValues<RecordingStatus>())
             {
-                if (status != RecordingStatus.Unknown)
+                if (status == RecordingStatus.Unknown)
                 {
-                    status.GetDescriptiveText();
+                    continue;
                 }
+
+                var description = status.GetDescriptiveText();
+                await Assert.That(description).IsNotNull();
             }
         }
     }

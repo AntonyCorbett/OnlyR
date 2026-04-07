@@ -36,3 +36,13 @@ jobs:
 
       - name: Build
         run: dotnet build OnlyR.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test --project OnlyR.Tests/OnlyR.Tests.csproj --configuration Release --no-build --report-trx --report-trx-filename test-results.trx --results-directory ./test-results
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: ./test-results
