@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using OnlyR.Utils;
@@ -368,6 +369,61 @@ public sealed class TestFileUtils
     public async Task GetSystemTempFolderReturnsValidPath()
     {
         var result = FileUtils.GetSystemTempFolder();
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).IsNotEmpty();
+    }
+
+    // ========================================================================
+    // FindSuitableRecordingFolderToShow & GetLogFolder
+    // ========================================================================
+
+    [Test]
+    public async Task FindSuitableRecordingFolderToShowReturnsTodayFolder()
+    {
+        var today = DateTime.Today;
+        var todayFolder = Path.Combine(
+            tempDir,
+            today.ToString("yyyy", CultureInfo.InvariantCulture),
+            today.ToString("MM", CultureInfo.InvariantCulture),
+            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        Directory.CreateDirectory(todayFolder);
+
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result.EndsWith(today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), StringComparison.Ordinal)).IsTrue();
+    }
+
+    [Test]
+    public async Task FindSuitableRecordingFolderToShowFallsBackToMonthly()
+    {
+        var today = DateTime.Today;
+        var monthFolder = Path.Combine(
+            tempDir,
+            today.ToString("yyyy", CultureInfo.InvariantCulture),
+            today.ToString("MM", CultureInfo.InvariantCulture));
+        Directory.CreateDirectory(monthFolder);
+
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result.EndsWith(today.ToString("MM", CultureInfo.InvariantCulture), StringComparison.Ordinal)).IsTrue();
+    }
+
+    [Test]
+    public async Task FindSuitableRecordingFolderToShowFallsBackToRoot()
+    {
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).IsEqualTo(tempDir);
+    }
+
+    [Test]
+    public async Task GetLogFolderReturnsNonEmptyPath()
+    {
+        var result = FileUtils.GetLogFolder();
+
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsNotEmpty();
     }

@@ -1,6 +1,7 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -577,6 +578,93 @@ public sealed class TestSettingsPageViewModel
     [Test]
     public async Task PageNameIsSettings() =>
         await Assert.That(SettingsPageViewModel.PageName).IsEqualTo("SettingsPage");
+
+    [Test]
+    public async Task DestinationFolderRoundTrips()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.DestinationFolder = "C:\\TestFolder";
+                result = vm.DestinationFolder;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo("C:\\TestFolder");
+    }
+
+    [Test]
+    public async Task CodecSetterFiresPropertyChanged()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName != null)
+                    {
+                        changedProperties.Add(args.PropertyName);
+                    }
+                };
+                vm.Codec = AudioCodec.Wav;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties).Contains("ShowBitRate");
+    }
+
+    [Test]
+    public async Task NavigateRecordingCommandIsNotNull()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.NavigateRecordingCommand != null;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
 
     private static SettingsPageViewModel CreateViewModel(Options? options = null)
     {

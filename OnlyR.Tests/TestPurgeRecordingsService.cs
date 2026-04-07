@@ -37,9 +37,9 @@ public sealed class TestPurgeRecordingsService
     {
         var dayFolder = Path.Combine(
             rootFolder,
-            date.ToString("yyyy"),
-            date.ToString("MM"),
-            date.ToString("yyyy-MM-dd"));
+            date.ToString("yyyy", CultureInfo.InvariantCulture),
+            date.ToString("MM", CultureInfo.InvariantCulture),
+            date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
 
         Directory.CreateDirectory(dayFolder);
 
@@ -324,6 +324,118 @@ public sealed class TestPurgeRecordingsService
 
             await Assert.That(deletedCount).IsEqualTo(0);
             service.Dispose();
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
+    public async Task PurgeKeepsNonAudioFiles()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            var oldDate = DateTime.Now.AddDays(-60);
+            var dayFolder = Path.Combine(
+                dir,
+                oldDate.ToString("yyyy", CultureInfo.InvariantCulture),
+                oldDate.ToString("MM", CultureInfo.InvariantCulture),
+                oldDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            Directory.CreateDirectory(dayFolder);
+
+            var txtFilePath = Path.Combine(dayFolder, "notes.txt");
+            await File.WriteAllTextAsync(txtFilePath, "some text content");
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => service = CreateService(dir, recordingsLifeTimeDays: 30));
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                await Assert.That(deletedCount).IsEqualTo(0);
+                await Assert.That(File.Exists(txtFilePath)).IsTrue();
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
+    public async Task PurgeWithOptionsIdentifier()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            var oldDate = DateTime.Now.AddDays(-60);
+            var subDir = Path.Combine(dir, "testId");
+            Directory.CreateDirectory(subDir);
+            CreateRecordingFile(subDir, oldDate);
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30, optionsIdentifier: "testId"); });
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                await Assert.That(deletedCount).IsGreaterThanOrEqualTo(1);
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
+    public async Task RemoveEmptyFoldersKeepsNonEmptyFolder()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            var oldDate = DateTime.Now.AddDays(-60);
+            var oldFilePath = CreateRecordingFile(dir, oldDate);
+            var dateFolderPath = Path.GetDirectoryName(oldFilePath)!;
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+                await Assert.That(foldersDeleted).IsEqualTo(0);
+                await Assert.That(Directory.Exists(dateFolderPath)).IsTrue();
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
         }
         finally
         {

@@ -13,6 +13,7 @@ using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
+using System.Globalization;
 
 namespace OnlyR.Tests;
 
@@ -53,7 +54,7 @@ public sealed class TestMainViewModel
         await Assert.That(result.AfterNavBackIsRecordingPage).IsTrue();
 
         // Recording assertions
-        await Assert.That(result.ElapsedTimeBeforeRecording).IsEqualTo(TimeSpan.Zero.ToString("hh\\:mm\\:ss"));
+        await Assert.That(result.ElapsedTimeBeforeRecording).IsEqualTo(TimeSpan.Zero.ToString("hh\\:mm\\:ss", CultureInfo.InvariantCulture));
         await Assert.That(result.StatusAfterStart).IsEqualTo(RecordingStatus.Recording);
         await Assert.That(result.StatusAfterStop).IsEqualTo(RecordingStatus.NotRecording);
     }
@@ -215,6 +216,72 @@ public sealed class TestMainViewModel
         await tcs.Task;
 
         await Assert.That(cancelValue).IsTrue();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task ClosingWhenRecordingAndDefaultOptionsBlocksClose()
+    {
+        bool? cancelValue = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+
+                // Start recording
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                rvm.StartRecordingCommand.Execute(null);
+
+                var args = new System.ComponentModel.CancelEventArgs();
+                vm.Closing(this, args);
+                cancelValue = args.Cancel;
+
+                // Stop recording to clean up
+                rvm.StopRecordingCommand.Execute(null);
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(cancelValue).IsTrue();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task IsNotRecordingInitially()
+    {
+        RecordingStatus? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                result = rvm.RecordingStatus;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).IsEqualTo(RecordingStatus.NotRecording);
     }
 
     private static MainViewModel CreateMainViewModel(Options? options = null)

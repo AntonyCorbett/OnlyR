@@ -12,8 +12,10 @@ using OnlyR.Services.Options;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
+using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
+using OnlyR.ViewModel.Messages;
 
 namespace OnlyR.Tests;
 
@@ -640,6 +642,146 @@ public sealed class TestRecordingPageViewModel
 
         await Assert.That(changedProperties).IsNotNull();
         await Assert.That(changedProperties!).Contains("ErrorMsg");
+    }
+
+    [Test]
+    public async Task StatusStrSetterUpdatesValue()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.StatusStr = "Recording...";
+                result = vm.StatusStr;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo("Recording...");
+    }
+
+    [Test]
+    public async Task IsSaveVisibleFalseWhenNoSaveTrue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoSave.Returns(true);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                result = vm.IsSaveVisible;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task SaveHintEmptyWhenNoDrives()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.SaveHint;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(string.Empty);
+    }
+
+    [Test]
+    public async Task RemovableDriveMessageAddsMakesVisible()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoSave.Returns(false);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+                result = vm.IsSaveVisible;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task RemovableDriveRemovedMakesInvisible()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var commandLineMock = Mock.Of<ICommandLineService>();
+                commandLineMock.NoSave.Returns(false);
+                var vm = CreateViewModel(cmdLineMock: commandLineMock);
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = false });
+                result = vm.IsSaveVisible;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
     }
 
     private static RecordingPageViewModel CreateViewModel(Options? options = null, Mock<ICommandLineService>? cmdLineMock = null)
