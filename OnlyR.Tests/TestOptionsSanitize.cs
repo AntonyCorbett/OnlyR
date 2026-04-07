@@ -87,6 +87,23 @@ public class TestOptionsSanitize
     }
 
     [Test]
+    public async Task SanitizeNegativeRecordingsLifeTimeDays()
+    {
+        var options = new Options { RecordingsLifeTimeDays = -10 };
+        options.Sanitize();
+        await Assert.That(options.RecordingsLifeTimeDays).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task SanitizeNullGenre()
+    {
+        var options = new Options { Genre = null };
+        options.Sanitize();
+        await Assert.That(options.Genre).IsNotNull();
+        await Assert.That(options.Genre).IsNotEmpty();
+    }
+
+    [Test]
     public async Task DefaultConstructorProducesValidOptions()
     {
         var options = new Options();

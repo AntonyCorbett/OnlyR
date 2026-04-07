@@ -143,6 +143,36 @@ public class TestSampleAggregator
     }
 
     [Test]
+    public async Task ConstructorClampsSmallReportCount()
+    {
+        // reportCount = 100 * 50 / 1000 = 5, clamped to 10.
+        var aggregator = new SampleAggregator(100, 50);
+        var fired = 0;
+
+        aggregator.ReportEvent += (_, _) => fired++;
+
+        for (var i = 0; i < 10; i++)
+        {
+            aggregator.Add(0.1f);
+        }
+
+        await Assert.That(fired).IsEqualTo(1);
+    }
+
+    [Test]
+    public void NoExceptionWithoutSubscriber()
+    {
+        // reportCount = 100 * 100 / 1000 = 10.
+        var aggregator = new SampleAggregator(100, 100);
+
+        // Add enough samples to exceed threshold with no event handler — should not throw.
+        for (var i = 0; i < 10; i++)
+        {
+            aggregator.Add(0.5f);
+        }
+    }
+
+    [Test]
     public async Task MultipleReportCycles()
     {
         // reportCount = 100 * 100 / 1000 = 10.

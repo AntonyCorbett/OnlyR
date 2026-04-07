@@ -1,9 +1,11 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
+using OnlyR.Utils;
 
 namespace OnlyR.Tests;
 
@@ -129,5 +131,57 @@ public class TestRecordingDestinationService
 
         // Assert
         await Assert.That(candidate.FinalPath).EndsWith(".wav");
+    }
+
+    [Test]
+    public async Task ThrowsWhenMaxRecordingsReached()
+    {
+        // Arrange
+        var optionsMock = Mock.Of<IOptionsService>();
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3, MaxRecordingsInOneFolder = 10 };
+        optionsMock.Options.Returns(options);
+
+        var service = new RecordingDestinationService();
+        var testDate = new DateTime(2026, 4, 7, 10, 30, 0);
+
+        // Pre-create destination folder and files for tracks 001-009.
+        var destFolder = FileUtils.GetDestinationFolder(testDate, null, _tempDir);
+        Directory.CreateDirectory(destFolder);
+
+        var coreName = $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)testDate.DayOfWeek]} {testDate:dd MMMM yyyy}";
+
+        for (var i = 1; i <= 9; i++)
+        {
+            File.Create(Path.Combine(destFolder, $"{coreName} - {i:D3}.mp3")).Dispose();
+        }
+
+        // Act & Assert
+        await Assert.That(() => service.GetRecordingFileCandidate(optionsMock.Object, testDate, null))
+            .Throws<NotSupportedException>();
+    }
+
+    [Test]
+    public async Task MalformedFilenameIsSkipped()
+    {
+        // Arrange
+        var optionsMock = Mock.Of<IOptionsService>();
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
+        optionsMock.Options.Returns(options);
+
+        var service = new RecordingDestinationService();
+        var testDate = new DateTime(2026, 4, 7, 10, 30, 0);
+
+        // Pre-create destination folder with a malformed filename (non-numeric track).
+        var destFolder = FileUtils.GetDestinationFolder(testDate, null, _tempDir);
+        Directory.CreateDirectory(destFolder);
+
+        var coreName = $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)testDate.DayOfWeek]} {testDate:dd MMMM yyyy}";
+        File.Create(Path.Combine(destFolder, $"{coreName} - XYZ.mp3")).Dispose();
+
+        // Act
+        var candidate = service.GetRecordingFileCandidate(optionsMock.Object, testDate, null);
+
+        // Assert - malformed file is skipped, so track starts at 1.
+        await Assert.That(candidate.TrackNumber).IsEqualTo(1);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -45,13 +46,20 @@ namespace OnlyR.Utils
             var enumAttribute = enumValue.GetType()
                 .GetMember(enumValue.ToString())[0]
                 .GetCustomAttribute<EnumMemberAttribute>();
-            
-            if (enumAttribute == null || string.IsNullOrWhiteSpace(enumAttribute.Value))
+
+            var value = ValidateEnumMemberAttribute(enumAttribute, enumValue);
+            return value.ToLower(CultureInfo.InvariantCulture);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static string ValidateEnumMemberAttribute(EnumMemberAttribute? attribute, AudioCodec enumValue)
+        {
+            if (attribute == null || string.IsNullOrWhiteSpace(attribute.Value))
             {
                 throw new ArgumentException(nameof(enumValue));
             }
-            
-            return enumAttribute.Value.ToLower(CultureInfo.InvariantCulture);
+
+            return attribute.Value;
         }
     }
 }
