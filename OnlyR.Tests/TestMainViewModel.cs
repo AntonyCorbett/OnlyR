@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Model;
@@ -21,28 +20,10 @@ namespace OnlyR.Tests;
 public sealed class TestMainViewModel
 {
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task TestNavigation()
     {
-        NavigationTestResult? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
-        {
-            try
-            {
-                result = RunNavigationTest();
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
-        });
-
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
+        var result = await StaThreadHelper.RunOnSta(() => RunNavigationTest());
 
         // Initial page assertions
         await Assert.That(result).IsNotNull();
@@ -99,366 +80,201 @@ public sealed class TestMainViewModel
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task CurrentPageNameMatchesRecordingPage()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                result = vm.CurrentPageName;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            return vm.CurrentPageName;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo(RecordingPageViewModel.PageName);
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task AlwaysOnTopReturnsOptionsValue()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel(new Options { AlwaysOnTop = true });
-                result = vm.AlwaysOnTop;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel(new Options { AlwaysOnTop = true });
+            return vm.AlwaysOnTop;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task ClosingWhenNotRecordingDoesNotCancel()
     {
-        bool? cancelValue = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var cancelValue = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                var args = new System.ComponentModel.CancelEventArgs();
-                vm.Closing(this, args);
-                cancelValue = args.Cancel;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            var args = new System.ComponentModel.CancelEventArgs();
+            vm.Closing(this, args);
+            return args.Cancel;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(cancelValue).IsFalse();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task ClosingWhenRecordingAndAllowCloseCancels()
     {
-        bool? cancelValue = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var cancelValue = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { AllowCloseWhenRecording = true };
-                var vm = CreateMainViewModel(options);
+            var options = new Options { AllowCloseWhenRecording = true };
+            var vm = CreateMainViewModel(options);
 
-                // Start recording
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                rvm.StartRecordingCommand.Execute(null);
+            // Start recording
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            rvm.StartRecordingCommand.Execute(null);
 
-                var args = new System.ComponentModel.CancelEventArgs();
-                vm.Closing(this, args);
-                cancelValue = args.Cancel;
+            var args = new System.ComponentModel.CancelEventArgs();
+            vm.Closing(this, args);
+            var cancel = args.Cancel;
 
-                // Stop recording to clean up
-                rvm.StopRecordingCommand.Execute(null);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            // Stop recording to clean up
+            rvm.StopRecordingCommand.Execute(null);
+            return cancel;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(cancelValue).IsTrue();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task ClosingWhenRecordingAndDefaultOptionsBlocksClose()
     {
-        bool? cancelValue = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var cancelValue = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
+            var vm = CreateMainViewModel();
 
-                // Start recording
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                rvm.StartRecordingCommand.Execute(null);
+            // Start recording
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            rvm.StartRecordingCommand.Execute(null);
 
-                var args = new System.ComponentModel.CancelEventArgs();
-                vm.Closing(this, args);
-                cancelValue = args.Cancel;
+            var args = new System.ComponentModel.CancelEventArgs();
+            vm.Closing(this, args);
+            var cancel = args.Cancel;
 
-                // Stop recording to clean up
-                rvm.StopRecordingCommand.Execute(null);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            // Stop recording to clean up
+            rvm.StopRecordingCommand.Execute(null);
+            return cancel;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(cancelValue).IsTrue();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task IsNotRecordingInitially()
     {
-        RecordingStatus? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                result = rvm.RecordingStatus;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            return rvm.RecordingStatus;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
-        await Assert.That(result).IsNotNull();
         await Assert.That(result).IsEqualTo(RecordingStatus.NotRecording);
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task CurrentPagePropertyChangedOnNavigation()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateMainViewModel();
+            var properties = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateMainViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
+                    properties.Add(e.PropertyName);
+                }
+            };
 
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                rvm.NavigateSettingsCommand.Execute(null);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            rvm.NavigateSettingsCommand.Execute(null);
+            return properties;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
-        await Assert.That(changedProperties!).Contains("CurrentPage");
+        await Assert.That(changedProperties).Contains("CurrentPage");
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task CurrentPageNameUpdatesOnNavigation()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                rvm.NavigateSettingsCommand.Execute(null);
-                result = vm.CurrentPageName;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            rvm.NavigateSettingsCommand.Execute(null);
+            return vm.CurrentPageName;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo(SettingsPageViewModel.PageName);
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task AlwaysOnTopFalseByDefault()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                result = vm.AlwaysOnTop;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            return vm.AlwaysOnTop;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task TheSnackbarMessageQueueIsNotNull()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateMainViewModel();
-                result = vm.TheSnackbarMessageQueue != null;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateMainViewModel();
+            return vm.TheSnackbarMessageQueue != null;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task StartRecordingOnLaunchStartsRecording()
     {
-        RecordingStatus? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { StartRecordingOnLaunch = true };
-                var vm = CreateMainViewModel(options);
-                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
-                result = rvm.RecordingStatus;
-                rvm.StopRecordingCommand.Execute(null);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { StartRecordingOnLaunch = true };
+            var vm = CreateMainViewModel(options);
+            var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+            var status = rvm.RecordingStatus;
+            rvm.StopRecordingCommand.Execute(null);
+            return status;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo(RecordingStatus.Recording);
     }
 
     [Test]
-    [NotInParallel("WpfApp")]
+    [NotInParallel("Messenger")]
     public async Task StartMinimizedSuppressesSplash()
     {
-        bool? success = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var success = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { StartMinimized = true };
-                var vm = CreateMainViewModel(options);
-                success = vm.CurrentPage != null;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { StartMinimized = true };
+            var vm = CreateMainViewModel(options);
+            return vm.CurrentPage != null;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(success).IsTrue();
     }

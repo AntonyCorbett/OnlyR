@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -16,14 +15,6 @@ public sealed class TestSilenceService
         optionsMock.Options.Returns(options);
 
         return new SilenceService(optionsMock.Object);
-    }
-
-    private static void SetNonSilenceLastDetected(SilenceService service, DateTime value)
-    {
-        var field = typeof(SilenceService).GetField(
-            "_nonSilenceLastDetected",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        field!.SetValue(service, value);
     }
 
     [Test]
@@ -85,7 +76,7 @@ public sealed class TestSilenceService
     {
         var service = CreateService();
 
-        SetNonSilenceLastDetected(service, DateTime.UtcNow.AddSeconds(-5));
+        service.SetNonSilenceLastDetected(DateTime.UtcNow.AddSeconds(-5));
         var result = service.GetSecondsOfSilence();
 
         await Assert.That(result).IsGreaterThanOrEqualTo(4);

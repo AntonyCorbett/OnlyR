@@ -2,7 +2,6 @@
 
 using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using OnlyR.ViewModel.Messages;
@@ -26,81 +25,38 @@ public sealed class TestSessionEndingMessage
     [Test]
     public async Task ConstructorSetsArgs()
     {
-        SessionEndingMessage? message = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var message = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var args = CreateSessionEndingCancelEventArgs();
-                message = new SessionEndingMessage(args);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var args = CreateSessionEndingCancelEventArgs();
+            return new SessionEndingMessage(args);
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
-        await Assert.That(message!.SessionEndingArgs).IsNotNull();
+        await Assert.That(message.SessionEndingArgs).IsNotNull();
     }
 
     [Test]
     public async Task SessionEndingArgsReturnsSameInstance()
     {
-        SessionEndingCancelEventArgs? args = null;
-        SessionEndingMessage? message = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var (args, message) = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                args = CreateSessionEndingCancelEventArgs();
-                message = new SessionEndingMessage(args);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var a = CreateSessionEndingCancelEventArgs();
+            return (a, new SessionEndingMessage(a));
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
-        await Assert.That(message!.SessionEndingArgs).IsSameReferenceAs(args!);
+        await Assert.That(message.SessionEndingArgs).IsSameReferenceAs(args);
     }
 
     [Test]
     public async Task CancelPropertyIsPropagated()
     {
-        SessionEndingMessage? message = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var message = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var args = CreateSessionEndingCancelEventArgs();
-                args.Cancel = true;
-                message = new SessionEndingMessage(args);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var args = CreateSessionEndingCancelEventArgs();
+            args.Cancel = true;
+            return new SessionEndingMessage(args);
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
-        await Assert.That(message!.SessionEndingArgs.Cancel).IsTrue();
+        await Assert.That(message.SessionEndingArgs.Cancel).IsTrue();
     }
 }
 

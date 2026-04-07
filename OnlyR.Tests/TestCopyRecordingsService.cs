@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using OnlyR.Exceptions;
 using OnlyR.Services.Options;
@@ -12,49 +11,6 @@ namespace OnlyR.Tests;
 
 public sealed class TestCopyRecordingsService
 {
-    [Test]
-    public async Task GetRecordingsFolderReturnsNullWhenNonExistent()
-    {
-        var nonExistent = Path.Combine(Path.GetTempPath(), $"OnlyRTest_{Guid.NewGuid():N}");
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "GetRecordingsFolder",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-
-        var service = CreateService(nonExistent);
-        var result = method!.Invoke(service, Array.Empty<object>());
-
-        await Assert.That(result).IsNull();
-    }
-
-    [Test]
-    public async Task GetRecordingsFolderReturnsFolderWhenExists()
-    {
-        var todayFolder = CreateTodayRecordingsFolder();
-
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "GetRecordingsFolder",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-
-        var service = CreateService(tempDir);
-        var result = (string?)method!.Invoke(service, []);
-
-        await Assert.That(result).IsNotNull();
-        await Assert.That(result!).IsEqualTo(todayFolder);
-    }
-
-    [Test]
-    public async Task CopyThrowsNoRecordingsWhenOnlyNonAudioFiles()
-    {
-        var recordingsFolder = CreateTodayRecordingsFolder();
-        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.md"), "not audio");
-        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "data.json"), "{}");
-
-        var service = CreateService(tempDir);
-
-        await Assert.That(() => service.Copy(new List<char> { 'Z' }))
-            .Throws<NoRecordingsException>();
-    }
-
     private string tempDir = string.Empty;
 
     [Before(Test)]
@@ -73,32 +29,40 @@ public sealed class TestCopyRecordingsService
         }
     }
 
-    private sealed class StubDriveEjectionService : IDriveEjectionService
+    [Test]
+    public async Task GetRecordingsFolderReturnsNullWhenNonExistent()
     {
-        public bool Eject(char driveLetter) => true;
+        var nonExistent = Path.Combine(Path.GetTempPath(), $"OnlyRTest_{Guid.NewGuid():N}");
+        var service = CreateService(nonExistent);
+
+        var result = service.GetRecordingsFolder();
+
+        await Assert.That(result).IsNull();
     }
 
-    private static CopyRecordingsService CreateService(string destinationFolder)
+    [Test]
+    public async Task GetRecordingsFolderReturnsFolderWhenExists()
     {
-        var cmdMock = Mock.Of<ICommandLineService>();
-        cmdMock.OptionsIdentifier.Returns((string?)null);
+        var todayFolder = CreateTodayRecordingsFolder();
+        var service = CreateService(tempDir);
 
-        var optsMock = Mock.Of<IOptionsService>();
-        optsMock.Options.Returns(new Options { DestinationFolder = destinationFolder });
+        var result = service.GetRecordingsFolder();
 
-        return new CopyRecordingsService(cmdMock.Object, optsMock.Object, new StubDriveEjectionService());
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!).IsEqualTo(todayFolder);
     }
 
-    private string CreateTodayRecordingsFolder()
+    [Test]
+    public async Task CopyThrowsNoRecordingsWhenOnlyNonAudioFiles()
     {
-        var today = DateTime.Today;
-        var folder = Path.Combine(
-            tempDir,
-            today.ToString("yyyy", CultureInfo.InvariantCulture),
-            today.ToString("MM", CultureInfo.InvariantCulture),
-            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-        Directory.CreateDirectory(folder);
-        return folder;
+        var recordingsFolder = CreateTodayRecordingsFolder();
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.md"), "not audio");
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "data.json"), "{}");
+
+        var service = CreateService(tempDir);
+
+        await Assert.That(() => service.Copy(new List<char> { 'Z' }))
+            .Throws<NoRecordingsException>();
     }
 
     [Test]
@@ -127,14 +91,10 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task CanCopyFileReturnsTrueForAccessibleFile()
     {
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "CanCopyFile",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
         var filePath = Path.Combine(tempDir, "accessible.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
-        var result = (bool)method!.Invoke(null, [filePath])!;
+        var result = CopyRecordingsService.CanCopyFile(filePath);
 
         await Assert.That(result).IsTrue();
     }
@@ -142,13 +102,9 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task CanCopyFileReturnsFalseForMissingFile()
     {
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "CanCopyFile",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
         var filePath = Path.Combine(tempDir, "nonexistent.mp3");
 
-        var result = (bool)method!.Invoke(null, [filePath])!;
+        var result = CopyRecordingsService.CanCopyFile(filePath);
 
         await Assert.That(result).IsFalse();
     }
@@ -156,15 +112,11 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task IsFileLockedReturnsTrueForLockedFile()
     {
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "IsFileLocked",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
         var filePath = Path.Combine(tempDir, "locked.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         await using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
-        var result = (bool)method!.Invoke(null, [filePath])!;
+        var result = CopyRecordingsService.IsFileLocked(filePath);
 
         await Assert.That(result).IsTrue();
     }
@@ -172,14 +124,10 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task IsFileLockedReturnsFalseForUnlockedFile()
     {
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "IsFileLocked",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
         var filePath = Path.Combine(tempDir, "unlocked.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
-        var result = (bool)method!.Invoke(null, [filePath])!;
+        var result = CopyRecordingsService.IsFileLocked(filePath);
 
         await Assert.That(result).IsFalse();
     }
@@ -187,20 +135,44 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task GetSpaceNeedSumsFileSizes()
     {
-        var method = typeof(CopyRecordingsService).GetMethod(
-            "GetSpaceNeed",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
         var file1 = Path.Combine(tempDir, "file1.mp3");
         var file2 = Path.Combine(tempDir, "file2.mp3");
-        await File.WriteAllTextAsync(file1, "abcdef"); // 6 bytes
-        await File.WriteAllTextAsync(file2, "ghijklmnop"); // 10 bytes
+        await File.WriteAllTextAsync(file1, "abcdef");
+        await File.WriteAllTextAsync(file2, "ghijklmnop");
 
         var expectedSize = new FileInfo(file1).Length + new FileInfo(file2).Length;
         var files = new[] { file1, file2 };
 
-        var result = (long)method!.Invoke(null, [files])!;
+        var result = CopyRecordingsService.GetSpaceNeed(files);
 
         await Assert.That(result).IsEqualTo(expectedSize);
+    }
+
+    private sealed class StubDriveEjectionService : IDriveEjectionService
+    {
+        public bool Eject(char driveLetter) => true;
+    }
+
+    private static CopyRecordingsService CreateService(string destinationFolder)
+    {
+        var cmdMock = Mock.Of<ICommandLineService>();
+        cmdMock.OptionsIdentifier.Returns((string?)null);
+
+        var optsMock = Mock.Of<IOptionsService>();
+        optsMock.Options.Returns(new Options { DestinationFolder = destinationFolder });
+
+        return new CopyRecordingsService(cmdMock.Object, optsMock.Object, new StubDriveEjectionService());
+    }
+
+    private string CreateTodayRecordingsFolder()
+    {
+        var today = DateTime.Today;
+        var folder = Path.Combine(
+            tempDir,
+            today.ToString("yyyy", CultureInfo.InvariantCulture),
+            today.ToString("MM", CultureInfo.InvariantCulture),
+            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        Directory.CreateDirectory(folder);
+        return folder;
     }
 }

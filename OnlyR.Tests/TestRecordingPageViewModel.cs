@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Exceptions;
@@ -25,25 +24,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task InitialStatusIsNotRecording()
     {
-        RecordingStatus? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.RecordingStatus;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.RecordingStatus;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo(RecordingStatus.NotRecording);
     }
@@ -51,25 +36,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsNotRecordingTrueInitially()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.IsNotRecording;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.IsNotRecording;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -77,25 +48,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsRecordingFalseInitially()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.IsRecording;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.IsRecording;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -103,34 +60,21 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task RecordingStatusSetterFiresPropertyChanged()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
+                    props.Add(e.PropertyName);
+                }
+            };
 
-                vm.RecordingStatus = RecordingStatus.Recording;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties).IsNotNull();
         await Assert.That(changedProperties!).Contains("RecordingStatus");
@@ -146,27 +90,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ShowStopOnlyWhenPauseDisabled()
     {
-        ShowStopResult? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { ShowPauseRecordingButton = false };
-                var vm = CreateViewModel(options);
-                vm.RecordingStatus = RecordingStatus.Recording;
-                result = new ShowStopResult(vm.ShowStopOnly, vm.ShowStopAndPause);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { ShowPauseRecordingButton = false };
+            var vm = CreateViewModel(options);
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return new ShowStopResult(vm.ShowStopOnly, vm.ShowStopAndPause);
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.ShowStopOnly).IsTrue();
@@ -176,27 +106,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ShowStopAndPauseWhenPauseEnabled()
     {
-        ShowStopResult? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { ShowPauseRecordingButton = true };
-                var vm = CreateViewModel(options);
-                vm.RecordingStatus = RecordingStatus.Recording;
-                result = new ShowStopResult(vm.ShowStopOnly, vm.ShowStopAndPause);
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { ShowPauseRecordingButton = true };
+            var vm = CreateViewModel(options);
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return new ShowStopResult(vm.ShowStopOnly, vm.ShowStopAndPause);
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.ShowStopAndPause).IsTrue();
@@ -206,28 +122,14 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ClosingPreventsCloseWhenRecording()
     {
-        bool? cancelValue = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var cancelValue = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Recording;
-                var args = new CancelEventArgs();
-                vm.Closing(this, args);
-                cancelValue = args.Cancel;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Recording;
+            var args = new CancelEventArgs();
+            vm.Closing(this, args);
+            return args.Cancel;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(cancelValue).IsTrue();
     }
@@ -235,27 +137,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ClosingAllowsCloseWhenNotRecording()
     {
-        bool? cancelValue = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var cancelValue = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                var args = new CancelEventArgs();
-                vm.Closing(this, args);
-                cancelValue = args.Cancel;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            var args = new CancelEventArgs();
+            vm.Closing(this, args);
+            return args.Cancel;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(cancelValue).IsFalse();
     }
@@ -263,26 +151,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task MaxRecordingTimeStringNullWhenZero()
     {
-        string? result = "placeholder";
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { MaxRecordingTimeSeconds = 0 };
-                var vm = CreateViewModel(options);
-                result = vm.MaxRecordingTimeString;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { MaxRecordingTimeSeconds = 0 };
+            var vm = CreateViewModel(options);
+            return vm.MaxRecordingTimeString;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNull();
     }
@@ -290,26 +164,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task MaxRecordingTimeStringFormattedWhenSet()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var options = new Options { MaxRecordingTimeSeconds = 3661 };
-                var vm = CreateViewModel(options);
-                result = vm.MaxRecordingTimeString;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var options = new Options { MaxRecordingTimeSeconds = 3661 };
+            var vm = CreateViewModel(options);
+            return vm.MaxRecordingTimeString;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo("01:01:01");
     }
@@ -317,25 +177,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ElapsedTimeStrZeroWhenNotRecording()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.ElapsedTimeStr;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.ElapsedTimeStr;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo("00:00:00");
     }
@@ -343,26 +189,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsPausedWhenStatusPaused()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Paused;
-                result = vm.IsPaused;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Paused;
+            return vm.IsPaused;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -370,26 +202,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsRecordingOrPausedWhenRecording()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Recording;
-                result = vm.IsRecordingOrPaused;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return vm.IsRecordingOrPaused;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -397,26 +215,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsRecordingOrPausedWhenPaused()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Paused;
-                result = vm.IsRecordingOrPaused;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Paused;
+            return vm.IsRecordingOrPaused;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -424,25 +228,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsMaxRecordingTimeSpecifiedWhenSet()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 300 });
-                result = vm.IsMaxRecordingTimeSpecified;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 300 });
+            return vm.IsMaxRecordingTimeSpecified;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -450,25 +240,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsMaxRecordingTimeSpecifiedWhenZero()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 0 });
-                result = vm.IsMaxRecordingTimeSpecified;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel(new Options { MaxRecordingTimeSeconds = 0 });
+            return vm.IsMaxRecordingTimeSpecified;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -476,27 +252,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task NoSettingsReturnsCommandLineValue()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoSettings.Returns(true);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                result = vm.NoSettings;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoSettings.Returns(true);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            return vm.NoSettings;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -504,27 +266,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task NoFolderReturnsCommandLineValue()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoFolder.Returns(true);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                result = vm.NoFolder;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoFolder.Returns(true);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            return vm.NoFolder;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -532,27 +280,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task NoSaveReturnsCommandLineValue()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoSave.Returns(true);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                result = vm.NoSave;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoSave.Returns(true);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            return vm.NoSave;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -560,25 +294,11 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsSaveEnabledWhenNotCopyingNotRecording()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.IsSaveEnabled;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.IsSaveEnabled;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -586,26 +306,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsSaveEnabledFalseWhenCopying()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.IsCopying = true;
-                result = vm.IsSaveEnabled;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.IsCopying = true;
+            return vm.IsSaveEnabled;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -613,33 +319,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ErrorMsgSetterNotifiesPropertyChanged()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.ErrorMsg = "Test error";
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.ErrorMsg = "Test error";
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties).IsNotNull();
         await Assert.That(changedProperties!).Contains("ErrorMsg");
@@ -648,26 +341,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task StatusStrSetterUpdatesValue()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.StatusStr = "Recording...";
-                result = vm.StatusStr;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.StatusStr = "Recording...";
+            return vm.StatusStr;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo("Recording...");
     }
@@ -675,27 +354,13 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsSaveVisibleFalseWhenNoSaveTrue()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoSave.Returns(true);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                result = vm.IsSaveVisible;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoSave.Returns(true);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            return vm.IsSaveVisible;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -703,92 +368,51 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task SaveHintEmptyWhenNoDrives()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                result = vm.SaveHint;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            return vm.SaveHint;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsEqualTo(string.Empty);
     }
 
     [Test]
-    [NotInParallel("RecordingPageMsg")]
+    [NotInParallel("Messenger")]
     public async Task RemovableDriveMessageAddsMakesVisible()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoSave.Returns(false);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
-                result = vm.IsSaveVisible;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoSave.Returns(false);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+            return vm.IsSaveVisible;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
 
     [Test]
-    [NotInParallel("RecordingPageMsg")]
+    [NotInParallel("Messenger")]
     public async Task RemovableDriveRemovedMakesInvisible()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var commandLineMock = Mock.Of<ICommandLineService>();
-                commandLineMock.NoSave.Returns(false);
-                var vm = CreateViewModel(cmdLineMock: commandLineMock);
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = false });
-                result = vm.IsSaveVisible;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            commandLineMock.NoSave.Returns(false);
+            var vm = CreateViewModel(cmdLineMock: commandLineMock);
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = false });
+            return vm.IsSaveVisible;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
 
     private static RecordingPageViewModel CreateViewModel(Options? options = null, Mock<ICommandLineService>? cmdLineMock = null)
     {
+        CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger.Default.Reset();
         var audioService = new MockAudioService();
 
         var optionsMock = Mock.Of<IOptionsService>();
@@ -816,33 +440,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task VolumeLevelAsPercentageSetterFiresPropertyChanged()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.VolumeLevelAsPercentage = 50;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.VolumeLevelAsPercentage = 50;
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).Contains("VolumeLevelAsPercentage");
     }
@@ -850,34 +461,21 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task VolumeLevelAsPercentageNoChangeWhenSameValue()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            vm.VolumeLevelAsPercentage = 50;
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                vm.VolumeLevelAsPercentage = 50;
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.VolumeLevelAsPercentage = 50;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.VolumeLevelAsPercentage = 50;
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).DoesNotContain("VolumeLevelAsPercentage");
     }
@@ -885,33 +483,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsCopyingSetterFiresPropertyChanged()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.IsCopying = true;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.IsCopying = true;
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).Contains("IsCopying");
         await Assert.That(changedProperties!).Contains("IsSaveEnabled");
@@ -920,33 +505,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsCopyingNoChangeWhenSameValue()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.IsCopying = false; // already false
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.IsCopying = false; // already false
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).DoesNotContain("IsCopying");
     }
@@ -954,34 +526,21 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task StatusStrSetterNoChangeWhenSameValue()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var initial = vm.StatusStr;
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                var initial = vm.StatusStr;
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.StatusStr = initial;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.StatusStr = initial;
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).DoesNotContain("StatusStr");
     }
@@ -989,33 +548,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ErrorMsgNoChangeWhenSameValue()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.ErrorMsg = null; // already null
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.ErrorMsg = null; // already null
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).DoesNotContain("ErrorMsg");
     }
@@ -1023,33 +569,20 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task RecordingStatusSetterNoChangeWhenSameValue()
     {
-        List<string>? changedProperties = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var changedProperties = await StaThreadHelper.RunOnSta(() =>
         {
-            try
+            var vm = CreateViewModel();
+            var props = new List<string>();
+            vm.PropertyChanged += (_, e) =>
             {
-                var vm = CreateViewModel();
-                changedProperties = [];
-                vm.PropertyChanged += (_, e) =>
+                if (e.PropertyName != null)
                 {
-                    if (e.PropertyName != null)
-                    {
-                        changedProperties.Add(e.PropertyName);
-                    }
-                };
-                vm.RecordingStatus = RecordingStatus.NotRecording; // same as initial
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+                    props.Add(e.PropertyName);
+                }
+            };
+            vm.RecordingStatus = RecordingStatus.NotRecording; // same as initial
+            return props;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(changedProperties!).DoesNotContain("RecordingStatus");
     }
@@ -1057,26 +590,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsRecordingOrStoppingWhenStopRequested()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.StopRequested;
-                result = vm.IsRecordingOrStopping;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.StopRequested;
+            return vm.IsRecordingOrStopping;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsTrue();
     }
@@ -1084,26 +603,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsReadyToRecordFalseWhenRecording()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Recording;
-                result = vm.IsReadyToRecord;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return vm.IsReadyToRecord;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -1111,26 +616,12 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsReadyToRecordFalseWhenPaused()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Paused;
-                result = vm.IsReadyToRecord;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Paused;
+            return vm.IsReadyToRecord;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
@@ -1138,54 +629,26 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task IsSaveEnabledFalseWhenRecording()
     {
-        bool? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.RecordingStatus = RecordingStatus.Recording;
-                result = vm.IsSaveEnabled;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return vm.IsSaveEnabled;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsFalse();
     }
 
     [Test]
-    [NotInParallel("RecordingPageMsg")]
+    [NotInParallel("Messenger")]
     public async Task SaveHintShowsSingleDrive()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
-                result = vm.SaveHint;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+            return vm.SaveHint;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!).IsNotEmpty();
@@ -1193,30 +656,16 @@ public sealed class TestRecordingPageViewModel
     }
 
     [Test]
-    [NotInParallel("RecordingPageMsg")]
+    [NotInParallel("Messenger")]
     public async Task SaveHintShowsMultipleDrives()
     {
-        string? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
-                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'F', Added = true });
-                result = vm.SaveHint;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+            WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'F', Added = true });
+            return vm.SaveHint;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result!).Contains(",");
@@ -1225,55 +674,21 @@ public sealed class TestRecordingPageViewModel
     [Test]
     public async Task ActivatedWithNullStateDoesNotThrow()
     {
-        bool? success = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.Activated(null);
-                success = true;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.Activated(null);
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
-
-        await Assert.That(success).IsTrue();
     }
 
     [Test]
     public async Task ActivatedWithSplashStateDoesNotThrow()
     {
-        bool? success = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var vm = CreateViewModel();
-                vm.Activated(new RecordingPageNavigationState { ShowSplash = true });
-                success = true;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var vm = CreateViewModel();
+            vm.Activated(new RecordingPageNavigationState { ShowSplash = true });
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
-
-        await Assert.That(success).IsTrue();
     }
 
     [Test]

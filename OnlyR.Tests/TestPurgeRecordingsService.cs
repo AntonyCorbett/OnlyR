@@ -3,8 +3,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using OnlyR.Services.Options;
 using OnlyR.Services.PurgeRecordings;
@@ -50,23 +48,11 @@ public sealed class TestPurgeRecordingsService
         return filePath;
     }
 
-    private static async Task<int> InvokePurgeFilesInternal(PurgeRecordingsService service, int days)
-    {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "PurgeFilesInternal",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        var task = (Task<int>)method!.Invoke(service, [days])!;
-        return await task;
-    }
+    private static async Task<int> InvokePurgeFilesInternal(PurgeRecordingsService service, int days) =>
+        await service.PurgeFilesInternal(days);
 
-    private static async Task<int> InvokeRemoveEmptyFolders(PurgeRecordingsService service)
-    {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "RemoveEmptyFolders",
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        var task = (Task<int>)method!.Invoke(service, Array.Empty<object>())!;
-        return await task;
-    }
+    private static async Task<int> InvokeRemoveEmptyFolders(PurgeRecordingsService service) =>
+        await service.RemoveEmptyFolders();
 
     private static string CreateTempTestDir()
     {
@@ -87,78 +73,57 @@ public sealed class TestPurgeRecordingsService
     public async Task ConstructorDoesNotThrow()
     {
         var dir = CreateTempTestDir();
-        var success = false;
 
         try
         {
-            var t = new Thread(() =>
+            await StaThreadHelper.RunOnSta(() =>
             {
                 using var service = CreateService(dir);
-                success = true;
             });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
         }
         finally
         {
             CleanupTempDir(dir);
         }
-
-        await Assert.That(success).IsTrue();
     }
 
     [Test]
     public async Task CloseDoesNotThrow()
     {
         var dir = CreateTempTestDir();
-        var success = false;
 
         try
         {
-            var t = new Thread(() =>
+            await StaThreadHelper.RunOnSta(() =>
             {
                 var service = CreateService(dir);
                 service.Close();
                 service.Dispose();
-                success = true;
             });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
         }
         finally
         {
             CleanupTempDir(dir);
         }
-
-        await Assert.That(success).IsTrue();
     }
 
     [Test]
     public async Task DisposeDoesNotThrow()
     {
         var dir = CreateTempTestDir();
-        var success = false;
 
         try
         {
-            var t = new Thread(() =>
+            await StaThreadHelper.RunOnSta(() =>
             {
                 var service = CreateService(dir);
                 service.Dispose();
-                success = true;
             });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
         }
         finally
         {
             CleanupTempDir(dir);
         }
-
-        await Assert.That(success).IsTrue();
     }
 
     [Test]
@@ -171,21 +136,17 @@ public sealed class TestPurgeRecordingsService
             var oldDate = DateTime.Now.AddDays(-60);
             var oldFilePath = CreateRecordingFile(dir, oldDate);
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 await Assert.That(deletedCount).IsGreaterThanOrEqualTo(1);
                 await Assert.That(File.Exists(oldFilePath)).IsFalse();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -204,21 +165,17 @@ public sealed class TestPurgeRecordingsService
         {
             var todayFilePath = CreateRecordingFile(dir, DateTime.Now);
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 await Assert.That(deletedCount).IsEqualTo(0);
                 await Assert.That(File.Exists(todayFilePath)).IsTrue();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -239,22 +196,18 @@ public sealed class TestPurgeRecordingsService
             var oldFilePath = CreateRecordingFile(dir, oldDate);
             var dateFolderPath = Path.GetDirectoryName(oldFilePath)!;
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                await InvokePurgeFilesInternal(service!, 30);
-                var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+                await InvokePurgeFilesInternal(service, 30);
+                var foldersDeleted = await InvokeRemoveEmptyFolders(service);
                 await Assert.That(foldersDeleted).IsGreaterThanOrEqualTo(1);
                 await Assert.That(Directory.Exists(dateFolderPath)).IsFalse();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -270,23 +223,19 @@ public sealed class TestPurgeRecordingsService
         var nonExistentDir = Path.Combine(Path.GetTempPath(), $"OnlyRTest_NonExistent_{Guid.NewGuid():N}");
         CleanupTempDir(nonExistentDir);
 
-        PurgeRecordingsService? service = null;
-        var t = new Thread(() => { service = CreateService(nonExistentDir, recordingsLifeTimeDays: 30); });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        t.Join();
+        var service = await StaThreadHelper.RunOnSta(() => CreateService(nonExistentDir, recordingsLifeTimeDays: 30));
 
         try
         {
-            var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+            var deletedCount = await InvokePurgeFilesInternal(service, 30);
             await Assert.That(deletedCount).IsEqualTo(0);
 
-            var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+            var foldersDeleted = await InvokeRemoveEmptyFolders(service);
             await Assert.That(foldersDeleted).IsEqualTo(0);
         }
         finally
         {
-            service!.Close();
+            service.Close();
             service.Dispose();
             CleanupTempDir(nonExistentDir);
         }
@@ -304,13 +253,9 @@ public sealed class TestPurgeRecordingsService
                 CreateRecordingFile(dir, DateTime.Now.AddDays(-60 - i), i);
             }
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
-            service!.Close();
+            service.Close();
 
             int deletedCount;
             try
@@ -349,21 +294,17 @@ public sealed class TestPurgeRecordingsService
             var txtFilePath = Path.Combine(dayFolder, "notes.txt");
             await File.WriteAllTextAsync(txtFilePath, "some text content");
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => service = CreateService(dir, recordingsLifeTimeDays: 30));
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 await Assert.That(deletedCount).IsEqualTo(0);
                 await Assert.That(File.Exists(txtFilePath)).IsTrue();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -385,20 +326,16 @@ public sealed class TestPurgeRecordingsService
             Directory.CreateDirectory(subDir);
             CreateRecordingFile(subDir, oldDate);
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30, optionsIdentifier: "testId"); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30, optionsIdentifier: "testId"));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 await Assert.That(deletedCount).IsGreaterThanOrEqualTo(1);
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -421,21 +358,17 @@ public sealed class TestPurgeRecordingsService
                 CreateRecordingFile(dir, DateTime.Now.AddDays(-60), i);
             }
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 // Should not exceed 20 (MaxFileDeletionsInBatch)
                 await Assert.That(deletedCount).IsLessThanOrEqualTo(20);
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -448,66 +381,42 @@ public sealed class TestPurgeRecordingsService
     [Test]
     public async Task YearFolderMayContainCandidatesReturnsTrueForOldYear()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "YearFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2020, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.YearFolderMayContainCandidates(2020, new DateTime(2026, 4, 7));
         await Assert.That(result).IsTrue();
     }
 
     [Test]
     public async Task YearFolderMayContainCandidatesReturnsFalseForFutureYear()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "YearFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2030, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.YearFolderMayContainCandidates(2030, new DateTime(2026, 4, 7));
         await Assert.That(result).IsFalse();
     }
 
     [Test]
     public async Task MonthFolderMayContainCandidatesReturnsTrueForOlderMonth()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "MonthFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2026, 1, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.MonthFolderMayContainCandidates(2026, 1, new DateTime(2026, 4, 7));
         await Assert.That(result).IsTrue();
     }
 
     [Test]
     public async Task MonthFolderMayContainCandidatesReturnsFalseForFutureMonth()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "MonthFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2026, 12, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.MonthFolderMayContainCandidates(2026, 12, new DateTime(2026, 4, 7));
         await Assert.That(result).IsFalse();
     }
 
     [Test]
     public async Task MonthFolderMayContainCandidatesReturnsTrueForSameMonth()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "MonthFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2026, 4, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.MonthFolderMayContainCandidates(2026, 4, new DateTime(2026, 4, 7));
         await Assert.That(result).IsTrue();
     }
 
     [Test]
     public async Task MonthFolderMayContainCandidatesReturnsTrueForOlderYear()
     {
-        var method = typeof(PurgeRecordingsService).GetMethod(
-            "MonthFolderMayContainCandidates",
-            BindingFlags.NonPublic | BindingFlags.Static);
-
-        var result = (bool)method!.Invoke(null, [2025, 12, new DateTime(2026, 4, 7)])!;
+        var result = PurgeRecordingsService.MonthFolderMayContainCandidates(2025, 12, new DateTime(2026, 4, 7));
         await Assert.That(result).IsTrue();
     }
 
@@ -529,21 +438,17 @@ public sealed class TestPurgeRecordingsService
             var wavFile = Path.Combine(dayFolder, "recording - 001.wav");
             File.WriteAllText(wavFile, "dummy wav");
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                var deletedCount = await InvokePurgeFilesInternal(service, 30);
                 await Assert.That(deletedCount).IsGreaterThanOrEqualTo(1);
                 await Assert.That(File.Exists(wavFile)).IsFalse();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -564,21 +469,17 @@ public sealed class TestPurgeRecordingsService
             var invalidFolder = Path.Combine(dir, "notayear");
             Directory.CreateDirectory(invalidFolder);
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+                var foldersDeleted = await InvokeRemoveEmptyFolders(service);
                 await Assert.That(foldersDeleted).IsEqualTo(0);
                 await Assert.That(Directory.Exists(invalidFolder)).IsTrue();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }
@@ -664,21 +565,17 @@ public sealed class TestPurgeRecordingsService
             var oldFilePath = CreateRecordingFile(dir, oldDate);
             var dateFolderPath = Path.GetDirectoryName(oldFilePath)!;
 
-            PurgeRecordingsService? service = null;
-            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-            t.Join();
+            var service = await StaThreadHelper.RunOnSta(() => CreateService(dir, recordingsLifeTimeDays: 30));
 
             try
             {
-                var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+                var foldersDeleted = await InvokeRemoveEmptyFolders(service);
                 await Assert.That(foldersDeleted).IsEqualTo(0);
                 await Assert.That(Directory.Exists(dateFolderPath)).IsTrue();
             }
             finally
             {
-                service!.Close();
+                service.Close();
                 service.Dispose();
             }
         }

@@ -2,9 +2,7 @@
 
 using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using OnlyR.Model;
 using OnlyR.Services.Options;
 
 namespace OnlyR.Tests;
@@ -15,28 +13,15 @@ public sealed class TestOptionsService
     public async Task ConstructorCreatesDefaultOptions()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        Options? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.Options;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.Options;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -52,28 +37,15 @@ public sealed class TestOptionsService
     public async Task OptionsNotNullWithUniqueIdentifier()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        Options? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.Options;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.Options;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -89,28 +61,15 @@ public sealed class TestOptionsService
     public async Task GetSupportedMp3BitRatesReturnsItems()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        BitRateItem[]? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.GetSupportedMp3BitRates();
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.GetSupportedMp3BitRates();
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -127,28 +86,15 @@ public sealed class TestOptionsService
     public async Task GetSupportedSampleRatesReturnsItems()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        SampleRateItem[]? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.GetSupportedSampleRates();
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.GetSupportedSampleRates();
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -165,28 +111,15 @@ public sealed class TestOptionsService
     public async Task GetSupportedChannelsReturnsItems()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        ChannelItem[]? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.GetSupportedChannels();
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.GetSupportedChannels();
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -203,29 +136,16 @@ public sealed class TestOptionsService
     public async Task CultureGetReturnsCultureFromOptions()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        string? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                svc.Options.Culture = "fr-FR";
-                result = svc.Culture;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            svc.Options.Culture = "fr-FR";
+            return svc.Culture;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -241,29 +161,16 @@ public sealed class TestOptionsService
     public async Task CultureSetUpdatesCulture()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        string? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                svc.Culture = "de-DE";
-                result = svc.Options.Culture;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            svc.Culture = "de-DE";
+            return svc.Options.Culture;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -279,32 +186,19 @@ public sealed class TestOptionsService
     public async Task SaveAndReloadPreservesValues()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        int? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                svc.Options.MaxRecordingTimeSeconds = 999;
-                svc.Save();
+            var svc = new OptionsService(cmdMock.Object);
+            svc.Options.MaxRecordingTimeSeconds = 999;
+            svc.Save();
 
-                var svc2 = new OptionsService(cmdMock.Object);
-                result = svc2.Options.MaxRecordingTimeSeconds;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc2 = new OptionsService(cmdMock.Object);
+            return svc2.Options.MaxRecordingTimeSeconds;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -320,29 +214,16 @@ public sealed class TestOptionsService
     public async Task SaveDoesNotThrow()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        var success = false;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var success = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                svc.Save();
-                success = true;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            svc.Save();
+            return true;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -358,28 +239,15 @@ public sealed class TestOptionsService
     public async Task DefaultOptionsHaveExpectedDefaults()
     {
         var identifier = $"test_{Guid.NewGuid():N}";
-        Options? result = null;
 
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns(identifier);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns(identifier);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.Options;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.Options;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         try
         {
@@ -396,28 +264,14 @@ public sealed class TestOptionsService
     [Test]
     public async Task ConstructorWithNullIdentifier()
     {
-        Options? result = null;
-
-        var tcs = new TaskCompletionSource();
-        var t = new Thread(() =>
+        var result = await StaThreadHelper.RunOnSta(() =>
         {
-            try
-            {
-                var cmdMock = Mock.Of<ICommandLineService>();
-                cmdMock.OptionsIdentifier.Returns((string?)null);
+            var cmdMock = Mock.Of<ICommandLineService>();
+            cmdMock.OptionsIdentifier.Returns((string?)null);
 
-                var svc = new OptionsService(cmdMock.Object);
-                result = svc.Options;
-                tcs.SetResult();
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
+            var svc = new OptionsService(cmdMock.Object);
+            return svc.Options;
         });
-        t.SetApartmentState(ApartmentState.STA);
-        t.Start();
-        await tcs.Task;
 
         await Assert.That(result).IsNotNull();
     }
