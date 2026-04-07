@@ -409,6 +409,186 @@ public sealed class TestPurgeRecordingsService
     }
 
     [Test]
+    public async Task PurgeBatchesMaxFileDeletions()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            // Create 25 old files (more than MaxFileDeletionsInBatch = 20)
+            for (var i = 1; i <= 25; i++)
+            {
+                CreateRecordingFile(dir, DateTime.Now.AddDays(-60), i);
+            }
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                // Should not exceed 20 (MaxFileDeletionsInBatch)
+                await Assert.That(deletedCount).IsLessThanOrEqualTo(20);
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
+    public async Task YearFolderMayContainCandidatesReturnsTrueForOldYear()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "YearFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2020, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task YearFolderMayContainCandidatesReturnsFalseForFutureYear()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "YearFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2030, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task MonthFolderMayContainCandidatesReturnsTrueForOlderMonth()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "MonthFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2026, 1, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task MonthFolderMayContainCandidatesReturnsFalseForFutureMonth()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "MonthFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2026, 12, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task MonthFolderMayContainCandidatesReturnsTrueForSameMonth()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "MonthFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2026, 4, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task MonthFolderMayContainCandidatesReturnsTrueForOlderYear()
+    {
+        var method = typeof(PurgeRecordingsService).GetMethod(
+            "MonthFolderMayContainCandidates",
+            BindingFlags.NonPublic | BindingFlags.Static);
+
+        var result = (bool)method!.Invoke(null, [2025, 12, new DateTime(2026, 4, 7)])!;
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task PurgeDeletesWavFilesToo()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            var oldDate = DateTime.Now.AddDays(-60);
+            var dayFolder = Path.Combine(
+                dir,
+                oldDate.ToString("yyyy", CultureInfo.InvariantCulture),
+                oldDate.ToString("MM", CultureInfo.InvariantCulture),
+                oldDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            Directory.CreateDirectory(dayFolder);
+
+            var wavFile = Path.Combine(dayFolder, "recording - 001.wav");
+            File.WriteAllText(wavFile, "dummy wav");
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var deletedCount = await InvokePurgeFilesInternal(service!, 30);
+                await Assert.That(deletedCount).IsGreaterThanOrEqualTo(1);
+                await Assert.That(File.Exists(wavFile)).IsFalse();
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
+    public async Task RemoveEmptyFoldersIgnoresInvalidYearFolders()
+    {
+        var dir = CreateTempTestDir();
+
+        try
+        {
+            // Create an invalid year folder
+            var invalidFolder = Path.Combine(dir, "notayear");
+            Directory.CreateDirectory(invalidFolder);
+
+            PurgeRecordingsService? service = null;
+            var t = new Thread(() => { service = CreateService(dir, recordingsLifeTimeDays: 30); });
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+            t.Join();
+
+            try
+            {
+                var foldersDeleted = await InvokeRemoveEmptyFolders(service!);
+                await Assert.That(foldersDeleted).IsEqualTo(0);
+                await Assert.That(Directory.Exists(invalidFolder)).IsTrue();
+            }
+            finally
+            {
+                service!.Close();
+                service.Dispose();
+            }
+        }
+        finally
+        {
+            CleanupTempDir(dir);
+        }
+    }
+
+    [Test]
     public async Task RemoveEmptyFoldersKeepsNonEmptyFolder()
     {
         var dir = CreateTempTestDir();

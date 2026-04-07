@@ -12,6 +12,49 @@ namespace OnlyR.Tests;
 
 public sealed class TestCopyRecordingsService
 {
+    [Test]
+    public async Task GetRecordingsFolderReturnsNullWhenNonExistent()
+    {
+        var nonExistent = Path.Combine(Path.GetTempPath(), $"OnlyRTest_{Guid.NewGuid():N}");
+        var method = typeof(CopyRecordingsService).GetMethod(
+            "GetRecordingsFolder",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+
+        var service = CreateService(nonExistent);
+        var result = method!.Invoke(service, Array.Empty<object>());
+
+        await Assert.That(result).IsNull();
+    }
+
+    [Test]
+    public async Task GetRecordingsFolderReturnsFolderWhenExists()
+    {
+        var todayFolder = CreateTodayRecordingsFolder();
+
+        var method = typeof(CopyRecordingsService).GetMethod(
+            "GetRecordingsFolder",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+
+        var service = CreateService(tempDir);
+        var result = (string?)method!.Invoke(service, []);
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!).IsEqualTo(todayFolder);
+    }
+
+    [Test]
+    public async Task CopyThrowsNoRecordingsWhenOnlyNonAudioFiles()
+    {
+        var recordingsFolder = CreateTodayRecordingsFolder();
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.md"), "not audio");
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "data.json"), "{}");
+
+        var service = CreateService(tempDir);
+
+        await Assert.That(() => service.Copy(new List<char> { 'Z' }))
+            .Throws<NoRecordingsException>();
+    }
+
     private string tempDir = string.Empty;
 
     [Before(Test)]
@@ -72,8 +115,8 @@ public sealed class TestCopyRecordingsService
     public async Task CopyThrowsNoRecordingsWhenNoAudioFiles()
     {
         var recordingsFolder = CreateTodayRecordingsFolder();
-        File.WriteAllText(Path.Combine(recordingsFolder, "notes.txt"), "not audio");
-        File.WriteAllText(Path.Combine(recordingsFolder, "readme.txt"), "also not audio");
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "notes.txt"), "not audio");
+        await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.txt"), "also not audio");
 
         var service = CreateService(tempDir);
 
@@ -89,7 +132,7 @@ public sealed class TestCopyRecordingsService
             BindingFlags.NonPublic | BindingFlags.Static);
 
         var filePath = Path.Combine(tempDir, "accessible.mp3");
-        File.WriteAllText(filePath, "dummy audio data");
+        await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         var result = (bool)method!.Invoke(null, [filePath])!;
 
@@ -118,9 +161,9 @@ public sealed class TestCopyRecordingsService
             BindingFlags.NonPublic | BindingFlags.Static);
 
         var filePath = Path.Combine(tempDir, "locked.mp3");
-        File.WriteAllText(filePath, "dummy audio data");
+        await File.WriteAllTextAsync(filePath, "dummy audio data");
 
-        using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
+        await using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
         var result = (bool)method!.Invoke(null, [filePath])!;
 
         await Assert.That(result).IsTrue();
@@ -134,7 +177,7 @@ public sealed class TestCopyRecordingsService
             BindingFlags.NonPublic | BindingFlags.Static);
 
         var filePath = Path.Combine(tempDir, "unlocked.mp3");
-        File.WriteAllText(filePath, "dummy audio data");
+        await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         var result = (bool)method!.Invoke(null, [filePath])!;
 
@@ -150,8 +193,8 @@ public sealed class TestCopyRecordingsService
 
         var file1 = Path.Combine(tempDir, "file1.mp3");
         var file2 = Path.Combine(tempDir, "file2.mp3");
-        File.WriteAllText(file1, "abcdef"); // 6 bytes
-        File.WriteAllText(file2, "ghijklmnop"); // 10 bytes
+        await File.WriteAllTextAsync(file1, "abcdef"); // 6 bytes
+        await File.WriteAllTextAsync(file2, "ghijklmnop"); // 10 bytes
 
         var expectedSize = new FileInfo(file1).Length + new FileInfo(file2).Length;
         var files = new[] { file1, file2 };

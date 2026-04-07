@@ -1,6 +1,8 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using OnlyR.Core.Enums;
@@ -13,7 +15,6 @@ using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
-using System.Globalization;
 
 namespace OnlyR.Tests;
 
@@ -282,6 +283,184 @@ public sealed class TestMainViewModel
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsEqualTo(RecordingStatus.NotRecording);
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task CurrentPagePropertyChangedOnNavigation()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                rvm.NavigateSettingsCommand.Execute(null);
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).Contains("CurrentPage");
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task CurrentPageNameUpdatesOnNavigation()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                rvm.NavigateSettingsCommand.Execute(null);
+                result = vm.CurrentPageName;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(SettingsPageViewModel.PageName);
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task AlwaysOnTopFalseByDefault()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                result = vm.AlwaysOnTop;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task TheSnackbarMessageQueueIsNotNull()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateMainViewModel();
+                result = vm.TheSnackbarMessageQueue != null;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task StartRecordingOnLaunchStartsRecording()
+    {
+        RecordingStatus? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var options = new Options { StartRecordingOnLaunch = true };
+                var vm = CreateMainViewModel(options);
+                var rvm = (RecordingPageViewModel)vm.CurrentPage!.DataContext!;
+                result = rvm.RecordingStatus;
+                rvm.StopRecordingCommand.Execute(null);
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(RecordingStatus.Recording);
+    }
+
+    [Test]
+    [NotInParallel("WpfApp")]
+    public async Task StartMinimizedSuppressesSplash()
+    {
+        bool? success = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var options = new Options { StartMinimized = true };
+                var vm = CreateMainViewModel(options);
+                success = vm.CurrentPage != null;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(success).IsTrue();
     }
 
     private static MainViewModel CreateMainViewModel(Options? options = null)

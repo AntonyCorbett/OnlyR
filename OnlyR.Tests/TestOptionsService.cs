@@ -316,6 +316,112 @@ public sealed class TestOptionsService
         }
     }
 
+    [Test]
+    public async Task SaveDoesNotThrow()
+    {
+        var identifier = $"test_{Guid.NewGuid():N}";
+        var success = false;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var cmdMock = Mock.Of<ICommandLineService>();
+                cmdMock.OptionsIdentifier.Returns(identifier);
+
+                var svc = new OptionsService(cmdMock.Object);
+                svc.Save();
+                success = true;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        try
+        {
+            await Assert.That(success).IsTrue();
+        }
+        finally
+        {
+            CleanupAppDataFolder(identifier);
+        }
+    }
+
+    [Test]
+    public async Task DefaultOptionsHaveExpectedDefaults()
+    {
+        var identifier = $"test_{Guid.NewGuid():N}";
+        Options? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var cmdMock = Mock.Of<ICommandLineService>();
+                cmdMock.OptionsIdentifier.Returns(identifier);
+
+                var svc = new OptionsService(cmdMock.Object);
+                result = svc.Options;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        try
+        {
+            await Assert.That(result).IsNotNull();
+            await Assert.That(result!.SampleRate).IsGreaterThan(0);
+            await Assert.That(result.ChannelCount).IsGreaterThan(0);
+        }
+        finally
+        {
+            CleanupAppDataFolder(identifier);
+        }
+    }
+
+    [Test]
+    public async Task ConstructorWithNullIdentifier()
+    {
+        Options? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var cmdMock = Mock.Of<ICommandLineService>();
+                cmdMock.OptionsIdentifier.Returns((string?)null);
+
+                var svc = new OptionsService(cmdMock.Object);
+                result = svc.Options;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsNotNull();
+    }
+
     private static void CleanupAppDataFolder(string identifier)
     {
         try

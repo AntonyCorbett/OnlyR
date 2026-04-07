@@ -666,12 +666,390 @@ public sealed class TestSettingsPageViewModel
         await Assert.That(result).IsTrue();
     }
 
+    [Test]
+    public async Task SampleRateRoundTrips()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.SampleRate = 44100;
+                result = vm.SampleRate;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(44100);
+    }
+
+    [Test]
+    public async Task ChannelRoundTrips()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.Channel = 2;
+                result = vm.Channel;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(2);
+    }
+
+    [Test]
+    public async Task BitRateRoundTrips()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.BitRate = 128;
+                result = vm.BitRate;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(128);
+    }
+
+    [Test]
+    public async Task RecordingDeviceIdRoundTrips()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingDeviceId = 2;
+                result = vm.RecordingDeviceId;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsEqualTo(2);
+    }
+
+    [Test]
+    public async Task RecordingDevicesReturnsItems()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.RecordingDevices.Count();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result!.Value).IsGreaterThan(0);
+    }
+
+    [Test]
+    public async Task SampleRatesReturnsItems()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.SampleRates.Count();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result!.Value).IsGreaterThan(0);
+    }
+
+    [Test]
+    public async Task ChannelsReturnsItems()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.Channels.Count();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result!.Value).IsGreaterThan(0);
+    }
+
+    [Test]
+    public async Task BitRatesReturnsItems()
+    {
+        int? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.BitRates.Count();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result!.Value).IsGreaterThan(0);
+    }
+
+    [Test]
+    public async Task ActivatedDoesNotThrow()
+    {
+        bool? success = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.Activated(null);
+                success = true;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(success).IsTrue();
+    }
+
+    [Test]
+    public async Task LanguageIdSetterFiresPropertyChanged()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName != null)
+                    {
+                        changedProperties.Add(args.PropertyName);
+                    }
+                };
+                vm.LanguageId = "fr-FR";
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).Contains("LanguageId");
+    }
+
+    [Test]
+    public async Task ShowBitRateInitiallyMatchesCodec()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.ShowBitRate;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        // Default codec is MP3
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task NotUsingLoopbackCaptureDefaultTrue()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.NotUsingLoopbackCapture;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task ShowRecordingsCommandIsNotNull()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.ShowRecordingsCommand != null;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task SelectDestinationFolderCommandIsNotNull()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                result = vm.SelectDestinationFolderCommand != null;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
     private static SettingsPageViewModel CreateViewModel(Options? options = null)
     {
         var audioService = new MockAudioService();
 
         var optionsMock = Mock.Of<IOptionsService>();
-        optionsMock.Options.Returns(new Options());
+        optionsMock.Options.Returns(options ?? new Options());
         optionsMock.GetSupportedSampleRates().Returns([new SampleRateItem("44.1 kHz", 44100)]);
         optionsMock.GetSupportedChannels().Returns([new ChannelItem("Mono", 1)]);
         optionsMock.GetSupportedMp3BitRates().Returns([new BitRateItem("96 kbps", 96)]);

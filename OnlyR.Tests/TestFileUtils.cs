@@ -427,4 +427,100 @@ public sealed class TestFileUtils
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsNotEmpty();
     }
+
+    [Test]
+    public async Task GetDefaultMyDocsDestinationFolderReturnsPath()
+    {
+        var result = FileUtils.GetDefaultMyDocsDestinationFolder();
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).IsNotEmpty();
+        await Assert.That(result).Contains("OnlyR");
+    }
+
+    [Test]
+    public async Task GetUserOptionsFilePathWithoutIdentifier()
+    {
+        var result = FileUtils.GetUserOptionsFilePath(null, 1);
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).Contains("OnlyR");
+        await Assert.That(result).Contains("options.json");
+    }
+
+    [Test]
+    public async Task GetUserOptionsFilePathWithIdentifier()
+    {
+        var result = FileUtils.GetUserOptionsFilePath("myId", 2);
+        await Assert.That(result).Contains("myId");
+        await Assert.That(result).Contains("2");
+        await Assert.That(result).Contains("options.json");
+    }
+
+    [Test]
+    public async Task GetDestinationFolderWithIdentifier()
+    {
+        var dt = new DateTime(2026, 4, 7);
+        var result = FileUtils.GetDestinationFolder(dt, "testId", tempDir);
+        await Assert.That(result).Contains("testId");
+        await Assert.That(result).Contains("2026-04-07");
+    }
+
+    [Test]
+    public async Task GetMonthlyDestinationFolderWithIdentifier()
+    {
+        var dt = new DateTime(2026, 4, 7);
+        var result = FileUtils.GetMonthlyDestinationFolder(dt, "testId", tempDir);
+        await Assert.That(result).Contains("testId");
+        await Assert.That(result).Contains("2026");
+        await Assert.That(result).Contains("04");
+    }
+
+    [Test]
+    public async Task FindSuitableRecordingFolderToShowWithIdentifier()
+    {
+        var today = DateTime.Today;
+        var todayFolder = Path.Combine(
+            tempDir,
+            "testId",
+            today.ToString("yyyy", CultureInfo.InvariantCulture),
+            today.ToString("MM", CultureInfo.InvariantCulture),
+            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        Directory.CreateDirectory(todayFolder);
+
+        var result = FileUtils.FindSuitableRecordingFolderToShow("testId", tempDir);
+        await Assert.That(result).IsNotNull();
+    }
+
+    [Test]
+    public async Task FindSuitableRecordingFolderToShowNonExistentDirCreatesDefault()
+    {
+        var nonExistent = Path.Combine(tempDir, "totally_nonexistent_" + Guid.NewGuid().ToString("N"));
+        var result = FileUtils.FindSuitableRecordingFolderToShow("missingId", nonExistent);
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result).IsNotEmpty();
+    }
+
+    [Test]
+    public async Task SafeDeleteFileActuallyDeletesFile()
+    {
+        var filePath = Path.Combine(tempDir, "toDeleteActual.txt");
+        File.WriteAllText(filePath, "content");
+        FileUtils.SafeDeleteFile(filePath);
+        await Assert.That(File.Exists(filePath)).IsFalse();
+    }
+
+    [Test]
+    public async Task SafeDeleteFolderActuallyDeletesFolder()
+    {
+        var folderPath = Path.Combine(tempDir, "toDeleteActual");
+        Directory.CreateDirectory(folderPath);
+        FileUtils.SafeDeleteFolder(folderPath);
+        await Assert.That(Directory.Exists(folderPath)).IsFalse();
+    }
+
+    [Test]
+    public async Task GetLogFolderContainsLogs()
+    {
+        var result = FileUtils.GetLogFolder();
+        await Assert.That(result).Contains("Logs");
+    }
 }

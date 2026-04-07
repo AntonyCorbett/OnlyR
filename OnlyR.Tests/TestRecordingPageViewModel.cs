@@ -726,6 +726,7 @@ public sealed class TestRecordingPageViewModel
     }
 
     [Test]
+    [NotInParallel("RecordingPageMsg")]
     public async Task RemovableDriveMessageAddsMakesVisible()
     {
         bool? result = null;
@@ -755,6 +756,7 @@ public sealed class TestRecordingPageViewModel
     }
 
     [Test]
+    [NotInParallel("RecordingPageMsg")]
     public async Task RemovableDriveRemovedMakesInvisible()
     {
         bool? result = null;
@@ -809,6 +811,473 @@ public sealed class TestRecordingPageViewModel
             snackbarMock.Object,
             silenceMock.Object);
     }
+
+    [Test]
+    public async Task VolumeLevelAsPercentageSetterFiresPropertyChanged()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.VolumeLevelAsPercentage = 50;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).Contains("VolumeLevelAsPercentage");
+    }
+
+    [Test]
+    public async Task VolumeLevelAsPercentageNoChangeWhenSameValue()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.VolumeLevelAsPercentage = 50;
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.VolumeLevelAsPercentage = 50;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).DoesNotContain("VolumeLevelAsPercentage");
+    }
+
+    [Test]
+    public async Task IsCopyingSetterFiresPropertyChanged()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.IsCopying = true;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).Contains("IsCopying");
+        await Assert.That(changedProperties!).Contains("IsSaveEnabled");
+    }
+
+    [Test]
+    public async Task IsCopyingNoChangeWhenSameValue()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.IsCopying = false; // already false
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).DoesNotContain("IsCopying");
+    }
+
+    [Test]
+    public async Task StatusStrSetterNoChangeWhenSameValue()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                var initial = vm.StatusStr;
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.StatusStr = initial;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).DoesNotContain("StatusStr");
+    }
+
+    [Test]
+    public async Task ErrorMsgNoChangeWhenSameValue()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.ErrorMsg = null; // already null
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).DoesNotContain("ErrorMsg");
+    }
+
+    [Test]
+    public async Task RecordingStatusSetterNoChangeWhenSameValue()
+    {
+        List<string>? changedProperties = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                changedProperties = [];
+                vm.PropertyChanged += (_, e) =>
+                {
+                    if (e.PropertyName != null)
+                    {
+                        changedProperties.Add(e.PropertyName);
+                    }
+                };
+                vm.RecordingStatus = RecordingStatus.NotRecording; // same as initial
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(changedProperties!).DoesNotContain("RecordingStatus");
+    }
+
+    [Test]
+    public async Task IsRecordingOrStoppingWhenStopRequested()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.StopRequested;
+                result = vm.IsRecordingOrStopping;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task IsReadyToRecordFalseWhenRecording()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Recording;
+                result = vm.IsReadyToRecord;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task IsReadyToRecordFalseWhenPaused()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Paused;
+                result = vm.IsReadyToRecord;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task IsSaveEnabledFalseWhenRecording()
+    {
+        bool? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.RecordingStatus = RecordingStatus.Recording;
+                result = vm.IsSaveEnabled;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    [NotInParallel("RecordingPageMsg")]
+    public async Task SaveHintShowsSingleDrive()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+                result = vm.SaveHint;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!).IsNotEmpty();
+        await Assert.That(result).Contains("E");
+    }
+
+    [Test]
+    [NotInParallel("RecordingPageMsg")]
+    public async Task SaveHintShowsMultipleDrives()
+    {
+        string? result = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'E', Added = true });
+                WeakReferenceMessenger.Default.Send(new RemovableDriveMessage { DriveLetter = 'F', Added = true });
+                result = vm.SaveHint;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!).Contains(",");
+    }
+
+    [Test]
+    public async Task ActivatedWithNullStateDoesNotThrow()
+    {
+        bool? success = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.Activated(null);
+                success = true;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(success).IsTrue();
+    }
+
+    [Test]
+    public async Task ActivatedWithSplashStateDoesNotThrow()
+    {
+        bool? success = null;
+
+        var tcs = new TaskCompletionSource();
+        var t = new Thread(() =>
+        {
+            try
+            {
+                var vm = CreateViewModel();
+                vm.Activated(new RecordingPageNavigationState { ShowSplash = true });
+                success = true;
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        await tcs.Task;
+
+        await Assert.That(success).IsTrue();
+    }
+
+    [Test]
+    public async Task PageNameIsRecordingPage() =>
+        await Assert.That(RecordingPageViewModel.PageName).IsEqualTo("RecordingPage");
 
     private sealed record ShowStopResult(bool ShowStopOnly, bool ShowStopAndPause);
 }
