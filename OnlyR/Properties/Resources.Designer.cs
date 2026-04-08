@@ -438,11 +438,38 @@ namespace OnlyR.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Dark mode.
+        ///   Looks up a localized string similar to Theme.
         /// </summary>
-        public static string SETTINGS_DARK_MODE {
+        public static string SETTINGS_THEME {
             get {
-                return ResourceManager.GetString("SETTINGS_DARK_MODE", resourceCulture);
+                return ResourceManager.GetString("SETTINGS_THEME", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        public static string THEME_LIGHT {
+            get {
+                return ResourceManager.GetString("THEME_LIGHT", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        public static string THEME_DARK {
+            get {
+                return ResourceManager.GetString("THEME_DARK", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to System (default).
+        /// </summary>
+        public static string THEME_SYSTEM {
+            get {
+                return ResourceManager.GetString("THEME_SYSTEM", resourceCulture);
             }
         }
 

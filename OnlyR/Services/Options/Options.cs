@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using OnlyR.Core.Enums;
+using OnlyR.Model;
 using OnlyR.Utils;
 
 namespace OnlyR.Services.Options
@@ -86,6 +88,8 @@ namespace OnlyR.Services.Options
 
         public bool DarkMode { get; set; }
 
+        public AppTheme? AppTheme { get; set; }
+
         public string? UnfinishedRecordingTempPath { get; set; }
 
         public string? UnfinishedRecordingFinalPath { get; set; }
@@ -168,6 +172,16 @@ namespace OnlyR.Services.Options
             if (Codec != AudioCodec.Mp3 && Codec != AudioCodec.Wav)
             {
                 Codec = AudioCodec.Mp3;
+            }
+
+            // Migrate legacy DarkMode bool to AppTheme enum
+            if (AppTheme == null)
+            {
+                AppTheme = DarkMode ? Model.AppTheme.Dark : Model.AppTheme.System;
+            }
+            else if (!Enum.IsDefined(typeof(Model.AppTheme), AppTheme))
+            {
+                AppTheme = Model.AppTheme.System;
             }
         }
     }

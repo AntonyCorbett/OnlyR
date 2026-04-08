@@ -15,6 +15,8 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using OnlyR.Model;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
 
@@ -44,6 +46,7 @@ namespace OnlyR
             ConfigureServices();
             ApplyStartupTheme();
 
+            SystemEvents.UserPreferenceChanged += OnSystemThemeChanged;
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
         }
 
@@ -76,6 +79,7 @@ namespace OnlyR
 
         protected override void OnExit(ExitEventArgs e)
         {
+            SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged;
             _appMutex?.Dispose();
             Log.Logger.Information("==== Exit ====");
         }
@@ -105,8 +109,15 @@ namespace OnlyR
             Log.Logger.Information("==== Launched ====");
         }
         
-        internal static void ApplyDarkMode(bool isDark)
+        internal static void ApplyTheme(AppTheme mode)
         {
+            var isDark = mode switch
+            {
+                AppTheme.Dark => true,
+                AppTheme.System => SystemThemeHelper.IsSystemDarkTheme(),
+                _ => false,
+            };
+
             var paletteHelper = new PaletteHelper();
             var theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(isDark ? Theme.Dark : Theme.Light);
@@ -116,9 +127,21 @@ namespace OnlyR
         private static void ApplyStartupTheme()
         {
             var optionsService = Ioc.Default.GetService<IOptionsService>();
-            if (optionsService?.Options.DarkMode == true)
+            if (optionsService != null)
             {
-                ApplyDarkMode(true);
+                ApplyTheme(optionsService.Options.AppTheme ?? AppTheme.System);
+            }
+        }
+
+        private static void OnSystemThemeChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category == UserPreferenceCategory.General)
+            {
+                var optionsService = Ioc.Default.GetService<IOptionsService>();
+                if (optionsService?.Options.AppTheme == AppTheme.System)
+                {
+                    ApplyTheme(AppTheme.System);
+                }
             }
         }
 

@@ -224,12 +224,15 @@
                     IsChecked="{Binding StartMinimized, Mode=TwoWay}"
                     Style="{StaticResource SettingsCheckBox}" />
 
-                <CheckBox
-                    AutomationProperties.AutomationId="DarkMode"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_DARK_MODE}"
-                    Content="{x:Static resx:Resources.SETTINGS_DARK_MODE}"
-                    IsChecked="{Binding DarkMode, Mode=TwoWay}"
-                    Style="{StaticResource SettingsCheckBox}" />
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_THEME}"
+                    AutomationProperties.AutomationId="AppTheme"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_THEME}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding ThemeModes}"
+                    SelectedValue="{Binding AppTheme, Mode=TwoWay}"
+                    SelectedValuePath="Theme"
+                    Style="{StaticResource SettingsComboStyle}" />
 
                 <TextBox
                     Margin="0,10,0,10"

@@ -34,6 +34,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private readonly LanguageItem[] _languages;
     private readonly MaxSilenceTimeItem[] _maxSilenceTimes;
     private readonly CodecItem[] _codecs;
+    private readonly ThemeModeItem[] _themeModes;
     private bool _showBitRate;
 
     public SettingsPageViewModel(
@@ -55,6 +56,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
         _languages = GetSupportedLanguages();
         _maxSilenceTimes = GetMaxSilenceTimes();
         _codecs = GenerateCodecItems();
+        _themeModes = GenerateThemeModeItems();
 
         // Initialize ShowBitRate based on current codec
         _showBitRate = _optionsService.Options.Codec == AudioCodec.Mp3;
@@ -233,15 +235,17 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
-    public bool DarkMode
+    public IEnumerable<ThemeModeItem> ThemeModes => _themeModes;
+
+    public AppTheme AppTheme
     {
-        get => _optionsService.Options.DarkMode;
+        get => _optionsService.Options.AppTheme ?? Model.AppTheme.System;
         set
         {
-            if (_optionsService.Options.DarkMode != value)
+            if (_optionsService.Options.AppTheme != value)
             {
-                _optionsService.Options.DarkMode = value;
-                WeakReferenceMessenger.Default.Send(new DarkModeChanged());
+                _optionsService.Options.AppTheme = value;
+                WeakReferenceMessenger.Default.Send(new ThemeModeChanged());
             }
         }
     }
@@ -360,6 +364,13 @@ public class SettingsPageViewModel : ObservableObject, IPage
     {
         // nothing to do
     }
+
+    private static ThemeModeItem[] GenerateThemeModeItems() =>
+    [
+        new(Properties.Resources.THEME_LIGHT, AppTheme.Light),
+        new(Properties.Resources.THEME_DARK, AppTheme.Dark),
+        new(Properties.Resources.THEME_SYSTEM, AppTheme.System),
+    ];
 
     private static CodecItem[] GenerateCodecItems() =>
     [
