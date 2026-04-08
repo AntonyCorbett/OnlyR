@@ -84,6 +84,8 @@ namespace OnlyR.Services.Options
 
         public bool StartMinimized { get; set; }
 
+        public bool DarkMode { get; set; }
+
         public string? UnfinishedRecordingTempPath { get; set; }
 
         public string? UnfinishedRecordingFinalPath { get; set; }

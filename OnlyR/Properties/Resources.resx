@@ -293,6 +293,10 @@
     <value>Silence detection (% of full volume)</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_DARK_MODE" xml:space="preserve">
+    <value>Dark mode</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
     <value>Start minimised</value>
     <comment>Settings page checkbox title</comment>

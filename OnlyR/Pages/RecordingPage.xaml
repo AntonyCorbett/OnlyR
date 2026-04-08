@@ -224,12 +224,13 @@
                 <DockPanel>
                     <TextBlock
                         DockPanel.Dock="Top"
-                        Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
+                        Foreground="{DynamicResource MaterialDesignBody}"
                         Text="{Binding StatusStr}"
                         TextWrapping="Wrap" />
                     <TextBlock
                         DockPanel.Dock="Top"
                         FontSize="32"
+                        Foreground="{DynamicResource MaterialDesignBody}"
                         Text="{Binding ElapsedTimeStr}"
                         TextWrapping="Wrap" />
                     <TextBlock

@@ -233,6 +233,19 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
+    public bool DarkMode
+    {
+        get => _optionsService.Options.DarkMode;
+        set
+        {
+            if (_optionsService.Options.DarkMode != value)
+            {
+                _optionsService.Options.DarkMode = value;
+                WeakReferenceMessenger.Default.Send(new DarkModeChanged());
+            }
+        }
+    }
+
     public bool AllowCloseWhenRecording
     {
         get => _optionsService.Options.AllowCloseWhenRecording;

@@ -436,7 +436,16 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("SETTINGS_CHANNELS", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Dark mode.
+        /// </summary>
+        public static string SETTINGS_DARK_MODE {
+            get {
+                return ResourceManager.GetString("SETTINGS_DARK_MODE", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Show pause control.
         /// </summary>
