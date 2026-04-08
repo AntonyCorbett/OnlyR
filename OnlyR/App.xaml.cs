@@ -11,6 +11,7 @@ using Serilog;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -122,6 +123,38 @@ namespace OnlyR
             var theme = paletteHelper.GetTheme();
             theme.SetBaseTheme(isDark ? Theme.Dark : Theme.Light);
             paletteHelper.SetTheme(theme);
+
+            ApplyTitleBarTheme(isDark);
+        }
+
+        internal static void ApplyTitleBarTheme(Window window)
+        {
+            var paletteHelper = new PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            var isDark = theme.GetBaseTheme() == BaseTheme.Dark;
+            SetTitleBarDarkMode(window, isDark);
+        }
+
+        private static void ApplyTitleBarTheme(bool isDark)
+        {
+            foreach (Window window in Current.Windows)
+            {
+                SetTitleBarDarkMode(window, isDark);
+            }
+        }
+
+        private static void SetTitleBarDarkMode(Window window, bool isDark)
+        {
+            var darkMode = isDark ? 1 : 0;
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd != nint.Zero)
+            {
+                _ = NativeMethods.DwmSetWindowAttribute(
+                    hwnd,
+                    NativeMethods.DwmwaUseImmersiveDarkMode,
+                    ref darkMode,
+                    sizeof(int));
+            }
         }
 
         private static void ApplyStartupTheme()
