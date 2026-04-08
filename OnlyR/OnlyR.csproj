@@ -23,7 +23,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Serilog.Sinks.File" />
-    <PackageReference Include="WinCopies.WindowsAPICodePack.Shell" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OnlyR.Core\OnlyR.Core.csproj" />
