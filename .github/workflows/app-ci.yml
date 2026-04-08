@@ -21,10 +21,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Setup .NET
+      - name: Setup .NET (x64)
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
+
+      - name: Setup .NET (x86)
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+          architecture: x86
 
       - name: Cache NuGet packages
         uses: actions/cache@v5
@@ -36,3 +42,13 @@ jobs:
 
       - name: Build
         run: dotnet build OnlyR.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test --project OnlyR.Tests/OnlyR.Tests.csproj --configuration Release --no-build --report-trx --report-trx-filename test-results.trx --results-directory ./test-results
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: ./test-results

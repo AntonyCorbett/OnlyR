@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -23,6 +24,7 @@ namespace OnlyR
     /// Interaction logic for App.xaml.
     /// </summary>
 #pragma warning disable CA1001 // Types that own disposable fields should be disposable
+    [ExcludeFromCodeCoverage]
     public partial class App
 #pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {

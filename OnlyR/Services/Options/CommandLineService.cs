@@ -8,6 +8,11 @@ internal sealed class CommandLineService : ICommandLineService
 {
     public CommandLineService()
     {
+        Parse(Environment.GetCommandLineArgs());
+    }
+
+    internal void Parse(string[] args)
+    {
         var p = new FluentCommandLineParser();
 
         p.Setup<bool>("nogpu")
@@ -24,8 +29,8 @@ internal sealed class CommandLineService : ICommandLineService
 
         p.Setup<bool>("nosave")
             .Callback(s => NoSave = s).SetDefault(false);
-            
-        p.Parse(Environment.GetCommandLineArgs());
+
+        p.Parse(args);
     }
 
     public bool NoGpu { get; set; }

@@ -66,23 +66,22 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             _timer.Start();
             return;
         }
-            
+
         var itemsDeletedCount = 0;
         try
         {
+            _lastJob = GetNextPurgeJob(_lastJob);
+
             switch (_lastJob)
             {
-                case PurgeServiceJob.FolderPurge:
-                case PurgeServiceJob.Nothing:
+                case PurgeServiceJob.FilePurge:
                     Log.Logger.Information($"Starting purge of old recordings (older than {days} days)");
-                    _lastJob = PurgeServiceJob.FilePurge;
                     itemsDeletedCount = await PurgeFilesInternal(days);
                     _allFilesDone = itemsDeletedCount == 0;
                     break;
 
-                case PurgeServiceJob.FilePurge:
+                case PurgeServiceJob.FolderPurge:
                     Log.Logger.Information("Starting removal of empty folders");
-                    _lastJob = PurgeServiceJob.FolderPurge;
                     itemsDeletedCount = await RemoveEmptyFolders();
                     break;
 
@@ -98,6 +97,17 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         {
             AfterPurge(itemsDeletedCount);
         }
+    }
+
+    internal static PurgeServiceJob GetNextPurgeJob(PurgeServiceJob lastJob)
+    {
+        return lastJob switch
+        {
+            PurgeServiceJob.Nothing => PurgeServiceJob.FilePurge,
+            PurgeServiceJob.FolderPurge => PurgeServiceJob.FilePurge,
+            PurgeServiceJob.FilePurge => PurgeServiceJob.FolderPurge,
+            _ => throw new NotImplementedException(),
+        };
     }
 
     private void AfterPurge(int itemsDeletedCount)
@@ -122,7 +132,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
     }
         
-    private Task<int> RemoveEmptyFolders()
+    internal Task<int> RemoveEmptyFolders()
     {
         var t = Task.Run(
             () => DeleteFolders(GetEmptyFolders()),
@@ -160,7 +170,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
     }
 
     // returns number of files deleted
-    private Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
+    internal Task<int> PurgeFilesInternal(int recordingsLifeTimeDays)
     {
         var t = Task.Run(
             () =>
@@ -239,7 +249,8 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 continue;
             }
 
-            if (FileUtils.IsDirectoryEmpty(yearFolder) && yearOfFolder != DateTime.Now.Year)
+            if (FileUtils.IsDirectoryEmpty(yearFolder) &&
+                ShouldDeleteEmptyFolder(yearOfFolder, null, null, DateTime.Now))
             {
                 Log.Logger.Debug($"Found empty folder: {yearFolder}");
                 result.Add(yearFolder);
@@ -259,8 +270,8 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                     continue;
                 }
 
-                if (FileUtils.IsDirectoryEmpty(monthFolder) && 
-                    (yearOfFolder != DateTime.Now.Year || monthOfFolder != DateTime.Now.Month))
+                if (FileUtils.IsDirectoryEmpty(monthFolder) &&
+                    ShouldDeleteEmptyFolder(yearOfFolder, monthOfFolder, null, DateTime.Now))
                 {
                     Log.Logger.Debug($"Found empty folder: {monthFolder}");
                     result.Add(monthFolder);
@@ -285,9 +296,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                     }
 
                     if (FileUtils.IsDirectoryEmpty(dateFolder) &&
-                        (yearOfFolder != DateTime.Now.Year || 
-                         monthOfFolder != DateTime.Now.Month || 
-                         dateOfFolder != DateTime.Today.Date))
+                        ShouldDeleteEmptyFolder(yearOfFolder, monthOfFolder, dateOfFolder, DateTime.Now))
                     {
                         Log.Logger.Debug($"Found empty folder: {dateFolder}");
                         result.Add(dateFolder);
@@ -415,15 +424,38 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
     }
 
-    private static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
+    internal static bool MonthFolderMayContainCandidates(int yearOfFolder, int monthOfFolder, DateTime oldFileDate)
     {
         return yearOfFolder < oldFileDate.Year ||
                (yearOfFolder == oldFileDate.Year && monthOfFolder <= oldFileDate.Month);
     }
 
-    private static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
+    internal static bool YearFolderMayContainCandidates(int yearOfFolder, DateTime oldFileDate)
     {
         return oldFileDate.Year >= yearOfFolder;
+    }
+
+    internal static bool ShouldDeleteEmptyFolder(int? year, int? month, DateTime? date, DateTime now)
+    {
+        if (year == null)
+        {
+            return false;
+        }
+
+        // Year-level folder: delete if not current year
+        if (month == null)
+        {
+            return year != now.Year;
+        }
+
+        // Month-level folder: delete if not current year+month
+        if (date == null)
+        {
+            return year != now.Year || month != now.Month;
+        }
+
+        // Date-level folder: delete if not today
+        return year != now.Year || month != now.Month || date != now.Date;
     }
 
     public void Dispose()

@@ -1,34 +1,30 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using OnlyR.Services.Options;
 
-namespace OnlyR.Tests
+namespace OnlyR.Tests;
+
+public sealed class TestOptions
 {
-    [TestClass]
-    public class TestOptions
+    [Test]
+    public async Task TestSanitize()
     {
-        private readonly int _badIntValue = -100;
-
-        [TestMethod]
-        public void TestSanitize()
+        var options = new Options
         {
-            var options = new Options
-            {
-                ChannelCount = _badIntValue,
-                MaxRecordingTimeSeconds = _badIntValue,
-                MaxRecordingsInOneFolder = _badIntValue,
-                Mp3BitRate = _badIntValue,
-                RecordingDevice = _badIntValue,
-                SampleRate = _badIntValue,
-            };
+            ChannelCount = -100,
+            MaxRecordingTimeSeconds = -100,
+            MaxRecordingsInOneFolder = -100,
+            Mp3BitRate = -100,
+            RecordingDevice = -100,
+            SampleRate = -100,
+        };
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreNotEqual(options.ChannelCount, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingTimeSeconds, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingsInOneFolder, _badIntValue);
-            Assert.AreNotEqual(options.Mp3BitRate, _badIntValue);
-            Assert.AreNotEqual(options.RecordingDevice, _badIntValue);
-            Assert.AreNotEqual(options.SampleRate, _badIntValue);
-        }
+        await Assert.That(options.ChannelCount).IsGreaterThan(0);
+        await Assert.That(options.MaxRecordingTimeSeconds).IsGreaterThanOrEqualTo(0);
+        await Assert.That(options.MaxRecordingsInOneFolder).IsGreaterThan(0);
+        await Assert.That(options.Mp3BitRate).IsGreaterThan(0);
+        await Assert.That(options.RecordingDevice).IsGreaterThanOrEqualTo(0);
+        await Assert.That(options.SampleRate).IsGreaterThan(0);
     }
 }
