@@ -1,103 +1,99 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 
-namespace OnlyR.Tests
+namespace OnlyR.Tests;
+
+public sealed class TestOptions
 {
-    [TestClass]
-    public class TestOptions
+    [Test]
+    public async Task TestSanitize()
     {
-        private readonly int _badIntValue = -100;
-
-        [TestMethod]
-        public void TestSanitize()
+        var options = new Options
         {
-            var options = new Options
-            {
-                ChannelCount = _badIntValue,
-                MaxRecordingTimeSeconds = _badIntValue,
-                MaxRecordingsInOneFolder = _badIntValue,
-                Mp3BitRate = _badIntValue,
-                RecordingDevice = _badIntValue,
-                SampleRate = _badIntValue,
-            };
+            ChannelCount = -100,
+            MaxRecordingTimeSeconds = -100,
+            MaxRecordingsInOneFolder = -100,
+            Mp3BitRate = -100,
+            RecordingDevice = -100,
+            SampleRate = -100,
+        };
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreNotEqual(options.ChannelCount, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingTimeSeconds, _badIntValue);
-            Assert.AreNotEqual(options.MaxRecordingsInOneFolder, _badIntValue);
-            Assert.AreNotEqual(options.Mp3BitRate, _badIntValue);
-            Assert.AreNotEqual(options.RecordingDevice, _badIntValue);
-            Assert.AreNotEqual(options.SampleRate, _badIntValue);
-        }
+        await Assert.That(options.ChannelCount).IsGreaterThan(0);
+        await Assert.That(options.MaxRecordingTimeSeconds).IsGreaterThanOrEqualTo(0);
+        await Assert.That(options.MaxRecordingsInOneFolder).IsGreaterThan(0);
+        await Assert.That(options.Mp3BitRate).IsGreaterThan(0);
+        await Assert.That(options.RecordingDevice).IsGreaterThanOrEqualTo(0);
+        await Assert.That(options.SampleRate).IsGreaterThan(0);
+    }
 
-        [TestMethod]
-        public void TestLegacyDarkModeFalseMigratesToSystem()
-        {
-            const string json = """{ "SampleRate": 44100, "AlwaysOnTop": true }""";
+    [Test]
+    public async Task TestLegacyDarkModeFalseMigratesToSystem()
+    {
+        const string json = """{ "SampleRate": 44100, "AlwaysOnTop": true }""";
 
-            var options = JsonConvert.DeserializeObject<Options>(json);
+        var options = JsonConvert.DeserializeObject<Options>(json);
 
-            Assert.IsNotNull(options);
-            Assert.IsNull(options.AppTheme);
+        await Assert.That(options).IsNotNull();
+        await Assert.That(options!.AppTheme).IsNull();
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreEqual(AppTheme.System, options.AppTheme);
-        }
+        await Assert.That(options.AppTheme).IsEqualTo(AppTheme.System);
+    }
 
-        [TestMethod]
-        public void TestLegacyDarkModeTrueMigratesToDark()
-        {
-            const string json = """{ "DarkMode": true, "SampleRate": 44100 }""";
+    [Test]
+    public async Task TestLegacyDarkModeTrueMigratesToDark()
+    {
+        const string json = """{ "DarkMode": true, "SampleRate": 44100 }""";
 
-            var options = JsonConvert.DeserializeObject<Options>(json);
+        var options = JsonConvert.DeserializeObject<Options>(json);
 
-            Assert.IsNotNull(options);
-            Assert.IsNull(options.AppTheme);
+        await Assert.That(options).IsNotNull();
+        await Assert.That(options!.AppTheme).IsNull();
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreEqual(AppTheme.Dark, options.AppTheme);
-        }
+        await Assert.That(options.AppTheme).IsEqualTo(AppTheme.Dark);
+    }
 
-        [TestMethod]
-        public void TestExplicitAppThemePreserved()
-        {
-            const string json = """{ "DarkMode": false, "AppTheme": 0 }""";
+    [Test]
+    public async Task TestExplicitAppThemePreserved()
+    {
+        const string json = """{ "DarkMode": false, "AppTheme": 0 }""";
 
-            var options = JsonConvert.DeserializeObject<Options>(json);
+        var options = JsonConvert.DeserializeObject<Options>(json);
 
-            Assert.IsNotNull(options);
-            Assert.AreEqual(AppTheme.Light, options.AppTheme);
+        await Assert.That(options).IsNotNull();
+        await Assert.That(options!.AppTheme).IsEqualTo(AppTheme.Light);
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreEqual(AppTheme.Light, options.AppTheme);
-        }
+        await Assert.That(options.AppTheme).IsEqualTo(AppTheme.Light);
+    }
 
-        [TestMethod]
-        public void TestAppThemeRoundTrips()
-        {
-            var original = new Options { AppTheme = AppTheme.Dark };
+    [Test]
+    public async Task TestAppThemeRoundTrips()
+    {
+        var original = new Options { AppTheme = AppTheme.Dark };
 
-            var json = JsonConvert.SerializeObject(original);
-            var restored = JsonConvert.DeserializeObject<Options>(json);
+        var json = JsonConvert.SerializeObject(original);
+        var restored = JsonConvert.DeserializeObject<Options>(json);
 
-            Assert.IsNotNull(restored);
-            Assert.AreEqual(AppTheme.Dark, restored.AppTheme);
-        }
+        await Assert.That(restored).IsNotNull();
+        await Assert.That(restored!.AppTheme).IsEqualTo(AppTheme.Dark);
+    }
 
-        [TestMethod]
-        public void TestInvalidAppThemeSanitizedToSystem()
-        {
-            var options = new Options { AppTheme = (AppTheme)99 };
+    [Test]
+    public async Task TestInvalidAppThemeSanitizedToSystem()
+    {
+        var options = new Options { AppTheme = (AppTheme)99 };
 
-            options.Sanitize();
+        options.Sanitize();
 
-            Assert.AreEqual(AppTheme.System, options.AppTheme);
-        }
+        await Assert.That(options.AppTheme).IsEqualTo(AppTheme.System);
     }
 }

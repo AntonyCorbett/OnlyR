@@ -25,9 +25,16 @@ using Serilog;
 
 namespace OnlyR.ViewModel
 {
+    internal enum AutoStopReason
+    {
+        None,
+        TimeLimit,
+        Silence,
+    }
+
     /// <summary>
-    /// View model for Recording page. Contains properties that the Recording page 
-    /// can data bind to, i.e. it has everything that is needed by the user during 
+    /// View model for Recording page. Contains properties that the Recording page
+    /// can data bind to, i.e. it has everything that is needed by the user during
     /// interaction with the Recording page.
     /// </summary>
     public class RecordingPageViewModel : ObservableObject, IPage
@@ -330,22 +337,46 @@ namespace OnlyR.ViewModel
 
             if (RecordingStatus != RecordingStatus.StopRequested)
             {
-                if (_optionsService.Options.MaxRecordingTimeSeconds > 0 &&
-                    ElapsedTime.TotalSeconds > _optionsService.Options.MaxRecordingTimeSeconds)
-                {
-                    AutoStopRecordingAtLimit();
-                }
-
                 if (StopOnSilenceEnabled)
                 {
                     _silenceService.ReportVolume(e.VolumeLevelAsPercentage);
+                }
 
-                    if (_silenceService.GetSecondsOfSilence() > _optionsService.Options.MaxSilenceTimeSeconds)
-                    {
+                var reason = GetAutoStopReason(
+                    ElapsedTime.TotalSeconds,
+                    _optionsService.Options.MaxRecordingTimeSeconds,
+                    _silenceService.GetSecondsOfSilence(),
+                    _optionsService.Options.MaxSilenceTimeSeconds);
+
+                switch (reason)
+                {
+                    case AutoStopReason.TimeLimit:
+                        AutoStopRecordingAtLimit();
+                        break;
+                    case AutoStopReason.Silence:
                         AutoStopRecordingAfterSilence();
-                    }
+                        break;
                 }
             }
+        }
+
+        internal static AutoStopReason GetAutoStopReason(
+            double elapsedSeconds,
+            int maxRecordingSeconds,
+            int silenceSeconds,
+            int maxSilenceSeconds)
+        {
+            if (maxRecordingSeconds > 0 && elapsedSeconds > maxRecordingSeconds)
+            {
+                return AutoStopReason.TimeLimit;
+            }
+
+            if (maxSilenceSeconds > 0 && silenceSeconds > maxSilenceSeconds)
+            {
+                return AutoStopReason.Silence;
+            }
+
+            return AutoStopReason.None;
         }
         
         private void AutoStopRecordingAfterSilence()
@@ -555,7 +586,7 @@ namespace OnlyR.ViewModel
         private void SaveToRemovableDrives()
         {
             IsCopying = true;
-            
+
             Task.Run(() =>
             {
                 try
@@ -569,34 +600,38 @@ namespace OnlyR.ViewModel
                         promote: false,
                         neverConsiderToBeDuplicate: true);
                 }
-                catch (NoRecordingsException ex)
-                {
-                    _snackbarService.EnqueueWithOk(ex.Message);
-                }
-                catch (AggregateException ex)
-                {
-                    foreach (var innerException in ex.InnerExceptions)
-                    {
-                        if (innerException is NoSpaceException exception)
-                        {
-                            _snackbarService.EnqueueWithOk(exception.Message);
-                        }
-                        else
-                        {
-                            _snackbarService.EnqueueWithOk(Properties.Resources.UNKNOWN_COPY_ERROR);
-                        }
-                    }
-                }
                 catch (Exception ex)
                 {
-                    Log.Logger.Error(ex, Properties.Resources.UNKNOWN_COPY_ERROR);
-                    _snackbarService.EnqueueWithOk(Properties.Resources.UNKNOWN_COPY_ERROR);
+                    foreach (var message in GetCopyErrorMessages(ex))
+                    {
+                        _snackbarService.EnqueueWithOk(message);
+                    }
                 }
                 finally
                 {
                     Application.Current.Dispatcher.Invoke(() => IsCopying = false);
                 }
             });
+        }
+
+        internal static string[] GetCopyErrorMessages(Exception ex)
+        {
+            if (ex is NoRecordingsException)
+            {
+                return [ex.Message];
+            }
+
+            if (ex is AggregateException agg)
+            {
+                return agg.InnerExceptions
+                    .Select(inner => inner is NoSpaceException
+                        ? inner.Message
+                        : Properties.Resources.UNKNOWN_COPY_ERROR)
+                    .ToArray();
+            }
+
+            Log.Logger.Error(ex, Properties.Resources.UNKNOWN_COPY_ERROR);
+            return [Properties.Resources.UNKNOWN_COPY_ERROR];
         }
 
         private void OnRemovableDriveMessage(object recipient, RemovableDriveMessage message)

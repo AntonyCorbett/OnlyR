@@ -13,6 +13,7 @@ namespace OnlyR.VolumeMeter
     /// Volume meter custom control using bitmaps on a DrawingVisual.
     /// See also Themes\Generic.xaml
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class VduControl : Control
     {
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -13,6 +14,7 @@ namespace OnlyR
     /// <summary>
     /// MainWindow.xaml code-behind.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public partial class MainWindow
     {
         private const double MainWindowWidth = 268;

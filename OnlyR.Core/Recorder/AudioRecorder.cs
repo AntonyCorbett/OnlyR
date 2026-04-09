@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using NAudio.Lame;
@@ -16,6 +17,7 @@ namespace OnlyR.Core.Recorder;
 /// so if we need to replace NAudio with another library we just need to modify this part
 /// of the application.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class AudioRecorder : IDisposable
 {
     // use these 2 together. Experiment to get the best VU display...

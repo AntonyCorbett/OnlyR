@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -12,6 +13,7 @@ namespace OnlyR.Services.RecordingCopies
 
     // adapted from work by Armanisoft from here:
     // https://www.codeproject.com/Articles/375916/How-to-Prepare-a-USB-Drive-for-Safe-Removal-2
+    [ExcludeFromCodeCoverage]
     internal static class DriveEjectionServiceNativeMethods
     {
         // from setupapi.h

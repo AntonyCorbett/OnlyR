@@ -35,4 +35,9 @@ internal sealed class SilenceService : ISilenceService
     {
         _nonSilenceLastDetected = DateTime.UtcNow;
     }
+
+    internal void SetNonSilenceLastDetected(DateTime value)
+    {
+        _nonSilenceLastDetected = value;
+    }
 }

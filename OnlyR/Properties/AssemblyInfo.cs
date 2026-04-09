@@ -19,3 +19,4 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly)]
 [assembly: NeutralResourcesLanguage("en-GB")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("OnlyR.Tests")]

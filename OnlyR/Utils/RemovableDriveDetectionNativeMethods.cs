@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.ViewModel.Messages;
@@ -14,6 +15,7 @@ namespace OnlyR.Utils
     // ReSharper disable StyleCop.SA1310
     // ReSharper disable InconsistentNaming
 
+    [ExcludeFromCodeCoverage]
     internal static class RemovableDriveDetectionNativeMethods
     {
         private const int WM_DEVICECHANGE = 0x0219;

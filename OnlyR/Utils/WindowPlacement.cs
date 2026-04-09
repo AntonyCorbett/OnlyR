@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -19,6 +20,7 @@ namespace OnlyR.Utils
 
     //// adapted from david Rickard's Tech Blog
 
+    [ExcludeFromCodeCoverage]
     public static class WindowPlacement
     {
         private const int SwShowNormal = 1;
@@ -130,6 +132,7 @@ namespace OnlyR.Utils
     // RECT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
+    [ExcludeFromCodeCoverage]
 #pragma warning disable U2U1004 // Public value types should implement equality
     public struct RECT
 #pragma warning restore U2U1004 // Public value types should implement equality
@@ -152,6 +155,7 @@ namespace OnlyR.Utils
     // POINT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
+    [ExcludeFromCodeCoverage]
 #pragma warning disable U2U1004 // Public value types should implement equality
     public struct POINT
 #pragma warning restore U2U1004 // Public value types should implement equality
