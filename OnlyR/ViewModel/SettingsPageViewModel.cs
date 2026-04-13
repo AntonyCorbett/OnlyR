@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.ViewModel.Messages;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.Win32;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
@@ -436,14 +436,16 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     private void SelectDestinationFolder()
     {
-#pragma warning disable CA1416 // Validate platform compatibility
-        using var d = new CommonOpenFileDialog(Properties.Resources.SELECT_DEST_FOLDER) { IsFolderPicker = true };
-        var result = d.ShowDialog();
-        if (result == CommonFileDialogResult.Ok)
+        var dialog = new OpenFolderDialog
         {
-            DestinationFolder = d.FileName;
+            Title = Properties.Resources.SELECT_DEST_FOLDER,
+            InitialDirectory = DestinationFolder
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            DestinationFolder = dialog.FolderName;
         }
-#pragma warning restore CA1416 // Validate platform compatibility
     }
 
     private void ShowRecordings()
