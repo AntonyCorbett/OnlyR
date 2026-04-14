@@ -9,6 +9,7 @@
     Title="O N L Y R"
     Width="268"
     Height="300"
+    Background="{DynamicResource MaterialDesignPaper}"
     AutomationProperties.Name="{x:Static resx:Resources.ACCESSIBILITY_ONLY_R}"
     Closing="WindowClosing"
     DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
