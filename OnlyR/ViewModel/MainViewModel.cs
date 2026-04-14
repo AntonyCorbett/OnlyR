@@ -59,6 +59,7 @@ namespace OnlyR.ViewModel
             // subscriptions...
             WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
             WeakReferenceMessenger.Default.Register<AlwaysOnTopChanged>(this, OnAlwaysOnTopChanged);
+            WeakReferenceMessenger.Default.Register<ThemeModeChanged>(this, OnThemeModeChanged);
 
             _pages = new Dictionary<string, FrameworkElement>();
 
@@ -155,6 +156,11 @@ namespace OnlyR.ViewModel
         private void OnAlwaysOnTopChanged(object recipient, AlwaysOnTopChanged obj)
         {
             OnPropertyChanged(nameof(AlwaysOnTop));
+        }
+
+        private void OnThemeModeChanged(object recipient, ThemeModeChanged obj)
+        {
+            App.ApplyTheme(_optionsService.Options.AppTheme ?? Model.AppTheme.System);
         }
         
         private void SetupPage(string pageName, FrameworkElement page, ObservableObject pageModel)

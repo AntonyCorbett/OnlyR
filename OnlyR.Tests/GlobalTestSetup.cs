@@ -1,7 +1,8 @@
-#pragma warning disable CA1416 // Validate platform compatibility
-
 using System;
+using System.Runtime.Versioning;
 using System.Windows;
+
+[assembly: SupportedOSPlatform("windows7.0")]
 
 namespace OnlyR.Tests;
 
@@ -17,5 +18,3 @@ public static class GlobalTestSetup
         }
     }
 }
-
-#pragma warning restore CA1416 // Validate platform compatibility

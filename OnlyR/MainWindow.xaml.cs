@@ -38,6 +38,7 @@ namespace OnlyR
         {
             base.OnSourceInitialized(e);
 
+            App.ApplyTitleBarTheme(this);
             AdjustMainWindowPositionAndSize();
 
             var source = PresentationSource.FromVisual(this) as HwndSource;
@@ -71,7 +72,7 @@ namespace OnlyR
                 MaxWidth = SettingsWindowMaxWidth;
 
                 var optionsService = Ioc.Default.GetService<IOptionsService>();
-                var sz = optionsService?.Options?.SettingsPageSize ?? default;
+                var sz = optionsService?.Options.SettingsPageSize ?? default;
                 if (sz != default)
                 {
                     Width = sz.Width;

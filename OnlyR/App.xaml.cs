@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
@@ -12,11 +13,17 @@ using Serilog;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using OnlyR.Model;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
+
+[assembly: SupportedOSPlatform("windows7.0")]
 
 namespace OnlyR
 {
@@ -43,7 +50,9 @@ namespace OnlyR
             }
 
             ConfigureServices();
+            ApplyStartupTheme();
 
+            SystemEvents.UserPreferenceChanged += OnSystemThemeChanged;
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
         }
 
@@ -76,6 +85,7 @@ namespace OnlyR
 
         protected override void OnExit(ExitEventArgs e)
         {
+            SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged;
             _appMutex?.Dispose();
             Log.Logger.Information("==== Exit ====");
         }
@@ -105,6 +115,74 @@ namespace OnlyR
             Log.Logger.Information("==== Launched ====");
         }
         
+        internal static void ApplyTheme(AppTheme mode)
+        {
+            var isDark = mode switch
+            {
+                AppTheme.Dark => true,
+                AppTheme.System => SystemThemeHelper.IsSystemDarkTheme(),
+                _ => false,
+            };
+
+            var paletteHelper = new PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(isDark ? Theme.Dark : Theme.Light);
+            paletteHelper.SetTheme(theme);
+
+            ApplyTitleBarTheme(isDark);
+        }
+
+        internal static void ApplyTitleBarTheme(Window window)
+        {
+            var paletteHelper = new PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            var isDark = theme.GetBaseTheme() == BaseTheme.Dark;
+            SetTitleBarDarkMode(window, isDark);
+        }
+
+        private static void ApplyTitleBarTheme(bool isDark)
+        {
+            foreach (Window window in Current.Windows)
+            {
+                SetTitleBarDarkMode(window, isDark);
+            }
+        }
+
+        private static void SetTitleBarDarkMode(Window window, bool isDark)
+        {
+            var darkMode = isDark ? 1 : 0;
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd != nint.Zero)
+            {
+                _ = NativeMethods.DwmSetWindowAttribute(
+                    hwnd,
+                    NativeMethods.DwmwaUseImmersiveDarkMode,
+                    ref darkMode,
+                    sizeof(int));
+            }
+        }
+
+        private static void ApplyStartupTheme()
+        {
+            var optionsService = Ioc.Default.GetService<IOptionsService>();
+            if (optionsService != null)
+            {
+                ApplyTheme(optionsService.Options.AppTheme ?? AppTheme.System);
+            }
+        }
+
+        private static void OnSystemThemeChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category == UserPreferenceCategory.General)
+            {
+                var optionsService = Ioc.Default.GetService<IOptionsService>();
+                if (optionsService?.Options.AppTheme == AppTheme.System)
+                {
+                    ApplyTheme(AppTheme.System);
+                }
+            }
+        }
+
         private bool AnotherInstanceRunning()
         {
             _appMutex = new Mutex(true, _appString, out var newInstance);

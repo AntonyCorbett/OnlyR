@@ -21,5 +21,10 @@ namespace OnlyR.Utils
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+
+        public const int DwmwaUseImmersiveDarkMode = 20;
+
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
     }
 }

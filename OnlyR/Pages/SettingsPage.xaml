@@ -44,7 +44,7 @@
         </Style>
 
         <Style x:Key="MiscNotesStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="Foreground" Value="{StaticResource PrimaryHueDarkBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBodyLight}" />
             <Setter Property="FontSize" Value="11" />
         </Style>
 
@@ -93,7 +93,7 @@
                 <TextBlock
                     Margin="0,10,0,10"
                     FontSize="10"
-                    Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
+                    Foreground="{DynamicResource MaterialDesignBody}"
                     Text="{Binding AppVersionStr}" />
 
                 <ComboBox
@@ -223,6 +223,16 @@
                     Content="{x:Static resx:Resources.SETTINGS_START_MINIMIZED}"
                     IsChecked="{Binding StartMinimized, Mode=TwoWay}"
                     Style="{StaticResource SettingsCheckBox}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_THEME}"
+                    AutomationProperties.AutomationId="AppTheme"
+                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_THEME}"
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding ThemeModes}"
+                    SelectedValue="{Binding AppTheme, Mode=TwoWay}"
+                    SelectedValuePath="Theme"
+                    Style="{StaticResource SettingsComboStyle}" />
 
                 <TextBox
                     Margin="0,10,0,10"
