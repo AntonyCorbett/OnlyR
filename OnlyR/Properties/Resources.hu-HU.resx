@@ -293,6 +293,22 @@
     <value>Csend érzékelés (teljes hangerő %-a)</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_THEME" xml:space="preserve">
+    <value>Theme</value>
+    <comment>Settings page theme combobox title</comment>
+  </data>
+  <data name="THEME_LIGHT" xml:space="preserve">
+    <value>Light</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_DARK" xml:space="preserve">
+    <value>Dark</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_SYSTEM" xml:space="preserve">
+    <value>System (default)</value>
+    <comment>Theme mode option - follows OS theme</comment>
+  </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
     <value>Kis méretben induljon</value>
     <comment>Settings page checkbox title</comment>

@@ -202,10 +202,10 @@
     <value>1 minuto</value>
   </data>
   <data name="PAUSED" xml:space="preserve">
-    <value>Paused</value>
+    <value>In pausa</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>Metti in pausa</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Registrazione in corso</value>
@@ -223,7 +223,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>Riprendi registrazione</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Salva le registrazioni di oggi nell'unità {0}</value>
@@ -251,7 +251,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>Mostra controllo pausa</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Dissolvenza in uscita</value>
@@ -292,6 +292,22 @@
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
     <value>Rilevamento silenzio (% del volume massimo)</value>
     <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_THEME" xml:space="preserve">
+    <value>Theme</value>
+    <comment>Settings page theme combobox title</comment>
+  </data>
+  <data name="THEME_LIGHT" xml:space="preserve">
+    <value>Light</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_DARK" xml:space="preserve">
+    <value>Dark</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_SYSTEM" xml:space="preserve">
+    <value>System (default)</value>
+    <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
     <value>Avvia ridotto a icona</value>
