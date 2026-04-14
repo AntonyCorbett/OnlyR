@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
@@ -21,6 +22,8 @@ using Microsoft.Win32;
 using OnlyR.Model;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
+
+[assembly: SupportedOSPlatform("windows7.0")]
 
 namespace OnlyR
 {
