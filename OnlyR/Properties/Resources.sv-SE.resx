@@ -202,10 +202,10 @@
     <value>1 minut</value>
   </data>
   <data name="PAUSED" xml:space="preserve">
-    <value>Paused</value>
+    <value>Pausad</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>Pausa inspelningen</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Spelar in</value>
@@ -223,7 +223,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>Återuppta inspelningen</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Spara dagens inspelningar till disk {0}</value>
@@ -251,7 +251,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>Visa pauskontroll</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Tona ut inspelningar</value>
@@ -294,19 +294,19 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>Ljus</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>Mörk</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
-    <value>System (default)</value>
+    <value>System (standard)</value>
     <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
