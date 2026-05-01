@@ -8,23 +8,20 @@
     <PackageVersion Include="NAudio.Lame" Version="2.1.0" />
     <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
     <PackageVersion Include="NAudio.WinForms" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.5" />
-
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.7" />
     <!-- OnlyR -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
     <PackageVersion Include="MaterialDesignThemes" Version="4.8.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
-
     <!-- OnlyR.Tests -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="Rocks" Version="10.1.0" />
     <PackageVersion Include="TUnit" Version="1.28.7" />
     <PackageVersion Include="TUnit.Mocks" Version="1.28.7-beta" />
-
     <!-- Shared -->
     <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
   </ItemGroup>
