@@ -19,8 +19,8 @@
     mc:Ignorable="d">
 
     <Grid>
-        <ContentControl Content="{Binding CurrentPage}" />
-        <materialDesign:Snackbar Padding="10,0,10,0" MessageQueue="{Binding TheSnackbarMessageQueue}" />
+        <ContentControl IsTabStop="False" Content="{Binding CurrentPage}" />
+        <materialDesign:Snackbar IsTabStop="False" Padding="10,0,10,0" MessageQueue="{Binding TheSnackbarMessageQueue}" />
     </Grid>
 
 </Window>

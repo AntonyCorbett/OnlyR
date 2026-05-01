@@ -219,6 +219,7 @@
 
             <materialDesign:Card
                 Grid.Row="1"
+                IsTabStop="False"
                 Padding="10"
                 VerticalAlignment="Stretch">
                 <DockPanel>
