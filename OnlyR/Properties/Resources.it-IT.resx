@@ -294,19 +294,19 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>Chiaro</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>Scuro</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
-    <value>System (default)</value>
+    <value>Sistema (predefinito)</value>
     <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
