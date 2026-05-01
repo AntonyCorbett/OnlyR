@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
@@ -57,6 +58,10 @@ namespace OnlyR.VolumeMeter
         {
             DefaultStyleKeyProperty.OverrideMetadata(
                 typeof(VduControl), new FrameworkPropertyMetadata(typeof(VduControl)));
+
+            // Display-only control — exclude from keyboard navigation
+            IsTabStopProperty.OverrideMetadata(typeof(VduControl), new FrameworkPropertyMetadata(false));
+            FocusableProperty.OverrideMetadata(typeof(VduControl), new FrameworkPropertyMetadata(false));
         }
 
         public VduControl()
@@ -79,6 +84,8 @@ namespace OnlyR.VolumeMeter
             get => (int)GetValue(VolumeLevelProperty);
             set => SetValue(VolumeLevelProperty, value);
         }
+
+        protected override AutomationPeer OnCreateAutomationPeer() => new VduControlAutomationPeer(this);
 
         public override void OnApplyTemplate()
         {
@@ -135,13 +142,18 @@ namespace OnlyR.VolumeMeter
         {
             if (d is VduControl c)
             {
-                c.OnVolumeChanged();
+                c.OnVolumeChanged((int)e.OldValue, (int)e.NewValue);
             }
         }
 
-        private void OnVolumeChanged()
+        private void OnVolumeChanged(int oldValue, int newValue)
         {
             Refresh();
+
+            if (UIElementAutomationPeer.FromElement(this) is VduControlAutomationPeer peer)
+            {
+                peer.RaiseVolumeChangedEvent(oldValue, newValue);
+            }
         }
 
         private void Refresh()
