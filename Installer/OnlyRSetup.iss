@@ -43,7 +43,13 @@ Source: "..\OnlyR\bin\Release\net10.0-windows\publish\win-x86\*"; DestDir: "{app
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; Check: not DesktopShortcutExists
+
+[Code]
+function DesktopShortcutExists: Boolean;
+begin
+  Result := FileExists(ExpandConstant('{commondesktop}\{#MyAppName}.lnk'));
+end;
 
 [ThirdParty]
 UseRelativePaths=True
