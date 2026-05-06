@@ -131,6 +131,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
             if (_optionsService.Options.SilenceAsVolumePercentage != value)
             {
                 _optionsService.Options.SilenceAsVolumePercentage = value;
+                OnPropertyChanged();
             }
         }
     }

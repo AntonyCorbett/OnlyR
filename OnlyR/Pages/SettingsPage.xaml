@@ -175,12 +175,21 @@
                     SelectedValuePath="Seconds"
                     Style="{StaticResource SettingsComboStyle}" />
 
-                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
+                <Label
+                    x:Name="SilenceDetectionVolumeLabel"
+                    Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
                 <Slider
                     AutomationProperties.AutomationId="SilenceDetectionVolume"
+                    AutomationProperties.LabeledBy="{Binding ElementName=SilenceDetectionVolumeLabel}"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    Focusable="True"
+                    IsSnapToTickEnabled="True"
+                    IsTabStop="True"
+                    LargeChange="10"
+                    SmallChange="1"
                     Style="{StaticResource SliderStyle}"
-                    Value="{Binding SilenceAsVolumePercentage}" />
+                    TickFrequency="1"
+                    Value="{Binding SilenceAsVolumePercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox
                     AutomationProperties.AutomationId="FadeOut"
@@ -248,7 +257,7 @@
                         Margin="10,0,5,10"
                         VerticalAlignment="Bottom"
                         AutomationProperties.AutomationId="SelectDestinationFolder"
-                        AutomationProperties.Name="{Binding SelectDestinationFolderCommand}"
+                        AutomationProperties.Name="{x:Static resx:Resources.SELECT_DEST_FOLDER}"
                         Command="{Binding SelectDestinationFolderCommand}"
                         DockPanel.Dock="Right">
                         ...
@@ -257,7 +266,7 @@
                         Margin="0,10,0,10"
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
                         AutomationProperties.AutomationId="EditDestinationFolder"
-                        AutomationProperties.Name="SETTINGS_RECORDINGS_FOLDER"
+                        AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDINGS_FOLDER}"
                         DockPanel.Dock="Left"
                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                         Text="{Binding DestinationFolder, Mode=TwoWay}" />
