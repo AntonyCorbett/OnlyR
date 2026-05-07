@@ -67,7 +67,25 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("ACCESSIBILITY_ONLY_R", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Displays the current recording input level as a value from 0 to 100.
+        /// </summary>
+        public static string ACCESSIBILITY_VOLUME_LEVEL_HELP {
+            get {
+                return ResourceManager.GetString("ACCESSIBILITY_VOLUME_LEVEL_HELP", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Input volume level.
+        /// </summary>
+        public static string ACCESSIBILITY_VOLUME_LEVEL_NAME {
+            get {
+                return ResourceManager.GetString("ACCESSIBILITY_VOLUME_LEVEL_NAME", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Version: {0}.
         /// </summary>

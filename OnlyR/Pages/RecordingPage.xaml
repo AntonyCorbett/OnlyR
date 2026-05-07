@@ -131,8 +131,7 @@
                     <materialDesign:PackIcon
                         Width="56"
                         Height="56"
-                        HorizontalAlignment="Center"
-                        Kind="Microphone" />
+                        HorizontalAlignment="Center"                        Kind="Microphone" />
                     <TextBlock
                         Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
                         Text="{Binding MaxRecordingTimeString}"
@@ -171,7 +170,7 @@
                     Height="85"
                     VerticalAlignment="Top"
                     behaviours:VisibilityFocusBehaviour.IsFocusEnabled="True"
-                    AutomationProperties.AutomationId="StopBtn"
+                    AutomationProperties.AutomationId="StopWithPauseBtn"
                     AutomationProperties.Name="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}"
                     Command="{Binding StopRecordingCommand}"
                     IsEnabled="{Binding IsRecordingOrPaused}"
@@ -179,8 +178,7 @@
                     ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}">
                     <materialDesign:PackIcon
                         Width="44"
-                        Height="44"
-                        Kind="Stop" />
+                        Height="44"                        Kind="Stop" />
                 </Button>
 
                 <Button
@@ -192,9 +190,11 @@
                     IsEnabled="{Binding IsRecordingOrPaused}">
                     <Button.Style>
                         <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                            <Setter Property="AutomationProperties.Name" Value="{x:Static resx:Resources.PAUSE_RECORDING_TOOLTIP}" />
                             <Setter Property="ToolTip" Value="{x:Static resx:Resources.PAUSE_RECORDING_TOOLTIP}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                    <Setter Property="AutomationProperties.Name" Value="{x:Static resx:Resources.RESUME_RECORDING_TOOLTIP}" />
                                     <Setter Property="ToolTip" Value="{x:Static resx:Resources.RESUME_RECORDING_TOOLTIP}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -219,22 +219,26 @@
 
             <materialDesign:Card
                 Grid.Row="1"
+                IsTabStop="False"
                 Padding="10"
                 VerticalAlignment="Stretch">
                 <DockPanel>
                     <TextBlock
                         DockPanel.Dock="Top"
+                        AutomationProperties.LiveSetting="Polite"
                         Foreground="{DynamicResource MaterialDesignBody}"
                         Text="{Binding StatusStr}"
                         TextWrapping="Wrap" />
                     <TextBlock
                         DockPanel.Dock="Top"
                         FontSize="32"
+                        AutomationProperties.LiveSetting="Off"
                         Foreground="{DynamicResource MaterialDesignBody}"
                         Text="{Binding ElapsedTimeStr}"
                         TextWrapping="Wrap" />
                     <TextBlock
                         DockPanel.Dock="Top"
+                        AutomationProperties.LiveSetting="Assertive"
                         Foreground="Crimson"
                         Text="{Binding ErrorMsg}"
                         TextWrapping="Wrap" />
