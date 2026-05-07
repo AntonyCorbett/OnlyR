@@ -121,6 +121,14 @@
     <value>Only R Application</value>
     <comment>Application title (for accessibility)</comment>
   </data>
+  <data name="ACCESSIBILITY_VOLUME_LEVEL_NAME" xml:space="preserve">
+    <value>Input volume level</value>
+    <comment>Accessibility name for the volume meter on the recording page</comment>
+  </data>
+  <data name="ACCESSIBILITY_VOLUME_LEVEL_HELP" xml:space="preserve">
+    <value>Displays the current recording input level as a value from 0 to 100</value>
+    <comment>Accessibility help text for the volume meter on the recording page</comment>
+  </data>
   <data name="APP_VER" xml:space="preserve">
     <value>Version: {0}</value>
   </data>
