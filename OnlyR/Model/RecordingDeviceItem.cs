@@ -14,5 +14,7 @@
         public int DeviceId { get; }
 
         public string DeviceName { get; }
+
+        public override string ToString() => DeviceName;
     }
 }

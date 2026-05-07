@@ -174,12 +174,21 @@
                     SelectedValuePath="Seconds"
                     Style="{StaticResource SettingsComboStyle}" />
 
-                <Label Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
+                <Label
+                    x:Name="SilenceDetectionVolumeLabel"
+                    Content="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}" />
                 <Slider
                     AutomationProperties.AutomationId="SilenceDetectionVolume"
+                    AutomationProperties.LabeledBy="{Binding ElementName=SilenceDetectionVolumeLabel}"
                     AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME}"
+                    Focusable="True"
+                    IsSnapToTickEnabled="True"
+                    IsTabStop="True"
+                    LargeChange="10"
+                    SmallChange="1"
                     Style="{StaticResource SliderStyle}"
-                    Value="{Binding SilenceAsVolumePercentage}" />
+                    TickFrequency="1"
+                    Value="{Binding SilenceAsVolumePercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <CheckBox
                     AutomationProperties.AutomationId="FadeOut"

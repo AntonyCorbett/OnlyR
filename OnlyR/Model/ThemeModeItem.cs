@@ -14,5 +14,7 @@ namespace OnlyR.Model
         public string Name { get; }
 
         public AppTheme Theme { get; }
+
+        public override string ToString() => Name;
     }
 }
