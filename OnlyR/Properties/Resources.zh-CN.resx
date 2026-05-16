@@ -213,13 +213,13 @@
     <value>Paused</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>暂停录音</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>录音...</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Open recordings folder</value>
+    <value>打开录音文件夹</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RECORDING_SALVAGED" xml:space="preserve">
@@ -231,7 +231,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>继续录音</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Save today's recordings to drive {0}</value>
@@ -259,7 +259,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>显示暂停按钮</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>淡出声音</value>
@@ -302,15 +302,15 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>主题</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>浅色</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>深色</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
@@ -369,6 +369,6 @@
     <value>{0} 秒</value>
   </data>
   <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
-    <value>Audio format</value>
+    <value>音频格式</value>
   </data>
 </root>
