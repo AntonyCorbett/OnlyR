@@ -122,11 +122,11 @@
     <comment>Application title (for accessibility)</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_NAME" xml:space="preserve">
-    <value>Input volume level</value>
+    <value>Nível de volume de entrada</value>
     <comment>Accessibility name for the volume meter on the recording page</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_HELP" xml:space="preserve">
-    <value>Displays the current recording input level as a value from 0 to 100</value>
+    <value>Exibe o nível de gravação atual como um valor de 0 a 100</value>
     <comment>Accessibility help text for the volume meter on the recording page</comment>
   </data>
   <data name="APP_VER" xml:space="preserve">
@@ -219,7 +219,7 @@
     <value>A gravar</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Pasta de gravações</value>
+    <value>Abrir pasta de gravações</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RECORDING_SALVAGED" xml:space="preserve">
@@ -278,7 +278,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Gravações...</value>
+    <value>Abrir gravações...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
