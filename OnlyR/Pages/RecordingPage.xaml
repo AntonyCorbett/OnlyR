@@ -131,7 +131,8 @@
                     <materialDesign:PackIcon
                         Width="56"
                         Height="56"
-                        HorizontalAlignment="Center"                        Kind="Microphone" />
+                        HorizontalAlignment="Center"
+                        Kind="Microphone" />
                     <TextBlock
                         Foreground="{StaticResource PrimaryHueLightForegroundBrush}"
                         Text="{Binding MaxRecordingTimeString}"
@@ -178,7 +179,8 @@
                     ToolTip="{x:Static resx:Resources.STOP_RECORDING_TOOLTIP}">
                     <materialDesign:PackIcon
                         Width="44"
-                        Height="44"                        Kind="Stop" />
+                        Height="44"
+                        Kind="Stop" />
                 </Button>
 
                 <Button

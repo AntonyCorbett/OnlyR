@@ -80,7 +80,8 @@
             ToolTip="{x:Static resx:Resources.BACK_TO_MAIN_PAGE}">
             <materialDesign:PackIcon
                 Width="24"
-                Height="24"                Kind="Backburger" />
+                Height="24"
+                Kind="Backburger" />
         </Button>
 
         <ScrollViewer
@@ -286,7 +287,8 @@
                         Width="24"
                         Height="24"
                         Margin="0,0,6,0"
-                        VerticalAlignment="Center"                        Kind="Translate" />
+                        VerticalAlignment="Center"
+                        Kind="Translate" />
                     <ComboBox
                         materialDesign:HintAssist.Hint="{x:Static resx:Resources.LANGUAGE}"
                         AutomationProperties.AutomationId="Language"
