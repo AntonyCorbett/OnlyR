@@ -517,7 +517,7 @@ namespace OnlyR.ViewModel
             try
             {
                 ClearErrorMsg();
-                _audioService.StopRecording(_optionsService.Options?.FadeOut ?? false);
+                _audioService.StopRecording(_optionsService.Options.FadeOut);
             }
             catch (Exception ex)
             {
@@ -581,7 +581,7 @@ namespace OnlyR.ViewModel
         {
             return FileUtils.FindSuitableRecordingFolderToShow(
                 _commandLineService.OptionsIdentifier,
-                _optionsService.Options?.DestinationFolder);
+                _optionsService.Options.DestinationFolder);
         }
 
         private void SaveToRemovableDrives()

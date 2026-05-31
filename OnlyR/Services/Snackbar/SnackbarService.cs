@@ -72,7 +72,7 @@ public sealed class SnackbarService : ISnackbarService, IDisposable
 
     public void Dispose()
     {
-        ((SnackbarMessageQueue)TheSnackbarMessageQueue)?.Dispose();
+        ((SnackbarMessageQueue)TheSnackbarMessageQueue).Dispose();
     }
 }
 

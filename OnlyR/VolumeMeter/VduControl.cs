@@ -132,10 +132,10 @@ namespace OnlyR.VolumeMeter
         {
             InvalidateBitmaps();
 
-            _backBrush?.Freeze();
-            _lightGreenBrush?.Freeze();
-            _yellowBrush?.Freeze();
-            _redBrush?.Freeze();
+            _backBrush.Freeze();
+            _lightGreenBrush.Freeze();
+            _yellowBrush.Freeze();
+            _redBrush.Freeze();
         }
 
         private static void OnVolumeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
