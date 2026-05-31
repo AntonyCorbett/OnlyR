@@ -189,7 +189,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
 
     private int DeleteCandidates(IEnumerable<string> candidatePaths)
     {
-        if (_cancellationTokenSource.IsCancellationRequested || candidatePaths == null)
+        if (_cancellationTokenSource.IsCancellationRequested)
         {
             return 0;
         }

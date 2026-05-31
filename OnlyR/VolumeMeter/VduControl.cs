@@ -66,7 +66,7 @@ namespace OnlyR.VolumeMeter
 
         public VduControl()
         {
-            Debug.Assert(_levelsCount >= 7, "_levelsCount >= 7");
+            Debug.Assert(_levelsCount >= 7);
 
             InitBitmaps();
             InitBrushes();
