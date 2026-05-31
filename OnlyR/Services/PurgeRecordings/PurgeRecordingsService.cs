@@ -76,7 +76,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             switch (_lastJob)
             {
                 case PurgeServiceJob.FilePurge:
-                    Log.Logger.Information($"Starting purge of old recordings (older than {days} days)");
+                    Log.Logger.Information("Starting purge of old recordings (older than {Days} days)", days);
                     itemsDeletedCount = await PurgeFilesInternal(days);
                     _allFilesDone = itemsDeletedCount == 0;
                     break;
@@ -118,11 +118,11 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
     {
         if (_cancellationTokenSource.IsCancellationRequested)
         {
-            Log.Logger.Information($"Purge cancelled: ({itemsDeletedCount} items deleted)");
+            Log.Logger.Information("Purge cancelled: ({DeletedCount} items deleted)", itemsDeletedCount);
         }
         else
         {
-            Log.Logger.Information($"Completed purge: ({itemsDeletedCount} items deleted)");
+            Log.Logger.Information("Completed purge: ({DeletedCount} items deleted)", itemsDeletedCount);
 
             if (_lastJob == PurgeServiceJob.FolderPurge && _allFilesDone)
             {
@@ -161,7 +161,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 break;
             }
 
-            Log.Logger.Debug($"Deleting folder: {candidate}");
+            Log.Logger.Debug("Deleting folder: {Candidate}", candidate);
             FileUtils.SafeDeleteFolder(candidate);
 
             if (!Directory.Exists(candidate))
@@ -203,7 +203,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 break;
             }
 
-            Log.Logger.Debug($"Deleting file: {candidate}");
+            Log.Logger.Debug("Deleting file: {Candidate}", candidate);
             FileUtils.SafeDeleteFile(candidate);
 
             if (!File.Exists(candidate))
@@ -258,7 +258,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             if (FileUtils.IsDirectoryEmpty(yearFolder) &&
                 ShouldDeleteEmptyFolder(yearOfFolder, null, null, DateTime.Now))
             {
-                Log.Logger.Debug($"Found empty folder: {yearFolder}");
+                Log.Logger.Debug("Found empty folder: {YearFolder}", yearFolder);
                 result.Add(yearFolder);
             }
 
@@ -281,7 +281,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 if (FileUtils.IsDirectoryEmpty(monthFolder) &&
                     ShouldDeleteEmptyFolder(yearOfFolder, monthOfFolder, null, DateTime.Now))
                 {
-                    Log.Logger.Debug($"Found empty folder: {monthFolder}");
+                    Log.Logger.Debug("Found empty folder: {MonthFolder}", monthFolder);
                     result.Add(monthFolder);
                 }
 
@@ -307,7 +307,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                     if (FileUtils.IsDirectoryEmpty(dateFolder) &&
                         ShouldDeleteEmptyFolder(yearOfFolder, monthOfFolder, dateOfFolder, DateTime.Now))
                     {
-                        Log.Logger.Debug($"Found empty folder: {dateFolder}");
+                        Log.Logger.Debug("Found empty folder: {DateFolder}", dateFolder);
                         result.Add(dateFolder);
                     }
                 }
@@ -341,7 +341,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
 
             foreach (var file in files)
             {
-                Log.Logger.Debug($"Found file: {file}");
+                Log.Logger.Debug("Found file: {File}", file);
                 yield return file;
             }
         }
@@ -431,7 +431,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
 
                     if (dateOfFolder.Value.Date < oldFileDate.Date)
                     {
-                        Log.Logger.Debug($"Found folder: {dateFolder}");
+                        Log.Logger.Debug("Found folder: {DateFolder}", dateFolder);
                         yield return dateFolder;
                     }
                 }

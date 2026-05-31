@@ -26,10 +26,12 @@ namespace OnlyR.Utils
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
+
                 if (!Directory.Exists(folderPath))
                 {
                     // "Could not create folder {0}"
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture,
+                        Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
                 }
             }
         }
@@ -110,7 +112,10 @@ namespace OnlyR.Utils
         /// <param name="commandLineIdentifier">Optional command-line id</param>
         /// <param name="rootFromOptions">Overriding root folder as manually specified in app's settings</param>
         /// <returns>Folder path</returns>
-        public static string GetMonthlyDestinationFolder(DateTime dt, string? commandLineIdentifier, string? rootFromOptions)
+        public static string GetMonthlyDestinationFolder(
+            DateTime dt,
+            string? commandLineIdentifier,
+            string? rootFromOptions)
         {
             return Path.Combine(
                 GetRootDestinationFolder(commandLineIdentifier, rootFromOptions),
@@ -169,11 +174,11 @@ namespace OnlyR.Utils
             }
 
             if (!DateTime.TryParseExact(
-                fullDateDestinationFolderName,
-                FullDateFormat,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out var result))
+                    fullDateDestinationFolderName,
+                    FullDateFormat,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var result))
             {
                 return null;
             }
@@ -239,19 +244,19 @@ namespace OnlyR.Utils
             }
             catch (DirectoryNotFoundException)
             {
-                Log.Logger.Error($"Trying to delete folder but not found {candidate}");
+                Log.Logger.Error("Trying to delete folder but not found {Candidate}", candidate);
             }
             catch (UnauthorizedAccessException)
             {
-                Log.Logger.Error($"No permission to delete folder {candidate}");
+                Log.Logger.Error("No permission to delete folder {Candidate}", candidate);
             }
             catch (IOException)
             {
-                Log.Logger.Error($"Trying to delete folder but may be in use {candidate}");
+                Log.Logger.Error("Trying to delete folder but may be in use {Candidate}", candidate);
             }
             catch (Exception ex)
             {
-                Log.Logger.Error(ex, $"Could not delete folder {candidate}");
+                Log.Logger.Error(ex, "Could not delete folder {Candidate}", candidate);
             }
         }
 
@@ -268,19 +273,19 @@ namespace OnlyR.Utils
             }
             catch (DirectoryNotFoundException)
             {
-                Log.Logger.Error($"Trying to delete file but folder not found {path}");
+                Log.Logger.Error("Trying to delete file but folder not found {Path}", path);
             }
             catch (UnauthorizedAccessException)
             {
-                Log.Logger.Error($"No permission to delete file {path}");
+                Log.Logger.Error("No permission to delete file {Path}", path);
             }
             catch (IOException)
             {
-                Log.Logger.Error($"Trying to delete file but may be in use {path}");
+                Log.Logger.Error("Trying to delete file but may be in use {Path}", path);
             }
             catch (Exception ex)
             {
-                Log.Logger.Error(ex, $"Could not delete file {path}");
+                Log.Logger.Error(ex, "Could not delete file {Path}", path);
             }
         }
 
@@ -323,7 +328,7 @@ namespace OnlyR.Utils
             }
             catch (Exception ex)
             {
-                Log.Logger.Error(ex, $"Could not find destination folder {folder}");
+                Log.Logger.Error(ex, "Could not find destination folder {Folder}", folder);
             }
 
             if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
@@ -340,6 +345,7 @@ namespace OnlyR.Utils
             Log.Logger.Information("Copying {Source} to {Target}", sourcePath, destPath);
 
             var path = Path.GetDirectoryName(destPath);
+
             if (path != null)
             {
                 Directory.CreateDirectory(path);

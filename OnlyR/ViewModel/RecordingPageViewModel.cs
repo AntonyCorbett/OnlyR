@@ -481,7 +481,7 @@ namespace OnlyR.ViewModel
             catch (Exception ex)
             {
                 ErrorMsg = Properties.Resources.ERROR_START;
-                Log.Logger.Error(ex, ErrorMsg);
+                Log.Logger.Error(ex, "Failed to start recording. Error message: {ErrorMessage}", ErrorMsg);
             }
         }
 
@@ -522,7 +522,7 @@ namespace OnlyR.ViewModel
             catch (Exception ex)
             {
                 ErrorMsg = Properties.Resources.ERROR_STOP;
-                Log.Logger.Error(ex, ErrorMsg);
+                Log.Logger.Error(ex, "Failed to stop recording. Error message: {ErrorMessage}", ErrorMsg);
             }
         }
 
@@ -631,7 +631,7 @@ namespace OnlyR.ViewModel
                     .ToArray();
             }
 
-            Log.Logger.Error(ex, Properties.Resources.UNKNOWN_COPY_ERROR);
+            Log.Logger.Error(ex, "Failed to get copy error messages. Error message: {ErrorMessage}", Properties.Resources.UNKNOWN_COPY_ERROR);
             return [Properties.Resources.UNKNOWN_COPY_ERROR];
         }
 

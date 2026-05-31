@@ -77,6 +77,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
     private string[] GetRecordings()
     {
         var folder = GetRecordingsFolder();
+
         if (folder == null)
         {
             throw new NoRecordingsException();
@@ -89,14 +90,16 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
 
         var files = Directory
             .EnumerateFiles(folder)
-            .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+            .Where(file => Array.Exists(fileExtensions,
+                extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
             .ToList();
+
         if (files.Count == 0)
         {
             throw new NoRecordingsException();
         }
 
-        Log.Logger.Debug($"Recordings found = {files.Count}");
+        Log.Logger.Debug("Recordings found = {FileCount}", files.Count);
 
         var result = new ConcurrentBag<string>();
 
@@ -142,6 +145,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
     private void Copy(char driveLetter, string[] recordings, long spaceNeeded)
     {
         var di = new DriveInfo(driveLetter.ToString());
+
         if (spaceNeeded * 1.05 > di.AvailableFreeSpace)
         {
             throw new NoSpaceException(driveLetter);
@@ -152,11 +156,12 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
             file =>
             {
                 var fileName = Path.GetFileName(file);
+
                 if (!string.IsNullOrEmpty(fileName))
                 {
                     var destinationFile = Path.Combine($"{driveLetter}:\\", fileName);
 
-                    Log.Logger.Debug($"Copying {file} to {destinationFile}");
+                    Log.Logger.Debug("Copying {File} to {DestinationFile}", file, destinationFile);
                     File.Copy(file, destinationFile, overwrite: true);
                 }
             });
@@ -194,7 +199,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
             return null;
         }
 
-        Log.Logger.Debug($"Recordings folder = {folder}");
+        Log.Logger.Debug("Recordings folder = {Folder}", folder);
 
         return folder;
     }
