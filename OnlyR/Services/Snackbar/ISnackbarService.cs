@@ -1,5 +1,5 @@
-﻿using System;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 
 namespace OnlyR.Services.Snackbar
 {

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Interop;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
 using OnlyR.ViewModel.Messages;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace OnlyR
 {
@@ -29,7 +29,7 @@ namespace OnlyR
         public MainWindow()
         {
             InitializeComponent();
-            
+
             WeakReferenceMessenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
             WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
         }
@@ -128,7 +128,7 @@ namespace OnlyR
 
             var m = (MainViewModel)DataContext;
 
-            if (m.CurrentPageName != null && 
+            if (m.CurrentPageName != null &&
                 m.CurrentPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
             {
                 SaveSettingsWindowSize();

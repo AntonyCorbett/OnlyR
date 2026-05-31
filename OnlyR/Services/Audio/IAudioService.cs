@@ -1,7 +1,7 @@
-﻿using System;
-using OnlyR.Core.EventArgs;
+﻿using OnlyR.Core.EventArgs;
 using OnlyR.Model;
 using OnlyR.Services.Options;
+using System;
 
 namespace OnlyR.Services.Audio
 {

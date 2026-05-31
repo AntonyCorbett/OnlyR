@@ -4,7 +4,7 @@ namespace OnlyR.Behaviours
 {
     internal static class VisibilityFocusBehaviour
     {
-        public static readonly DependencyProperty IsFocusEnabledProperty = 
+        public static readonly DependencyProperty IsFocusEnabledProperty =
             DependencyProperty.RegisterAttached(
                 "IsFocusEnabled",
                 typeof(bool),

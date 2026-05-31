@@ -1,13 +1,12 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.NetworkInformation;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
 using Serilog;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 namespace OnlyR.Services.RecordingDestination
 {
@@ -38,8 +37,8 @@ namespace OnlyR.Services.RecordingDestination
             }
 
             var result = new RecordingCandidate(
-                dt, 
-                finalPathAndTrack.TrackNumber, 
+                dt,
+                finalPathAndTrack.TrackNumber,
                 GetTempRecordingFile(optionsService.Options.Codec),
                 finalPathAndTrack.FilePath);
 
@@ -89,7 +88,7 @@ namespace OnlyR.Services.RecordingDestination
             Path.Combine(
                 folder,
                 $"{GenerateCoreCandidateFileName(dt)} - {increment:D3}.{codec.GetExtensionFormat()}");
-        
+
         private static string GenerateCoreCandidateFileName(DateTime dt)
             => $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)dt.DayOfWeek]} {dt:dd MMMM yyyy}";
 

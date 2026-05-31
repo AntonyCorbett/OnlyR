@@ -1,5 +1,5 @@
-﻿using System;
-using OnlyR.Services.Options;
+﻿using OnlyR.Services.Options;
+using System;
 
 namespace OnlyR.Services.AudioSilence;
 

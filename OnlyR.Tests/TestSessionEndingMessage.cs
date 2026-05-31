@@ -1,9 +1,9 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
+using OnlyR.ViewModel.Messages;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using OnlyR.ViewModel.Messages;
 
 namespace OnlyR.Tests;
 

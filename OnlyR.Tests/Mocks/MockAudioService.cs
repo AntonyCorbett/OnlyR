@@ -1,10 +1,10 @@
-﻿using System;
-using System.Windows.Threading;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
+using System;
+using System.Windows.Threading;
 
 namespace OnlyR.Tests.Mocks;
 

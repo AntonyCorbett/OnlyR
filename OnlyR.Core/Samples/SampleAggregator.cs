@@ -1,5 +1,5 @@
-﻿using System;
-using OnlyR.Core.EventArgs;
+﻿using OnlyR.Core.EventArgs;
+using System;
 
 namespace OnlyR.Core.Samples
 {

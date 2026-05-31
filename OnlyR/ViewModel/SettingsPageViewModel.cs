@@ -240,7 +240,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     public AppTheme AppTheme
     {
-        get => _optionsService.Options.AppTheme ?? Model.AppTheme.System;
+        get => _optionsService.Options.AppTheme ?? AppTheme.System;
         set
         {
             if (_optionsService.Options.AppTheme != value)
@@ -440,7 +440,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
         Save();
 
         WeakReferenceMessenger.Default.Send(new NavigateMessage(
-            SettingsPageViewModel.PageName,
+            PageName,
             RecordingPageViewModel.PageName,
             null));
     }

@@ -68,6 +68,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
 
         var itemsDeletedCount = 0;
+
         try
         {
             _lastJob = GetNextPurgeJob(_lastJob);
@@ -83,6 +84,9 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 case PurgeServiceJob.FolderPurge:
                     Log.Logger.Information("Starting removal of empty folders");
                     itemsDeletedCount = await RemoveEmptyFolders();
+                    break;
+
+                case PurgeServiceJob.Nothing:
                     break;
 
                 default:
@@ -236,6 +240,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
 
         var yearSubFolders = Directory.GetDirectories(rootFolder);
+
         foreach (var yearFolder in yearSubFolders)
         {
             if (_cancellationTokenSource.IsCancellationRequested)
@@ -244,6 +249,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             }
 
             var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
+
             if (yearOfFolder == null)
             {
                 continue;
@@ -257,6 +263,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             }
 
             var monthSubFolders = Directory.GetDirectories(yearFolder);
+
             foreach (var monthFolder in monthSubFolders)
             {
                 if (_cancellationTokenSource.IsCancellationRequested)
@@ -265,6 +272,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 }
 
                 var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
+
                 if (monthOfFolder == null)
                 {
                     continue;
@@ -278,6 +286,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 }
 
                 var dateSubFolders = Directory.GetDirectories(monthFolder);
+
                 foreach (var dateFolder in dateSubFolders)
                 {
                     if (_cancellationTokenSource.IsCancellationRequested)
@@ -326,7 +335,8 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         {
             var files = Directory
                 .EnumerateFiles(folder)
-                .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
+                .Where(file => Array.Exists(fileExtensions,
+                    extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
             foreach (var file in files)
@@ -354,6 +364,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         }
 
         var yearSubFolders = Directory.EnumerateDirectories(rootFolder);
+
         foreach (var yearFolder in yearSubFolders)
         {
             if (_cancellationTokenSource.IsCancellationRequested)
@@ -362,6 +373,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             }
 
             var yearOfFolder = FileUtils.ParseYearFromFolderName(Path.GetFileName(yearFolder));
+
             if (yearOfFolder == null)
             {
                 continue;
@@ -378,6 +390,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             }
 
             var monthSubFolders = Directory.EnumerateDirectories(yearFolder);
+
             foreach (var monthFolder in monthSubFolders)
             {
                 if (_cancellationTokenSource.IsCancellationRequested)
@@ -386,6 +399,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 }
 
                 var monthOfFolder = FileUtils.ParseMonthFromFolderName(Path.GetFileName(monthFolder));
+
                 if (monthOfFolder == null)
                 {
                     continue;
@@ -397,6 +411,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                 }
 
                 var dateSubFolders = Directory.EnumerateDirectories(monthFolder);
+
                 foreach (var dateFolder in dateSubFolders)
                 {
                     if (_cancellationTokenSource.IsCancellationRequested)

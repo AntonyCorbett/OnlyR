@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MaterialDesignThemes.Wpf;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using MaterialDesignThemes.Wpf;
 
 namespace OnlyR.Services.Snackbar;
 

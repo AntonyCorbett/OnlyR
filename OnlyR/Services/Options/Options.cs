@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
 
 namespace OnlyR.Services.Options
 {
@@ -94,20 +93,14 @@ namespace OnlyR.Services.Options
 
         public string? UnfinishedRecordingFinalPath { get; set; }
 
-        public static IEnumerable<int> GetSupportedSampleRates()
-        {
-            return ValidSampleRates;
-        }
+        public static IEnumerable<int> GetSupportedSampleRates() =>
+            ValidSampleRates;
 
-        public static IEnumerable<int> GetSupportedChannels()
-        {
-            return ValidChannelCounts;
-        }
+        public static IEnumerable<int> GetSupportedChannels() =>
+            ValidChannelCounts;
 
-        public static IEnumerable<int> GetSupportedMp3BitRates()
-        {
-            return ValidMp3BitRates;
-        }
+        public static IEnumerable<int> GetSupportedMp3BitRates() =>
+            ValidMp3BitRates;
 
         /// <summary>
         /// Validates the data, correcting automatically as required
@@ -179,7 +172,7 @@ namespace OnlyR.Services.Options
             {
                 AppTheme = DarkMode ? Model.AppTheme.Dark : Model.AppTheme.System;
             }
-            else if (!Enum.IsDefined(typeof(Model.AppTheme), AppTheme))
+            else if (!Enum.IsDefined(typeof(AppTheme), AppTheme))
             {
                 AppTheme = Model.AppTheme.System;
             }

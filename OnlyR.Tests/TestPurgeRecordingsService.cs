@@ -1,11 +1,11 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
+using OnlyR.Services.Options;
+using OnlyR.Services.PurgeRecordings;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using OnlyR.Services.Options;
-using OnlyR.Services.PurgeRecordings;
 
 namespace OnlyR.Tests;
 

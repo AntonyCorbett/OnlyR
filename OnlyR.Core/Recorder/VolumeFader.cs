@@ -1,5 +1,5 @@
-﻿using System;
-using NAudio.Wave;
+﻿using NAudio.Wave;
+using System;
 
 namespace OnlyR.Core.Recorder
 {
@@ -12,7 +12,7 @@ namespace OnlyR.Core.Recorder
         private readonly int _fadeTimeSecs = 4;
         private int _sampleCountToModify;
         private int _sampleCountModified;
-        
+
         public VolumeFader(int sampleRate)
         {
             _sampleRate = sampleRate;

@@ -1,3 +1,18 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using MaterialDesignThemes.Wpf;
+using OnlyR.AutoUpdates;
+using OnlyR.Model;
+using OnlyR.Pages;
+using OnlyR.Services.Audio;
+using OnlyR.Services.AudioSilence;
+using OnlyR.Services.Options;
+using OnlyR.Services.PurgeRecordings;
+using OnlyR.Services.RecordingCopies;
+using OnlyR.Services.RecordingDestination;
+using OnlyR.Services.Snackbar;
+using OnlyR.Utils;
+using OnlyR.ViewModel.Messages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,21 +22,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using MaterialDesignThemes.Wpf;
-using OnlyR.ViewModel.Messages;
-using OnlyR.Model;
-using OnlyR.AutoUpdates;
-using OnlyR.Services.AudioSilence;
-using OnlyR.Services.PurgeRecordings;
-using OnlyR.Pages;
-using OnlyR.Services.Audio;
-using OnlyR.Services.Options;
-using OnlyR.Services.RecordingCopies;
-using OnlyR.Services.RecordingDestination;
-using OnlyR.Services.Snackbar;
-using OnlyR.Utils;
 
 namespace OnlyR.ViewModel
 {
@@ -70,19 +70,19 @@ namespace OnlyR.ViewModel
 
             // set up pages...
             SetupPage(
-                RecordingPageViewModel.PageName, 
+                RecordingPageViewModel.PageName,
                 new RecordingPage(),
                 new RecordingPageViewModel(
-                    audioService, 
-                    optionsService, 
-                    commandLineService, 
-                    destService, 
+                    audioService,
+                    optionsService,
+                    commandLineService,
+                    destService,
                     copyRecordingsService,
                     snackbarService,
                     silenceService));
 
             SetupPage(
-                SettingsPageViewModel.PageName, 
+                SettingsPageViewModel.PageName,
                 new SettingsPage(),
                 new SettingsPageViewModel(audioService, optionsService, commandLineService));
 
@@ -91,7 +91,7 @@ namespace OnlyR.ViewModel
             var state = new RecordingPageNavigationState
             {
                 ShowSplash = !optionsService.Options.StartMinimized,
-                StartRecording = optionsService.Options.StartRecordingOnLaunch && 
+                StartRecording = optionsService.Options.StartRecordingOnLaunch &&
                                  _unfinishedRecordingFileFoundOnStartup == null
             };
 
@@ -160,15 +160,15 @@ namespace OnlyR.ViewModel
 
         private void OnThemeModeChanged(object recipient, ThemeModeChanged obj)
         {
-            App.ApplyTheme(_optionsService.Options.AppTheme ?? Model.AppTheme.System);
+            App.ApplyTheme(_optionsService.Options.AppTheme ?? AppTheme.System);
         }
-        
+
         private void SetupPage(string pageName, FrameworkElement page, ObservableObject pageModel)
         {
             page.DataContext = pageModel;
             _pages.Add(pageName, page);
         }
-        
+
         private void OnNavigate(object recipient, NavigateMessage message)
         {
             CurrentPage = _pages[message.TargetPageName];

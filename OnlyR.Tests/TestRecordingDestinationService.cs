@@ -1,11 +1,11 @@
-using System;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Services.Options;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Utils;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

@@ -1,9 +1,6 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Core.Enums;
 using OnlyR.Exceptions;
 using OnlyR.Model;
@@ -12,10 +9,13 @@ using OnlyR.Services.Options;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
-using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
 using OnlyR.ViewModel.Messages;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

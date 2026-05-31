@@ -1,14 +1,14 @@
-﻿using System;
+﻿using OnlyR.Core.Enums;
+using OnlyR.Exceptions;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using Serilog;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using OnlyR.Core.Enums;
-using OnlyR.Exceptions;
-using OnlyR.Services.Options;
-using OnlyR.Utils;
-using Serilog;
 
 namespace OnlyR.Services.RecordingCopies;
 
@@ -42,7 +42,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         var exceptions = new ConcurrentQueue<Exception>();
 
         Parallel.ForEach(
-            drives, 
+            drives,
             drive =>
             {
                 try
@@ -86,7 +86,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
             .GetValues<AudioCodec>()
             .Select(f => f.GetExtensionFormat())
             .ToArray();
-        
+
         var files = Directory
             .EnumerateFiles(folder)
             .Where(file => Array.Exists(fileExtensions, extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
@@ -101,7 +101,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         var result = new ConcurrentBag<string>();
 
         Parallel.ForEach(
-            files, 
+            files,
             file =>
             {
                 if (CanCopyFile(file))
@@ -112,7 +112,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
 
         return result.ToArray();
     }
-        
+
     internal static bool CanCopyFile(string filePath)
     {
         return File.Exists(filePath) && !IsFileLocked(filePath);
@@ -148,7 +148,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
         }
 
         Parallel.ForEach(
-            recordings, 
+            recordings,
             file =>
             {
                 var fileName = Path.GetFileName(file);
@@ -185,7 +185,7 @@ internal sealed class CopyRecordingsService : ICopyRecordingsService
 
         // first try today's folder...
         var folder = FileUtils.GetDestinationFolder(
-            today, 
+            today,
             _commandLineService.OptionsIdentifier,
             _optionsService.Options.DestinationFolder);
 

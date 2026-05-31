@@ -1,6 +1,6 @@
-﻿using System;
-using OnlyR.Model;
+﻿using OnlyR.Model;
 using OnlyR.Services.Options;
+using System;
 
 namespace OnlyR.Services.RecordingDestination
 {

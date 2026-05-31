@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OnlyR.Model;
 using OnlyR.Services.Options;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

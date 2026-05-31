@@ -1,5 +1,5 @@
-﻿using System;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
+using System;
 
 namespace OnlyR.Core.Recorder
 {

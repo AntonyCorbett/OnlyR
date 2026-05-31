@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Model;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 
