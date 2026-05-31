@@ -32,10 +32,10 @@ namespace OnlyR.Utils
         public static void SetPlacement(this Window window, string placementJson, bool showMinimized)
         {
             SetPlacement(
-                new WindowInteropHelper(window).Handle, 
-                placementJson, 
-                window.Width, 
-                window.Height, 
+                new WindowInteropHelper(window).Handle,
+                placementJson,
+                window.Width,
+                window.Height,
                 showMinimized);
         }
 
@@ -45,10 +45,10 @@ namespace OnlyR.Utils
         }
 
         private static void SetPlacement(
-            IntPtr windowHandle, 
-            string placementJson, 
-            double width, 
-            double height, 
+            IntPtr windowHandle,
+            string placementJson,
+            double width,
+            double height,
             bool showMinimized)
         {
             if (!string.IsNullOrEmpty(placementJson))
@@ -58,8 +58,11 @@ namespace OnlyR.Utils
                 {
                     WINDOWPLACEMENT placement;
                     using (var memoryStream = new MemoryStream(xmlBytes))
+                    using (var xmlReader = XmlReader.Create(
+                        memoryStream,
+                        new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null }))
                     {
-                        var p = (WINDOWPLACEMENT?)Serializer.Deserialize(memoryStream);
+                        var p = (WINDOWPLACEMENT?)Serializer.Deserialize(xmlReader);
                         if (p == null)
                         {
                             return;
@@ -79,7 +82,7 @@ namespace OnlyR.Utils
                         placement.showCmd = SwShowNormal;
                     }
 
-                    placement.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
+                    placement.length = Marshal.SizeOf<WINDOWPLACEMENT>();
                     placement.flags = 0;
                     placement.normalPosition.Right = placement.normalPosition.Left + (int)adjustedDimensions.Item1;
                     placement.normalPosition.Bottom = placement.normalPosition.Top + (int)adjustedDimensions.Item2;
@@ -128,7 +131,7 @@ namespace OnlyR.Utils
                 (int)(dpiYProperty?.GetValue(null, null) ?? 0));
         }
     }
-    
+
     // RECT structure required by WINDOWPLACEMENT structure
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]

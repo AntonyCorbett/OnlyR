@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Reflection;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using OnlyR.ViewModel.Messages;
 using Microsoft.Win32;
+using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using OnlyR.Utils;
-using OnlyR.Core.Enums;
+using OnlyR.ViewModel.Messages;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
 
 namespace OnlyR.ViewModel;
 
@@ -38,8 +38,8 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private bool _showBitRate;
 
     public SettingsPageViewModel(
-        IAudioService audioService, 
-        IOptionsService optionsService, 
+        IAudioService audioService,
+        IOptionsService optionsService,
         ICommandLineService commandLineService)
     {
         WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
@@ -288,7 +288,11 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
-    public string AppVersionStr => string.Format(Properties.Resources.APP_VER, GetVersionString());
+    // CA1822 suppressed: AppVersionStr is data-bound in SettingsPage.xaml (Text="{Binding AppVersionStr}");
+    // WPF binding requires an instance property, so it cannot be made static.
+#pragma warning disable CA1822
+    public string AppVersionStr => string.Format(CultureInfo.CurrentCulture, Properties.Resources.APP_VER, GetVersionString());
+#pragma warning restore CA1822
 
     public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
 
@@ -401,13 +405,13 @@ public class SettingsPageViewModel : ObservableObject, IPage
         return new[]
         {
             new MaxSilenceTimeItem(Properties.Resources.STOP_ON_SILENCE_DISABLED, 0),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 10), 10),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 1), 60),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 2), 120),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 3), 180),
-            new MaxSilenceTimeItem(string.Format(Properties.Resources.X_MINS, 5), 300),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 10), 10),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 15), 15),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 30), 30),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 1), 60),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 2), 120),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 3), 180),
+            new MaxSilenceTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 5), 300),
         };
     }
 
@@ -416,28 +420,28 @@ public class SettingsPageViewModel : ObservableObject, IPage
         return new[]
         {
             new MaxRecordingTimeItem(Properties.Resources.NO_LIMIT, 0),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 15), 15),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 30), 30),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_SECS, 45), 45),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 15), 15),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 30), 30),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_SECS, 45), 45),
             new MaxRecordingTimeItem(Properties.Resources.ONE_MIN, 1 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 2), 2 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 5), 5 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 15), 15 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 30), 30 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_MINS, 45), 45 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.ONE_HOUR, 1), 60 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 2), 120 * 60),
-            new MaxRecordingTimeItem(string.Format(Properties.Resources.X_HOURS, 3), 180 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 2), 2 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 5), 5 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 15), 15 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 30), 30 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_MINS, 45), 45 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.ONE_HOUR, 1), 60 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_HOURS, 2), 120 * 60),
+            new MaxRecordingTimeItem(string.Format(CultureInfo.CurrentCulture, Properties.Resources.X_HOURS, 3), 180 * 60),
         };
     }
-        
+
     private void NavigateRecording()
     {
         Save();
 
         WeakReferenceMessenger.Default.Send(new NavigateMessage(
             SettingsPageViewModel.PageName,
-            RecordingPageViewModel.PageName, 
+            RecordingPageViewModel.PageName,
             null));
     }
 
@@ -449,8 +453,8 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private static string GetVersionString()
     {
         var ver = Assembly.GetExecutingAssembly().GetName().Version;
-        return ver == null 
-            ? "Unknown" 
+        return ver == null
+            ? "Unknown"
             : $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
     }
 

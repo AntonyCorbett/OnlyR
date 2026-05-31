@@ -1,6 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Versioning;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
+using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
@@ -8,20 +11,18 @@ using OnlyR.Services.PurgeRecordings;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
+using OnlyR.Utils;
 using OnlyR.ViewModel;
+using OnlyR.ViewModel.Messages;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
-using MaterialDesignThemes.Wpf;
-using Microsoft.Win32;
-using OnlyR.Model;
-using OnlyR.Utils;
-using OnlyR.ViewModel.Messages;
 
 [assembly: SupportedOSPlatform("windows7.0")]
 
@@ -67,7 +68,7 @@ namespace OnlyR
         private static void ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
-            
+
             serviceCollection.AddSingleton<IOptionsService, OptionsService>();
             serviceCollection.AddSingleton<ICommandLineService, CommandLineService>();
             serviceCollection.AddSingleton<IRecordingDestinationService, RecordingDestinationService>();
@@ -103,18 +104,18 @@ namespace OnlyR
 #if DEBUG
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
                 .CreateLogger();
 #else
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day)
+                .WriteTo.File(Path.Combine(logsDirectory, "log-.txt"), retainedFileCountLimit: 28, rollingInterval: RollingInterval.Day, formatProvider: CultureInfo.InvariantCulture)
                 .CreateLogger();
 #endif
 
             Log.Logger.Information("==== Launched ====");
         }
-        
+
         internal static void ApplyTheme(AppTheme mode)
         {
             var isDark = mode switch

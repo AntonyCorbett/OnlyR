@@ -40,7 +40,7 @@ namespace OnlyR.Services.RecordingCopies
         private const int ERROR_NO_MORE_ITEMS = 259;
         private const int ERROR_INSUFFICIENT_BUFFER = 122;
         private const int ERROR_INVALID_DATA = 13;
-        
+
         private enum DriveType : uint
         {
             /// <summary>The drive type cannot be determined.</summary>
@@ -133,7 +133,10 @@ namespace OnlyR.Services.RecordingCopies
 
             // get drive's parent, e.g. the USB bridge, the SATA port, an IDE channel with two drives!
             var DevInstParent = 0;
-            CM_Get_Parent(ref DevInstParent, (int)DevInst, 0);
+
+            // Native cleanup/lookup; the CR_* result is non-actionable here. If it fails,
+            // DevInstParent stays 0 and the subsequent eject attempt simply returns failure.
+            _ = CM_Get_Parent(ref DevInstParent, (int)DevInst, 0);
 
             for (int tries = 1; tries <= 3; tries++)
             {
@@ -156,11 +159,26 @@ namespace OnlyR.Services.RecordingCopies
             return false;
         }
 
-        [DllImport("kernel32.dll")]
+        // CharSet.Ansi makes the existing implicit-ANSI marshaling explicit (binds GetDriveTypeA),
+        // matching the [MarshalAs(LPStr)] parameter and preserving behavior.
+        // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
+        // the native binding; the ANSI marshaling is explicit and intentional here, so suppress.
+#pragma warning disable CA2101 // ANSI marshaling is intentional to bind GetDriveTypeA; Unicode would change the ABI.
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
         private static extern DriveType GetDriveType([MarshalAs(UnmanagedType.LPStr)] string lpRootPathName);
+#pragma warning restore CA2101
 
-        [DllImport("kernel32.dll")]
-        private static extern uint QueryDosDevice(string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
+        // CharSet.Ansi preserves the original implicit-ANSI binding (QueryDosDeviceA). The
+        // dos device name is only compared against the literal "\\Floppy", so ANSI is correct.
+        // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
+        // the native binding; the ANSI marshaling is explicit and intentional here, so suppress.
+#pragma warning disable CA2101 // ANSI marshaling is intentional to bind QueryDosDeviceA; Unicode would change the ABI.
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+#pragma warning disable CA1838 // StringBuilder OUT param: perf-only for interop; converting to a char buffer risks regressions in working USB-ejection code.
+        private static extern uint QueryDosDevice(
+            [MarshalAs(UnmanagedType.LPStr)] string lpDeviceName, StringBuilder lpTargetPath, int ucchMax);
+#pragma warning restore CA1838
+#pragma warning restore CA2101
 
         [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr CreateFile(
@@ -220,21 +238,35 @@ namespace OnlyR.Services.RecordingCopies
             int dnDevInst,
             int ulFlags);
 
-        [DllImport("setupapi.dll")]
+        // CharSet.Ansi preserves the original implicit-ANSI binding (CM_Request_Device_EjectA).
+        // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
+        // the native binding; the ANSI marshaling is explicit and intentional here, so suppress.
+#pragma warning disable CA2101 // ANSI marshaling is intentional to bind CM_Request_Device_EjectA; Unicode would change the ABI.
+        [DllImport("setupapi.dll", CharSet = CharSet.Ansi)]
+#pragma warning disable CA1838 // StringBuilder param: perf-only for interop; the working interop is left intact to avoid USB-ejection regressions.
         private static extern int CM_Request_Device_Eject(
             int dnDevInst,
             out PNP_VETO_TYPE pVetoType,
             StringBuilder pszVetoName,
             int ulNameLength,
             int ulFlags);
+#pragma warning restore CA1838
+#pragma warning restore CA2101
 
-        [DllImport("setupapi.dll", EntryPoint = "CM_Request_Device_Eject")]
+        // CharSet.Ansi preserves the original implicit-ANSI binding (CM_Request_Device_EjectA).
+        // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
+        // the native binding; the ANSI marshaling is explicit and intentional here, so suppress.
+#pragma warning disable CA2101 // ANSI marshaling is intentional to bind CM_Request_Device_EjectA; Unicode would change the ABI.
+        [DllImport("setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Ansi)]
+#pragma warning disable CA1838 // StringBuilder param: perf-only for interop; the working interop is left intact to avoid USB-ejection regressions.
         private static extern int CM_Request_Device_Eject_NoUi(
             int dnDevInst,
             IntPtr pVetoType,
             StringBuilder? pszVetoName,
             int ulNameLength,
             int ulFlags);
+#pragma warning restore CA1838
+#pragma warning restore CA2101
 
         private static long GetDeviceNumber(IntPtr handle)
         {
@@ -247,13 +279,13 @@ namespace OnlyR.Services.RecordingCopies
             try
             {
                 DeviceIoControl(
-                    handle, 
-                    IOCTL_STORAGE_GET_DEVICE_NUMBER, 
-                    IntPtr.Zero, 
-                    0, 
-                    buffer, 
-                    size, 
-                    out bytesReturned, 
+                    handle,
+                    IOCTL_STORAGE_GET_DEVICE_NUMBER,
+                    IntPtr.Zero,
+                    0,
+                    buffer,
+                    size,
+                    out bytesReturned,
                     IntPtr.Zero);
             }
             finally
@@ -263,26 +295,26 @@ namespace OnlyR.Services.RecordingCopies
 
             if (bytesReturned > 0)
             {
-                var sdn = (STORAGE_DEVICE_NUMBER?)Marshal.PtrToStructure(buffer, typeof(STORAGE_DEVICE_NUMBER));
-                DeviceNumber = sdn?.DeviceNumber ?? -1;
+                var sdn = Marshal.PtrToStructure<STORAGE_DEVICE_NUMBER>(buffer);
+                DeviceNumber = sdn.DeviceNumber;
             }
 
             Marshal.FreeHGlobal(buffer);
 
             return DeviceNumber;
         }
-        
+
         // returns the device instance handle of a storage volume or 0 on error
         private static long GetDrivesDevInstByDeviceNumber(long DeviceNumber, DriveType DriveType, string dosDeviceName)
         {
-            var IsFloppy = dosDeviceName.Contains("\\Floppy"); 
+            var IsFloppy = dosDeviceName.Contains("\\Floppy");
             Guid guid;
 
             switch (DriveType)
             {
                 case DriveType.DRIVE_REMOVABLE:
-                    guid = IsFloppy 
-                        ? new Guid(GUID_DEVINTERFACE_FLOPPY) 
+                    guid = IsFloppy
+                        ? new Guid(GUID_DEVINTERFACE_FLOPPY)
                         : new Guid(GUID_DEVINTERFACE_DISK);
                     break;
 
@@ -300,9 +332,9 @@ namespace OnlyR.Services.RecordingCopies
 
             // Get device interface info set handle for all devices attached to system
             var hDevInfo = SetupDiGetClassDevs(
-                ref guid, 
-                0, 
-                IntPtr.Zero, 
+                ref guid,
+                0,
+                IntPtr.Zero,
                 DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
             if ((int)hDevInfo == INVALID_HANDLE_VALUE)
@@ -330,11 +362,11 @@ namespace OnlyR.Services.RecordingCopies
                 var devData = new SP_DEVINFO_DATA();
                 var size = 0;
                 if (!SetupDiGetDeviceInterfaceDetail(
-                    hDevInfo, 
-                    interfaceData, 
-                    IntPtr.Zero, 
-                    0, 
-                    ref size, 
+                    hDevInfo,
+                    interfaceData,
+                    IntPtr.Zero,
+                    0,
+                    ref size,
                     devData))
                 {
                     var error = Marshal.GetLastWin32Error();
@@ -346,7 +378,7 @@ namespace OnlyR.Services.RecordingCopies
 
                 var buffer = Marshal.AllocHGlobal(size);
                 var detailData = default(SP_DEVICE_INTERFACE_DETAIL_DATA);
-                detailData.cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+                detailData.cbSize = Marshal.SizeOf<SP_DEVICE_INTERFACE_DETAIL_DATA>();
                 Marshal.StructureToPtr(detailData, buffer, false);
 
                 if (!SetupDiGetDeviceInterfaceDetail(hDevInfo, interfaceData, buffer, size, ref size, devData))
@@ -355,7 +387,7 @@ namespace OnlyR.Services.RecordingCopies
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                var pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof(int)));
+                var pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf<int>());
                 var devicePath = Marshal.PtrToStringAuto(pDevicePath);
                 Marshal.FreeHGlobal(buffer);
 
@@ -378,7 +410,7 @@ namespace OnlyR.Services.RecordingCopies
                         if (DeviceNumber == driveDeviceNumber)
                         {
                             // matched the given device number with the one of the current device
-                            SetupDiDestroyDeviceInfoList(hDevInfo);
+                            _ = SetupDiDestroyDeviceInfoList(hDevInfo); // native cleanup; result non-actionable
                             return devData.devInst;
                         }
                     }
@@ -387,7 +419,7 @@ namespace OnlyR.Services.RecordingCopies
                 dwIndex++;
             }
 
-            SetupDiDestroyDeviceInfoList(hDevInfo);
+            _ = SetupDiDestroyDeviceInfoList(hDevInfo); // native cleanup; result non-actionable
             return 0;
         }
 
@@ -412,19 +444,19 @@ namespace OnlyR.Services.RecordingCopies
         [StructLayout(LayoutKind.Sequential)]
         private class SP_DEVICE_INTERFACE_DATA
         {
-            public int cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DATA));
+            public int cbSize = Marshal.SizeOf<SP_DEVICE_INTERFACE_DATA>();
             public Guid interfaceClassGuid = Guid.Empty; // temp
-            public int flags = 0;
-            public int reserved = 0;
+            public int flags;
+            public int reserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private class SP_DEVINFO_DATA
         {
-            public int cbSize = Marshal.SizeOf(typeof(SP_DEVINFO_DATA));
+            public int cbSize = Marshal.SizeOf<SP_DEVINFO_DATA>();
             public Guid classGuid = Guid.Empty; // temp
-            public int devInst = 0; // dumy
-            public int reserved = 0;
+            public int devInst; // dumy
+            public int reserved;
         }
     }
 

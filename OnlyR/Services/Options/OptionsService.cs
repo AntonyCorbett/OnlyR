@@ -1,15 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Newtonsoft.Json;
+using OnlyR.Model;
+using OnlyR.Utils;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Markup;
-using Newtonsoft.Json;
-using OnlyR.Model;
-using OnlyR.Utils;
-using Serilog;
 
 namespace OnlyR.Services.Options
 {
@@ -62,7 +62,7 @@ namespace OnlyR.Services.Options
             var validBitRates = Options.GetSupportedMp3BitRates();
             foreach (var rate in validBitRates)
             {
-                result.Add(new BitRateItem(rate.ToString(), rate));
+                result.Add(new BitRateItem(rate.ToString(CultureInfo.InvariantCulture), rate));
             }
 
             return result.ToArray();
@@ -79,7 +79,7 @@ namespace OnlyR.Services.Options
             var validSampleRates = Options.GetSupportedSampleRates();
             foreach (var rate in validSampleRates)
             {
-                result.Add(new SampleRateItem(rate.ToString(), rate));
+                result.Add(new SampleRateItem(rate.ToString(CultureInfo.InvariantCulture), rate));
             }
 
             return result.ToArray();
@@ -132,7 +132,7 @@ namespace OnlyR.Services.Options
                 _ => "Unknown"
             };
         }
-        
+
         [MemberNotNull(nameof(Options))]
         private void Init()
         {
@@ -188,9 +188,9 @@ namespace OnlyR.Services.Options
 
             if (Options == null)
             {
-                throw new Exception($"Could not read options file: {_optionsFilePath}");
+                throw new InvalidOperationException($"Could not read options file: {_optionsFilePath}");
             }
-            
+
             SetCulture();
             Options.Sanitize();
         }
@@ -263,7 +263,7 @@ namespace OnlyR.Services.Options
                 // denotes default for the language.
                 Options.Genre = null;
             }
-                
+
             var serializer = new JsonSerializer();
             serializer.Serialize(file, Options);
 

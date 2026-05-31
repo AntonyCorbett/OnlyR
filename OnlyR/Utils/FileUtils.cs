@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Serilog;
 
 namespace OnlyR.Utils
 {
@@ -29,7 +29,7 @@ namespace OnlyR.Utils
                 if (!Directory.Exists(folderPath))
                 {
                     // "Could not create folder {0}"
-                    throw new Exception(string.Format(Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, Properties.Resources.CREATE_FOLDER_ERROR, folderPath));
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace OnlyR.Utils
         {
             freespace = 0;
 
-            if (!folderName.EndsWith("\\", StringComparison.Ordinal))
+            if (!folderName.EndsWith('\\'))
             {
                 folderName += '\\';
             }
@@ -100,7 +100,7 @@ namespace OnlyR.Utils
         {
             return Path.Combine(
                 GetMonthlyDestinationFolder(dt, commandLineIdentifier, rootFromOptions),
-                dt.ToString(FullDateFormat));
+                dt.ToString(FullDateFormat, CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -114,8 +114,8 @@ namespace OnlyR.Utils
         {
             return Path.Combine(
                 GetRootDestinationFolder(commandLineIdentifier, rootFromOptions),
-                dt.ToString("yyyy"),
-                dt.ToString("MM"));
+                dt.ToString("yyyy", CultureInfo.InvariantCulture),
+                dt.ToString("MM", CultureInfo.InvariantCulture));
         }
 
         public static int? ParseYearFromFolderName(string yearlyDestinationFolderName)
@@ -159,7 +159,7 @@ namespace OnlyR.Utils
         }
 
         public static DateTime? ParseDateFromFolderName(
-            string fullDateDestinationFolderName, 
+            string fullDateDestinationFolderName,
             int expectedYear,
             int expectedMonth)
         {
@@ -222,7 +222,7 @@ namespace OnlyR.Utils
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 AppNamePathSegment,
                 commandLineIdentifier ?? string.Empty,
-                optionsVersion.ToString(),
+                optionsVersion.ToString(CultureInfo.InvariantCulture),
                 OptionsFileName);
         }
 
@@ -296,7 +296,7 @@ namespace OnlyR.Utils
             try
             {
                 var today = DateTime.Today;
-                
+
                 // first try today's folder...
                 folder = GetDestinationFolder(today, commandLineIdentifier, destFolder);
 
@@ -349,7 +349,7 @@ namespace OnlyR.Utils
 
         private static string GetRecordingFolderRoot(string? rootFromOptions)
         {
-            return DirectoryIsAvailable(rootFromOptions) 
+            return DirectoryIsAvailable(rootFromOptions)
                 ? rootFromOptions!
                 : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), AppNamePathSegment);
         }

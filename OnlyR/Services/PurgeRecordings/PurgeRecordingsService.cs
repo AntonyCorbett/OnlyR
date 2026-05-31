@@ -1,14 +1,14 @@
-﻿using System;
+﻿using OnlyR.Core.Enums;
+using OnlyR.Services.Options;
+using OnlyR.Utils;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using OnlyR.Core.Enums;
-using OnlyR.Services.Options;
-using OnlyR.Utils;
-using Serilog;
 
 namespace OnlyR.Services.PurgeRecordings;
 
@@ -131,7 +131,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             _timer.Start();
         }
     }
-        
+
     internal Task<int> RemoveEmptyFolders()
     {
         var t = Task.Run(
@@ -177,7 +177,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
             {
                 var oldFileDate = DateTime.Now.AddDays(-recordingsLifeTimeDays);
                 return DeleteCandidates(GetPurgeCandidates(oldFileDate));
-            }, 
+            },
             _cancellationTokenSource.Token);
 
         return t;
@@ -216,16 +216,16 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         return count;
     }
 
-    private IReadOnlyCollection<string> GetEmptyFolders()
+    private List<string> GetEmptyFolders()
     {
         var result = new List<string>();
 
         if (_cancellationTokenSource.IsCancellationRequested)
-                
+
         {
             return result;
         }
-            
+
         var rootFolder = FileUtils.GetRootDestinationFolder(
             _commandLineService.OptionsIdentifier,
             _optionsService.Options.DestinationFolder);
@@ -234,7 +234,7 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
         {
             return result;
         }
-            
+
         var yearSubFolders = Directory.GetDirectories(rootFolder);
         foreach (var yearFolder in yearSubFolders)
         {
@@ -405,8 +405,8 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                     }
 
                     var dateOfFolder = FileUtils.ParseDateFromFolderName(
-                        Path.GetFileName(dateFolder), 
-                        yearOfFolder.Value, 
+                        Path.GetFileName(dateFolder),
+                        yearOfFolder.Value,
                         monthOfFolder.Value);
 
                     if (dateOfFolder == null)

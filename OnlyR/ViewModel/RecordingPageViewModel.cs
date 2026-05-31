@@ -1,12 +1,3 @@
-using System.Windows;
-using System;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -22,6 +13,16 @@ using OnlyR.Services.Snackbar;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
 using Serilog;
+using System;
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace OnlyR.ViewModel
 {
@@ -180,11 +181,11 @@ namespace OnlyR.ViewModel
         public string? MaxRecordingTimeString =>
             _optionsService.Options.MaxRecordingTimeSeconds == 0
             ? null
-            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss");
+            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
 
         public bool IsMaxRecordingTimeSpecified => _optionsService.Options.MaxRecordingTimeSeconds > 0;
 
-        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
+        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
 
         public bool NoSettings => _commandLineService.NoSettings;
 
@@ -265,10 +266,10 @@ namespace OnlyR.ViewModel
 
                 if (driveLetterList.Contains(','))
                 {
-                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
+                    return string.Format(CultureInfo.CurrentCulture, Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
                 }
 
-                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
             }
         }
 
@@ -378,7 +379,7 @@ namespace OnlyR.ViewModel
 
             return AutoStopReason.None;
         }
-        
+
         private void AutoStopRecordingAfterSilence()
         {
             Log.Logger.Information(
@@ -470,7 +471,7 @@ namespace OnlyR.ViewModel
                 var recordingDate = DateTime.Today;
                 var candidateFile = _destinationService.GetRecordingFileCandidate(
                     _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
-                
+
                 CheckDiskSpace(candidateFile);
 
                 _audioService.StartRecording(candidateFile, _optionsService);
@@ -503,11 +504,11 @@ namespace OnlyR.ViewModel
                 return;
             }
 
-            if (FileUtils.DriveFreeBytes(folder, out ulong bytesFree) && 
+            if (FileUtils.DriveFreeBytes(folder, out ulong bytesFree) &&
                 bytesFree < _safeMinBytesFree)
             {
                 // "Insufficient free space to record"
-                throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+                throw new InvalidOperationException(Properties.Resources.INSUFFICIENT_FREE_SPACE);
             }
         }
 
@@ -569,7 +570,7 @@ namespace OnlyR.ViewModel
             var folder = FindSuitableRecordingFolderToShow();
             var psi = new ProcessStartInfo
             {
-                FileName = folder, 
+                FileName = folder,
                 UseShellExecute = true
             };
 
@@ -650,6 +651,3 @@ namespace OnlyR.ViewModel
         }
     }
 }
-
-
-

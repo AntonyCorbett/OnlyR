@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using OnlyR.ViewModel.Messages;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using CommunityToolkit.Mvvm.Messaging;
-using OnlyR.ViewModel.Messages;
 
 // Ensure this is built x86!
 
@@ -27,7 +27,7 @@ namespace OnlyR.Utils
         {
             if (msg == WM_DEVICECHANGE && lparam != IntPtr.Zero)
             {
-                var vol = (DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure(lparam, typeof(DEV_BROADCAST_VOLUME));
+                var vol = (DEV_BROADCAST_VOLUME?)Marshal.PtrToStructure<DEV_BROADCAST_VOLUME>(lparam);
 
                 if (vol != null && vol.Value.dbcv_devicetype == DBT_DEVTYPVOLUME)
                 {
@@ -35,7 +35,7 @@ namespace OnlyR.Utils
 
                     checked
                     {
-                        switch ((int) wparam)
+                        switch ((int)wparam)
                         {
                             case DBT_DEVICEARRIVAL:
                                 WeakReferenceMessenger.Default.Send(new RemovableDriveMessage
@@ -72,7 +72,7 @@ namespace OnlyR.Utils
 
             return cnt < Drives.Length ? Drives[cnt] : '?';
         }
-        
+
         [StructLayout(LayoutKind.Sequential)]
         private struct DEV_BROADCAST_VOLUME
         {

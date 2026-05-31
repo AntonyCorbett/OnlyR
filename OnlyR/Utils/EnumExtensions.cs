@@ -1,9 +1,9 @@
-﻿using System;
+﻿using OnlyR.Core.Enums;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
-using OnlyR.Core.Enums;
 
 namespace OnlyR.Utils
 {
@@ -32,10 +32,10 @@ namespace OnlyR.Utils
                 default:
                 // ReSharper disable once RedundantCaseLabel
                 case RecordingStatus.Unknown:
-                    throw new ArgumentException(nameof(value));
+                    throw new ArgumentException("Unknown recording status", nameof(value));
             }
         }
-        
+
         /// <summary>
         /// Gets the extension format for the <see cref="AudioCodec"/> enum value
         /// </summary>
@@ -56,7 +56,7 @@ namespace OnlyR.Utils
         {
             if (attribute == null || string.IsNullOrWhiteSpace(attribute.Value))
             {
-                throw new ArgumentException(nameof(enumValue));
+                throw new ArgumentException("Missing or empty EnumMember attribute value", nameof(enumValue));
             }
 
             return attribute.Value;
