@@ -1,12 +1,12 @@
 # https://lefthook.dev
 # Auto-formats staged C# files against .editorconfig before each commit.
-# Scoped to whitespace formatting only (deterministic, no code-style/analyzer
-# rewrites) so commits stay predictable. Broaden to `dotnet format` (style +
-# analyzers) here once the team is ready to enforce the full ruleset.
+# Runs the full `dotnet format` (whitespace + style + analyzers) on staged
+# files, consistent with TreatWarningsAsErrors, so style and analyzer fixes
+# are applied at commit time.
 
 pre-commit:
   commands:
     format:
       glob: "*.cs"
-      run: dotnet format whitespace OnlyR.slnx --include {staged_files}
+      run: dotnet format OnlyR.slnx --include {staged_files}
       stage_fixed: true
