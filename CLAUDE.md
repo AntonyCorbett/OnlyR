@@ -51,4 +51,9 @@ The solution has three projects:
 - **Do not suggest changes to localization resource files** (`.resx` files). Translations are managed externally via a separate localisation workflow.
 - Target platform is **Windows x86** only. Do not introduce cross-platform abstractions.
 - Nullable reference types are enabled globally — all new code must be null-safe.
-- Code analysis uses `OnlyR.ruleset` (CA* rules) plus Roslynator. Treat warnings as errors.
+- Code analysis uses the built-in .NET analyzers (`AnalysisLevel=latest-recommended`) plus `Roslynator.Analyzers`, all configured via `.editorconfig`.
+- Warnings are treated as errors: `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` is set in `Directory.Build.props`.
+
+## Dev tooling
+
+- Formatting/style is enforced by a [lefthook](https://github.com/evilmartians/lefthook) pre-commit hook that runs `dotnet format` on staged files. Dev tools (lefthook) are managed by [mise](https://mise.jdx.dev/) — run `mise install && mise run setup` on a fresh checkout to install the pinned tools and wire up the git hooks.
