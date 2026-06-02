@@ -156,8 +156,9 @@ csharp_prefer_static_local_function = true
 csharp_prefer_braces = false
 # Prefer the simple 'using' declaration over a 'using' statement block; 'true' prefers the simple form.
 csharp_prefer_simple_using_statement = true
-# Namespace declaration style; 'file_scoped' prefers file-scoped namespaces (namespace X;).
-csharp_style_namespace_declarations = file_scoped
+# Namespace declaration style; 'file_scoped' enforces file-scoped namespaces (namespace X;).
+# ':warning' makes the pre-commit `dotnet format` auto-convert any block-scoped namespace.
+csharp_style_namespace_declarations = file_scoped:warning
 
 # Expression-level preferences
 # Prefer 'default' over 'default(T)' when the type is inferable; 'true' prefers the simple form.
