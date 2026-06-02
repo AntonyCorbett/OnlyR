@@ -178,7 +178,7 @@ public sealed class AudioRecorder : IDisposable
     /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
     public void Stop(bool fadeOut)
     {
-        if (this._recordingStatus is RecordingStatus.Recording or RecordingStatus.Paused)
+        if (_recordingStatus is RecordingStatus.Recording or RecordingStatus.Paused)
         {
             var wasPaused = _isPaused;
             _isPaused = false;

@@ -33,13 +33,13 @@ file_header_template = unset
 
 # this. and Me. preferences
 # Whether to prefix event accesses with 'this.'; 'false' prefers no qualifier.
-dotnet_style_qualification_for_event = false
+dotnet_style_qualification_for_event = false:warning
 # Whether to prefix field accesses with 'this.'; 'false' prefers no qualifier.
-dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_field = false:warning
 # Whether to prefix method calls with 'this.'; 'false' prefers no qualifier.
-dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_method = false:warning
 # Whether to prefix property accesses with 'this.'; 'false' prefers no qualifier.
-dotnet_style_qualification_for_property = false
+dotnet_style_qualification_for_property = false:warning
 
 # Language keywords vs BCL types preferences
 # Prefer language keywords (e.g. 'int') over BCL type names for locals, parameters, and members; 'true' prefers keywords.

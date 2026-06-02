@@ -268,7 +268,7 @@ public sealed class TestFileUtils
     [Test]
     public async Task IsDirectoryEmptyFalseWithFile()
     {
-        await File.WriteAllTextAsync(Path.Combine(this._tempDir, "test.txt"), "content");
+        await File.WriteAllTextAsync(Path.Combine(_tempDir, "test.txt"), "content");
         var result = FileUtils.IsDirectoryEmpty(_tempDir);
         await Assert.That(result).IsFalse();
     }
