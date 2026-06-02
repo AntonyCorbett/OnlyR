@@ -135,12 +135,12 @@ namespace OnlyR.ViewModel
             get => _isCopying;
             set
             {
-                if (_isCopying != value)
-                {
-                    _isCopying = value;
-                    OnPropertyChanged(nameof(IsCopying));
-                    OnPropertyChanged(nameof(IsSaveEnabled));
-                }
+                if (_isCopying == value)
+                    return;
+
+                _isCopying = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsSaveEnabled));
             }
         }
 
@@ -173,7 +173,7 @@ namespace OnlyR.ViewModel
                 if (_volumeLevel != value)
                 {
                     _volumeLevel = value;
-                    OnPropertyChanged(nameof(VolumeLevelAsPercentage));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace OnlyR.ViewModel
                     _recordingStatus = value;
                     StatusStr = value.GetDescriptiveText();
 
-                    OnPropertyChanged(nameof(RecordingStatus));
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(IsNotRecording));
                     OnPropertyChanged(nameof(IsRecording));
                     OnPropertyChanged(nameof(IsPaused));
@@ -235,7 +235,7 @@ namespace OnlyR.ViewModel
                 if (_statusStr != value)
                 {
                     _statusStr = value;
-                    OnPropertyChanged(nameof(StatusStr));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -248,7 +248,7 @@ namespace OnlyR.ViewModel
                 if (_errorMsg != value)
                 {
                     _errorMsg = value;
-                    OnPropertyChanged(nameof(ErrorMsg));
+                    OnPropertyChanged();
                 }
             }
         }

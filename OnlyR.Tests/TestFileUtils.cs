@@ -8,21 +8,21 @@ namespace OnlyR.Tests;
 
 public sealed class TestFileUtils
 {
-    private string tempDir = string.Empty;
+    private string _tempDir = string.Empty;
 
     [Before(Test)]
     public void SetUp()
     {
-        tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        _tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempDir);
     }
 
     [After(Test)]
     public void TearDown()
     {
-        if (Directory.Exists(tempDir))
+        if (Directory.Exists(_tempDir))
         {
-            Directory.Delete(tempDir, true);
+            Directory.Delete(_tempDir, true);
         }
     }
 
@@ -207,7 +207,7 @@ public sealed class TestFileUtils
     public async Task GetDestinationFolderFormat()
     {
         var dt = new DateTime(2026, 4, 7);
-        var result = FileUtils.GetDestinationFolder(dt, null, tempDir);
+        var result = FileUtils.GetDestinationFolder(dt, null, _tempDir);
 
         await Assert.That(result).Contains("2026");
         await Assert.That(result).Contains("04");
@@ -218,7 +218,7 @@ public sealed class TestFileUtils
     public async Task GetMonthlyDestinationFolderFormat()
     {
         var dt = new DateTime(2026, 4, 7);
-        var result = FileUtils.GetMonthlyDestinationFolder(dt, null, tempDir);
+        var result = FileUtils.GetMonthlyDestinationFolder(dt, null, _tempDir);
 
         await Assert.That(result).Contains("2026");
         await Assert.That(result).Contains("04");
@@ -227,14 +227,14 @@ public sealed class TestFileUtils
     [Test]
     public async Task GetRootDestinationFolderWithIdentifier()
     {
-        var result = FileUtils.GetRootDestinationFolder("myId", tempDir);
+        var result = FileUtils.GetRootDestinationFolder("myId", _tempDir);
         await Assert.That(result).Contains("myId");
     }
 
     [Test]
     public async Task GetRootDestinationFolderWithoutIdentifier()
     {
-        var result = FileUtils.GetRootDestinationFolder(null, tempDir);
+        var result = FileUtils.GetRootDestinationFolder(null, _tempDir);
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsNotEmpty();
     }
@@ -246,7 +246,7 @@ public sealed class TestFileUtils
     [Test]
     public async Task CreateDirectoryNew()
     {
-        var newDir = Path.Combine(tempDir, "newSubDir");
+        var newDir = Path.Combine(_tempDir, "newSubDir");
         FileUtils.CreateDirectory(newDir);
         await Assert.That(Directory.Exists(newDir)).IsTrue();
     }
@@ -254,37 +254,37 @@ public sealed class TestFileUtils
     [Test]
     public async Task CreateDirectoryExisting()
     {
-        FileUtils.CreateDirectory(tempDir);
-        await Assert.That(Directory.Exists(tempDir)).IsTrue();
+        FileUtils.CreateDirectory(_tempDir);
+        await Assert.That(Directory.Exists(_tempDir)).IsTrue();
     }
 
     [Test]
     public async Task IsDirectoryEmptyTrue()
     {
-        var result = FileUtils.IsDirectoryEmpty(tempDir);
+        var result = FileUtils.IsDirectoryEmpty(_tempDir);
         await Assert.That(result).IsTrue();
     }
 
     [Test]
     public async Task IsDirectoryEmptyFalseWithFile()
     {
-        await File.WriteAllTextAsync(Path.Combine(this.tempDir, "test.txt"), "content");
-        var result = FileUtils.IsDirectoryEmpty(tempDir);
+        await File.WriteAllTextAsync(Path.Combine(this._tempDir, "test.txt"), "content");
+        var result = FileUtils.IsDirectoryEmpty(_tempDir);
         await Assert.That(result).IsFalse();
     }
 
     [Test]
     public async Task IsDirectoryEmptyFalseWithSubdir()
     {
-        Directory.CreateDirectory(Path.Combine(tempDir, "subDir"));
-        var result = FileUtils.IsDirectoryEmpty(tempDir);
+        Directory.CreateDirectory(Path.Combine(_tempDir, "subDir"));
+        var result = FileUtils.IsDirectoryEmpty(_tempDir);
         await Assert.That(result).IsFalse();
     }
 
     [Test]
     public void SafeDeleteFolderExisting()
     {
-        var folderToDelete = Path.Combine(tempDir, "toDelete");
+        var folderToDelete = Path.Combine(_tempDir, "toDelete");
         Directory.CreateDirectory(folderToDelete);
         FileUtils.SafeDeleteFolder(folderToDelete);
     }
@@ -304,13 +304,13 @@ public sealed class TestFileUtils
     [Test]
     public void SafeDeleteFolderNonExistent()
     {
-        FileUtils.SafeDeleteFolder(Path.Combine(tempDir, "doesNotExist"));
+        FileUtils.SafeDeleteFolder(Path.Combine(_tempDir, "doesNotExist"));
     }
 
     [Test]
     public void SafeDeleteFileExisting()
     {
-        var filePath = Path.Combine(tempDir, "toDelete.txt");
+        var filePath = Path.Combine(_tempDir, "toDelete.txt");
         File.WriteAllText(filePath, "content");
         FileUtils.SafeDeleteFile(filePath);
     }
@@ -330,15 +330,15 @@ public sealed class TestFileUtils
     [Test]
     public void SafeDeleteFileNonExistent()
     {
-        FileUtils.SafeDeleteFile(Path.Combine(tempDir, "doesNotExist.txt"));
+        FileUtils.SafeDeleteFile(Path.Combine(_tempDir, "doesNotExist.txt"));
     }
 
     [Test]
     public async Task MoveFileSuccess()
     {
-        var sourcePath = Path.Combine(tempDir, "source.txt");
+        var sourcePath = Path.Combine(_tempDir, "source.txt");
         await File.WriteAllTextAsync(sourcePath, "content");
-        var destPath = Path.Combine(tempDir, "dest", "moved.txt");
+        var destPath = Path.Combine(_tempDir, "dest", "moved.txt");
 
         FileUtils.MoveFile(sourcePath, destPath);
 
@@ -349,8 +349,8 @@ public sealed class TestFileUtils
     [Test]
     public async Task MoveFileSourceMissing()
     {
-        var sourcePath = Path.Combine(tempDir, "nonexistent.txt");
-        var destPath = Path.Combine(tempDir, "dest", "moved.txt");
+        var sourcePath = Path.Combine(_tempDir, "nonexistent.txt");
+        var destPath = Path.Combine(_tempDir, "dest", "moved.txt");
 
         await Assert.That(() => FileUtils.MoveFile(sourcePath, destPath))
             .Throws<FileNotFoundException>();
@@ -382,13 +382,13 @@ public sealed class TestFileUtils
     {
         var today = DateTime.Today;
         var todayFolder = Path.Combine(
-            tempDir,
+            _tempDir,
             today.ToString("yyyy", CultureInfo.InvariantCulture),
             today.ToString("MM", CultureInfo.InvariantCulture),
             today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
         Directory.CreateDirectory(todayFolder);
 
-        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, _tempDir);
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result.EndsWith(today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), StringComparison.Ordinal)).IsTrue();
@@ -399,12 +399,12 @@ public sealed class TestFileUtils
     {
         var today = DateTime.Today;
         var monthFolder = Path.Combine(
-            tempDir,
+            _tempDir,
             today.ToString("yyyy", CultureInfo.InvariantCulture),
             today.ToString("MM", CultureInfo.InvariantCulture));
         Directory.CreateDirectory(monthFolder);
 
-        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, _tempDir);
 
         await Assert.That(result).IsNotNull();
         await Assert.That(result.EndsWith(today.ToString("MM", CultureInfo.InvariantCulture), StringComparison.Ordinal)).IsTrue();
@@ -413,10 +413,10 @@ public sealed class TestFileUtils
     [Test]
     public async Task FindSuitableRecordingFolderToShowFallsBackToRoot()
     {
-        var result = FileUtils.FindSuitableRecordingFolderToShow(null, tempDir);
+        var result = FileUtils.FindSuitableRecordingFolderToShow(null, _tempDir);
 
         await Assert.That(result).IsNotNull();
-        await Assert.That(result).IsEqualTo(tempDir);
+        await Assert.That(result).IsEqualTo(_tempDir);
     }
 
     [Test]
@@ -459,7 +459,7 @@ public sealed class TestFileUtils
     public async Task GetDestinationFolderWithIdentifier()
     {
         var dt = new DateTime(2026, 4, 7);
-        var result = FileUtils.GetDestinationFolder(dt, "testId", tempDir);
+        var result = FileUtils.GetDestinationFolder(dt, "testId", _tempDir);
         await Assert.That(result).Contains("testId");
         await Assert.That(result).Contains("2026-04-07");
     }
@@ -468,7 +468,7 @@ public sealed class TestFileUtils
     public async Task GetMonthlyDestinationFolderWithIdentifier()
     {
         var dt = new DateTime(2026, 4, 7);
-        var result = FileUtils.GetMonthlyDestinationFolder(dt, "testId", tempDir);
+        var result = FileUtils.GetMonthlyDestinationFolder(dt, "testId", _tempDir);
         await Assert.That(result).Contains("testId");
         await Assert.That(result).Contains("2026");
         await Assert.That(result).Contains("04");
@@ -479,21 +479,21 @@ public sealed class TestFileUtils
     {
         var today = DateTime.Today;
         var todayFolder = Path.Combine(
-            tempDir,
+            _tempDir,
             "testId",
             today.ToString("yyyy", CultureInfo.InvariantCulture),
             today.ToString("MM", CultureInfo.InvariantCulture),
             today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
         Directory.CreateDirectory(todayFolder);
 
-        var result = FileUtils.FindSuitableRecordingFolderToShow("testId", tempDir);
+        var result = FileUtils.FindSuitableRecordingFolderToShow("testId", _tempDir);
         await Assert.That(result).IsNotNull();
     }
 
     [Test]
     public async Task FindSuitableRecordingFolderToShowNonExistentDirCreatesDefault()
     {
-        var nonExistent = Path.Combine(tempDir, "totally_nonexistent_" + Guid.NewGuid().ToString("N"));
+        var nonExistent = Path.Combine(_tempDir, "totally_nonexistent_" + Guid.NewGuid().ToString("N"));
         var result = FileUtils.FindSuitableRecordingFolderToShow("missingId", nonExistent);
         await Assert.That(result).IsNotNull();
         await Assert.That(result).IsNotEmpty();
@@ -502,7 +502,7 @@ public sealed class TestFileUtils
     [Test]
     public async Task SafeDeleteFileActuallyDeletesFile()
     {
-        var filePath = Path.Combine(tempDir, "toDeleteActual.txt");
+        var filePath = Path.Combine(_tempDir, "toDeleteActual.txt");
         await File.WriteAllTextAsync(filePath, "content");
         FileUtils.SafeDeleteFile(filePath);
         await Assert.That(File.Exists(filePath)).IsFalse();
@@ -511,7 +511,7 @@ public sealed class TestFileUtils
     [Test]
     public async Task SafeDeleteFolderActuallyDeletesFolder()
     {
-        var folderPath = Path.Combine(tempDir, "toDeleteActual");
+        var folderPath = Path.Combine(_tempDir, "toDeleteActual");
         Directory.CreateDirectory(folderPath);
         FileUtils.SafeDeleteFolder(folderPath);
         await Assert.That(Directory.Exists(folderPath)).IsFalse();

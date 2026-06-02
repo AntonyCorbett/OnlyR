@@ -13,17 +13,17 @@ namespace OnlyR.Tests.Mocks;
 /// </summary>
 internal sealed class MockAudioService : IAudioService
 {
-    private readonly DispatcherTimer timer;
-    private readonly Random random;
-    private RecordingStatus status;
+    private readonly DispatcherTimer _timer;
+    private readonly Random _random;
+    private RecordingStatus _status;
 
     public MockAudioService()
     {
-        this.status = RecordingStatus.NotRecording;
-        this.random = new Random();
+        this._status = RecordingStatus.NotRecording;
+        this._random = new Random();
 
-        this.timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
-        this.timer.Tick += RecordingTimer;
+        this._timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
+        this._timer.Tick += RecordingTimer;
     }
 
     public event EventHandler? StartedEvent;
@@ -49,39 +49,39 @@ internal sealed class MockAudioService : IAudioService
 
     public void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService)
     {
-        if (this.status == RecordingStatus.NotRecording)
+        if (this._status == RecordingStatus.NotRecording)
         {
-            this.status = RecordingStatus.Recording;
+            this._status = RecordingStatus.Recording;
             OnStartedEvent();
-            this.timer.Start();
+            this._timer.Start();
         }
     }
 
     public void StopRecording(bool fadeOut)
     {
-        this.status = RecordingStatus.StopRequested;
+        this._status = RecordingStatus.StopRequested;
         OnStopRequested();
 
-        this.timer.Stop();
+        this._timer.Stop();
         OnStoppedEvent();
     }
 
     public void PauseRecording()
     {
-        if (this.status == RecordingStatus.Recording)
+        if (this._status == RecordingStatus.Recording)
         {
-            this.status = RecordingStatus.Paused;
-            this.timer.Stop();
+            this._status = RecordingStatus.Paused;
+            this._timer.Stop();
             PausedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public void ResumeRecording()
     {
-        if (this.status == RecordingStatus.Paused)
+        if (this._status == RecordingStatus.Paused)
         {
-            this.status = RecordingStatus.Recording;
-            this.timer.Start();
+            this._status = RecordingStatus.Recording;
+            this._timer.Start();
             ResumedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -108,6 +108,6 @@ internal sealed class MockAudioService : IAudioService
 
     private void RecordingTimer(object? sender, EventArgs e)
     {
-        OnRecordingProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = this.random.Next(0, 101) });
+        OnRecordingProgressEvent(new RecordingProgressEventArgs { VolumeLevelAsPercentage = this._random.Next(0, 101) });
     }
 }

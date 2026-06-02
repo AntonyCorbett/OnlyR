@@ -280,11 +280,11 @@ public class SettingsPageViewModel : ObservableObject, IPage
         get => _optionsService.Options.DestinationFolder;
         set
         {
-            if (_optionsService.Options.DestinationFolder != value)
-            {
-                _optionsService.Options.DestinationFolder = value;
-                OnPropertyChanged(nameof(DestinationFolder));
-            }
+            if (_optionsService.Options.DestinationFolder == value)
+                return;
+
+            _optionsService.Options.DestinationFolder = value;
+            OnPropertyChanged();
         }
     }
 

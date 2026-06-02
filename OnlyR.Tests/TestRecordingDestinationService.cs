@@ -11,21 +11,21 @@ namespace OnlyR.Tests;
 
 public sealed class TestRecordingDestinationService
 {
-    private string tempDir = string.Empty;
+    private string _tempDir = string.Empty;
 
     [Before(Test)]
     public void SetUp()
     {
-        tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        _tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempDir);
     }
 
     [After(Test)]
     public void TearDown()
     {
-        if (Directory.Exists(tempDir))
+        if (Directory.Exists(_tempDir))
         {
-            Directory.Delete(tempDir, true);
+            Directory.Delete(_tempDir, true);
         }
     }
 
@@ -34,7 +34,7 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
@@ -53,7 +53,7 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
@@ -71,7 +71,7 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
@@ -102,7 +102,7 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
@@ -120,7 +120,7 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Wav };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Wav };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
@@ -138,14 +138,14 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3, MaxRecordingsInOneFolder = 10 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3, MaxRecordingsInOneFolder = 10 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
         var testDate = new DateTime(2026, 4, 7, 10, 30, 0);
 
         // Pre-create destination folder and files for tracks 001-009.
-        var destFolder = FileUtils.GetDestinationFolder(testDate, null, tempDir);
+        var destFolder = FileUtils.GetDestinationFolder(testDate, null, _tempDir);
         Directory.CreateDirectory(destFolder);
 
         var coreName = $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)testDate.DayOfWeek]} {testDate:dd MMMM yyyy}";
@@ -165,14 +165,14 @@ public sealed class TestRecordingDestinationService
     {
         // Arrange
         var optionsMock = Mock.Of<IOptionsService>();
-        var options = new Options { DestinationFolder = tempDir, Codec = AudioCodec.Mp3 };
+        var options = new Options { DestinationFolder = _tempDir, Codec = AudioCodec.Mp3 };
         optionsMock.Options.Returns(options);
 
         var service = new RecordingDestinationService();
         var testDate = new DateTime(2026, 4, 7, 10, 30, 0);
 
         // Pre-create destination folder with a malformed filename (non-numeric track).
-        var destFolder = FileUtils.GetDestinationFolder(testDate, null, tempDir);
+        var destFolder = FileUtils.GetDestinationFolder(testDate, null, _tempDir);
         Directory.CreateDirectory(destFolder);
 
         var coreName = $"{CultureInfo.CurrentCulture.DateTimeFormat.DayNames[(int)testDate.DayOfWeek]} {testDate:dd MMMM yyyy}";

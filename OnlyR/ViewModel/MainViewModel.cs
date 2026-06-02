@@ -114,11 +114,11 @@ namespace OnlyR.ViewModel
             get => _currentPage;
             set
             {
-                if (!ReferenceEquals(_currentPage, value))
-                {
-                    _currentPage = value;
-                    OnPropertyChanged(nameof(CurrentPage));
-                }
+                if (ReferenceEquals(_currentPage, value))
+                    return;
+
+                _currentPage = value;
+                OnPropertyChanged();
             }
         }
 
