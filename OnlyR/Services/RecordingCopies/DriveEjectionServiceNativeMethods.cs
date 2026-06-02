@@ -26,16 +26,17 @@ namespace OnlyR.Services.RecordingCopies
         private const string GUID_DEVINTERFACE_CDROM = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
 
         private const int INVALID_HANDLE_VALUE = -1;
+        // 0x80000000 overflows int, so the unchecked cast is required here.
         private const int GENERIC_READ = unchecked((int)0x80000000);
-        private const int GENERIC_WRITE = unchecked((int)0x40000000);
-        private const int FILE_SHARE_READ = unchecked((int)0x00000001);
-        private const int FILE_SHARE_WRITE = unchecked((int)0x00000002);
-        private const int OPEN_EXISTING = unchecked((int)3);
-        private const int FSCTL_LOCK_VOLUME = unchecked((int)0x00090018);
-        private const int FSCTL_DISMOUNT_VOLUME = unchecked((int)0x00090020);
-        private const int IOCTL_STORAGE_EJECT_MEDIA = unchecked((int)0x002D4808);
-        private const int IOCTL_STORAGE_MEDIA_REMOVAL = unchecked((int)0x002D4804);
-        private const int IOCTL_STORAGE_GET_DEVICE_NUMBER = unchecked((int)0x002D1080);
+        private const int GENERIC_WRITE = 0x40000000;
+        private const int FILE_SHARE_READ = 0x00000001;
+        private const int FILE_SHARE_WRITE = 0x00000002;
+        private const int OPEN_EXISTING = 3;
+        private const int FSCTL_LOCK_VOLUME = 0x00090018;
+        private const int FSCTL_DISMOUNT_VOLUME = 0x00090020;
+        private const int IOCTL_STORAGE_EJECT_MEDIA = 0x002D4808;
+        private const int IOCTL_STORAGE_MEDIA_REMOVAL = 0x002D4804;
+        private const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002D1080;
 
         private const int ERROR_NO_MORE_ITEMS = 259;
         private const int ERROR_INSUFFICIENT_BUFFER = 122;
