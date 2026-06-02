@@ -6,7 +6,9 @@ Thanks for thinking about contributing additional code or bug fixes to the proje
 
 This repo uses [mise](https://mise.jdx.dev/) to manage dev tooling and [lefthook](https://github.com/evilmartians/lefthook) for git hooks.
 
-After cloning, run `mise install` and then `mise run setup` (this runs `lefthook install` to wire up the hooks).
+First, install mise itself if you don't already have it — see the [mise install guide](https://mise.jdx.dev/getting-started.html) (on Windows, e.g. `winget install jdx.mise`).
+
+Then, after cloning, run `mise install` and `mise run setup` (this runs `lefthook install` to wire up the hooks).
 
 The pre-commit hook runs `dotnet format` on staged .cs files to keep formatting aligned with `.editorconfig`.
 
