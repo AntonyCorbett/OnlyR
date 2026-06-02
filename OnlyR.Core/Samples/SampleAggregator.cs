@@ -1,60 +1,59 @@
 ﻿using OnlyR.Core.EventArgs;
 using System;
 
-namespace OnlyR.Core.Samples
+namespace OnlyR.Core.Samples;
+
+/// <summary>
+/// Aggregator of audio samples. Based on Mark Heath's work in NAudio sample applications
+/// </summary>
+public sealed class SampleAggregator
 {
-    /// <summary>
-    /// Aggregator of audio samples. Based on Mark Heath's work in NAudio sample applications
-    /// </summary>
-    public sealed class SampleAggregator
+    private readonly int _reportCount;
+    private readonly int _minReportingIntervalMs = 20;
+
+    private float _maxValue;
+    private float _minValue;
+    private int _count;
+
+    public SampleAggregator(int samplesPerSecond, int reportingIntervalMs)
     {
-        private readonly int _reportCount;
-        private readonly int _minReportingIntervalMs = 20;
-
-        private float _maxValue;
-        private float _minValue;
-        private int _count;
-
-        public SampleAggregator(int samplesPerSecond, int reportingIntervalMs)
+        if (reportingIntervalMs < 20)
         {
-            if (reportingIntervalMs < 20)
-            {
-                reportingIntervalMs = _minReportingIntervalMs;
-            }
-
-            _reportCount = samplesPerSecond * reportingIntervalMs / 1000;
-
-            if (_reportCount < 10)
-            {
-                _reportCount = 10;
-            }
+            reportingIntervalMs = _minReportingIntervalMs;
         }
 
-        public event EventHandler<SamplesReportEventArgs>? ReportEvent;
+        _reportCount = samplesPerSecond * reportingIntervalMs / 1000;
 
-        public void Add(float value)
+        if (_reportCount < 10)
         {
-            ++_count;
-
-            _maxValue = Math.Max(_maxValue, value);
-            _minValue = Math.Min(_minValue, value);
-
-            if (_count >= _reportCount)
-            {
-                OnReportEvent(new SamplesReportEventArgs(_minValue, _maxValue));
-                Reset();
-            }
+            _reportCount = 10;
         }
+    }
 
-        private void OnReportEvent(SamplesReportEventArgs e)
+    public event EventHandler<SamplesReportEventArgs>? ReportEvent;
+
+    public void Add(float value)
+    {
+        ++_count;
+
+        _maxValue = Math.Max(_maxValue, value);
+        _minValue = Math.Min(_minValue, value);
+
+        if (_count >= _reportCount)
         {
-            ReportEvent?.Invoke(this, e);
+            OnReportEvent(new SamplesReportEventArgs(_minValue, _maxValue));
+            Reset();
         }
+    }
 
-        private void Reset()
-        {
-            _count = 0;
-            _maxValue = _minValue = 0.0F;
-        }
+    private void OnReportEvent(SamplesReportEventArgs e)
+    {
+        ReportEvent?.Invoke(this, e);
+    }
+
+    private void Reset()
+    {
+        _count = 0;
+        _maxValue = _minValue = 0.0F;
     }
 }

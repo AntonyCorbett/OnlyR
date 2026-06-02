@@ -1,7 +1,6 @@
-﻿namespace OnlyR.Services.RecordingCopies
+﻿namespace OnlyR.Services.RecordingCopies;
+
+internal interface IDriveEjectionService
 {
-    internal interface IDriveEjectionService
-    {
-        bool Eject(char driveLetter);
-    }
+    bool Eject(char driveLetter);
 }

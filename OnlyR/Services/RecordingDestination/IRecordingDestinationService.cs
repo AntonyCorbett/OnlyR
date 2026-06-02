@@ -2,11 +2,10 @@
 using OnlyR.Services.Options;
 using System;
 
-namespace OnlyR.Services.RecordingDestination
+namespace OnlyR.Services.RecordingDestination;
+
+public interface IRecordingDestinationService
 {
-    public interface IRecordingDestinationService
-    {
-        // ReSharper disable once UnusedMember.Global
-        RecordingCandidate GetRecordingFileCandidate(IOptionsService optionsService, DateTime dt, string? commandLineIdentifier);
-    }
+    // ReSharper disable once UnusedMember.Global
+    RecordingCandidate GetRecordingFileCandidate(IOptionsService optionsService, DateTime dt, string? commandLineIdentifier);
 }

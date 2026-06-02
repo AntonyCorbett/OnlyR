@@ -1,9 +1,8 @@
-﻿namespace OnlyR.Services.PurgeRecordings
+﻿namespace OnlyR.Services.PurgeRecordings;
+
+internal enum PurgeServiceJob
 {
-    internal enum PurgeServiceJob
-    {
-        Nothing,
-        FilePurge,
-        FolderPurge,
-    }
+    Nothing,
+    FilePurge,
+    FolderPurge,
 }

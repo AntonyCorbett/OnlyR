@@ -1,19 +1,18 @@
 ﻿using OnlyR.Model;
 
-namespace OnlyR.Services.Options
+namespace OnlyR.Services.Options;
+
+public interface IOptionsService
 {
-    public interface IOptionsService
-    {
-        Options Options { get; }
+    Options Options { get; }
 
-        string? Culture { get; set; }
+    string? Culture { get; set; }
 
-        SampleRateItem[] GetSupportedSampleRates();
+    SampleRateItem[] GetSupportedSampleRates();
 
-        ChannelItem[] GetSupportedChannels();
+    ChannelItem[] GetSupportedChannels();
 
-        BitRateItem[] GetSupportedMp3BitRates();
+    BitRateItem[] GetSupportedMp3BitRates();
 
-        void Save();
-    }
+    void Save();
 }

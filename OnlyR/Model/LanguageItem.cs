@@ -1,17 +1,16 @@
-﻿namespace OnlyR.Model
+﻿namespace OnlyR.Model;
+
+public class LanguageItem
 {
-    public class LanguageItem
+    public LanguageItem(string languageId, string languageName)
     {
-        public LanguageItem(string languageId, string languageName)
-        {
-            LanguageId = languageId;
-            LanguageName = languageName;
-        }
-
-        public string LanguageId { get; }
-
-        public string LanguageName { get; }
-
-        public override string ToString() => LanguageName;
+        LanguageId = languageId;
+        LanguageName = languageName;
     }
+
+    public string LanguageId { get; }
+
+    public string LanguageName { get; }
+
+    public override string ToString() => LanguageName;
 }
