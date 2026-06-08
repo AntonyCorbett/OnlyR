@@ -1,6 +1,6 @@
+using OnlyR.Services.Options;
 using System.Linq;
 using System.Threading.Tasks;
-using OnlyR.Services.Options;
 
 namespace OnlyR.Tests;
 

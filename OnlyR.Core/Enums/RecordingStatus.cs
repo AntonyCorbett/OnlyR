@@ -1,15 +1,14 @@
-﻿namespace OnlyR.Core.Enums
+﻿namespace OnlyR.Core.Enums;
+
+/// <summary>
+/// Status of recording.
+/// </summary>
+public enum RecordingStatus
 {
-    /// <summary>
-    /// Status of recording.
-    /// </summary>
-    public enum RecordingStatus
-    {
-        // ReSharper disable once UnusedMember.Global
-        Unknown,
-        NotRecording,
-        StopRequested,
-        Recording,
-        Paused
-    }
+    // ReSharper disable once UnusedMember.Global
+    Unknown,
+    NotRecording,
+    StopRequested,
+    Recording,
+    Paused
 }

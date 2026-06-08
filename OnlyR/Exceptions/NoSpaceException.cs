@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using System.Globalization;
 
-namespace OnlyR.Exceptions
+namespace OnlyR.Exceptions;
+
+[Serializable]
+public sealed class NoSpaceException : Exception
 {
-    [Serializable]
-    public sealed class NoSpaceException : Exception
+    public NoSpaceException()
     {
-        public NoSpaceException()
-        {
-        }
+    }
 
-        public NoSpaceException(char driveLetter)
-            : base(string.Format(Properties.Resources.NO_SPACE, driveLetter.ToString()))
-        {
-        }
+    public NoSpaceException(char driveLetter)
+        : base(string.Format(CultureInfo.CurrentCulture, Properties.Resources.NO_SPACE, driveLetter.ToString(CultureInfo.CurrentCulture)))
+    {
+    }
 
-        public NoSpaceException(string msg)
-            : base(msg)
-        {
-        }
+    public NoSpaceException(string msg)
+        : base(msg)
+    {
+    }
 
-        public NoSpaceException(string msg, Exception innerException)
-            : base(msg, innerException)
-        {
-        }
-
-        private NoSpaceException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+    public NoSpaceException(string msg, Exception innerException)
+        : base(msg, innerException)
+    {
     }
 }

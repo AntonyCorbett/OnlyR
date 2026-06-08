@@ -1,9 +1,5 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.AudioSilence;
@@ -14,6 +10,10 @@ using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

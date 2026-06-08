@@ -3,11 +3,11 @@ name: App CI
 on:
   push:
     branches: [master]
-    paths: ['**/*.csproj', '**/*.cs', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
+    paths: ['**/*.csproj', '**/*.cs', '.editorconfig', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
   pull_request:
     branches: [master]
     types: [opened, synchronize, reopened]
-    paths: ['**/*.csproj', '**/*.cs', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
+    paths: ['**/*.csproj', '**/*.cs', '.editorconfig', 'Directory.Packages.props', 'Directory.Build.props', '.github/workflows/app-ci.yml']
 
 env:
   DOTNET_NOLOGO: true
@@ -52,3 +52,29 @@ jobs:
         with:
           name: test-results
           path: ./test-results
+
+  format:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore OnlyR.slnx
+
+      - name: Verify formatting
+        run: dotnet format OnlyR.slnx --verify-no-changes --no-restore

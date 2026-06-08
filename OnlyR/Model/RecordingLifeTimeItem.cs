@@ -1,17 +1,16 @@
-﻿namespace OnlyR.Model
+﻿namespace OnlyR.Model;
+
+public class RecordingLifeTimeItem
 {
-    public class RecordingLifeTimeItem
+    public RecordingLifeTimeItem(string description, int days)
     {
-        public RecordingLifeTimeItem(string description, int days)
-        {
-            Description = description;
-            Days = days;
-        }
-
-        public string Description { get; }
-
-        public int Days { get; }
-
-        public override string ToString() => Description;
+        Description = description;
+        Days = days;
     }
+
+    public string Description { get; }
+
+    public int Days { get; }
+
+    public override string ToString() => Description;
 }

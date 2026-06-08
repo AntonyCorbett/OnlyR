@@ -2,6 +2,16 @@
 
 Thanks for thinking about contributing additional code or bug fixes to the project. If your changes are likely to be more than a few lines of code, please would you let me know in advance what you propose to do. This will help avoid duplication of effort.
 
+## Local setup / git hooks
+
+This repo uses [mise](https://mise.jdx.dev/) to manage dev tooling and [lefthook](https://github.com/evilmartians/lefthook) for git hooks.
+
+First, install mise itself if you don't already have it — see the [mise install guide](https://mise.jdx.dev/getting-started.html) (on Windows, e.g. `winget install jdx.mise`).
+
+Then, after cloning, run `mise install` and `mise run setup` (this runs `lefthook install` to wire up the hooks).
+
+The pre-commit hook runs `dotnet format` on staged .cs files to keep formatting aligned with `.editorconfig`.
+
 ## Submitting changes
 
 Please send a Pull Request with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). 
@@ -15,8 +25,8 @@ If you make changes to the string resources (resources.resx, etc) please don't i
 
 ## Coding conventions
 
-A StyleCop ruleset file is used to help maintain consistent coding conventions. 
-The projects reference the StyleCop.Analyzers assembly so it should be possible to stick to the coding style without too much difficulty.
+Coding conventions are defined in `.editorconfig` and enforced by the built-in .NET analyzers (`AnalysisLevel=latest-recommended`) plus `Roslynator.Analyzers`.
+Warnings are treated as errors (`TreatWarningsAsErrors=true`), and the pre-commit hook runs `dotnet format`, so staying within the coding style takes little effort.
 
 Many thanks
 

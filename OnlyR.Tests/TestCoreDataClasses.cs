@@ -1,9 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Models;
 using OnlyR.Core.Recorder;
+using System;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 
