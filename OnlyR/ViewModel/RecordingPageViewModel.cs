@@ -547,7 +547,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
             // fading out is pointless (and won't work) if the device hasn't
             // actually produced any audio
-            var fadeOut = _audioDataReceived && (_optionsService.Options?.FadeOut ?? false);
+            var fadeOut = _audioDataReceived && _optionsService.Options.FadeOut;
             _audioService.StopRecording(fadeOut);
         }
         catch (Exception ex)
