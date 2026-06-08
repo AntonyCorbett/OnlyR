@@ -4,11 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+// ReSharper disable UnusedMember.Local
 
 // Ensure this is built x86!
 
 namespace OnlyR.Services.RecordingCopies;
-#pragma warning disable IDE0051 // unused member
 
 // adapted from work by Armanisoft from here:
 // https://www.codeproject.com/Articles/375916/How-to-Prepare-a-USB-Drive-for-Safe-Removal-2
@@ -19,68 +20,31 @@ internal static class DriveEjectionServiceNativeMethods
     private const int DIGCF_PRESENT = 0x00000002;
     private const int DIGCF_DEVICEINTERFACE = 0x00000010;
 
-    private const string GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
     private const string GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
     private const string GUID_DEVINTERFACE_FLOPPY = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
     private const string GUID_DEVINTERFACE_CDROM = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
 
     private const int INVALID_HANDLE_VALUE = -1;
-    // 0x80000000 overflows int, so the unchecked cast is required here.
-    private const int GENERIC_READ = unchecked((int)0x80000000);
-    private const int GENERIC_WRITE = 0x40000000;
     private const int FILE_SHARE_READ = 0x00000001;
     private const int FILE_SHARE_WRITE = 0x00000002;
     private const int OPEN_EXISTING = 3;
-    private const int FSCTL_LOCK_VOLUME = 0x00090018;
-    private const int FSCTL_DISMOUNT_VOLUME = 0x00090020;
-    private const int IOCTL_STORAGE_EJECT_MEDIA = 0x002D4808;
-    private const int IOCTL_STORAGE_MEDIA_REMOVAL = 0x002D4804;
     private const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002D1080;
 
     private const int ERROR_NO_MORE_ITEMS = 259;
     private const int ERROR_INSUFFICIENT_BUFFER = 122;
-    private const int ERROR_INVALID_DATA = 13;
 
+    // Values mirror the Win32 GetDriveType return codes; only the types this code
+    // dispatches on are named. Other codes fall through to the switch default.
     private enum DriveType : uint
     {
-        /// <summary>The drive type cannot be determined.</summary>
-        DriveUnknown = 0,
-
-        /// <summary>The root path is invalid, for example, no volume is mounted at the path.</summary>
-        DriveNoRootDir = 1,
-
         /// <summary>The drive is a type that has removable media, for example, a floppy drive or removable hard disk.</summary>
         DriveRemovable = 2,
 
         /// <summary>The drive is a type that cannot be removed, for example, a fixed hard drive.</summary>
         DriveFixed = 3,
 
-        /// <summary>The drive is a remote (network) drive.</summary>
-        DriveRemote = 4,
-
         /// <summary>The drive is a CD-ROM drive.</summary>
         DriveCdrom = 5,
-
-        /// <summary>The drive is a RAM disk.</summary>
-        DriveRamdisk = 6,
-    }
-
-    private enum PnpVetoType
-    {
-        Ok,
-        TypeUnknown,
-        LegacyDevice,
-        PendingClose,
-        WindowsApp,
-        WindowsService,
-        OutstandingOpen,
-        Device,
-        Driver,
-        IllegalDeviceRequest,
-        InsufficientPower,
-        NonDisableable,
-        LegacyDriver,
-        InsufficientRights,
     }
 
     /// <summary>
@@ -237,21 +201,6 @@ internal static class DriveEjectionServiceNativeMethods
         ref int pdnDevInst,
         int dnDevInst,
         int ulFlags);
-
-    // CharSet.Ansi preserves the original implicit-ANSI binding (CM_Request_Device_EjectA).
-    // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
-    // the native binding; the ANSI marshaling is explicit and intentional here, so suppress.
-#pragma warning disable CA2101 // ANSI marshaling is intentional to bind CM_Request_Device_EjectA; Unicode would change the ABI.
-    [DllImport("setupapi.dll", CharSet = CharSet.Ansi)]
-#pragma warning disable CA1838 // StringBuilder param: perf-only for interop; the working interop is left intact to avoid USB-ejection regressions.
-    private static extern int CM_Request_Device_Eject(
-        int dnDevInst,
-        out PnpVetoType pVetoType,
-        StringBuilder pszVetoName,
-        int ulNameLength,
-        int ulFlags);
-#pragma warning restore CA1838
-#pragma warning restore CA2101
 
     // CharSet.Ansi preserves the original implicit-ANSI binding (CM_Request_Device_EjectA).
     // CA2101 cannot be satisfied without switching to the Unicode (W) ABI, which would change
@@ -459,5 +408,3 @@ internal static class DriveEjectionServiceNativeMethods
         public int reserved;
     }
 }
-
-#pragma warning restore IDE0051 // unused member
