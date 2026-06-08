@@ -122,11 +122,11 @@
     <comment>Application title (for accessibility)</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_NAME" xml:space="preserve">
-    <value>Input volume level</value>
+    <value>Poziom głośności wejściowej</value>
     <comment>Accessibility name for the volume meter on the recording page</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_HELP" xml:space="preserve">
-    <value>Displays the current recording input level as a value from 0 to 100</value>
+    <value>Wyświetla bieżący poziom wejścia nagrywania jako wartość od 0 do 100</value>
     <comment>Accessibility help text for the volume meter on the recording page</comment>
   </data>
   <data name="APP_VER" xml:space="preserve">
@@ -210,16 +210,16 @@
     <value>1 minuta</value>
   </data>
   <data name="PAUSED" xml:space="preserve">
-    <value>Paused</value>
+    <value>Wstrzymano</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>Zatrzymaj nagrywanie</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Nagrywanie</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Open recordings folder</value>
+    <value>Otwórz folder nagrań</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RECORDING_SALVAGED" xml:space="preserve">
@@ -231,7 +231,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>Wznów nagrywanie</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Zapisz dzisiejsze nagrania na dysku {0}</value>
@@ -259,7 +259,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>Pokaż przycisk wstrzymania</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Wyciszanie</value>
@@ -278,7 +278,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Open recordings...</value>
+    <value>Otwórz nagrania...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
@@ -302,19 +302,19 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>Motyw</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>Jasny</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>Ciemny</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
-    <value>System (default)</value>
+    <value>System (domyślnie)</value>
     <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
