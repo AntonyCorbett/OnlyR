@@ -191,6 +191,9 @@
   <data name="NOT_RECORDING" xml:space="preserve">
     <value>Not recording</value>
   </data>
+  <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
+    <value>No audio produced</value>
+  </data>
   <data name="NO_LIMIT" xml:space="preserve">
     <value>No limit</value>
   </data>

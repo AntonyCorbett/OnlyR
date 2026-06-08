@@ -52,6 +52,7 @@ namespace OnlyR.ViewModel
         private DispatcherTimer? _splashTimer;
         private int _volumeLevel;
         private bool _isCopying;
+        private bool _audioDataReceived;
         private RecordingStatus _recordingStatus;
         private string _statusStr;
         private string? _errorMsg;
@@ -276,6 +277,14 @@ namespace OnlyR.ViewModel
         {
             get
             {
+                // some devices accept a recording connection but never deliver any audio
+                // (e.g. certain virtual/NDI endpoints) - in that case keep the elapsed
+                // time at zero rather than showing a misleadingly advancing clock
+                if (!_audioDataReceived)
+                {
+                    return TimeSpan.Zero;
+                }
+
                 if (_stopwatch.IsRunning || _recordingStatus == RecordingStatus.Paused)
                 {
                     return _stopwatch.Elapsed;
@@ -332,6 +341,10 @@ namespace OnlyR.ViewModel
 
         private void AudioProgressHandler(object? sender, Core.EventArgs.RecordingProgressEventArgs e)
         {
+            // a progress event only ever arrives once the recording device has
+            // actually delivered some audio data
+            _audioDataReceived = true;
+
             VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
             OnPropertyChanged(nameof(ElapsedTimeStr));
 
@@ -406,6 +419,13 @@ namespace OnlyR.ViewModel
         private void AudioStoppedHandler(object? sender, EventArgs e)
         {
             Log.Logger.Information("Stopped recording");
+
+            if (!_audioDataReceived)
+            {
+                Log.Logger.Warning("No audio was produced by the selected recording device");
+                _snackbarService.EnqueueWithOk(Properties.Resources.NO_AUDIO_PRODUCED);
+            }
+
             RecordingStatus = RecordingStatus.NotRecording;
             VolumeLevelAsPercentage = 0;
             _stopwatch.Stop();
@@ -465,6 +485,7 @@ namespace OnlyR.ViewModel
                 ClearErrorMsg();
                 Log.Logger.Information("Start requested");
 
+                _audioDataReceived = false;
                 _silenceService.Reset();
 
                 var recordingDate = DateTime.Today;
@@ -516,7 +537,11 @@ namespace OnlyR.ViewModel
             try
             {
                 ClearErrorMsg();
-                _audioService.StopRecording(_optionsService.Options?.FadeOut ?? false);
+
+                // fading out is pointless (and won't work) if the device hasn't
+                // actually produced any audio
+                var fadeOut = _audioDataReceived && (_optionsService.Options?.FadeOut ?? false);
+                _audioService.StopRecording(fadeOut);
             }
             catch (Exception ex)
             {
