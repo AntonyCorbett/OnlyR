@@ -24,13 +24,20 @@ public sealed class AudioRecorder : IDisposable
     private const int RequiredReportingIntervalMs = 40;
     private const int VuSpeed = 5;
 
+    // some devices (e.g. NDI virtual audio endpoints) can be selected for recording
+    // but never actually deliver any audio data. Give a device this long to prove
+    // it's producing data before we give up and report an error.
+    private const int NoAudioDataTimeoutMs = 5000;
+
     private Stream? _audioWriter;
     private IWaveIn? _waveSource;
     private WaveOutEvent? _silenceWaveOut;
     private SampleAggregator? _sampleAggregator;
     private VolumeFader? _fader;
+    private System.Threading.Timer? _noAudioDataWatchdogTimer;
     private RecordingStatus _recordingStatus;
     private bool _isPaused;
+    private bool _audioDataReceived;
     private string? _tempRecordingFilePath;
     private string? _finalRecordingFilePath;
 
@@ -44,6 +51,12 @@ public sealed class AudioRecorder : IDisposable
     public event EventHandler<RecordingProgressEventArgs>? ProgressEvent;
 
     public event EventHandler<RecordingStatusChangeEventArgs>? RecordingStatusChangeEvent;
+
+    /// <summary>
+    /// Raised if recording starts but the selected device never delivers any audio data
+    /// (e.g. some virtual audio endpoints accept a connection but produce nothing).
+    /// </summary>
+    public event EventHandler? NoAudioDataEvent;
 
     /// <summary>
     /// Gets a list of Windows recording devices.
@@ -78,6 +91,8 @@ public sealed class AudioRecorder : IDisposable
         {
             CheckRecordingDevice(recordingConfig);
 
+            _audioDataReceived = false;
+
             if (recordingConfig.UseLoopbackCapture)
             {
                 _waveSource = new WasapiLoopbackCapture();
@@ -111,6 +126,8 @@ public sealed class AudioRecorder : IDisposable
 
             _waveSource.StartRecording();
 
+            StartNoAudioDataWatchdog();
+
             _tempRecordingFilePath = recordingConfig.DestFilePath;
             _finalRecordingFilePath = recordingConfig.FinalFilePath;
 
@@ -120,6 +137,32 @@ public sealed class AudioRecorder : IDisposable
                 FinalRecordingPath = _finalRecordingFilePath
             });
         }
+    }
+
+    private void StartNoAudioDataWatchdog()
+    {
+        _noAudioDataWatchdogTimer?.Dispose();
+        _noAudioDataWatchdogTimer = new System.Threading.Timer(
+            NoAudioDataWatchdogCallback, null, NoAudioDataTimeoutMs, System.Threading.Timeout.Infinite);
+    }
+
+    private void StopNoAudioDataWatchdog()
+    {
+        _noAudioDataWatchdogTimer?.Dispose();
+        _noAudioDataWatchdogTimer = null;
+    }
+
+    private void NoAudioDataWatchdogCallback(object? state)
+    {
+        if (_audioDataReceived || _recordingStatus != RecordingStatus.Recording)
+        {
+            return;
+        }
+
+        NoAudioDataEvent?.Invoke(this, System.EventArgs.Empty);
+
+        // there's nothing to fade out - the device has given us no audio at all
+        Stop(fadeOut: false);
     }
 
     private void ConfigureSilenceOut()
@@ -258,6 +301,12 @@ public sealed class AudioRecorder : IDisposable
 
     private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
     {
+        if (!_audioDataReceived)
+        {
+            _audioDataReceived = true;
+            StopNoAudioDataWatchdog();
+        }
+
         if (_isPaused)
         {
             return;
@@ -340,6 +389,8 @@ public sealed class AudioRecorder : IDisposable
     private void Cleanup()
     {
         _isPaused = false;
+
+        StopNoAudioDataWatchdog();
 
         _audioWriter?.Flush();
 

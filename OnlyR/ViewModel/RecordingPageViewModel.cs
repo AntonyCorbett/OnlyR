@@ -81,6 +81,7 @@ namespace OnlyR.ViewModel
             _audioService.StoppedEvent += AudioStoppedHandler;
             _audioService.StopRequested += AudioStopRequestedHandler;
             _audioService.RecordingProgressEvent += AudioProgressHandler;
+            _audioService.NoAudioDataEvent += AudioNoDataHandler;
 
             _optionsService = optionsService;
             _destinationService = destinationService;
@@ -395,6 +396,12 @@ namespace OnlyR.ViewModel
                 _optionsService.Options.MaxRecordingTimeSeconds);
 
             StopRecordingCommand.Execute(null);
+        }
+
+        private void AudioNoDataHandler(object? sender, EventArgs e)
+        {
+            Log.Logger.Warning("No audio data was received from the selected recording device");
+            ErrorMsg = Properties.Resources.ERROR_NO_AUDIO_DATA;
         }
 
         private void AudioStopRequestedHandler(object? sender, EventArgs e)

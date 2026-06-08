@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(dotnet build *)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "Bash(git log *)",
+      "Bash(xargs grep -l \"NDI\\\\|NewTek\")",
+      "Bash(xargs grep -i \"naudio\")",
+      "Bash(xargs -I{} sh -c 'echo === {} ===; cat {}')",
+      "Bash(xargs cat)"
     ]
   }
 }

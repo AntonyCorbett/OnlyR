@@ -31,6 +31,7 @@ namespace OnlyR.Services.Audio
             _audioRecorder = new AudioRecorder();
             _audioRecorder.RecordingStatusChangeEvent += AudioRecorderOnRecordingStatusChangeHandler;
             _audioRecorder.ProgressEvent += AudioRecorderOnProgressHandler;
+            _audioRecorder.NoAudioDataEvent += AudioRecorderOnNoAudioDataHandler;
         }
 
         public event EventHandler? StartedEvent;
@@ -40,6 +41,11 @@ namespace OnlyR.Services.Audio
         public event EventHandler? StopRequested;
 
         public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
+
+        /// <summary>
+        /// Raised when recording started but the selected device delivered no audio data
+        /// </summary>
+        public event EventHandler? NoAudioDataEvent;
 
         public event EventHandler? PausedEvent;
 
@@ -132,6 +138,11 @@ namespace OnlyR.Services.Audio
         private void AudioRecorderOnProgressHandler(object? sender, RecordingProgressEventArgs e)
         {
             OnRecordingProgressEvent(e);
+        }
+
+        private void AudioRecorderOnNoAudioDataHandler(object? sender, EventArgs e)
+        {
+            OnNoAudioDataEvent();
         }
 
         private void AudioRecorderOnRecordingStatusChangeHandler(object? sender, RecordingStatusChangeEventArgs recordingStatusChangeEventArgs)
@@ -227,6 +238,11 @@ namespace OnlyR.Services.Audio
         private void OnRecordingProgressEvent(RecordingProgressEventArgs e)
         {
             RecordingProgressEvent?.Invoke(this, e);
+        }
+
+        private void OnNoAudioDataEvent()
+        {
+            NoAudioDataEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 }

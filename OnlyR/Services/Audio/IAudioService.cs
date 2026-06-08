@@ -15,6 +15,8 @@ namespace OnlyR.Services.Audio
 
         event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
+        event EventHandler NoAudioDataEvent;
+
         event EventHandler PausedEvent;
 
         event EventHandler ResumedEvent;

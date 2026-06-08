@@ -34,6 +34,8 @@ internal sealed class MockAudioService : IAudioService
 
     public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
 
+    public event EventHandler? NoAudioDataEvent;
+
     public event EventHandler? PausedEvent;
 
     public event EventHandler? ResumedEvent;
