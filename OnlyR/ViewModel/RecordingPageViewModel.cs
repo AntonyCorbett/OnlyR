@@ -553,7 +553,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
         catch (Exception ex)
         {
             ErrorMsg = Properties.Resources.ERROR_STOP;
-            Log.Logger.Error(ex, ErrorMsg);
+            Log.Logger.Error(ex, "Failed to stop recording. Error message: {ErrorMessage}", ErrorMsg);
         }
     }
 
