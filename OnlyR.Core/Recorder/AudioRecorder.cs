@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using NAudio.Lame;
+﻿using NAudio.Lame;
 using NAudio.Wave;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Models;
 using OnlyR.Core.Samples;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 
 namespace OnlyR.Core.Recorder;
 
@@ -178,7 +178,7 @@ public sealed class AudioRecorder : IDisposable
     /// <param name="fadeOut">true - fade out the recording instead of stopping immediately.</param>
     public void Stop(bool fadeOut)
     {
-        if (this._recordingStatus is RecordingStatus.Recording or RecordingStatus.Paused)
+        if (_recordingStatus is RecordingStatus.Recording or RecordingStatus.Paused)
         {
             var wasPaused = _isPaused;
             _isPaused = false;

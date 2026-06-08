@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
 using OnlyR.Utils;
+using System;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

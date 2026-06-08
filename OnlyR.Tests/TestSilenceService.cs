@@ -1,7 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using OnlyR.Services.AudioSilence;
 using OnlyR.Services.Options;
+using System;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

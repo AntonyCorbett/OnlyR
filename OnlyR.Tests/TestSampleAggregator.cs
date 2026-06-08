@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Samples;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

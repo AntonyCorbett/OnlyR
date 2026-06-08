@@ -1,11 +1,10 @@
-﻿namespace OnlyR.Services.AudioSilence
-{
-    public interface ISilenceService
-    {
-        int GetSecondsOfSilence();
-        
-        void ReportVolume(int volumeLevelAsPercentage);
+﻿namespace OnlyR.Services.AudioSilence;
 
-        void Reset();
-    }
+public interface ISilenceService
+{
+    int GetSecondsOfSilence();
+
+    void ReportVolume(int volumeLevelAsPercentage);
+
+    void Reset();
 }

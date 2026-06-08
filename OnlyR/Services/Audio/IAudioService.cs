@@ -1,32 +1,31 @@
-﻿using System;
-using OnlyR.Core.EventArgs;
+﻿using OnlyR.Core.EventArgs;
 using OnlyR.Model;
 using OnlyR.Services.Options;
+using System;
 
-namespace OnlyR.Services.Audio
+namespace OnlyR.Services.Audio;
+
+public interface IAudioService
 {
-    public interface IAudioService
-    {
-        event EventHandler StartedEvent;
+    event EventHandler StartedEvent;
 
-        event EventHandler StoppedEvent;
+    event EventHandler StoppedEvent;
 
-        event EventHandler StopRequested;
+    event EventHandler StopRequested;
 
-        event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
+    event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
 
-        event EventHandler PausedEvent;
+    event EventHandler PausedEvent;
 
-        event EventHandler ResumedEvent;
+    event EventHandler ResumedEvent;
 
-        RecordingDeviceItem[] GetRecordingDeviceList();
+    RecordingDeviceItem[] GetRecordingDeviceList();
 
-        void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
+    void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
 
-        void StopRecording(bool fadeOut);
+    void StopRecording(bool fadeOut);
 
-        void PauseRecording();
+    void PauseRecording();
 
-        void ResumeRecording();
-    }
+    void ResumeRecording();
 }

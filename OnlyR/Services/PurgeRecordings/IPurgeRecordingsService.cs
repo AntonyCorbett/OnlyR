@@ -1,7 +1,6 @@
-﻿namespace OnlyR.Services.PurgeRecordings
+﻿namespace OnlyR.Services.PurgeRecordings;
+
+public interface IPurgeRecordingsService
 {
-    public interface IPurgeRecordingsService
-    {
-        void Close();
-    }
+    void Close();
 }

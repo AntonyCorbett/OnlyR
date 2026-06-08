@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace OnlyR.Services.RecordingCopies
+namespace OnlyR.Services.RecordingCopies;
+
+public interface ICopyRecordingsService
 {
-    public interface ICopyRecordingsService
-    {
-        void Copy(IReadOnlyCollection<char> drives);
-    }
+    void Copy(IReadOnlyCollection<char> drives);
 }

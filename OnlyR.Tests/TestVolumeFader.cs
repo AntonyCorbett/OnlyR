@@ -1,6 +1,6 @@
+using OnlyR.Core.Recorder;
 using System;
 using System.Threading.Tasks;
-using OnlyR.Core.Recorder;
 
 namespace OnlyR.Tests;
 

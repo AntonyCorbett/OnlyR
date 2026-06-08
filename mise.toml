@@ -1,0 +1,16 @@
+# https://mise.jdx.dev
+# Dev tooling for OnlyR. Run `mise install` to get the pinned tools,
+# then `mise run setup` to wire the git hooks.
+
+[tools]
+# ubi backend. NOTE: both the default `aqua` and the newer `github` backends
+# mis-name lefthook's Windows release binary (they extract the raw
+# `lefthook_x.y.z_Windows_x86_64` without the `.exe`), so mise can't resolve
+# the bin and hooks fail to wire. `ubi` is the only backend that installs a
+# proper `lefthook.exe`. It is deprecated for removal in mise 2027.1.0 —
+# revisit then (the `github` backend will hopefully handle the rename by then).
+"ubi:evilmartians/lefthook" = "2.1.9"
+
+[tasks.setup]
+description = "Install lefthook-managed git hooks into .git/hooks"
+run = "lefthook install"
