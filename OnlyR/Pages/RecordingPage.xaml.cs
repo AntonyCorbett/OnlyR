@@ -1,13 +1,12 @@
-﻿namespace OnlyR.Pages
+﻿namespace OnlyR.Pages;
+
+/// <summary>
+/// Interaction logic for RecordingPage.xaml
+/// </summary>
+public partial class RecordingPage
 {
-    /// <summary>
-    /// Interaction logic for RecordingPage.xaml
-    /// </summary>
-    public partial class RecordingPage
+    public RecordingPage()
     {
-        public RecordingPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

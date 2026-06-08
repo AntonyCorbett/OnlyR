@@ -1,12 +1,3 @@
-using System.Windows;
-using System;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -22,634 +13,640 @@ using OnlyR.Services.Snackbar;
 using OnlyR.Utils;
 using OnlyR.ViewModel.Messages;
 using Serilog;
+using System;
+using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
-namespace OnlyR.ViewModel
+namespace OnlyR.ViewModel;
+
+internal enum AutoStopReason
 {
-    internal enum AutoStopReason
+    None,
+    TimeLimit,
+    Silence,
+}
+
+/// <summary>
+/// View model for Recording page. Contains properties that the Recording page
+/// can data bind to, i.e. it has everything that is needed by the user during
+/// interaction with the Recording page.
+/// </summary>
+public class RecordingPageViewModel : ObservableObject, IPage
+{
+    private readonly IAudioService _audioService;
+    private readonly IRecordingDestinationService _destinationService;
+    private readonly IOptionsService _optionsService;
+    private readonly ICopyRecordingsService _copyRecordingsService;
+    private readonly ICommandLineService _commandLineService;
+    private readonly ISnackbarService _snackbarService;
+    private readonly ISilenceService _silenceService;
+    private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
+    private readonly Stopwatch _stopwatch;
+    private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new();
+    private DispatcherTimer? _splashTimer;
+    private int _volumeLevel;
+    private bool _isCopying;
+    private RecordingStatus _recordingStatus;
+    private string _statusStr;
+    private string? _errorMsg;
+
+    public RecordingPageViewModel(
+        IAudioService audioService,
+        IOptionsService optionsService,
+        ICommandLineService commandLineService,
+        IRecordingDestinationService destinationService,
+        ICopyRecordingsService copyRecordingsService,
+        ISnackbarService snackbarService,
+        ISilenceService silenceService)
     {
-        None,
-        TimeLimit,
-        Silence,
+        WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
+        WeakReferenceMessenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
+        WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
+
+        _commandLineService = commandLineService;
+        _copyRecordingsService = copyRecordingsService;
+        _snackbarService = snackbarService;
+        _silenceService = silenceService;
+
+        _stopwatch = new Stopwatch();
+
+        _audioService = audioService;
+        _audioService.StartedEvent += AudioStartedHandler;
+        _audioService.StoppedEvent += AudioStoppedHandler;
+        _audioService.StopRequested += AudioStopRequestedHandler;
+        _audioService.RecordingProgressEvent += AudioProgressHandler;
+
+        _optionsService = optionsService;
+        _destinationService = destinationService;
+        _recordingStatus = RecordingStatus.NotRecording;
+
+        _statusStr = Properties.Resources.NOT_RECORDING;
+
+        _audioService.PausedEvent += AudioPausedHandler;
+        _audioService.ResumedEvent += AudioResumedHandler;
+
+        // bind commands...
+        StartRecordingCommand = new RelayCommand(StartRecording);
+        StopRecordingCommand = new RelayCommand(StopRecording);
+        PauseResumeRecordingCommand = new RelayCommand(PauseResumeRecording);
+        NavigateSettingsCommand = new RelayCommand(NavigateSettings);
+        ShowRecordingsCommand = new RelayCommand(ShowRecordings);
+        SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
+
+        WeakReferenceMessenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
+    }
+
+    private void OnNavigate(object recipient, NavigateMessage message)
+    {
+        if (message.OriginalPageName == SettingsPageViewModel.PageName
+            && message.TargetPageName == PageName)
+        {
+            OnPropertyChanged(nameof(MaxRecordingTimeString));
+            OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
+            OnPropertyChanged(nameof(ShowStopOnly));
+            OnPropertyChanged(nameof(ShowStopAndPause));
+        }
+    }
+
+    public static string PageName => "RecordingPage";
+
+    // Commands (bound in ctor)...
+    public RelayCommand StartRecordingCommand { get; }
+
+    public RelayCommand StopRecordingCommand { get; }
+
+    public RelayCommand PauseResumeRecordingCommand { get; }
+
+    public RelayCommand NavigateSettingsCommand { get; }
+
+    public RelayCommand ShowRecordingsCommand { get; }
+
+    public RelayCommand SaveToRemovableDriveCommand { get; }
+
+    public bool IsCopying
+    {
+        get => _isCopying;
+        set
+        {
+            if (_isCopying == value)
+                return;
+
+            _isCopying = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsSaveEnabled));
+        }
+    }
+
+    public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
+                                         RecordingStatus == RecordingStatus.StopRequested ||
+                                         RecordingStatus == RecordingStatus.Paused;
+
+    public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
+
+    public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
+
+    public bool IsPaused => RecordingStatus == RecordingStatus.Paused;
+
+    public bool IsRecordingOrPaused => RecordingStatus == RecordingStatus.Recording ||
+                                       RecordingStatus == RecordingStatus.Paused;
+
+    public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
+                                   RecordingStatus != RecordingStatus.StopRequested &&
+                                   RecordingStatus != RecordingStatus.Paused;
+
+    public bool ShowStopOnly => IsRecordingOrStopping && !_optionsService.Options.ShowPauseRecordingButton;
+
+    public bool ShowStopAndPause => IsRecordingOrStopping && _optionsService.Options.ShowPauseRecordingButton;
+
+    public int VolumeLevelAsPercentage
+    {
+        get => _volumeLevel;
+        set
+        {
+            if (_volumeLevel != value)
+            {
+                _volumeLevel = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string? MaxRecordingTimeString =>
+        _optionsService.Options.MaxRecordingTimeSeconds == 0
+            ? null
+            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
+
+    public bool IsMaxRecordingTimeSpecified => _optionsService.Options.MaxRecordingTimeSeconds > 0;
+
+    public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss", CultureInfo.CurrentCulture);
+
+    public bool NoSettings => _commandLineService.NoSettings;
+
+    public bool NoFolder => _commandLineService.NoFolder;
+
+    public bool NoSave => _commandLineService.NoSave;
+
+    public bool IsSaveVisible => !NoSave && !_removableDrives.IsEmpty;
+
+    public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
+
+    /// <summary>
+    /// Gets or sets the Recording status.
+    /// </summary>
+    public RecordingStatus RecordingStatus
+    {
+        get => _recordingStatus;
+        set
+        {
+            if (_recordingStatus != value)
+            {
+                _recordingStatus = value;
+                StatusStr = value.GetDescriptiveText();
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsNotRecording));
+                OnPropertyChanged(nameof(IsRecording));
+                OnPropertyChanged(nameof(IsPaused));
+                OnPropertyChanged(nameof(IsRecordingOrPaused));
+                OnPropertyChanged(nameof(IsReadyToRecord));
+                OnPropertyChanged(nameof(IsRecordingOrStopping));
+                OnPropertyChanged(nameof(ShowStopOnly));
+                OnPropertyChanged(nameof(ShowStopAndPause));
+                OnPropertyChanged(nameof(IsSaveEnabled));
+            }
+        }
     }
 
     /// <summary>
-    /// View model for Recording page. Contains properties that the Recording page
-    /// can data bind to, i.e. it has everything that is needed by the user during
-    /// interaction with the Recording page.
+    /// Gets or sets the Recording Status as a string.
     /// </summary>
-    public class RecordingPageViewModel : ObservableObject, IPage
+    public string StatusStr
     {
-        private readonly IAudioService _audioService;
-        private readonly IRecordingDestinationService _destinationService;
-        private readonly IOptionsService _optionsService;
-        private readonly ICopyRecordingsService _copyRecordingsService;
-        private readonly ICommandLineService _commandLineService;
-        private readonly ISnackbarService _snackbarService;
-        private readonly ISilenceService _silenceService;
-        private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
-        private readonly Stopwatch _stopwatch;
-        private readonly ConcurrentDictionary<char, DateTime> _removableDrives = new();
-        private DispatcherTimer? _splashTimer;
-        private int _volumeLevel;
-        private bool _isCopying;
-        private RecordingStatus _recordingStatus;
-        private string _statusStr;
-        private string? _errorMsg;
-
-        public RecordingPageViewModel(
-            IAudioService audioService,
-            IOptionsService optionsService,
-            ICommandLineService commandLineService,
-            IRecordingDestinationService destinationService,
-            ICopyRecordingsService copyRecordingsService,
-            ISnackbarService snackbarService,
-            ISilenceService silenceService)
+        get => _statusStr;
+        set
         {
-            WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
-            WeakReferenceMessenger.Default.Register<SessionEndingMessage>(this, OnSessionEnding);
-            WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
-
-            _commandLineService = commandLineService;
-            _copyRecordingsService = copyRecordingsService;
-            _snackbarService = snackbarService;
-            _silenceService = silenceService;
-
-            _stopwatch = new Stopwatch();
-
-            _audioService = audioService;
-            _audioService.StartedEvent += AudioStartedHandler;
-            _audioService.StoppedEvent += AudioStoppedHandler;
-            _audioService.StopRequested += AudioStopRequestedHandler;
-            _audioService.RecordingProgressEvent += AudioProgressHandler;
-
-            _optionsService = optionsService;
-            _destinationService = destinationService;
-            _recordingStatus = RecordingStatus.NotRecording;
-
-            _statusStr = Properties.Resources.NOT_RECORDING;
-
-            _audioService.PausedEvent += AudioPausedHandler;
-            _audioService.ResumedEvent += AudioResumedHandler;
-
-            // bind commands...
-            StartRecordingCommand = new RelayCommand(StartRecording);
-            StopRecordingCommand = new RelayCommand(StopRecording);
-            PauseResumeRecordingCommand = new RelayCommand(PauseResumeRecording);
-            NavigateSettingsCommand = new RelayCommand(NavigateSettings);
-            ShowRecordingsCommand = new RelayCommand(ShowRecordings);
-            SaveToRemovableDriveCommand = new RelayCommand(SaveToRemovableDrives);
-
-            WeakReferenceMessenger.Default.Register<RemovableDriveMessage>(this, OnRemovableDriveMessage);
-        }
-
-        private void OnNavigate(object recipient, NavigateMessage message)
-        {
-            if (message.OriginalPageName == SettingsPageViewModel.PageName
-                && message.TargetPageName == PageName)
+            if (_statusStr != value)
             {
-                OnPropertyChanged(nameof(MaxRecordingTimeString));
-                OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
-                OnPropertyChanged(nameof(ShowStopOnly));
-                OnPropertyChanged(nameof(ShowStopAndPause));
+                _statusStr = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public static string PageName => "RecordingPage";
-
-        // Commands (bound in ctor)...
-        public RelayCommand StartRecordingCommand { get; }
-
-        public RelayCommand StopRecordingCommand { get; }
-
-        public RelayCommand PauseResumeRecordingCommand { get; }
-
-        public RelayCommand NavigateSettingsCommand { get; }
-
-        public RelayCommand ShowRecordingsCommand { get; }
-
-        public RelayCommand SaveToRemovableDriveCommand { get; }
-
-        public bool IsCopying
+    public string? ErrorMsg
+    {
+        get => _errorMsg;
+        set
         {
-            get => _isCopying;
-            set
+            if (_errorMsg != value)
             {
-                if (_isCopying != value)
-                {
-                    _isCopying = value;
-                    OnPropertyChanged(nameof(IsCopying));
-                    OnPropertyChanged(nameof(IsSaveEnabled));
-                }
+                _errorMsg = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool IsRecordingOrStopping => RecordingStatus == RecordingStatus.Recording ||
-                                             RecordingStatus == RecordingStatus.StopRequested ||
-                                             RecordingStatus == RecordingStatus.Paused;
-
-        public bool IsNotRecording => RecordingStatus == RecordingStatus.NotRecording;
-
-        public bool IsRecording => RecordingStatus == RecordingStatus.Recording;
-
-        public bool IsPaused => RecordingStatus == RecordingStatus.Paused;
-
-        public bool IsRecordingOrPaused => RecordingStatus == RecordingStatus.Recording ||
-                                           RecordingStatus == RecordingStatus.Paused;
-
-        public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
-                                       RecordingStatus != RecordingStatus.StopRequested &&
-                                       RecordingStatus != RecordingStatus.Paused;
-
-        public bool ShowStopOnly => IsRecordingOrStopping && !_optionsService.Options.ShowPauseRecordingButton;
-
-        public bool ShowStopAndPause => IsRecordingOrStopping && _optionsService.Options.ShowPauseRecordingButton;
-
-        public int VolumeLevelAsPercentage
+    public string SaveHint
+    {
+        get
         {
-            get => _volumeLevel;
-            set
+            var driveLetterList = string.Join(", ", _removableDrives.Keys);
+
+            if (string.IsNullOrEmpty(driveLetterList))
             {
-                if (_volumeLevel != value)
-                {
-                    _volumeLevel = value;
-                    OnPropertyChanged(nameof(VolumeLevelAsPercentage));
-                }
-            }
-        }
-
-        public string? MaxRecordingTimeString =>
-            _optionsService.Options.MaxRecordingTimeSeconds == 0
-            ? null
-            : TimeSpan.FromSeconds(_optionsService.Options.MaxRecordingTimeSeconds).ToString("hh\\:mm\\:ss");
-
-        public bool IsMaxRecordingTimeSpecified => _optionsService.Options.MaxRecordingTimeSeconds > 0;
-
-        public string ElapsedTimeStr => ElapsedTime.ToString("hh\\:mm\\:ss");
-
-        public bool NoSettings => _commandLineService.NoSettings;
-
-        public bool NoFolder => _commandLineService.NoFolder;
-
-        public bool NoSave => _commandLineService.NoSave;
-
-        public bool IsSaveVisible => !NoSave && !_removableDrives.IsEmpty;
-
-        public bool IsSaveEnabled => !IsCopying && !IsRecordingOrStopping;
-
-        /// <summary>
-        /// Gets or sets the Recording status.
-        /// </summary>
-        public RecordingStatus RecordingStatus
-        {
-            get => _recordingStatus;
-            set
-            {
-                if (_recordingStatus != value)
-                {
-                    _recordingStatus = value;
-                    StatusStr = value.GetDescriptiveText();
-
-                    OnPropertyChanged(nameof(RecordingStatus));
-                    OnPropertyChanged(nameof(IsNotRecording));
-                    OnPropertyChanged(nameof(IsRecording));
-                    OnPropertyChanged(nameof(IsPaused));
-                    OnPropertyChanged(nameof(IsRecordingOrPaused));
-                    OnPropertyChanged(nameof(IsReadyToRecord));
-                    OnPropertyChanged(nameof(IsRecordingOrStopping));
-                    OnPropertyChanged(nameof(ShowStopOnly));
-                    OnPropertyChanged(nameof(ShowStopAndPause));
-                    OnPropertyChanged(nameof(IsSaveEnabled));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the Recording Status as a string.
-        /// </summary>
-        public string StatusStr
-        {
-            get => _statusStr;
-            set
-            {
-                if (_statusStr != value)
-                {
-                    _statusStr = value;
-                    OnPropertyChanged(nameof(StatusStr));
-                }
-            }
-        }
-
-        public string? ErrorMsg
-        {
-            get => _errorMsg;
-            set
-            {
-                if (_errorMsg != value)
-                {
-                    _errorMsg = value;
-                    OnPropertyChanged(nameof(ErrorMsg));
-                }
-            }
-        }
-
-        public string SaveHint
-        {
-            get
-            {
-                var driveLetterList = string.Join(", ", _removableDrives.Keys);
-
-                if (string.IsNullOrEmpty(driveLetterList))
-                {
-                    return string.Empty;
-                }
-
-                if (driveLetterList.Contains(','))
-                {
-                    return string.Format(Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
-                }
-
-                return string.Format(Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
-            }
-        }
-
-        private TimeSpan ElapsedTime
-        {
-            get
-            {
-                if (_stopwatch.IsRunning || _recordingStatus == RecordingStatus.Paused)
-                {
-                    return _stopwatch.Elapsed;
-                }
-
-                return TimeSpan.Zero;
-            }
-        }
-
-        private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
-
-        /// <summary>
-        /// Responds to activation.
-        /// </summary>
-        /// <param name="state">RecordingPageNavigationState object (or null).</param>
-        public void Activated(object? state)
-        {
-            // on display of page...
-            var stateObj = (RecordingPageNavigationState?)state;
-            if (stateObj != null)
-            {
-                if (stateObj.StartRecording)
-                {
-                    StartRecording();
-                }
-                else if (stateObj.ShowSplash)
-                {
-                    DoSplash();
-                }
-            }
-        }
-
-        public void Closing(object sender, CancelEventArgs e)
-        {
-            // prevent window closing when recording...
-            e.Cancel = RecordingStatus != RecordingStatus.NotRecording;
-        }
-
-        private void NavigateSettings()
-        {
-            WeakReferenceMessenger.Default.Send(new NavigateMessage(PageName, SettingsPageViewModel.PageName, null));
-        }
-
-        private void OnShutDown(object recipient, BeforeShutDownMessage message)
-        {
-            // nothing to do
-        }
-
-        private void OnSessionEnding(object recipient, SessionEndingMessage e)
-        {
-            // allow the session to shutdown if we're not recording
-            e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
-        }
-
-        private void AudioProgressHandler(object? sender, Core.EventArgs.RecordingProgressEventArgs e)
-        {
-            VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
-            OnPropertyChanged(nameof(ElapsedTimeStr));
-
-            if (RecordingStatus != RecordingStatus.StopRequested)
-            {
-                if (StopOnSilenceEnabled)
-                {
-                    _silenceService.ReportVolume(e.VolumeLevelAsPercentage);
-                }
-
-                var reason = GetAutoStopReason(
-                    ElapsedTime.TotalSeconds,
-                    _optionsService.Options.MaxRecordingTimeSeconds,
-                    _silenceService.GetSecondsOfSilence(),
-                    _optionsService.Options.MaxSilenceTimeSeconds);
-
-                switch (reason)
-                {
-                    case AutoStopReason.TimeLimit:
-                        AutoStopRecordingAtLimit();
-                        break;
-                    case AutoStopReason.Silence:
-                        AutoStopRecordingAfterSilence();
-                        break;
-                }
-            }
-        }
-
-        internal static AutoStopReason GetAutoStopReason(
-            double elapsedSeconds,
-            int maxRecordingSeconds,
-            int silenceSeconds,
-            int maxSilenceSeconds)
-        {
-            if (maxRecordingSeconds > 0 && elapsedSeconds > maxRecordingSeconds)
-            {
-                return AutoStopReason.TimeLimit;
+                return string.Empty;
             }
 
-            if (maxSilenceSeconds > 0 && silenceSeconds > maxSilenceSeconds)
+            if (driveLetterList.Contains(','))
             {
-                return AutoStopReason.Silence;
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.SAVE_TO_DRIVES, driveLetterList);
             }
 
-            return AutoStopReason.None;
+            return string.Format(CultureInfo.CurrentCulture, Properties.Resources.SAVE_TO_DRIVE, driveLetterList);
         }
-        
-        private void AutoStopRecordingAfterSilence()
+    }
+
+    private TimeSpan ElapsedTime
+    {
+        get
         {
-            Log.Logger.Information(
-                "Automatically stopped recording after {Limit} seconds of silence",
+            if (_stopwatch.IsRunning || _recordingStatus == RecordingStatus.Paused)
+            {
+                return _stopwatch.Elapsed;
+            }
+
+            return TimeSpan.Zero;
+        }
+    }
+
+    private bool StopOnSilenceEnabled => _optionsService.Options.MaxSilenceTimeSeconds > 0;
+
+    /// <summary>
+    /// Responds to activation.
+    /// </summary>
+    /// <param name="state">RecordingPageNavigationState object (or null).</param>
+    public void Activated(object? state)
+    {
+        // on display of page...
+        var stateObj = (RecordingPageNavigationState?)state;
+        if (stateObj != null)
+        {
+            if (stateObj.StartRecording)
+            {
+                StartRecording();
+            }
+            else if (stateObj.ShowSplash)
+            {
+                DoSplash();
+            }
+        }
+    }
+
+    public void Closing(object sender, CancelEventArgs e)
+    {
+        // prevent window closing when recording...
+        e.Cancel = RecordingStatus != RecordingStatus.NotRecording;
+    }
+
+    private void NavigateSettings()
+    {
+        WeakReferenceMessenger.Default.Send(new NavigateMessage(PageName, SettingsPageViewModel.PageName, null));
+    }
+
+    private void OnShutDown(object recipient, BeforeShutDownMessage message)
+    {
+        // nothing to do
+    }
+
+    private void OnSessionEnding(object recipient, SessionEndingMessage e)
+    {
+        // allow the session to shutdown if we're not recording
+        e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
+    }
+
+    private void AudioProgressHandler(object? sender, Core.EventArgs.RecordingProgressEventArgs e)
+    {
+        VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
+        OnPropertyChanged(nameof(ElapsedTimeStr));
+
+        if (RecordingStatus != RecordingStatus.StopRequested)
+        {
+            if (StopOnSilenceEnabled)
+            {
+                _silenceService.ReportVolume(e.VolumeLevelAsPercentage);
+            }
+
+            var reason = GetAutoStopReason(
+                ElapsedTime.TotalSeconds,
+                _optionsService.Options.MaxRecordingTimeSeconds,
+                _silenceService.GetSecondsOfSilence(),
                 _optionsService.Options.MaxSilenceTimeSeconds);
 
-            StopRecordingCommand.Execute(null);
+            switch (reason)
+            {
+                case AutoStopReason.TimeLimit:
+                    AutoStopRecordingAtLimit();
+                    break;
+                case AutoStopReason.Silence:
+                    AutoStopRecordingAfterSilence();
+                    break;
+            }
+        }
+    }
+
+    internal static AutoStopReason GetAutoStopReason(
+        double elapsedSeconds,
+        int maxRecordingSeconds,
+        int silenceSeconds,
+        int maxSilenceSeconds)
+    {
+        if (maxRecordingSeconds > 0 && elapsedSeconds > maxRecordingSeconds)
+        {
+            return AutoStopReason.TimeLimit;
         }
 
-        private void AutoStopRecordingAtLimit()
+        if (maxSilenceSeconds > 0 && silenceSeconds > maxSilenceSeconds)
         {
-            Log.Logger.Information(
-                "Automatically stopped recording having reached the {Limit} second limit",
-                _optionsService.Options.MaxRecordingTimeSeconds);
-
-            StopRecordingCommand.Execute(null);
+            return AutoStopReason.Silence;
         }
 
-        private void AudioStopRequestedHandler(object? sender, EventArgs e)
-        {
-            Log.Logger.Information("Stop requested");
-            RecordingStatus = RecordingStatus.StopRequested;
-        }
+        return AutoStopReason.None;
+    }
 
-        private void AudioStoppedHandler(object? sender, EventArgs e)
-        {
-            Log.Logger.Information("Stopped recording");
-            RecordingStatus = RecordingStatus.NotRecording;
-            VolumeLevelAsPercentage = 0;
-            _stopwatch.Stop();
-            OnPropertyChanged(nameof(ElapsedTimeStr));
-        }
+    private void AutoStopRecordingAfterSilence()
+    {
+        Log.Logger.Information(
+            "Automatically stopped recording after {Limit} seconds of silence",
+            _optionsService.Options.MaxSilenceTimeSeconds);
 
-        private void AudioStartedHandler(object? sender, EventArgs e)
-        {
-            Log.Logger.Information("Started recording");
-            RecordingStatus = RecordingStatus.Recording;
-            OnPropertyChanged(nameof(ElapsedTimeStr));
-        }
+        StopRecordingCommand.Execute(null);
+    }
 
-        private void AudioPausedHandler(object? sender, EventArgs e)
-        {
-            Log.Logger.Information("Paused recording");
-            RecordingStatus = RecordingStatus.Paused;
-            _stopwatch.Stop();
-            VolumeLevelAsPercentage = 0;
-            OnPropertyChanged(nameof(ElapsedTimeStr));
-        }
+    private void AutoStopRecordingAtLimit()
+    {
+        Log.Logger.Information(
+            "Automatically stopped recording having reached the {Limit} second limit",
+            _optionsService.Options.MaxRecordingTimeSeconds);
 
-        private void AudioResumedHandler(object? sender, EventArgs e)
+        StopRecordingCommand.Execute(null);
+    }
+
+    private void AudioStopRequestedHandler(object? sender, EventArgs e)
+    {
+        Log.Logger.Information("Stop requested");
+        RecordingStatus = RecordingStatus.StopRequested;
+    }
+
+    private void AudioStoppedHandler(object? sender, EventArgs e)
+    {
+        Log.Logger.Information("Stopped recording");
+        RecordingStatus = RecordingStatus.NotRecording;
+        VolumeLevelAsPercentage = 0;
+        _stopwatch.Stop();
+        OnPropertyChanged(nameof(ElapsedTimeStr));
+    }
+
+    private void AudioStartedHandler(object? sender, EventArgs e)
+    {
+        Log.Logger.Information("Started recording");
+        RecordingStatus = RecordingStatus.Recording;
+        OnPropertyChanged(nameof(ElapsedTimeStr));
+    }
+
+    private void AudioPausedHandler(object? sender, EventArgs e)
+    {
+        Log.Logger.Information("Paused recording");
+        RecordingStatus = RecordingStatus.Paused;
+        _stopwatch.Stop();
+        VolumeLevelAsPercentage = 0;
+        OnPropertyChanged(nameof(ElapsedTimeStr));
+    }
+
+    private void AudioResumedHandler(object? sender, EventArgs e)
+    {
+        Log.Logger.Information("Resumed recording");
+        RecordingStatus = RecordingStatus.Recording;
+        _stopwatch.Start();
+        _silenceService.Reset();
+        OnPropertyChanged(nameof(ElapsedTimeStr));
+    }
+
+    private void PauseResumeRecording()
+    {
+        try
         {
-            Log.Logger.Information("Resumed recording");
-            RecordingStatus = RecordingStatus.Recording;
-            _stopwatch.Start();
+            ClearErrorMsg();
+
+            if (RecordingStatus == RecordingStatus.Recording)
+            {
+                _audioService.PauseRecording();
+            }
+            else if (RecordingStatus == RecordingStatus.Paused)
+            {
+                _audioService.ResumeRecording();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Error(ex, "Error pausing/resuming recording");
+        }
+    }
+
+    private void StartRecording()
+    {
+        try
+        {
+            ClearErrorMsg();
+            Log.Logger.Information("Start requested");
+
             _silenceService.Reset();
+
+            var recordingDate = DateTime.Today;
+            var candidateFile = _destinationService.GetRecordingFileCandidate(
+                _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
+
+            CheckDiskSpace(candidateFile);
+
+            _audioService.StartRecording(candidateFile, _optionsService);
+            _stopwatch.Restart();
             OnPropertyChanged(nameof(ElapsedTimeStr));
         }
-
-        private void PauseResumeRecording()
+        catch (Exception ex)
         {
-            try
-            {
-                ClearErrorMsg();
+            ErrorMsg = Properties.Resources.ERROR_START;
+            Log.Logger.Error(ex, "Failed to start recording. Error message: {ErrorMessage}", ErrorMsg);
+        }
+    }
 
-                if (RecordingStatus == RecordingStatus.Recording)
-                {
-                    _audioService.PauseRecording();
-                }
-                else if (RecordingStatus == RecordingStatus.Paused)
-                {
-                    _audioService.ResumeRecording();
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Logger.Error(ex, "Error pausing/resuming recording");
-            }
+    private void CheckDiskSpace(RecordingCandidate candidate)
+    {
+        CheckDiskSpace(candidate.TempPath);
+        CheckDiskSpace(candidate.FinalPath);
+    }
+
+    private void CheckDiskSpace(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            return;
         }
 
-        private void StartRecording()
+        var folder = Path.GetDirectoryName(filePath);
+        if (string.IsNullOrEmpty(folder))
         {
-            try
-            {
-                ClearErrorMsg();
-                Log.Logger.Information("Start requested");
-
-                _silenceService.Reset();
-
-                var recordingDate = DateTime.Today;
-                var candidateFile = _destinationService.GetRecordingFileCandidate(
-                    _optionsService, recordingDate, _commandLineService.OptionsIdentifier);
-                
-                CheckDiskSpace(candidateFile);
-
-                _audioService.StartRecording(candidateFile, _optionsService);
-                _stopwatch.Restart();
-                OnPropertyChanged(nameof(ElapsedTimeStr));
-            }
-            catch (Exception ex)
-            {
-                ErrorMsg = Properties.Resources.ERROR_START;
-                Log.Logger.Error(ex, ErrorMsg);
-            }
+            return;
         }
 
-        private void CheckDiskSpace(RecordingCandidate candidate)
+        if (FileUtils.DriveFreeBytes(folder, out ulong bytesFree) &&
+            bytesFree < _safeMinBytesFree)
         {
-            CheckDiskSpace(candidate.TempPath);
-            CheckDiskSpace(candidate.FinalPath);
+            // "Insufficient free space to record"
+            throw new InvalidOperationException(Properties.Resources.INSUFFICIENT_FREE_SPACE);
+        }
+    }
+
+    private void StopRecording()
+    {
+        try
+        {
+            ClearErrorMsg();
+            _audioService.StopRecording(_optionsService.Options.FadeOut);
+        }
+        catch (Exception ex)
+        {
+            ErrorMsg = Properties.Resources.ERROR_STOP;
+            Log.Logger.Error(ex, "Failed to stop recording. Error message: {ErrorMessage}", ErrorMsg);
+        }
+    }
+
+    private void ClearErrorMsg()
+    {
+        ErrorMsg = null;
+    }
+
+    /// <summary>
+    /// Show brief animation
+    /// </summary>
+    private void DoSplash()
+    {
+        // "Splash" is a graphical effect rendered in the volume meter
+        // when the Recording page loads for the first time. It's designed
+        // to show that all is working, and OnlyR is ready to record!
+        if (_splashTimer == null)
+        {
+            _splashTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(25) };
+            _splashTimer.Tick += SplashTimerTick;
         }
 
-        private void CheckDiskSpace(string filePath)
+        VolumeLevelAsPercentage = 100;
+        _splashTimer.Start();
+    }
+
+    private void SplashTimerTick(object? sender, EventArgs e)
+    {
+        if (IsNotRecording)
         {
-            if (string.IsNullOrEmpty(filePath))
-            {
-                return;
-            }
-
-            var folder = Path.GetDirectoryName(filePath);
-            if (string.IsNullOrEmpty(folder))
-            {
-                return;
-            }
-
-            if (FileUtils.DriveFreeBytes(folder, out ulong bytesFree) && 
-                bytesFree < _safeMinBytesFree)
-            {
-                // "Insufficient free space to record"
-                throw new Exception(Properties.Resources.INSUFFICIENT_FREE_SPACE);
-            }
-        }
-
-        private void StopRecording()
-        {
-            try
-            {
-                ClearErrorMsg();
-                _audioService.StopRecording(_optionsService.Options?.FadeOut ?? false);
-            }
-            catch (Exception ex)
-            {
-                ErrorMsg = Properties.Resources.ERROR_STOP;
-                Log.Logger.Error(ex, ErrorMsg);
-            }
-        }
-
-        private void ClearErrorMsg()
-        {
-            ErrorMsg = null;
-        }
-
-        /// <summary>
-        /// Show brief animation
-        /// </summary>
-        private void DoSplash()
-        {
-            // "Splash" is a graphical effect rendered in the volume meter
-            // when the Recording page loads for the first time. It's designed
-            // to show that all is working, and OnlyR is ready to record!
-            if (_splashTimer == null)
-            {
-                _splashTimer = new DispatcherTimer(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(25) };
-                _splashTimer.Tick += SplashTimerTick;
-            }
-
-            VolumeLevelAsPercentage = 100;
-            _splashTimer.Start();
-        }
-
-        private void SplashTimerTick(object? sender, EventArgs e)
-        {
-            if (IsNotRecording)
-            {
-                VolumeLevelAsPercentage -= 6;
-                if (VolumeLevelAsPercentage <= 0)
-                {
-                    _splashTimer?.Stop();
-                }
-            }
-            else
+            VolumeLevelAsPercentage -= 6;
+            if (VolumeLevelAsPercentage <= 0)
             {
                 _splashTimer?.Stop();
             }
         }
-
-        private void ShowRecordings()
+        else
         {
-            var folder = FindSuitableRecordingFolderToShow();
-            var psi = new ProcessStartInfo
-            {
-                FileName = folder, 
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
-        }
-
-        private string FindSuitableRecordingFolderToShow()
-        {
-            return FileUtils.FindSuitableRecordingFolderToShow(
-                _commandLineService.OptionsIdentifier,
-                _optionsService.Options?.DestinationFolder);
-        }
-
-        private void SaveToRemovableDrives()
-        {
-            IsCopying = true;
-
-            Task.Run(() =>
-            {
-                try
-                {
-                    _copyRecordingsService.Copy(_removableDrives.Keys.ToArray());
-                    _snackbarService.Enqueue(
-                        Properties.Resources.COPIED,
-                        Properties.Resources.OK,
-                        _ => { },
-                        null,
-                        promote: false,
-                        neverConsiderToBeDuplicate: true);
-                }
-                catch (Exception ex)
-                {
-                    foreach (var message in GetCopyErrorMessages(ex))
-                    {
-                        _snackbarService.EnqueueWithOk(message);
-                    }
-                }
-                finally
-                {
-                    Application.Current.Dispatcher.Invoke(() => IsCopying = false);
-                }
-            });
-        }
-
-        internal static string[] GetCopyErrorMessages(Exception ex)
-        {
-            if (ex is NoRecordingsException)
-            {
-                return [ex.Message];
-            }
-
-            if (ex is AggregateException agg)
-            {
-                return agg.InnerExceptions
-                    .Select(inner => inner is NoSpaceException
-                        ? inner.Message
-                        : Properties.Resources.UNKNOWN_COPY_ERROR)
-                    .ToArray();
-            }
-
-            Log.Logger.Error(ex, Properties.Resources.UNKNOWN_COPY_ERROR);
-            return [Properties.Resources.UNKNOWN_COPY_ERROR];
-        }
-
-        private void OnRemovableDriveMessage(object recipient, RemovableDriveMessage message)
-        {
-            if (message.Added)
-            {
-                _removableDrives[message.DriveLetter] = DateTime.UtcNow;
-            }
-            else
-            {
-                _removableDrives.TryRemove(message.DriveLetter, out var _);
-            }
-
-            OnPropertyChanged(nameof(IsSaveVisible));
-            OnPropertyChanged(nameof(SaveHint));
+            _splashTimer?.Stop();
         }
     }
+
+    private void ShowRecordings()
+    {
+        var folder = FindSuitableRecordingFolderToShow();
+        var psi = new ProcessStartInfo
+        {
+            FileName = folder,
+            UseShellExecute = true
+        };
+
+        Process.Start(psi);
+    }
+
+    private string FindSuitableRecordingFolderToShow()
+    {
+        return FileUtils.FindSuitableRecordingFolderToShow(
+            _commandLineService.OptionsIdentifier,
+            _optionsService.Options.DestinationFolder);
+    }
+
+    private void SaveToRemovableDrives()
+    {
+        IsCopying = true;
+
+        Task.Run(() =>
+        {
+            try
+            {
+                _copyRecordingsService.Copy(_removableDrives.Keys.ToArray());
+                _snackbarService.Enqueue(
+                    Properties.Resources.COPIED,
+                    Properties.Resources.OK,
+                    _ => { },
+                    null,
+                    promote: false,
+                    neverConsiderToBeDuplicate: true);
+            }
+            catch (Exception ex)
+            {
+                foreach (var message in GetCopyErrorMessages(ex))
+                {
+                    _snackbarService.EnqueueWithOk(message);
+                }
+            }
+            finally
+            {
+                Application.Current.Dispatcher.Invoke(() => IsCopying = false);
+            }
+        });
+    }
+
+    internal static string[] GetCopyErrorMessages(Exception ex)
+    {
+        if (ex is NoRecordingsException)
+        {
+            return [ex.Message];
+        }
+
+        if (ex is AggregateException agg)
+        {
+            return agg.InnerExceptions
+                .Select(inner => inner is NoSpaceException
+                    ? inner.Message
+                    : Properties.Resources.UNKNOWN_COPY_ERROR)
+                .ToArray();
+        }
+
+        Log.Logger.Error(ex, "Failed to get copy error messages. Error message: {ErrorMessage}", Properties.Resources.UNKNOWN_COPY_ERROR);
+        return [Properties.Resources.UNKNOWN_COPY_ERROR];
+    }
+
+    private void OnRemovableDriveMessage(object recipient, RemovableDriveMessage message)
+    {
+        if (message.Added)
+        {
+            _removableDrives[message.DriveLetter] = DateTime.UtcNow;
+        }
+        else
+        {
+            _removableDrives.TryRemove(message.DriveLetter, out var _);
+        }
+
+        OnPropertyChanged(nameof(IsSaveVisible));
+        OnPropertyChanged(nameof(SaveHint));
+    }
 }
-
-
-

@@ -1,6 +1,6 @@
+using OnlyR.AutoUpdates;
 using System;
 using System.Threading.Tasks;
-using OnlyR.AutoUpdates;
 
 namespace OnlyR.Tests;
 

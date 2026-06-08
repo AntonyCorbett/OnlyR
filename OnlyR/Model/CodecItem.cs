@@ -1,22 +1,21 @@
 using OnlyR.Core.Enums;
 
-namespace OnlyR.Model
+namespace OnlyR.Model;
+
+/// <summary>
+/// Represents an audio codec option in the settings
+/// </summary>
+public class CodecItem
 {
-    /// <summary>
-    /// Represents an audio codec option in the settings
-    /// </summary>
-    public class CodecItem
+    public CodecItem(string name, AudioCodec codec)
     {
-        public CodecItem(string name, AudioCodec codec)
-        {
-            Name = name;
-            Codec = codec;
-        }
-
-        public string Name { get; }
-
-        public AudioCodec Codec { get; }
-
-        public override string ToString() => Name;
+        Name = name;
+        Codec = codec;
     }
+
+    public string Name { get; }
+
+    public AudioCodec Codec { get; }
+
+    public override string ToString() => Name;
 }

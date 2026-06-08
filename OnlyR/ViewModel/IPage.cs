@@ -1,8 +1,7 @@
-﻿namespace OnlyR.ViewModel
+﻿namespace OnlyR.ViewModel;
+
+internal interface IPage
 {
-    internal interface IPage
-    {
-        // ReSharper disable once UnusedParameter.Global
-        void Activated(object? state);
-    }
+    // ReSharper disable once UnusedParameter.Global
+    void Activated(object? state);
 }

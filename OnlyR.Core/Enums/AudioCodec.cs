@@ -1,12 +1,11 @@
 using System.Runtime.Serialization;
 
-namespace OnlyR.Core.Enums
+namespace OnlyR.Core.Enums;
+
+public enum AudioCodec
 {
-    public enum AudioCodec
-    {
-        [EnumMember(Value = "MP3")]
-        Mp3,
-        [EnumMember(Value = "WAV")]
-        Wav
-    }
+    [EnumMember(Value = "MP3")]
+    Mp3,
+    [EnumMember(Value = "WAV")]
+    Wav
 }

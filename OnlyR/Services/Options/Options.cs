@@ -1,188 +1,180 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using OnlyR.Core.Enums;
+﻿using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
 
-namespace OnlyR.Services.Options
+namespace OnlyR.Services.Options;
+
+/// <summary>
+/// All program options. The full structure is written to disk in JSON format on change
+/// of data, and read from disk during app startup
+/// </summary>
+public class Options
 {
-    /// <summary>
-    /// All program options. The full structure is written to disk in JSON format on change
-    /// of data, and read from disk during app startup
-    /// </summary>
-    public class Options
+    private const int DefaultMaxRecordings = 999;
+    private const int DefaultRecordingDevice = 0;
+    private const int DefaultMaxRecordingSeconds = 0; // no limit
+    private const int DefaultSampleRate = 44100;
+    private const int DefaultChannelCount = 1;
+    private const int DefaultMp3BitRate = 96;
+    private const int DefaultSilenceAsVolumePercentage = 5;
+
+    private static readonly int[] ValidSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
+    private static readonly int[] ValidChannelCounts = { 1, 2 };
+    private static readonly int[] ValidMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
+
+    public Options()
     {
-        private const int DefaultMaxRecordings = 999;
-        private const int DefaultRecordingDevice = 0;
-        private const int DefaultMaxRecordingSeconds = 0; // no limit
-        private const int DefaultSampleRate = 44100;
-        private const int DefaultChannelCount = 1;
-        private const int DefaultMp3BitRate = 96;
-        private const int DefaultSilenceAsVolumePercentage = 5;
+        MaxRecordingsInOneFolder = DefaultMaxRecordings;
+        SampleRate = DefaultSampleRate;
+        ChannelCount = DefaultChannelCount;
+        Mp3BitRate = DefaultMp3BitRate;
+        Genre = Properties.Resources.SPEECH;
+        MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
+        RecordingDevice = DefaultRecordingDevice;
+        DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
+        RecordingsLifeTimeDays = 0; // forever
+        SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
+        Codec = AudioCodec.Mp3; // default to MP3
+    }
 
-        private static readonly int[] ValidSampleRates = { 8000, 11025, 16000, 22050, 32000, 44100, 48000 };
-        private static readonly int[] ValidChannelCounts = { 1, 2 };
-        private static readonly int[] ValidMp3BitRates = { 320, 256, 224, 192, 160, 144, 128, 112, 96, 80, 64, 56, 48, 32 };
+    public int MaxRecordingsInOneFolder { get; set; }
 
-        public Options()
+    public int SampleRate { get; set; }
+
+    public int ChannelCount { get; set; }
+
+    public int Mp3BitRate { get; set; }
+
+    public AudioCodec Codec { get; set; }
+
+    public string? Genre { get; set; }
+
+    public int MaxRecordingTimeSeconds { get; set; }
+
+    public int MaxSilenceTimeSeconds { get; set; }
+
+    public int SilenceAsVolumePercentage { get; set; }
+
+    public int RecordingDevice { get; set; }
+
+    public bool UseLoopbackCapture { get; set; }
+
+    public bool FadeOut { get; set; }
+
+    public bool ShowPauseRecordingButton { get; set; }
+
+    public bool StartRecordingOnLaunch { get; set; }
+
+    public string DestinationFolder { get; set; }
+
+    public string? AppWindowPlacement { get; set; }
+
+    public Size SettingsPageSize { get; set; }
+
+    public bool AlwaysOnTop { get; set; }
+
+    public bool AllowCloseWhenRecording { get; set; }
+
+    public int RecordingsLifeTimeDays { get; set; }
+
+    public string? Culture { get; set; }
+
+    public bool StartMinimized { get; set; }
+
+    public bool DarkMode { get; set; }
+
+    public AppTheme? AppTheme { get; set; }
+
+    public string? UnfinishedRecordingTempPath { get; set; }
+
+    public string? UnfinishedRecordingFinalPath { get; set; }
+
+    public static IEnumerable<int> GetSupportedSampleRates() =>
+        ValidSampleRates;
+
+    public static IEnumerable<int> GetSupportedChannels() =>
+        ValidChannelCounts;
+
+    public static IEnumerable<int> GetSupportedMp3BitRates() =>
+        ValidMp3BitRates;
+
+    /// <summary>
+    /// Validates the data, correcting automatically as required
+    /// </summary>
+    public void Sanitize()
+    {
+        Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount));
+        Debug.Assert(ValidSampleRates.Contains(DefaultSampleRate));
+        Debug.Assert(ValidMp3BitRates.Contains(DefaultMp3BitRate));
+
+        if (RecordingsLifeTimeDays < 0)
+        {
+            RecordingsLifeTimeDays = 0;
+        }
+
+        if (MaxRecordingsInOneFolder < 10 || MaxRecordingsInOneFolder > 500)
         {
             MaxRecordingsInOneFolder = DefaultMaxRecordings;
+        }
+
+        if (!ValidSampleRates.Contains(SampleRate))
+        {
             SampleRate = DefaultSampleRate;
+        }
+
+        if (!ValidChannelCounts.Contains(ChannelCount))
+        {
             ChannelCount = DefaultChannelCount;
+        }
+
+        if (!ValidMp3BitRates.Contains(Mp3BitRate))
+        {
             Mp3BitRate = DefaultMp3BitRate;
+        }
+
+        if (string.IsNullOrEmpty(Genre))
+        {
             Genre = Properties.Resources.SPEECH;
+        }
+
+        if (MaxRecordingTimeSeconds < 0)
+        {
             MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
+        }
+
+        if (RecordingDevice < 0)
+        {
             RecordingDevice = DefaultRecordingDevice;
-            DestinationFolder = FileUtils.GetDefaultMyDocsDestinationFolder();
-            RecordingsLifeTimeDays = 0; // forever
+        }
+
+        if (SilenceAsVolumePercentage < 1 || SilenceAsVolumePercentage > 90)
+        {
             SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
-            Codec = AudioCodec.Mp3; // default to MP3
         }
 
-        public int MaxRecordingsInOneFolder { get; set; }
-
-        public int SampleRate { get; set; }
-
-        public int ChannelCount { get; set; }
-
-        public int Mp3BitRate { get; set; }
-
-        public AudioCodec Codec { get; set; }
-
-        public string? Genre { get; set; }
-
-        public int MaxRecordingTimeSeconds { get; set; }
-
-        public int MaxSilenceTimeSeconds { get; set; }
-
-        public int SilenceAsVolumePercentage { get; set; }
-
-        public int RecordingDevice { get; set; }
-
-        public bool UseLoopbackCapture { get; set; }
-
-        public bool FadeOut { get; set; }
-
-        public bool ShowPauseRecordingButton { get; set; }
-
-        public bool StartRecordingOnLaunch { get; set; }
-
-        public string DestinationFolder { get; set; }
-
-        public string? AppWindowPlacement { get; set; }
-
-        public Size SettingsPageSize { get; set; }
-
-        public bool AlwaysOnTop { get; set; }
-
-        public bool AllowCloseWhenRecording { get; set; }
-
-        public int RecordingsLifeTimeDays { get; set; }
-
-        public string? Culture { get; set; }
-
-        public bool StartMinimized { get; set; }
-
-        public bool DarkMode { get; set; }
-
-        public AppTheme? AppTheme { get; set; }
-
-        public string? UnfinishedRecordingTempPath { get; set; }
-
-        public string? UnfinishedRecordingFinalPath { get; set; }
-
-        public static IEnumerable<int> GetSupportedSampleRates()
+        if (MaxSilenceTimeSeconds < 0)
         {
-            return ValidSampleRates;
+            MaxSilenceTimeSeconds = 0;
         }
 
-        public static IEnumerable<int> GetSupportedChannels()
+        // Ensure codec is valid
+        if (Codec != AudioCodec.Mp3 && Codec != AudioCodec.Wav)
         {
-            return ValidChannelCounts;
+            Codec = AudioCodec.Mp3;
         }
 
-        public static IEnumerable<int> GetSupportedMp3BitRates()
+        // Migrate legacy DarkMode bool to AppTheme enum
+        if (AppTheme == null)
         {
-            return ValidMp3BitRates;
+            AppTheme = DarkMode ? Model.AppTheme.Dark : Model.AppTheme.System;
         }
-
-        /// <summary>
-        /// Validates the data, correcting automatically as required
-        /// </summary>
-        public void Sanitize()
+        else if (!Enum.IsDefined(typeof(AppTheme), AppTheme))
         {
-            Debug.Assert(ValidChannelCounts.Contains(DefaultChannelCount), "ValidChannelCounts.Contains(DefaultChannelCount)");
-            Debug.Assert(ValidSampleRates.Contains(DefaultSampleRate), "ValidSampleRates.Contains(DefaultSampleRate)");
-            Debug.Assert(ValidMp3BitRates.Contains(DefaultMp3BitRate), "ValidMp3BitRates.Contains(DefaultMp3BitRate)");
-
-            if (RecordingsLifeTimeDays < 0)
-            {
-                RecordingsLifeTimeDays = 0;
-            }
-
-            if (MaxRecordingsInOneFolder < 10 || MaxRecordingsInOneFolder > 500)
-            {
-                MaxRecordingsInOneFolder = DefaultMaxRecordings;
-            }
-
-            if (!ValidSampleRates.Contains(SampleRate))
-            {
-                SampleRate = DefaultSampleRate;
-            }
-
-            if (!ValidChannelCounts.Contains(ChannelCount))
-            {
-                ChannelCount = DefaultChannelCount;
-            }
-
-            if (!ValidMp3BitRates.Contains(Mp3BitRate))
-            {
-                Mp3BitRate = DefaultMp3BitRate;
-            }
-
-            if (string.IsNullOrEmpty(Genre))
-            {
-                Genre = Properties.Resources.SPEECH;
-            }
-
-            if (MaxRecordingTimeSeconds < 0)
-            {
-                MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
-            }
-
-            if (RecordingDevice < 0)
-            {
-                RecordingDevice = DefaultRecordingDevice;
-            }
-
-            if (SilenceAsVolumePercentage < 1 || SilenceAsVolumePercentage > 90)
-            {
-                SilenceAsVolumePercentage = DefaultSilenceAsVolumePercentage;
-            }
-
-            if (MaxSilenceTimeSeconds < 0)
-            {
-                MaxSilenceTimeSeconds = 0;
-            }
-
-            // Ensure codec is valid
-            if (Codec != AudioCodec.Mp3 && Codec != AudioCodec.Wav)
-            {
-                Codec = AudioCodec.Mp3;
-            }
-
-            // Migrate legacy DarkMode bool to AppTheme enum
-            if (AppTheme == null)
-            {
-                AppTheme = DarkMode ? Model.AppTheme.Dark : Model.AppTheme.System;
-            }
-            else if (!Enum.IsDefined(typeof(Model.AppTheme), AppTheme))
-            {
-                AppTheme = Model.AppTheme.System;
-            }
+            AppTheme = Model.AppTheme.System;
         }
     }
 }

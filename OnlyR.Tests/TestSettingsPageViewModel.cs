@@ -1,13 +1,13 @@
 #pragma warning disable CA1416 // Validate platform compatibility
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using OnlyR.Core.Enums;
 using OnlyR.Model;
 using OnlyR.Services.Options;
 using OnlyR.Tests.Mocks;
 using OnlyR.ViewModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 

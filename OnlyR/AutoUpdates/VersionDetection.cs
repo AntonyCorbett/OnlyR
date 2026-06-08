@@ -1,9 +1,9 @@
+using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
-using Serilog;
 
 namespace OnlyR.AutoUpdates;
 
@@ -85,8 +85,6 @@ internal static class VersionDetection
             {
                 return new Version(major, minor, build, revision);
             }
-
-            return null;
         }
 
         return null;

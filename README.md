@@ -21,6 +21,10 @@ If you just want to install the application, please download the [OnlyRSetup.exe
 
 See the [wiki](https://github.com/AntonyCorbett/OnlyR/wiki) for basic instructions and for information on where to get further help.
 
+### Building from source
+
+To build OnlyR yourself or contribute changes, see [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, including the mise / lefthook dev-tooling steps.
+
 ### License, etc
 
 OnlyR is Copyright &copy; 2017, 2025 Antony Corbett and other contributors under the [MIT license](LICENSE).

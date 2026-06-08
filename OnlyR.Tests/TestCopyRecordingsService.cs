@@ -1,31 +1,31 @@
+using OnlyR.Exceptions;
+using OnlyR.Services.Options;
+using OnlyR.Services.RecordingCopies;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using OnlyR.Exceptions;
-using OnlyR.Services.Options;
-using OnlyR.Services.RecordingCopies;
 
 namespace OnlyR.Tests;
 
 public sealed class TestCopyRecordingsService
 {
-    private string tempDir = string.Empty;
+    private string _tempDir = string.Empty;
 
     [Before(Test)]
     public void SetUp()
     {
-        tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_Copy_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempDir);
+        _tempDir = Path.Combine(Path.GetTempPath(), "OnlyRTests_Copy_" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_tempDir);
     }
 
     [After(Test)]
     public void TearDown()
     {
-        if (Directory.Exists(tempDir))
+        if (Directory.Exists(_tempDir))
         {
-            Directory.Delete(tempDir, true);
+            Directory.Delete(_tempDir, true);
         }
     }
 
@@ -44,7 +44,7 @@ public sealed class TestCopyRecordingsService
     public async Task GetRecordingsFolderReturnsFolderWhenExists()
     {
         var todayFolder = CreateTodayRecordingsFolder();
-        var service = CreateService(tempDir);
+        var service = CreateService(_tempDir);
 
         var result = service.GetRecordingsFolder();
 
@@ -59,7 +59,7 @@ public sealed class TestCopyRecordingsService
         await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.md"), "not audio");
         await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "data.json"), "{}");
 
-        var service = CreateService(tempDir);
+        var service = CreateService(_tempDir);
 
         await Assert.That(() => service.Copy(new List<char> { 'Z' }))
             .Throws<NoRecordingsException>();
@@ -68,7 +68,7 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task CopyThrowsNoRecordingsWhenFolderMissing()
     {
-        var nonExistentDir = Path.Combine(tempDir, "does_not_exist");
+        var nonExistentDir = Path.Combine(_tempDir, "does_not_exist");
         var service = CreateService(nonExistentDir);
 
         await Assert.That(() => service.Copy(new List<char> { 'Z' }))
@@ -82,7 +82,7 @@ public sealed class TestCopyRecordingsService
         await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "notes.txt"), "not audio");
         await File.WriteAllTextAsync(Path.Combine(recordingsFolder, "readme.txt"), "also not audio");
 
-        var service = CreateService(tempDir);
+        var service = CreateService(_tempDir);
 
         await Assert.That(() => service.Copy(new List<char> { 'Z' }))
             .Throws<NoRecordingsException>();
@@ -91,7 +91,7 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task CanCopyFileReturnsTrueForAccessibleFile()
     {
-        var filePath = Path.Combine(tempDir, "accessible.mp3");
+        var filePath = Path.Combine(_tempDir, "accessible.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         var result = CopyRecordingsService.CanCopyFile(filePath);
@@ -102,7 +102,7 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task CanCopyFileReturnsFalseForMissingFile()
     {
-        var filePath = Path.Combine(tempDir, "nonexistent.mp3");
+        var filePath = Path.Combine(_tempDir, "nonexistent.mp3");
 
         var result = CopyRecordingsService.CanCopyFile(filePath);
 
@@ -112,7 +112,7 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task IsFileLockedReturnsTrueForLockedFile()
     {
-        var filePath = Path.Combine(tempDir, "locked.mp3");
+        var filePath = Path.Combine(_tempDir, "locked.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         await using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
@@ -124,7 +124,7 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task IsFileLockedReturnsFalseForUnlockedFile()
     {
-        var filePath = Path.Combine(tempDir, "unlocked.mp3");
+        var filePath = Path.Combine(_tempDir, "unlocked.mp3");
         await File.WriteAllTextAsync(filePath, "dummy audio data");
 
         var result = CopyRecordingsService.IsFileLocked(filePath);
@@ -135,8 +135,8 @@ public sealed class TestCopyRecordingsService
     [Test]
     public async Task GetSpaceNeedSumsFileSizes()
     {
-        var file1 = Path.Combine(tempDir, "file1.mp3");
-        var file2 = Path.Combine(tempDir, "file2.mp3");
+        var file1 = Path.Combine(_tempDir, "file1.mp3");
+        var file2 = Path.Combine(_tempDir, "file2.mp3");
         await File.WriteAllTextAsync(file1, "abcdef");
         await File.WriteAllTextAsync(file2, "ghijklmnop");
 
@@ -168,7 +168,7 @@ public sealed class TestCopyRecordingsService
     {
         var today = DateTime.Today;
         var folder = Path.Combine(
-            tempDir,
+            _tempDir,
             today.ToString("yyyy", CultureInfo.InvariantCulture),
             today.ToString("MM", CultureInfo.InvariantCulture),
             today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));

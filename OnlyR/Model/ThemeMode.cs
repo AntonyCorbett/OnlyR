@@ -1,9 +1,8 @@
-namespace OnlyR.Model
+namespace OnlyR.Model;
+
+public enum AppTheme
 {
-    public enum AppTheme
-    {
-        Light = 0,
-        Dark = 1,
-        System = 2,
-    }
+    Light = 0,
+    Dark = 1,
+    System = 2,
 }

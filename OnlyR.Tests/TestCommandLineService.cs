@@ -1,5 +1,5 @@
-using System.Threading.Tasks;
 using OnlyR.Services.Options;
+using System.Threading.Tasks;
 
 namespace OnlyR.Tests;
 
