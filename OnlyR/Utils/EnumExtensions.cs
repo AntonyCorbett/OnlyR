@@ -32,6 +32,8 @@ public static class EnumExtensions
             default:
             // ReSharper disable once RedundantCaseLabel
             case RecordingStatus.Unknown:
+                // Developer-facing exception for an unhandled status, not shown in the UI; not localized.
+                // ReSharper disable once LocalizableElement
                 throw new ArgumentException("Unknown recording status", nameof(value));
         }
     }
@@ -52,10 +54,14 @@ public static class EnumExtensions
     }
 
     [ExcludeFromCodeCoverage]
+    // enumValue is intentionally captured via nameof to name the argument in the exception below.
+    // ReSharper disable once EntityNameCapturedOnly.Local
     private static string ValidateEnumMemberAttribute(EnumMemberAttribute? attribute, AudioCodec enumValue)
     {
         if (attribute == null || string.IsNullOrWhiteSpace(attribute.Value))
         {
+            // Developer-facing exception for a missing EnumMember attribute, not shown in the UI; not localized.
+            // ReSharper disable once LocalizableElement
             throw new ArgumentException("Missing or empty EnumMember attribute value", nameof(enumValue));
         }
 
