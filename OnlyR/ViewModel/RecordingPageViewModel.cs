@@ -336,7 +336,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
     private void OnSessionEnding(object recipient, SessionEndingMessage e)
     {
-        // allow the session to shutdown if we're not recording
+        // allow the session to shut down if we're not recording
         e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
     }
 
