@@ -422,8 +422,9 @@ namespace OnlyR.ViewModel
 
             if (!_audioDataReceived)
             {
+                // todo: string in resource
                 Log.Logger.Warning("No audio was produced by the selected recording device");
-                _snackbarService.EnqueueWithOk(Properties.Resources.NO_AUDIO_PRODUCED);
+                _snackbarService.EnqueueWithOk("No audio produced");
             }
 
             RecordingStatus = RecordingStatus.NotRecording;
