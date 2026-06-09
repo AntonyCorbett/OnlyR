@@ -53,7 +53,10 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private DispatcherTimer? _splashTimer;
     private int _volumeLevel;
     private bool _isCopying;
-    private bool _audioDataReceived;
+    // written on the audio capture thread (WASAPI loopback raises progress
+    // events off the UI thread), read on the UI thread - volatile to avoid
+    // a stale read driving the stop/pause/fade decisions below
+    private volatile bool _audioDataReceived;
     private RecordingStatus _recordingStatus;
     private string _statusStr;
     private string? _errorMsg;
@@ -423,6 +426,10 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
         if (!_audioDataReceived)
         {
+            // NOTE: this also fires if the recording is stopped before the very
+            // first progress event arrives (~40ms), which could be a false
+            // positive on a healthy device. Not reproduced in practice, but
+            // revisit if users report spurious warnings on very short recordings.
             Log.Logger.Warning("No audio was produced by the selected recording device");
             _snackbarService.EnqueueWithOk(Properties.Resources.NO_AUDIO_PRODUCED);
         }
@@ -468,7 +475,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
             {
                 if (!_audioDataReceived)
                 {
-                    // nothing is being captured, so pausing is meaningless
+                    // nothing is being captured, so pausing is meaningless;
+                    // silently ignore the request (the button stays on "pause")
                     return;
                 }
 
