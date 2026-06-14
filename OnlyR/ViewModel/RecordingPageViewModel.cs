@@ -45,6 +45,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private readonly IOptionsService _optionsService;
     private readonly ICopyRecordingsService _copyRecordingsService;
     private readonly ICommandLineService _commandLineService;
+    private const int NoAudioWarningGracePeriodMs = 80;
+
     private readonly ISnackbarService _snackbarService;
     private readonly ISilenceService _silenceService;
     private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
@@ -424,12 +426,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
     {
         Log.Logger.Information("Stopped recording");
 
-        if (!_audioDataReceived)
+        if (!_audioDataReceived && _stopwatch.ElapsedMilliseconds >= NoAudioWarningGracePeriodMs)
         {
-            // NOTE: this also fires if the recording is stopped before the very
-            // first progress event arrives (~40ms), which could be a false
-            // positive on a healthy device. Not reproduced in practice, but
-            // revisit if users report spurious warnings on very short recordings.
             Log.Logger.Warning("No audio was produced by the selected recording device");
             _snackbarService.EnqueueWithOk(Properties.Resources.NO_AUDIO_PRODUCED);
         }
