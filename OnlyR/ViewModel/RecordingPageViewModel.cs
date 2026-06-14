@@ -163,6 +163,9 @@ public class RecordingPageViewModel : ObservableObject, IPage
     public bool IsRecordingOrPaused => RecordingStatus == RecordingStatus.Recording ||
                                        RecordingStatus == RecordingStatus.Paused;
 
+    public bool CanPause => RecordingStatus == RecordingStatus.Paused ||
+                            (RecordingStatus == RecordingStatus.Recording && _audioDataReceived);
+
     public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
                                    RecordingStatus != RecordingStatus.StopRequested &&
                                    RecordingStatus != RecordingStatus.Paused;
@@ -221,6 +224,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
                 OnPropertyChanged(nameof(IsRecording));
                 OnPropertyChanged(nameof(IsPaused));
                 OnPropertyChanged(nameof(IsRecordingOrPaused));
+                OnPropertyChanged(nameof(CanPause));
                 OnPropertyChanged(nameof(IsReadyToRecord));
                 OnPropertyChanged(nameof(IsRecordingOrStopping));
                 OnPropertyChanged(nameof(ShowStopOnly));
@@ -349,7 +353,13 @@ public class RecordingPageViewModel : ObservableObject, IPage
     {
         // a progress event only ever arrives once the recording device has
         // actually delivered some audio data
+        var hasReceivedAudioBefore = _audioDataReceived;
         _audioDataReceived = true;
+
+        if (!hasReceivedAudioBefore)
+        {
+            OnPropertyChanged(nameof(CanPause));
+        }
 
         VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
         OnPropertyChanged(nameof(ElapsedTimeStr));
@@ -471,10 +481,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
             if (RecordingStatus == RecordingStatus.Recording)
             {
-                if (!_audioDataReceived)
+                if (!CanPause)
                 {
-                    // nothing is being captured, so pausing is meaningless;
-                    // silently ignore the request (the button stays on "pause")
                     return;
                 }
 
@@ -499,6 +507,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
             Log.Logger.Information("Start requested");
 
             _audioDataReceived = false;
+            OnPropertyChanged(nameof(CanPause));
             _silenceService.Reset();
 
             var recordingDate = DateTime.Today;
