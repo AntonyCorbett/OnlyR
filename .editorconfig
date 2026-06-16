@@ -362,3 +362,17 @@ dotnet_diagnostic.RCS1194.severity = silent
 # UI-list generation where the perf gain is negligible. Required so the build passes under
 # TreatWarningsAsErrors without churning ~45 call sites.
 dotnet_diagnostic.CA1863.severity = silent
+
+#### U2U-specific supressions (not referenced in project) ####
+
+# U2U1003 applying static qualifiers to methods that are used to bind to delegates can sometimes cause 
+# issues or unnecessarily complicate instantiation
+dotnet_diagnostic.U2U1003.severity = none
+
+# U2U1006 Do not await a Task<int> only to wrap its result in a new Task<int> in an async method, 
+# return the Task<int> directly
+dotnet_diagnostic.U2U1006.severity = none
+
+# Method has early exits that don't require a state machine to be generated, consider deferring the 
+# state machine generation to a local function
+dotnet_diagnostic.U2U1009.severity = none

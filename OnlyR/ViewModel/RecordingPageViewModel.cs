@@ -45,6 +45,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private readonly IOptionsService _optionsService;
     private readonly ICopyRecordingsService _copyRecordingsService;
     private readonly ICommandLineService _commandLineService;
+    private const int NoAudioWarningGracePeriodMs = 80;
+
     private readonly ISnackbarService _snackbarService;
     private readonly ISilenceService _silenceService;
     private readonly ulong _safeMinBytesFree = 0x20000000;  // 0.5GB
@@ -53,6 +55,10 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private DispatcherTimer? _splashTimer;
     private int _volumeLevel;
     private bool _isCopying;
+    // written on the audio capture thread (WASAPI loopback raises progress
+    // events off the UI thread), read on the UI thread - volatile to avoid
+    // a stale read driving the stop/pause/fade decisions below
+    private volatile bool _audioDataReceived;
     private RecordingStatus _recordingStatus;
     private string _statusStr;
     private string? _errorMsg;
@@ -157,6 +163,9 @@ public class RecordingPageViewModel : ObservableObject, IPage
     public bool IsRecordingOrPaused => RecordingStatus == RecordingStatus.Recording ||
                                        RecordingStatus == RecordingStatus.Paused;
 
+    public bool CanPause => RecordingStatus == RecordingStatus.Paused ||
+                            (RecordingStatus == RecordingStatus.Recording && _audioDataReceived);
+
     public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
                                    RecordingStatus != RecordingStatus.StopRequested &&
                                    RecordingStatus != RecordingStatus.Paused;
@@ -215,6 +224,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
                 OnPropertyChanged(nameof(IsRecording));
                 OnPropertyChanged(nameof(IsPaused));
                 OnPropertyChanged(nameof(IsRecordingOrPaused));
+                OnPropertyChanged(nameof(CanPause));
                 OnPropertyChanged(nameof(IsReadyToRecord));
                 OnPropertyChanged(nameof(IsRecordingOrStopping));
                 OnPropertyChanged(nameof(ShowStopOnly));
@@ -277,6 +287,14 @@ public class RecordingPageViewModel : ObservableObject, IPage
     {
         get
         {
+            // some devices accept a recording connection but never deliver any audio
+            // (e.g. certain virtual/NDI endpoints) - in that case keep the elapsed
+            // time at zero rather than showing a misleadingly advancing clock
+            if (!_audioDataReceived)
+            {
+                return TimeSpan.Zero;
+            }
+
             if (_stopwatch.IsRunning || _recordingStatus == RecordingStatus.Paused)
             {
                 return _stopwatch.Elapsed;
@@ -327,12 +345,22 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
     private void OnSessionEnding(object recipient, SessionEndingMessage e)
     {
-        // allow the session to shutdown if we're not recording
+        // allow the session to shut down if we're not recording
         e.SessionEndingArgs.Cancel = RecordingStatus != RecordingStatus.NotRecording;
     }
 
     private void AudioProgressHandler(object? sender, Core.EventArgs.RecordingProgressEventArgs e)
     {
+        // a progress event only ever arrives once the recording device has
+        // actually delivered some audio data
+        var hasReceivedAudioBefore = _audioDataReceived;
+        _audioDataReceived = true;
+
+        if (!hasReceivedAudioBefore)
+        {
+            OnPropertyChanged(nameof(CanPause));
+        }
+
         VolumeLevelAsPercentage = e.VolumeLevelAsPercentage;
         OnPropertyChanged(nameof(ElapsedTimeStr));
 
@@ -407,6 +435,13 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private void AudioStoppedHandler(object? sender, EventArgs e)
     {
         Log.Logger.Information("Stopped recording");
+
+        if (!_audioDataReceived && _stopwatch.ElapsedMilliseconds >= NoAudioWarningGracePeriodMs)
+        {
+            Log.Logger.Warning("No audio was produced by the selected recording device");
+            _snackbarService.EnqueueWithOk(Properties.Resources.NO_AUDIO_PRODUCED);
+        }
+
         RecordingStatus = RecordingStatus.NotRecording;
         VolumeLevelAsPercentage = 0;
         _stopwatch.Stop();
@@ -446,6 +481,11 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
             if (RecordingStatus == RecordingStatus.Recording)
             {
+                if (!CanPause)
+                {
+                    return;
+                }
+
                 _audioService.PauseRecording();
             }
             else if (RecordingStatus == RecordingStatus.Paused)
@@ -466,6 +506,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
             ClearErrorMsg();
             Log.Logger.Information("Start requested");
 
+            _audioDataReceived = false;
+            OnPropertyChanged(nameof(CanPause));
             _silenceService.Reset();
 
             var recordingDate = DateTime.Today;
@@ -517,7 +559,11 @@ public class RecordingPageViewModel : ObservableObject, IPage
         try
         {
             ClearErrorMsg();
-            _audioService.StopRecording(_optionsService.Options.FadeOut);
+
+            // fading out is pointless (and won't work) if the device hasn't
+            // actually produced any audio
+            var fadeOut = _audioDataReceived && _optionsService.Options.FadeOut;
+            _audioService.StopRecording(fadeOut);
         }
         catch (Exception ex)
         {

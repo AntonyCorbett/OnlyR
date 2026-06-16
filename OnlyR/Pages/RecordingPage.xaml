@@ -189,7 +189,7 @@
                     VerticalAlignment="Top"
                     AutomationProperties.AutomationId="PauseResumeBtn"
                     Command="{Binding PauseResumeRecordingCommand}"
-                    IsEnabled="{Binding IsRecordingOrPaused}">
+                    IsEnabled="{Binding CanPause}">
                     <Button.Style>
                         <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
                             <Setter Property="AutomationProperties.Name" Value="{x:Static resx:Resources.PAUSE_RECORDING_TOOLTIP}" />

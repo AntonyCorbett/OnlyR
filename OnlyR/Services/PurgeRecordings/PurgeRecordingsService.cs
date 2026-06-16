@@ -339,7 +339,9 @@ internal sealed class PurgeRecordingsService : IPurgeRecordingsService, IDisposa
                     extension => file.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
+#pragma warning disable U2U1203
             foreach (var file in files)
+#pragma warning restore U2U1203
             {
                 Log.Logger.Debug("Found file: {File}", file);
                 yield return file;
