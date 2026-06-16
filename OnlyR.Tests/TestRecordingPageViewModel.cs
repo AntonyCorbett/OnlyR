@@ -81,6 +81,7 @@ public sealed class TestRecordingPageViewModel
         await Assert.That(changedProperties).Contains("IsNotRecording");
         await Assert.That(changedProperties).Contains("IsRecording");
         await Assert.That(changedProperties).Contains("IsRecordingOrStopping");
+        await Assert.That(changedProperties).Contains("CanPause");
         await Assert.That(changedProperties).Contains("IsReadyToRecord");
         await Assert.That(changedProperties).Contains("ShowStopOnly");
         await Assert.That(changedProperties).Contains("ShowStopAndPause");
@@ -194,6 +195,32 @@ public sealed class TestRecordingPageViewModel
             var vm = CreateViewModel();
             vm.RecordingStatus = RecordingStatus.Paused;
             return vm.IsPaused;
+        });
+
+        await Assert.That(result).IsTrue();
+    }
+
+    [Test]
+    public async Task CanPauseFalseWhenRecordingWithoutAudio()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Recording;
+            return vm.CanPause;
+        });
+
+        await Assert.That(result).IsFalse();
+    }
+
+    [Test]
+    public async Task CanPauseTrueWhenPaused()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel();
+            vm.RecordingStatus = RecordingStatus.Paused;
+            return vm.CanPause;
         });
 
         await Assert.That(result).IsTrue();

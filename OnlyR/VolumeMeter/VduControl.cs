@@ -24,11 +24,11 @@ public class VduControl : Control
         DependencyProperty.Register(
             nameof(VolumeLevel), typeof(int), typeof(VduControl), new PropertyMetadata(0, OnVolumeChanged, CoerceVolumeLevel));
 
-#pragma warning disable U2U1011
+#pragma warning disable U2U1013
 #pragma warning disable CA1859
     private static object CoerceVolumeLevel(DependencyObject d, object baseValue)
 #pragma warning restore CA1859
-#pragma warning restore U2U1011
+#pragma warning restore U2U1013
     {
         var value = (int)baseValue;
         return Math.Clamp(value, 0, 100);
