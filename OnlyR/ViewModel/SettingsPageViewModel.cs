@@ -23,8 +23,9 @@ namespace OnlyR.ViewModel;
 /// </summary>
 public class SettingsPageViewModel : ObservableObject, IPage
 {
+    private readonly IAudioService _audioService;
     private readonly IOptionsService _optionsService;
-    private readonly RecordingDeviceItem[] _recordingDevices;
+    private RecordingDeviceItem[] _recordingDevices;
     private readonly SampleRateItem[] _sampleRates;
     private readonly ChannelItem[] _channels;
     private readonly BitRateItem[] _bitRates;
@@ -43,11 +44,12 @@ public class SettingsPageViewModel : ObservableObject, IPage
         ICommandLineService commandLineService)
     {
         WeakReferenceMessenger.Default.Register<BeforeShutDownMessage>(this, OnShutDown);
+        _audioService = audioService;
         _optionsService = optionsService;
 
         _commandLineService = commandLineService;
 
-        _recordingDevices = audioService.GetRecordingDeviceList();
+        _recordingDevices = _audioService.GetRecordingDeviceList();
         _sampleRates = optionsService.GetSupportedSampleRates();
         _channels = optionsService.GetSupportedChannels();
         _bitRates = optionsService.GetSupportedMp3BitRates();
@@ -367,7 +369,12 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     public void Activated(object? state)
     {
-        // nothing to do
+        // The set of audio devices can change while the app is running (e.g. a mic is
+        // enabled or plugged in), so re-enumerate each time the page is shown. Re-raising
+        // RecordingDeviceId lets the combo re-select the saved device if it's still present.
+        _recordingDevices = _audioService.GetRecordingDeviceList();
+        OnPropertyChanged(nameof(RecordingDevices));
+        OnPropertyChanged(nameof(RecordingDeviceId));
     }
 
     private static ThemeModeItem[] GenerateThemeModeItems() =>
