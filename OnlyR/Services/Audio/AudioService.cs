@@ -54,8 +54,14 @@ public sealed class AudioService : IAudioService, IDisposable
     /// <returns>List of available devices</returns>
     public RecordingDeviceItem[] GetRecordingDeviceList()
     {
-        var devices = AudioRecorder.GetRecordingDeviceList();
-        return devices.Select(Convert).ToArray();
+        var devices = AudioRecorder.GetRecordingDeviceList().Select(Convert).ToList();
+
+        // "None" lets the user record system loopback only, or (with a device selected) combine both.
+        devices.Insert(0, new RecordingDeviceItem(
+            RecordingConfig.EmptyRecordingDeviceId,
+            OnlyR.Properties.Resources.RECORDING_DEVICE_NONE));
+
+        return devices.ToArray();
     }
 
     private RecordingDeviceItem Convert(RecordingDeviceInfo deviceInfo) =>

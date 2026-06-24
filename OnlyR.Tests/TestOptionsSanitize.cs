@@ -1,4 +1,5 @@
 using OnlyR.Core.Enums;
+using OnlyR.Core.Recorder;
 using OnlyR.Services.Options;
 using System.Threading.Tasks;
 
@@ -101,6 +102,71 @@ public sealed class TestOptionsSanitize
         options.Sanitize();
         await Assert.That(options.Genre).IsNotNull();
         await Assert.That(options.Genre).IsNotEmpty();
+    }
+
+    [Test]
+    public async Task DualInputMigrationForcesExistingLoopbackUserToNone()
+    {
+        // Pre-feature options: loopback on with a real device selected.
+        var options = new Options
+        {
+            UseLoopbackCapture = true,
+            RecordingDevice = 2,
+            DualInputMigrated = false,
+        };
+
+        options.Sanitize();
+
+        // Must keep recording system audio only - device forced to "None".
+        await Assert.That(options.RecordingDevice).IsEqualTo(RecordingConfig.EmptyRecordingDeviceId);
+        await Assert.That(options.DualInputMigrated).IsTrue();
+    }
+
+    [Test]
+    public async Task DualInputMigrationLeavesExistingMicUserUntouched()
+    {
+        var options = new Options
+        {
+            UseLoopbackCapture = false,
+            RecordingDevice = 2,
+            DualInputMigrated = false,
+        };
+
+        options.Sanitize();
+
+        await Assert.That(options.RecordingDevice).IsEqualTo(2);
+        await Assert.That(options.DualInputMigrated).IsTrue();
+    }
+
+    [Test]
+    public async Task DualInputMigrationDoesNotRerunForDeliberateBothSelection()
+    {
+        // Already migrated: user has deliberately chosen device + loopback (both).
+        var options = new Options
+        {
+            UseLoopbackCapture = true,
+            RecordingDevice = 2,
+            DualInputMigrated = true,
+        };
+
+        options.Sanitize();
+
+        await Assert.That(options.RecordingDevice).IsEqualTo(2);
+    }
+
+    [Test]
+    public async Task SanitizePreservesNoneDeviceSentinel()
+    {
+        var options = new Options
+        {
+            RecordingDevice = RecordingConfig.EmptyRecordingDeviceId,
+            UseLoopbackCapture = true,
+            DualInputMigrated = true,
+        };
+
+        options.Sanitize();
+
+        await Assert.That(options.RecordingDevice).IsEqualTo(RecordingConfig.EmptyRecordingDeviceId);
     }
 
     [Test]

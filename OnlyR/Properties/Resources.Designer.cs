@@ -266,6 +266,24 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("NO_AUDIO_PRODUCED", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string RECORDING_DEVICE_NONE {
+            get {
+                return ResourceManager.GetString("RECORDING_DEVICE_NONE", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Select a recording device or enable loopback capture.
+        /// </summary>
+        public static string NO_AUDIO_SOURCE_HINT {
+            get {
+                return ResourceManager.GetString("NO_AUDIO_SOURCE_HINT", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to No limit.

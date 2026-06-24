@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Core.Enums;
+using OnlyR.Core.Recorder;
 using OnlyR.Exceptions;
 using OnlyR.Model;
 using OnlyR.Services.Audio;
@@ -118,6 +119,11 @@ public class RecordingPageViewModel : ObservableObject, IPage
             OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
             OnPropertyChanged(nameof(ShowStopOnly));
             OnPropertyChanged(nameof(ShowStopAndPause));
+
+            // The audio source may have changed in Settings.
+            OnPropertyChanged(nameof(HasAudioSource));
+            OnPropertyChanged(nameof(CanRecord));
+            OnPropertyChanged(nameof(RecordTooltip));
         }
     }
 
@@ -169,6 +175,17 @@ public class RecordingPageViewModel : ObservableObject, IPage
     public bool IsReadyToRecord => RecordingStatus != RecordingStatus.Recording &&
                                    RecordingStatus != RecordingStatus.StopRequested &&
                                    RecordingStatus != RecordingStatus.Paused;
+
+    public bool HasAudioSource =>
+        _optionsService.Options.RecordingDevice != RecordingConfig.EmptyRecordingDeviceId ||
+        _optionsService.Options.UseLoopbackCapture;
+
+    public bool CanRecord => IsReadyToRecord && HasAudioSource;
+
+    public string RecordTooltip =>
+        HasAudioSource
+            ? Properties.Resources.START_RECORDING_TOOLTIP
+            : Properties.Resources.NO_AUDIO_SOURCE_HINT;
 
     public bool ShowStopOnly => IsRecordingOrStopping && !_optionsService.Options.ShowPauseRecordingButton;
 
@@ -226,6 +243,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
                 OnPropertyChanged(nameof(IsRecordingOrPaused));
                 OnPropertyChanged(nameof(CanPause));
                 OnPropertyChanged(nameof(IsReadyToRecord));
+                OnPropertyChanged(nameof(CanRecord));
                 OnPropertyChanged(nameof(IsRecordingOrStopping));
                 OnPropertyChanged(nameof(ShowStopOnly));
                 OnPropertyChanged(nameof(ShowStopAndPause));
@@ -501,6 +519,12 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
     private void StartRecording()
     {
+        if (!HasAudioSource)
+        {
+            // No microphone selected and loopback disabled - nothing to record.
+            return;
+        }
+
         try
         {
             ClearErrorMsg();
