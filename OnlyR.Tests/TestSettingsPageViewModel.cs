@@ -475,6 +475,37 @@ public sealed class TestSettingsPageViewModel
 
     [Test]
     [NotInParallel("Messenger")]
+    public async Task ActivatedRefreshesRecordingDeviceList()
+    {
+        var (before, after) = await StaThreadHelper.RunOnSta(() =>
+        {
+            var audioService = new MockAudioService();
+
+            var optionsMock = Mock.Of<IOptionsService>();
+            optionsMock.Options.Returns(new Options());
+            optionsMock.GetSupportedSampleRates().Returns([new SampleRateItem("44.1 kHz", 44100)]);
+            optionsMock.GetSupportedChannels().Returns([new ChannelItem("Mono", 1)]);
+            optionsMock.GetSupportedMp3BitRates().Returns([new BitRateItem("96 kbps", 96)]);
+
+            var commandLineMock = Mock.Of<ICommandLineService>();
+
+            var vm = new SettingsPageViewModel(audioService, optionsMock.Object, commandLineMock.Object);
+
+            var initialCount = vm.RecordingDevices.Count();
+
+            // A device becomes available after the page was first constructed.
+            audioService.AddRecordingDevice(3, "Dev3");
+            vm.Activated(null);
+
+            return (initialCount, vm.RecordingDevices.Count());
+        });
+
+        await Assert.That(before).IsEqualTo(2);
+        await Assert.That(after).IsEqualTo(3);
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
     public async Task LanguageIdSetterFiresPropertyChanged()
     {
         var changedProperties = await StaThreadHelper.RunOnSta(() =>

@@ -4,6 +4,7 @@ using OnlyR.Model;
 using OnlyR.Services.Audio;
 using OnlyR.Services.Options;
 using System;
+using System.Collections.Generic;
 using System.Windows.Threading;
 
 namespace OnlyR.Tests.Mocks;
@@ -15,6 +16,12 @@ internal sealed class MockAudioService : IAudioService
 {
     private readonly DispatcherTimer _timer;
     private readonly Random _random;
+    private readonly List<RecordingDeviceItem> _devices =
+    [
+        new RecordingDeviceItem(1, "Dev1"),
+        new RecordingDeviceItem(2, "Dev2"),
+    ];
+
     private RecordingStatus _status;
 
     public MockAudioService()
@@ -40,11 +47,15 @@ internal sealed class MockAudioService : IAudioService
 
     public RecordingDeviceItem[] GetRecordingDeviceList()
     {
-        return
-        [
-            new RecordingDeviceItem(1, "Dev1"),
-            new RecordingDeviceItem(2, "Dev2")
-        ];
+        return _devices.ToArray();
+    }
+
+    /// <summary>
+    /// Simulates a recording device becoming available while the app is running.
+    /// </summary>
+    public void AddRecordingDevice(int id, string name)
+    {
+        _devices.Add(new RecordingDeviceItem(id, name));
     }
 
     public void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService)
