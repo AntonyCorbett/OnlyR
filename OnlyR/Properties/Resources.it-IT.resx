@@ -372,6 +372,6 @@
     <value>Formato audio</value>
   </data>
   <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
-    <value>No audio produced!</value>
+    <value>Nessun audio prodotto!</value>
   </data>
 </root>
