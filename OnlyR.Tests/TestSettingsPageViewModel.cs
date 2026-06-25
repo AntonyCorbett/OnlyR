@@ -261,20 +261,6 @@ public sealed class TestSettingsPageViewModel
 
     [Test]
     [NotInParallel("Messenger")]
-    public async Task UseLoopbackCaptureUpdatesNotUsingLoopback()
-    {
-        var notUsingLoopback = await StaThreadHelper.RunOnSta(() =>
-        {
-            var vm = CreateViewModel();
-            vm.UseLoopbackCapture = true;
-            return vm.NotUsingLoopbackCapture;
-        });
-
-        await Assert.That(notUsingLoopback).IsFalse();
-    }
-
-    [Test]
-    [NotInParallel("Messenger")]
     public async Task GenreRoundTrips()
     {
         var result = await StaThreadHelper.RunOnSta(() =>
@@ -537,19 +523,6 @@ public sealed class TestSettingsPageViewModel
         });
 
         // Default codec is MP3
-        await Assert.That(result).IsTrue();
-    }
-
-    [Test]
-    [NotInParallel("Messenger")]
-    public async Task NotUsingLoopbackCaptureDefaultTrue()
-    {
-        var result = await StaThreadHelper.RunOnSta(() =>
-        {
-            var vm = CreateViewModel();
-            return vm.NotUsingLoopbackCapture;
-        });
-
         await Assert.That(result).IsTrue();
     }
 

@@ -338,14 +338,19 @@ public sealed class AudioRecorder : IDisposable
 
     private static void CheckRecordingDevice(RecordingConfig recordingConfig)
     {
+        // "None" selected (loopback-only): no microphone needed, so skip the input-device guard.
+        if (recordingConfig.RecordingDevice == RecordingConfig.EmptyRecordingDeviceId)
+        {
+            return;
+        }
+
         var deviceCount = WaveIn.DeviceCount;
         if (deviceCount == 0)
         {
             throw new NoDevicesException();
         }
 
-        if (recordingConfig.RecordingDevice != RecordingConfig.EmptyRecordingDeviceId
-            && recordingConfig.RecordingDevice >= deviceCount)
+        if (recordingConfig.RecordingDevice >= deviceCount)
         {
             recordingConfig.RecordingDevice = 0;
         }

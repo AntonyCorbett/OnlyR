@@ -298,8 +298,6 @@ public class SettingsPageViewModel : ObservableObject, IPage
 
     public IEnumerable<RecordingDeviceItem> RecordingDevices => _recordingDevices;
 
-    public bool NotUsingLoopbackCapture => !UseLoopbackCapture;
-
     public int RecordingDeviceId
     {
         get => _optionsService.Options.RecordingDevice;
@@ -320,7 +318,6 @@ public class SettingsPageViewModel : ObservableObject, IPage
             if (_optionsService.Options.UseLoopbackCapture != value)
             {
                 _optionsService.Options.UseLoopbackCapture = value;
-                OnPropertyChanged(nameof(NotUsingLoopbackCapture));
             }
         }
     }
