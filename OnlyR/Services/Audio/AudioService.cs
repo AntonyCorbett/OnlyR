@@ -59,7 +59,7 @@ public sealed class AudioService : IAudioService, IDisposable
         // "None" lets the user record system loopback only, or (with a device selected) combine both.
         devices.Insert(0, new RecordingDeviceItem(
             RecordingConfig.EmptyRecordingDeviceId,
-            OnlyR.Properties.Resources.RECORDING_DEVICE_NONE));
+            Properties.Resources.RECORDING_DEVICE_NONE));
 
         return devices.ToArray();
     }
