@@ -372,6 +372,14 @@
     <value>Äänimuoto</value>
   </data>
   <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
-    <value>No audio produced!</value>
+    <value>Ääntä ei tuotettu!</value>
+  </data>
+  <data name="RECORDING_DEVICE_NONE" xml:space="preserve">
+    <value>None</value>
+    <comment>First (no microphone) entry in the Settings =&gt; Recording device list</comment>
+  </data>
+  <data name="NO_AUDIO_SOURCE_HINT" xml:space="preserve">
+    <value>Select a recording device or enable loopback capture</value>
+    <comment>Tooltip shown when no audio source is selected and recording is disabled</comment>
   </data>
 </root>
