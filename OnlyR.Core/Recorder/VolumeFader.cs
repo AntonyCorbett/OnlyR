@@ -68,6 +68,28 @@ internal sealed class VolumeFader
         }
     }
 
+    /// <summary>
+    /// Modifies a buffer of float samples in accord with the current fading status.
+    /// Used by the mixed (mic + loopback) recording path.
+    /// </summary>
+    /// <param name="buffer">The interleaved float audio samples.</param>
+    /// <param name="sampleCount">The number of samples to modify.</param>
+    public void FadeBuffer(float[] buffer, int sampleCount)
+    {
+        _sampleCountModified += sampleCount;
+        var volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
+
+        for (var index = 0; index < sampleCount; ++index)
+        {
+            buffer[index] *= volumeAdjustmentFraction;
+        }
+
+        if (volumeAdjustmentFraction <= 0)
+        {
+            OnFadeComplete();
+        }
+    }
+
     private void OnFadeComplete()
     {
         FadeComplete?.Invoke(this, System.EventArgs.Empty);

@@ -1,4 +1,5 @@
 ﻿using OnlyR.Core.Enums;
+using OnlyR.Core.Recorder;
 using OnlyR.Model;
 using OnlyR.Utils;
 using System;
@@ -62,6 +63,12 @@ public class Options
     public int RecordingDevice { get; set; }
 
     public bool UseLoopbackCapture { get; set; }
+
+    /// <summary>
+    /// Tracks whether the one-time migration to the dual-input recording model has run.
+    /// Absent (false) in options files written before the feature existed.
+    /// </summary>
+    public bool DualInputMigrated { get; set; }
 
     public bool FadeOut { get; set; }
 
@@ -146,7 +153,7 @@ public class Options
             MaxRecordingTimeSeconds = DefaultMaxRecordingSeconds;
         }
 
-        if (RecordingDevice < 0)
+        if (RecordingDevice < RecordingConfig.EmptyRecordingDeviceId)
         {
             RecordingDevice = DefaultRecordingDevice;
         }
@@ -165,6 +172,20 @@ public class Options
         if (Codec != AudioCodec.Mp3 && Codec != AudioCodec.Wav)
         {
             Codec = AudioCodec.Mp3;
+        }
+
+        // Migrate existing "Use loopback capture" users to the dual-input model.
+        // Loopback previously meant "system audio only" regardless of the selected device;
+        // now "selected device + loopback" means "record both". Force pre-existing loopback
+        // users to "None" so they keep recording system audio only after upgrading.
+        if (!DualInputMigrated)
+        {
+            if (UseLoopbackCapture)
+            {
+                RecordingDevice = RecordingConfig.EmptyRecordingDeviceId;
+            }
+
+            DualInputMigrated = true;
         }
 
         // Migrate legacy DarkMode bool to AppTheme enum

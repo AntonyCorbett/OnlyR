@@ -1,5 +1,6 @@
 ﻿using NAudio.Lame;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using OnlyR.Core.Enums;
 using OnlyR.Core.EventArgs;
 using OnlyR.Core.Models;
@@ -24,6 +25,10 @@ public sealed class AudioRecorder : IDisposable
     private const int RequiredReportingIntervalMs = 40;
     private const int VuSpeed = 5;
 
+    // Caps how far the microphone buffer may grow in the mixed path, bounding
+    // drift between the two independent capture clocks.
+    private const int MixBufferSeconds = 5;
+
     private Stream? _audioWriter;
     private IWaveIn? _waveSource;
     private WaveOutEvent? _silenceWaveOut;
@@ -33,6 +38,17 @@ public sealed class AudioRecorder : IDisposable
     private bool _isPaused;
     private string? _tempRecordingFilePath;
     private string? _finalRecordingFilePath;
+
+    // Mixed (microphone + loopback) recording path. Only used when both sources are active.
+    private WaveInEvent? _micCapture;
+    private WasapiLoopbackCapture? _loopbackCapture;
+    private BufferedWaveProvider? _micBuffer;
+    private BufferedWaveProvider? _loopbackBuffer;
+    private MixingSampleProvider? _mixer;
+    private float[]? _mixSampleBuffer;
+    private byte[]? _mixPcmBuffer;
+    private int _outputSampleRate;
+    private int _outputChannelCount;
 
     private int _dampedLevel;
 
@@ -78,38 +94,16 @@ public sealed class AudioRecorder : IDisposable
         {
             CheckRecordingDevice(recordingConfig);
 
-            if (recordingConfig.UseLoopbackCapture)
+            var captureMic = recordingConfig.RecordingDevice != RecordingConfig.EmptyRecordingDeviceId;
+
+            if (captureMic && recordingConfig.UseLoopbackCapture)
             {
-                _waveSource = new WasapiLoopbackCapture();
-                ConfigureSilenceOut();
+                StartMixedRecording(recordingConfig);
             }
             else
             {
-                _waveSource = new WaveIn
-                {
-                    WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
-                    DeviceNumber = recordingConfig.RecordingDevice,
-                };
+                StartSingleSourceRecording(recordingConfig);
             }
-
-            InitAggregator(_waveSource.WaveFormat.SampleRate);
-            InitFader(_waveSource.WaveFormat.SampleRate);
-
-            _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
-            _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
-
-            _audioWriter = recordingConfig.Codec switch
-            {
-                AudioCodec.Mp3 => new LameMP3FileWriter(
-                    recordingConfig.DestFilePath,
-                    _waveSource.WaveFormat,
-                    recordingConfig.Mp3BitRate!.Value,
-                    CreateTag(recordingConfig)),
-                AudioCodec.Wav => new WaveFileWriter(recordingConfig.DestFilePath, _waveSource.WaveFormat),
-                _ => throw new NotSupportedException("Unsupported codec"),
-            };
-
-            _waveSource.StartRecording();
 
             _tempRecordingFilePath = recordingConfig.DestFilePath;
             _finalRecordingFilePath = recordingConfig.FinalFilePath;
@@ -122,17 +116,138 @@ public sealed class AudioRecorder : IDisposable
         }
     }
 
-    private void ConfigureSilenceOut()
+    // Single-source recording (microphone-only or loopback-only) - the original, unchanged pipeline.
+    private void StartSingleSourceRecording(RecordingConfig recordingConfig)
+    {
+        if (recordingConfig.UseLoopbackCapture)
+        {
+            _waveSource = new WasapiLoopbackCapture();
+            ConfigureSilenceOut(_waveSource.WaveFormat);
+        }
+        else
+        {
+            _waveSource = new WaveIn
+            {
+                WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
+                DeviceNumber = recordingConfig.RecordingDevice,
+            };
+        }
+
+        InitAggregator(_waveSource.WaveFormat.SampleRate);
+        InitFader(_waveSource.WaveFormat.SampleRate);
+
+        _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
+        _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+
+        _audioWriter = CreateAudioWriter(recordingConfig, _waveSource.WaveFormat);
+
+        _waveSource.StartRecording();
+    }
+
+    // Mixed recording: microphone + system loopback combined into a single output stream.
+    // Each capture fills its own buffer; reads are clocked off the loopback capture (kept ticking
+    // by the silence-out trick) and the two streams are summed via a MixingSampleProvider.
+    private void StartMixedRecording(RecordingConfig recordingConfig)
+    {
+        _outputSampleRate = recordingConfig.SampleRate;
+        _outputChannelCount = recordingConfig.ChannelCount;
+
+        // Output matches single-source recordings: 16-bit PCM at the configured rate/channels.
+        var outputFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount);
+
+        _micCapture = new WaveInEvent
+        {
+            WaveFormat = outputFormat,
+            DeviceNumber = recordingConfig.RecordingDevice,
+        };
+        _micBuffer = new BufferedWaveProvider(_micCapture.WaveFormat)
+        {
+            DiscardOnBufferOverflow = true,
+            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
+        };
+        _micCapture.DataAvailable += MicCaptureDataAvailableHandler;
+
+        _loopbackCapture = new WasapiLoopbackCapture();
+        _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat)
+        {
+            DiscardOnBufferOverflow = true,
+            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
+        };
+        _loopbackCapture.DataAvailable += LoopbackCaptureDataAvailableHandler;
+        _loopbackCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;
+
+        ConfigureSilenceOut(_loopbackCapture.WaveFormat);
+
+        var mixFormat = WaveFormat.CreateIeeeFloatWaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount);
+        _mixer = new MixingSampleProvider(mixFormat) { ReadFully = true };
+        _mixer.AddMixerInput(ConvertToOutputFormat(_micBuffer.ToSampleProvider()));
+        _mixer.AddMixerInput(ConvertToOutputFormat(_loopbackBuffer.ToSampleProvider()));
+
+        InitAggregator(recordingConfig.SampleRate);
+        InitFader(recordingConfig.SampleRate);
+
+        _audioWriter = CreateAudioWriter(recordingConfig, outputFormat);
+
+        _micCapture.StartRecording();
+        _loopbackCapture.StartRecording();
+    }
+
+    private static Stream CreateAudioWriter(RecordingConfig recordingConfig, WaveFormat waveFormat)
+    {
+        return recordingConfig.Codec switch
+        {
+            AudioCodec.Mp3 => new LameMP3FileWriter(
+                recordingConfig.DestFilePath,
+                waveFormat,
+                recordingConfig.Mp3BitRate!.Value,
+                CreateTag(recordingConfig)),
+            AudioCodec.Wav => new WaveFileWriter(recordingConfig.DestFilePath, waveFormat),
+            _ => throw new NotSupportedException("Unsupported codec"),
+        };
+    }
+
+    // Converts a capture to the output format (channel count then sample rate) so it can be mixed.
+    private ISampleProvider ConvertToOutputFormat(ISampleProvider source)
+    {
+        var result = MatchChannels(source, _outputChannelCount);
+
+        if (result.WaveFormat.SampleRate != _outputSampleRate)
+        {
+            result = new WdlResamplingSampleProvider(result, _outputSampleRate);
+        }
+
+        return result;
+    }
+
+    private static ISampleProvider MatchChannels(ISampleProvider source, int targetChannels)
+    {
+        var channels = source.WaveFormat.Channels;
+        if (channels == targetChannels)
+        {
+            return source;
+        }
+
+        if (channels == 2 && targetChannels == 1)
+        {
+            return new StereoToMonoSampleProvider(source);
+        }
+
+        if (channels == 1 && targetChannels == 2)
+        {
+            return new MonoToStereoSampleProvider(source);
+        }
+
+        // ponytail: only 1<->2 conversion supported; multichannel loopback is rare.
+        // Upgrade with a MultiplexingSampleProvider downmix if it's ever reported.
+        throw new NotSupportedException($"Cannot mix {channels}-channel audio into {targetChannels}-channel output.");
+    }
+
+    private void ConfigureSilenceOut(WaveFormat waveFormat)
     {
         // WasapiLoopbackCapture doesn't record any audio when nothing is playing
         // so we must play some silence!
 
-        if (_waveSource?.WaveFormat == null)
-        {
-            return;
-        }
-
-        var silence = new SilenceProvider(_waveSource.WaveFormat);
+        var silence = new SilenceProvider(waveFormat);
         _silenceWaveOut = new WaveOutEvent();
         _silenceWaveOut.Init(silence);
         _silenceWaveOut.Play();
@@ -195,10 +310,17 @@ public sealed class AudioRecorder : IDisposable
             }
             else
             {
-                _waveSource?.StopRecording();
-                _silenceWaveOut?.Stop();
+                StopCaptures();
             }
         }
+    }
+
+    private void StopCaptures()
+    {
+        _waveSource?.StopRecording();
+        _micCapture?.StopRecording();
+        _loopbackCapture?.StopRecording();
+        _silenceWaveOut?.Stop();
     }
 
     private static ID3TagData CreateTag(RecordingConfig recordingConfig)
@@ -216,13 +338,19 @@ public sealed class AudioRecorder : IDisposable
 
     private static void CheckRecordingDevice(RecordingConfig recordingConfig)
     {
+        // "None" selected (loopback-only): no microphone needed, so skip the input-device guard.
+        if (recordingConfig.RecordingDevice == RecordingConfig.EmptyRecordingDeviceId)
+        {
+            return;
+        }
+
         var deviceCount = WaveIn.DeviceCount;
         if (deviceCount == 0)
         {
             throw new NoDevicesException();
         }
 
-        if (!recordingConfig.UseLoopbackCapture && recordingConfig.RecordingDevice >= deviceCount)
+        if (recordingConfig.RecordingDevice >= deviceCount)
         {
             recordingConfig.RecordingDevice = 0;
         }
@@ -303,6 +431,97 @@ public sealed class AudioRecorder : IDisposable
         }
     }
 
+    private void MicCaptureDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
+    {
+        if (_isPaused)
+        {
+            return;
+        }
+
+        // The microphone just fills its buffer; the loopback capture clocks the actual mixing.
+        _micBuffer?.AddSamples(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
+    }
+
+    private void LoopbackCaptureDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
+    {
+        if (_isPaused)
+        {
+            return;
+        }
+
+        _loopbackBuffer?.AddSamples(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
+        PumpMixedAudio(waveInEventArgs.BytesRecorded);
+    }
+
+    // Reads the amount of mixed audio that corresponds to the loopback data just received,
+    // keeping the output paced to real time. Reads pull from both source buffers (ReadFully
+    // pads brief gaps with silence), the summed result is clamped, faded, metered and written.
+    private void PumpMixedAudio(int loopbackBytesRecorded)
+    {
+        if (_mixer == null || _loopbackCapture == null || _audioWriter == null)
+        {
+            return;
+        }
+
+        var loopbackFormat = _loopbackCapture.WaveFormat;
+        var frames = loopbackBytesRecorded / loopbackFormat.BlockAlign;
+        var outputFrames = (int)((long)frames * _outputSampleRate / loopbackFormat.SampleRate);
+        var sampleCount = outputFrames * _outputChannelCount;
+        if (sampleCount <= 0)
+        {
+            return;
+        }
+
+        if (_mixSampleBuffer == null || _mixSampleBuffer.Length < sampleCount)
+        {
+            _mixSampleBuffer = new float[sampleCount];
+        }
+
+        var samplesRead = _mixer.Read(_mixSampleBuffer, 0, sampleCount);
+        if (samplesRead <= 0)
+        {
+            return;
+        }
+
+        // Summed sources can exceed the [-1, 1] range, so hard-clamp to prevent wrap-around.
+        for (var index = 0; index < samplesRead; ++index)
+        {
+            var sample = _mixSampleBuffer[index];
+            _mixSampleBuffer[index] = sample > 1f ? 1f : sample < -1f ? -1f : sample;
+        }
+
+        if (_fader?.Active == true)
+        {
+            _fader.FadeBuffer(_mixSampleBuffer, samplesRead);
+        }
+
+        for (var index = 0; index < samplesRead; ++index)
+        {
+            _sampleAggregator?.Add(_mixSampleBuffer[index]);
+        }
+
+        WriteMixedAsPcm16(_mixSampleBuffer, samplesRead);
+    }
+
+    private void WriteMixedAsPcm16(float[] samples, int sampleCount)
+    {
+        var byteCount = sampleCount * 2;
+        if (_mixPcmBuffer == null || _mixPcmBuffer.Length < byteCount)
+        {
+            _mixPcmBuffer = new byte[byteCount];
+        }
+
+        var offset = 0;
+        for (var index = 0; index < sampleCount; ++index)
+        {
+            var value = (short)(samples[index] * 32767f);
+            _mixPcmBuffer[offset++] = (byte)(value & 0xFF);
+            _mixPcmBuffer[offset++] = (byte)((value >> 8) & 0xFF);
+        }
+
+        _audioWriter?.Write(_mixPcmBuffer, 0, byteCount);
+    }
+
     private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
     {
         _recordingStatus = e.RecordingStatus;
@@ -333,8 +552,7 @@ public sealed class AudioRecorder : IDisposable
 
     private void FadeCompleteHandler(object? sender, System.EventArgs e)
     {
-        _waveSource?.StopRecording();
-        _silenceWaveOut?.Stop();
+        StopCaptures();
     }
 
     private void Cleanup()
@@ -345,6 +563,16 @@ public sealed class AudioRecorder : IDisposable
 
         _waveSource?.Dispose();
         _waveSource = null;
+
+        _micCapture?.Dispose();
+        _micCapture = null;
+
+        _loopbackCapture?.Dispose();
+        _loopbackCapture = null;
+
+        _micBuffer = null;
+        _loopbackBuffer = null;
+        _mixer = null;
 
         _silenceWaveOut?.Dispose();
         _silenceWaveOut = null;

@@ -9,6 +9,11 @@ namespace OnlyR.Core.Recorder;
 public class RecordingConfig
 {
     /// <summary>
+    /// Sentinel device id meaning "no microphone selected" (the "None" entry).
+    /// </summary>
+    public const int EmptyRecordingDeviceId = -1;
+
+    /// <summary>
     /// The audio recording device Id.
     /// </summary>
     public int RecordingDevice { get; set; }

@@ -123,9 +123,10 @@
                 AutomationProperties.AutomationId="StartBtn"
                 AutomationProperties.Name="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
                 Command="{Binding StartRecordingCommand}"
-                IsEnabled="{Binding IsNotRecording}"
+                IsEnabled="{Binding CanRecord}"
                 Style="{StaticResource StartRecordingBtnStyle}"
-                ToolTip="{x:Static resx:Resources.START_RECORDING_TOOLTIP}"
+                ToolTip="{Binding RecordTooltip}"
+                ToolTipService.ShowOnDisabled="True"
                 Visibility="{Binding Path=IsReadyToRecord, Converter={StaticResource BoolToVis}}">
                 <StackPanel Orientation="Vertical">
                     <materialDesign:PackIcon
