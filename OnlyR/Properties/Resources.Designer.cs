@@ -266,16 +266,7 @@ namespace OnlyR.Properties {
                 return ResourceManager.GetString("NO_AUDIO_PRODUCED", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to None.
-        /// </summary>
-        public static string RECORDING_DEVICE_NONE {
-            get {
-                return ResourceManager.GetString("RECORDING_DEVICE_NONE", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Select a recording device or enable loopback capture.
         /// </summary>
@@ -372,6 +363,15 @@ namespace OnlyR.Properties {
         public static string RECORDING {
             get {
                 return ResourceManager.GetString("RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string RECORDING_DEVICE_NONE {
+            get {
+                return ResourceManager.GetString("RECORDING_DEVICE_NONE", resourceCulture);
             }
         }
         
