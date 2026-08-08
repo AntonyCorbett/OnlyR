@@ -286,100 +286,100 @@
     <comment>Settings page "recordings folder" title</comment>
   </data>
   <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
-    <value>Recording device</value>
+    <value>Snemalna naprava</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
-    <value>Recording lifetime</value>
+    <value>Življenjska doba posnetkov</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
-    <value>Sample rate</value>
+    <value>Vzorčna frekvenca</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
-    <value>Silence detection (% of full volume)</value>
+    <value>Zaznavanje tišine (% od polne glasnosti)</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>Svetla</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>Temna</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
-    <value>System (default)</value>
+    <value>Sistemska (privzeto)</value>
     <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
-    <value>Start minimised</value>
+    <value>Začni minimizirano</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
-    <value>Start recording on launch</value>
+    <value>Začni snemati ob zagonu</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
-    <value>Stop on a period of silence</value>
+    <value>Zaustavi ko nastopi obdobje tišine</value>
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_TOOLTIP" xml:space="preserve">
-    <value>Settings</value>
+    <value>Nastavitve</value>
     <comment>Tooltip for the button that displays the Settings page</comment>
   </data>
   <data name="SPEECH" xml:space="preserve">
-    <value>Speech</value>
+    <value>Predavanje</value>
   </data>
   <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Start recording</value>
+    <value>Prični snemati</value>
     <comment>Tooltip for the "Start Recording" button</comment>
   </data>
   <data name="STEREO" xml:space="preserve">
     <value>Stereo</value>
   </data>
   <data name="STOPPING" xml:space="preserve">
-    <value>Stopping</value>
+    <value>Zaustavljanje</value>
   </data>
   <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Onemogočeno</value>
   </data>
   <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Stop recording</value>
+    <value>Zaustavi snemanje</value>
     <comment>Tooltip for the "Stop Recording" button</comment>
   </data>
   <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
-    <value>Unknown error!</value>
+    <value>Neznana napaka!</value>
   </data>
   <data name="VIEW" xml:space="preserve">
-    <value>VIEW</value>
+    <value>POGLEJ</value>
   </data>
   <data name="X_HOURS" xml:space="preserve">
-    <value>{0} hours</value>
+    <value>{0} ur</value>
   </data>
   <data name="X_MINS" xml:space="preserve">
-    <value>{0} minutes</value>
+    <value>{0} minut</value>
   </data>
   <data name="X_SECS" xml:space="preserve">
-    <value>{0} seconds</value>
+    <value>{0} sekund</value>
   </data>
   <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
-    <value>Audio format</value>
+    <value>Avdio format</value>
   </data>
   <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
-    <value>No audio produced!</value>
+    <value>Ni ustvarjenega zvoka!</value>
   </data>
   <data name="RECORDING_DEVICE_NONE" xml:space="preserve">
-    <value>None</value>
+    <value>Brez</value>
     <comment>First (no microphone) entry in the Settings =&gt; Recording device list</comment>
   </data>
   <data name="NO_AUDIO_SOURCE_HINT" xml:space="preserve">
-    <value>Select a recording device or enable loopback capture</value>
+    <value>Izberi snemalno napravo ali omogoči zajem povratnega zvoka</value>
     <comment>Tooltip shown when no audio source is selected and recording is disabled</comment>
   </data>
 </root>
