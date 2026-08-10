@@ -21,6 +21,8 @@ public interface IAudioService
 
     RecordingDeviceItem[] GetRecordingDeviceList();
 
+    PlaybackDeviceItem[] GetPlaybackDeviceList();
+
     void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService);
 
     void StopRecording(bool fadeOut);

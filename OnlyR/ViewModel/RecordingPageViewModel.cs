@@ -44,6 +44,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private readonly IAudioService _audioService;
     private readonly IRecordingDestinationService _destinationService;
     private readonly IOptionsService _optionsService;
+    private RecordingDeviceItem[] _recordingDevices;
+    private PlaybackDeviceItem[] _playbackDevices;
     private readonly ICopyRecordingsService _copyRecordingsService;
     private readonly ICommandLineService _commandLineService;
     private const int NoAudioWarningGracePeriodMs = 80;
@@ -85,6 +87,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
         _stopwatch = new Stopwatch();
 
         _audioService = audioService;
+        _recordingDevices = _audioService.GetRecordingDeviceList();
+        _playbackDevices = _audioService.GetPlaybackDeviceList();
         _audioService.StartedEvent += AudioStartedHandler;
         _audioService.StoppedEvent += AudioStoppedHandler;
         _audioService.StopRequested += AudioStopRequestedHandler;
@@ -115,6 +119,7 @@ public class RecordingPageViewModel : ObservableObject, IPage
         if (message.OriginalPageName == SettingsPageViewModel.PageName
             && message.TargetPageName == PageName)
         {
+            RefreshAudioDevices();
             OnPropertyChanged(nameof(MaxRecordingTimeString));
             OnPropertyChanged(nameof(IsMaxRecordingTimeSpecified));
             OnPropertyChanged(nameof(ShowStopOnly));
@@ -181,6 +186,57 @@ public class RecordingPageViewModel : ObservableObject, IPage
         _optionsService.Options.UseLoopbackCapture;
 
     public bool CanRecord => IsReadyToRecord && HasAudioSource;
+
+    public RecordingDeviceItem[] RecordingDevices => _recordingDevices;
+
+    public int RecordingDeviceId
+    {
+        get => _optionsService.Options.RecordingDevice;
+        set
+        {
+            if (_optionsService.Options.RecordingDevice != value)
+            {
+                _optionsService.Options.RecordingDevice = value;
+                _optionsService.Save();
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasAudioSource));
+                OnPropertyChanged(nameof(CanRecord));
+                OnPropertyChanged(nameof(RecordTooltip));
+            }
+        }
+    }
+
+    public PlaybackDeviceItem[] PlaybackDevices => _playbackDevices;
+
+    public PlaybackDeviceItem? SelectedPlaybackDevice
+    {
+        get
+        {
+            var savedId = _optionsService.Options.PlaybackDeviceId ?? string.Empty;
+            return _playbackDevices.FirstOrDefault(
+                       device => string.Equals(device.DeviceId, savedId, StringComparison.OrdinalIgnoreCase))
+                   ?? _playbackDevices.FirstOrDefault();
+        }
+        set
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            var newId = string.IsNullOrWhiteSpace(value.DeviceId) ? null : value.DeviceId;
+            if (_optionsService.Options.PlaybackDeviceId != newId || !_optionsService.Options.UseLoopbackCapture)
+            {
+                _optionsService.Options.PlaybackDeviceId = newId;
+                _optionsService.Options.UseLoopbackCapture = true;
+                _optionsService.Save();
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasAudioSource));
+                OnPropertyChanged(nameof(CanRecord));
+                OnPropertyChanged(nameof(RecordTooltip));
+            }
+        }
+    }
 
     public string RecordTooltip =>
         HasAudioSource
@@ -330,6 +386,8 @@ public class RecordingPageViewModel : ObservableObject, IPage
     /// <param name="state">RecordingPageNavigationState object (or null).</param>
     public void Activated(object? state)
     {
+        RefreshAudioDevices();
+
         // on display of page...
         var stateObj = (RecordingPageNavigationState?)state;
         if (stateObj != null)
@@ -354,6 +412,16 @@ public class RecordingPageViewModel : ObservableObject, IPage
     private void NavigateSettings()
     {
         WeakReferenceMessenger.Default.Send(new NavigateMessage(PageName, SettingsPageViewModel.PageName, null));
+    }
+
+    private void RefreshAudioDevices()
+    {
+        _recordingDevices = _audioService.GetRecordingDeviceList();
+        _playbackDevices = _audioService.GetPlaybackDeviceList();
+        OnPropertyChanged(nameof(RecordingDevices));
+        OnPropertyChanged(nameof(RecordingDeviceId));
+        OnPropertyChanged(nameof(PlaybackDevices));
+        OnPropertyChanged(nameof(SelectedPlaybackDevice));
     }
 
     private void OnShutDown(object recipient, BeforeShutDownMessage message)

@@ -96,9 +96,9 @@
                     Text="{Binding AppVersionStr}" />
 
                 <ComboBox
-                    materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
+                    materialDesign:HintAssist.Hint="Microphone"
                     AutomationProperties.AutomationId="RecordingDevice"
-                    AutomationProperties.Name="{x:Static resx:Resources.SETTINGS_RECORDING_DEVICE}"
+                    AutomationProperties.Name="Microphone"
                     DisplayMemberPath="DeviceName"
                     ItemsSource="{Binding RecordingDevices}"
                     SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"
@@ -111,6 +111,16 @@
                     Content="{x:Static resx:Resources.SETTINGS_LOOPBACK_CAPTURE}"
                     IsChecked="{Binding UseLoopbackCapture, Mode=TwoWay}"
                     Style="{StaticResource SettingsCheckBox}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="System audio / speakers"
+                    AutomationProperties.AutomationId="PlaybackDevice"
+                    AutomationProperties.Name="System audio / speakers"
+                    DisplayMemberPath="DeviceName"
+                    ItemsSource="{Binding PlaybackDevices}"
+                    SelectedItem="{Binding SelectedPlaybackDevice, Mode=TwoWay}"
+                    Style="{StaticResource SettingsComboStyle}"
+                    Visibility="{Binding UseLoopbackCapture, Converter={StaticResource BoolToVis}}" />
 
                 <ComboBox
                     materialDesign:HintAssist.Hint="{x:Static resx:Resources.SETTINGS_AUDIO_FORMAT}"

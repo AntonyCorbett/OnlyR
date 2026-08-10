@@ -65,6 +65,11 @@ public class Options
     public bool UseLoopbackCapture { get; set; }
 
     /// <summary>
+    /// Playback endpoint used for system-audio recording. Empty follows the Windows default.
+    /// </summary>
+    public string? PlaybackDeviceId { get; set; }
+
+    /// <summary>
     /// Tracks whether the one-time migration to the dual-input recording model has run.
     /// Absent (false) in options files written before the feature existed.
     /// </summary>
@@ -81,6 +86,8 @@ public class Options
     public string? AppWindowPlacement { get; set; }
 
     public Size SettingsPageSize { get; set; }
+
+    public Size MainPageSize { get; set; }
 
     public bool AlwaysOnTop { get; set; }
 

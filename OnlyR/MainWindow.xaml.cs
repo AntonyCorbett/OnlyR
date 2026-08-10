@@ -17,8 +17,11 @@ namespace OnlyR;
 [ExcludeFromCodeCoverage]
 public partial class MainWindow
 {
-    private const double MainWindowWidth = 268;
-    private const double MainWindowHeight = 300;
+    private const double MainWindowWidth = 420;
+    private const double MainWindowHeight = 460;
+
+    private const double MainWindowMinWidth = 360;
+    private const double MainWindowMinHeight = 400;
 
     private const double SettingsWindowDefWidth = 400;
     private const double SettingsWindowDefHeight = 400;
@@ -40,6 +43,7 @@ public partial class MainWindow
 
         App.ApplyTitleBarTheme(this);
         AdjustMainWindowPositionAndSize();
+        EnsureRecordingWindowFitsControls();
 
         var source = PresentationSource.FromVisual(this) as HwndSource;
         source?.AddHook(WndProc);
@@ -47,6 +51,11 @@ public partial class MainWindow
 
     private void OnNavigate(object recipient, NavigateMessage message)
     {
+        if (message.OriginalPageName.Equals(RecordingPageViewModel.PageName, StringComparison.Ordinal))
+        {
+            SaveMainWindowSize();
+        }
+
         if (message.OriginalPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
         {
             // store the size of the settings page...
@@ -55,18 +64,24 @@ public partial class MainWindow
 
         if (message.TargetPageName.Equals(RecordingPageViewModel.PageName, StringComparison.Ordinal))
         {
-            // We don't allow the main window to be resized...
-            ResizeMode = ResizeMode.CanMinimize;
+            ResizeMode = ResizeMode.CanResizeWithGrip;
             WindowState = WindowState.Normal;
-            Width = MainWindowWidth;
-            Height = MainWindowHeight;
+            MinWidth = MainWindowMinWidth;
+            MinHeight = MainWindowMinHeight;
+            MaxWidth = double.PositiveInfinity;
+            MaxHeight = double.PositiveInfinity;
+
+            var optionsService = Ioc.Default.GetService<IOptionsService>();
+            var size = optionsService?.Options.MainPageSize ?? default;
+            Width = size.Width >= MainWindowMinWidth ? size.Width : MainWindowWidth;
+            Height = size.Height >= MainWindowMinHeight ? size.Height : MainWindowHeight;
         }
         else if (message.TargetPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
         {
             // Settings window can be resized...
             ResizeMode = ResizeMode.CanResize;
-            MinHeight = MainWindowHeight;
-            MinWidth = MainWindowWidth;
+            MinHeight = MainWindowMinHeight;
+            MinWidth = MainWindowMinWidth;
 
             MaxHeight = SettingsWindowMaxHeight;
             MaxWidth = SettingsWindowMaxWidth;
@@ -92,6 +107,24 @@ public partial class MainWindow
         if (optionsService != null)
         {
             optionsService.Options.SettingsPageSize = new Size(Width, Height);
+        }
+    }
+
+    private void SaveMainWindowSize()
+    {
+        var optionsService = Ioc.Default.GetService<IOptionsService>();
+        if (optionsService != null)
+        {
+            optionsService.Options.MainPageSize = new Size(Width, Height);
+        }
+    }
+
+    private void EnsureRecordingWindowFitsControls()
+    {
+        if (Width < MainWindowMinWidth || Height < MainWindowMinHeight)
+        {
+            Width = MainWindowWidth;
+            Height = MainWindowHeight;
         }
     }
 
@@ -132,6 +165,10 @@ public partial class MainWindow
             m.CurrentPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
         {
             SaveSettingsWindowSize();
+        }
+        else
+        {
+            SaveMainWindowSize();
         }
 
         m.Closing(sender, e);

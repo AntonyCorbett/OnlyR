@@ -87,6 +87,15 @@
 
         </Style>
 
+        <Style
+            x:Key="SourceComboStyle"
+            BasedOn="{StaticResource MaterialDesignFloatingHintComboBox}"
+            TargetType="{x:Type ComboBox}">
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+
     </UserControl.Resources>
 
     <UserControl.Triggers>
@@ -119,6 +128,7 @@
         <Grid Grid.Column="1" Margin="10,10,10,12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
+                <RowDefinition Height="88" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -224,8 +234,31 @@
                 </Button>
             </Grid>
 
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <ComboBox
+                    materialDesign:HintAssist.Hint="Microphone"
+                    AutomationProperties.AutomationId="MainRecordingDevice"
+                    AutomationProperties.Name="Microphone"
+                    DisplayMemberPath="DeviceName"
+                    IsEnabled="{Binding IsNotRecording}"
+                    ItemsSource="{Binding RecordingDevices}"
+                    SelectedValue="{Binding RecordingDeviceId, Mode=TwoWay}"
+                    SelectedValuePath="DeviceId"
+                    Style="{StaticResource SourceComboStyle}" />
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="System audio / speakers"
+                    AutomationProperties.AutomationId="MainPlaybackDevice"
+                    AutomationProperties.Name="System audio / speakers"
+                    DisplayMemberPath="DeviceName"
+                    IsEnabled="{Binding IsNotRecording}"
+                    ItemsSource="{Binding PlaybackDevices}"
+                    SelectedItem="{Binding SelectedPlaybackDevice, Mode=TwoWay}"
+                    Style="{StaticResource SourceComboStyle}" />
+            </StackPanel>
+
             <materialDesign:Card
-                Grid.Row="1"
+                Grid.Row="2"
                 IsTabStop="False"
                 Padding="10"
                 VerticalAlignment="Stretch">

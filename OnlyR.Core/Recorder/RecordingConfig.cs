@@ -24,6 +24,12 @@ public class RecordingConfig
     public bool UseLoopbackCapture { get; set; }
 
     /// <summary>
+    /// Windows playback endpoint id used for system-audio loopback.
+    /// Null or empty selects the current Windows multimedia default.
+    /// </summary>
+    public string? PlaybackDeviceId { get; set; }
+
+    /// <summary>
     /// The date of the recording (the start date).
     /// </summary>
     public DateTime RecordingDate { get; set; }
