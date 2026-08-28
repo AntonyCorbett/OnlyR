@@ -160,18 +160,16 @@ public sealed class AudioRecorder : IDisposable
             WaveFormat = outputFormat,
             DeviceNumber = recordingConfig.RecordingDevice,
         };
-        _micBuffer = new BufferedWaveProvider(_micCapture.WaveFormat)
+        _micBuffer = new BufferedWaveProvider(_micCapture.WaveFormat, TimeSpan.FromSeconds(MixBufferSeconds))
         {
             DiscardOnBufferOverflow = true,
-            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
         };
         _micCapture.DataAvailable += MicCaptureDataAvailableHandler;
 
         _loopbackCapture = new WasapiLoopbackCapture();
-        _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat)
+        _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat, TimeSpan.FromSeconds(MixBufferSeconds))
         {
             DiscardOnBufferOverflow = true,
-            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
         };
         _loopbackCapture.DataAvailable += LoopbackCaptureDataAvailableHandler;
         _loopbackCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;

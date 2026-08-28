@@ -1,4 +1,8 @@
 using System.Reflection;
+using System.Runtime.Versioning;
+
+// GenerateAssemblyInfo=false, so declare the platform CA1416 would otherwise infer from the TFM.
+[assembly: SupportedOSPlatform("windows")]
 
 [assembly: AssemblyCompany("SoundBox")]
 [assembly: AssemblyProduct("OnlyR")]

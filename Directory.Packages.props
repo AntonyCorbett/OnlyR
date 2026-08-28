@@ -7,7 +7,7 @@
     <!-- OnlyR.Core -->
     <PackageVersion Include="NAudio.Lame" Version="2.1.0" />
     <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
-    <PackageVersion Include="NAudio.WinForms" Version="2.3.0" />
+    <PackageVersion Include="NAudio.WinForms" Version="2.4.0" />
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.11" />
     <!-- OnlyR -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
