@@ -354,6 +354,14 @@ public sealed class AudioRecorder : IDisposable
         {
             recordingConfig.RecordingDevice = 0;
         }
+
+        // Some devices may only support mono capture
+        // so clamp to what the device actually reports.
+        var maxChannels = WaveIn.GetCapabilities(recordingConfig.RecordingDevice).Channels;
+        if (maxChannels > 0 && recordingConfig.ChannelCount > maxChannels)
+        {
+            recordingConfig.ChannelCount = maxChannels;
+        }
     }
 
     private void InitAggregator(int sampleRate)
