@@ -64,6 +64,19 @@ public sealed class AudioService : IAudioService, IDisposable
         return devices.ToArray();
     }
 
+    /// <summary>
+    /// Gets the playback endpoints available for system-audio loopback capture.
+    /// </summary>
+    public PlaybackDeviceItem[] GetPlaybackDeviceList()
+    {
+        var devices = AudioRecorder.GetPlaybackDeviceList()
+            .Select(device => new PlaybackDeviceItem(device.Id, device.Name))
+            .ToList();
+
+        devices.Insert(0, new PlaybackDeviceItem(string.Empty, "Windows default playback device"));
+        return devices.ToArray();
+    }
+
     private RecordingDeviceItem Convert(RecordingDeviceInfo deviceInfo) =>
         new(deviceInfo.Id, deviceInfo.Name);
 
@@ -80,6 +93,7 @@ public sealed class AudioService : IAudioService, IDisposable
         {
             RecordingDevice = optionsService.Options.RecordingDevice,
             UseLoopbackCapture = optionsService.Options.UseLoopbackCapture,
+            PlaybackDeviceId = optionsService.Options.PlaybackDeviceId,
             RecordingDate = candidateFile.RecordingDate,
             TrackNumber = candidateFile.TrackNumber,
             DestFilePath = candidateFile.TempPath,

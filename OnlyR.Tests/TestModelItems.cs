@@ -96,6 +96,20 @@ public sealed class TestModelItems
         await Assert.That(item.DeviceName).IsEqualTo("Microphone");
     }
 
+    [Test]
+    public async Task PlaybackDeviceItemNormalizesDeviceId()
+    {
+        var item = new PlaybackDeviceItem("SPEAKER-ID", "Speakers");
+        await Assert.That(item.DeviceId).IsEqualTo("speaker-id");
+    }
+
+    [Test]
+    public async Task PlaybackDeviceItemStoresDeviceName()
+    {
+        var item = new PlaybackDeviceItem("speaker-id", "Speakers");
+        await Assert.That(item.DeviceName).IsEqualTo("Speakers");
+    }
+
     // ========================================================================
     // RecordingLifeTimeItem
     // ========================================================================

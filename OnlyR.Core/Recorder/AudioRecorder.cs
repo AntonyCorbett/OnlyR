@@ -1,4 +1,5 @@
-﻿using NAudio.Lame;
+﻿using NAudio.CoreAudioApi;
+using NAudio.Lame;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using OnlyR.Core.Enums;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace OnlyR.Core.Recorder;
 
@@ -31,7 +33,10 @@ public sealed class AudioRecorder : IDisposable
 
     private Stream? _audioWriter;
     private IWaveIn? _waveSource;
-    private WaveOutEvent? _silenceWaveOut;
+    private WasapiOut? _silenceWaveOut;
+    private MMDeviceEnumerator? _playbackDeviceEnumerator;
+    private MMDevice? _loopbackDevice;
+    private MMDevice? _silencePlaybackDevice;
     private SampleAggregator? _sampleAggregator;
     private VolumeFader? _fader;
     private RecordingStatus _recordingStatus;
@@ -79,6 +84,23 @@ public sealed class AudioRecorder : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Gets the active Windows playback devices that support system-audio loopback.
+    /// </summary>
+    public static IEnumerable<PlaybackDeviceInfo> GetPlaybackDeviceList()
+    {
+        using var enumerator = new MMDeviceEnumerator();
+        var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+        var result = new List<PlaybackDeviceInfo>();
+
+        foreach (var device in devices)
+        {
+            result.Add(new PlaybackDeviceInfo(device.ID, device.FriendlyName));
+        }
+
+        return result;
+    }
+
     public void Dispose()
     {
         Cleanup();
@@ -121,8 +143,9 @@ public sealed class AudioRecorder : IDisposable
     {
         if (recordingConfig.UseLoopbackCapture)
         {
-            _waveSource = new WasapiLoopbackCapture();
-            ConfigureSilenceOut(_waveSource.WaveFormat);
+            _loopbackDevice = GetPlaybackDevice(recordingConfig.PlaybackDeviceId);
+            ConfigureSilenceOut(_loopbackDevice.ID, _loopbackDevice.AudioClient.MixFormat);
+            _waveSource = new WasapiLoopbackCapture(_loopbackDevice);
         }
         else
         {
@@ -167,7 +190,9 @@ public sealed class AudioRecorder : IDisposable
         };
         _micCapture.DataAvailable += MicCaptureDataAvailableHandler;
 
-        _loopbackCapture = new WasapiLoopbackCapture();
+        _loopbackDevice = GetPlaybackDevice(recordingConfig.PlaybackDeviceId);
+        ConfigureSilenceOut(_loopbackDevice.ID, _loopbackDevice.AudioClient.MixFormat);
+        _loopbackCapture = new WasapiLoopbackCapture(_loopbackDevice);
         _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat)
         {
             DiscardOnBufferOverflow = true,
@@ -175,8 +200,6 @@ public sealed class AudioRecorder : IDisposable
         };
         _loopbackCapture.DataAvailable += LoopbackCaptureDataAvailableHandler;
         _loopbackCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;
-
-        ConfigureSilenceOut(_loopbackCapture.WaveFormat);
 
         var mixFormat = WaveFormat.CreateIeeeFloatWaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount);
         _mixer = new MixingSampleProvider(mixFormat) { ReadFully = true };
@@ -232,23 +255,99 @@ public sealed class AudioRecorder : IDisposable
             return new StereoToMonoSampleProvider(source);
         }
 
+        if (channels > 2 && targetChannels == 1)
+        {
+            return new MultiChannelToMonoSampleProvider(source);
+        }
+
         if (channels == 1 && targetChannels == 2)
         {
             return new MonoToStereoSampleProvider(source);
         }
 
-        // ponytail: only 1<->2 conversion supported; multichannel loopback is rare.
-        // Upgrade with a MultiplexingSampleProvider downmix if it's ever reported.
+        if (channels > 2 && targetChannels == 2)
+        {
+            return new MonoToStereoSampleProvider(new MultiChannelToMonoSampleProvider(source));
+        }
+
         throw new NotSupportedException($"Cannot mix {channels}-channel audio into {targetChannels}-channel output.");
     }
 
-    private void ConfigureSilenceOut(WaveFormat waveFormat)
+    private sealed class MultiChannelToMonoSampleProvider : ISampleProvider
+    {
+        private readonly ISampleProvider _source;
+        private float[] _sourceBuffer = [];
+
+        public MultiChannelToMonoSampleProvider(ISampleProvider source)
+        {
+            _source = source;
+            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(source.WaveFormat.SampleRate, 1);
+        }
+
+        public WaveFormat WaveFormat { get; }
+
+        public int Read(float[] buffer, int offset, int count)
+        {
+            var channels = _source.WaveFormat.Channels;
+            var requiredSourceSamples = count * channels;
+            if (_sourceBuffer.Length < requiredSourceSamples)
+            {
+                _sourceBuffer = new float[requiredSourceSamples];
+            }
+
+            var sourceSamplesRead = _source.Read(_sourceBuffer, 0, requiredSourceSamples);
+            var framesRead = sourceSamplesRead / channels;
+            for (var frame = 0; frame < framesRead; ++frame)
+            {
+                var sourceOffset = frame * channels;
+                var sum = 0f;
+                for (var channel = 0; channel < channels; ++channel)
+                {
+                    sum += _sourceBuffer[sourceOffset + channel];
+                }
+
+                buffer[offset + frame] = sum / channels;
+            }
+
+            return framesRead;
+        }
+    }
+
+    private MMDevice GetPlaybackDevice(string? playbackDeviceId)
+    {
+        _playbackDeviceEnumerator ??= new MMDeviceEnumerator();
+
+        if (!string.IsNullOrWhiteSpace(playbackDeviceId))
+        {
+            try
+            {
+                return _playbackDeviceEnumerator.GetDevice(playbackDeviceId);
+            }
+            catch (COMException)
+            {
+                // The saved endpoint may have been unplugged or removed. Falling back keeps
+                // recording available while preserving the saved choice for its next return.
+            }
+        }
+
+        return _playbackDeviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+    }
+
+    private void ConfigureSilenceOut(string playbackDeviceId, WaveFormat waveFormat)
     {
         // WasapiLoopbackCapture doesn't record any audio when nothing is playing
-        // so we must play some silence!
+        // so play silence through the same endpoint that is being captured. Using
+        // a separate endpoint object is required because NAudio caches one AudioClient
+        // per MMDevice and capture/render cannot share that COM object.
 
         var silence = new SilenceProvider(waveFormat);
-        _silenceWaveOut = new WaveOutEvent();
+        _silencePlaybackDevice = _playbackDeviceEnumerator?.GetDevice(playbackDeviceId)
+            ?? throw new InvalidOperationException("Playback device enumerator is unavailable.");
+        _silenceWaveOut = new WasapiOut(
+            _silencePlaybackDevice,
+            AudioClientShareMode.Shared,
+            useEventSync: false,
+            latency: 200);
         _silenceWaveOut.Init(silence);
         _silenceWaveOut.Play();
     }
@@ -576,6 +675,15 @@ public sealed class AudioRecorder : IDisposable
 
         _silenceWaveOut?.Dispose();
         _silenceWaveOut = null;
+
+        _loopbackDevice?.Dispose();
+        _loopbackDevice = null;
+
+        _silencePlaybackDevice?.Dispose();
+        _silencePlaybackDevice = null;
+
+        _playbackDeviceEnumerator?.Dispose();
+        _playbackDeviceEnumerator = null;
 
         _audioWriter?.Dispose();
         _audioWriter = null;

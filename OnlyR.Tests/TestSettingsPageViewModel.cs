@@ -411,6 +411,60 @@ public sealed class TestSettingsPageViewModel
 
     [Test]
     [NotInParallel("Messenger")]
+    public async Task PlaybackDeviceIdRoundTrips()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel();
+            vm.PlaybackDeviceId = "speaker-1";
+            return vm.PlaybackDeviceId;
+        });
+
+        await Assert.That(result).IsEqualTo("speaker-1");
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
+    public async Task PlaybackDevicesReturnsItems()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel();
+            return vm.PlaybackDevices.Count();
+        });
+
+        await Assert.That(result).IsGreaterThan(0);
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
+    public async Task SelectedPlaybackDeviceMatchesSavedId()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel(new Options { PlaybackDeviceId = "SPEAKER-1" });
+            return vm.SelectedPlaybackDevice?.DeviceName;
+        });
+
+        await Assert.That(result).IsEqualTo("Speakers 1");
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
+    public async Task NullPlaybackSelectionDoesNotClearSavedId()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel(new Options { PlaybackDeviceId = "speaker-1" });
+            vm.SelectedPlaybackDevice = null;
+            return vm.PlaybackDeviceId;
+        });
+
+        await Assert.That(result).IsEqualTo("speaker-1");
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
     public async Task SampleRatesReturnsItems()
     {
         var result = await StaThreadHelper.RunOnSta(() =>
@@ -484,6 +538,34 @@ public sealed class TestSettingsPageViewModel
             vm.Activated(null);
 
             return (initialCount, vm.RecordingDevices.Count());
+        });
+
+        await Assert.That(before).IsEqualTo(2);
+        await Assert.That(after).IsEqualTo(3);
+    }
+
+    [Test]
+    [NotInParallel("Messenger")]
+    public async Task ActivatedRefreshesPlaybackDeviceList()
+    {
+        var (before, after) = await StaThreadHelper.RunOnSta(() =>
+        {
+            var audioService = new MockAudioService();
+
+            var optionsMock = Mock.Of<IOptionsService>();
+            optionsMock.Options.Returns(new Options());
+            optionsMock.GetSupportedSampleRates().Returns([new SampleRateItem("44.1 kHz", 44100)]);
+            optionsMock.GetSupportedChannels().Returns([new ChannelItem("Mono", 1)]);
+            optionsMock.GetSupportedMp3BitRates().Returns([new BitRateItem("96 kbps", 96)]);
+
+            var commandLineMock = Mock.Of<ICommandLineService>();
+            var vm = new SettingsPageViewModel(audioService, optionsMock.Object, commandLineMock.Object);
+            var initialCount = vm.PlaybackDevices.Count();
+
+            audioService.AddPlaybackDevice("speaker-2", "Speakers 2");
+            vm.Activated(null);
+
+            return (initialCount, vm.PlaybackDevices.Count());
         });
 
         await Assert.That(before).IsEqualTo(2);

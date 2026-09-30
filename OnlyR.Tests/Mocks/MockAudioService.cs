@@ -21,6 +21,11 @@ internal sealed class MockAudioService : IAudioService
         new RecordingDeviceItem(1, "Dev1"),
         new RecordingDeviceItem(2, "Dev2"),
     ];
+    private readonly List<PlaybackDeviceItem> _playbackDevices =
+    [
+        new PlaybackDeviceItem(string.Empty, "Windows default playback device"),
+        new PlaybackDeviceItem("speaker-1", "Speakers 1"),
+    ];
 
     private RecordingStatus _status;
 
@@ -50,12 +55,22 @@ internal sealed class MockAudioService : IAudioService
         return _devices.ToArray();
     }
 
+    public PlaybackDeviceItem[] GetPlaybackDeviceList()
+    {
+        return _playbackDevices.ToArray();
+    }
+
     /// <summary>
     /// Simulates a recording device becoming available while the app is running.
     /// </summary>
     public void AddRecordingDevice(int id, string name)
     {
         _devices.Add(new RecordingDeviceItem(id, name));
+    }
+
+    public void AddPlaybackDevice(string id, string name)
+    {
+        _playbackDevices.Add(new PlaybackDeviceItem(id, name));
     }
 
     public void StartRecording(RecordingCandidate candidateFile, IOptionsService optionsService)

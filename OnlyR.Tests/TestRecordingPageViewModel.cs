@@ -440,6 +440,46 @@ public sealed class TestRecordingPageViewModel
         await Assert.That(result).IsFalse();
     }
 
+    [Test]
+    public async Task MainScreenProvidesMicrophoneAndPlaybackDevices()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel();
+            return (vm.RecordingDevices.Length, vm.PlaybackDevices.Length);
+        });
+
+        await Assert.That(result.Item1).IsGreaterThan(0);
+        await Assert.That(result.Item2).IsGreaterThan(0);
+    }
+
+    [Test]
+    public async Task MainScreenPlaybackSelectionMatchesSavedId()
+    {
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel(new Options { PlaybackDeviceId = "SPEAKER-1" });
+            return vm.SelectedPlaybackDevice?.DeviceName;
+        });
+
+        await Assert.That(result).IsEqualTo("Speakers 1");
+    }
+
+    [Test]
+    public async Task SelectingPlaybackDeviceEnablesSystemAudio()
+    {
+        var options = new Options { UseLoopbackCapture = false };
+        var result = await StaThreadHelper.RunOnSta(() =>
+        {
+            var vm = CreateViewModel(options);
+            vm.SelectedPlaybackDevice = vm.PlaybackDevices[1];
+            return (options.PlaybackDeviceId, options.UseLoopbackCapture);
+        });
+
+        await Assert.That(result.PlaybackDeviceId).IsEqualTo("speaker-1");
+        await Assert.That(result.UseLoopbackCapture).IsTrue();
+    }
+
     private static RecordingPageViewModel CreateViewModel(Options? options = null, Mock<ICommandLineService>? cmdLineMock = null)
     {
         WeakReferenceMessenger.Default.Reset();

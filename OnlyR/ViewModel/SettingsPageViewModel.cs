@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace OnlyR.ViewModel;
@@ -26,6 +27,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
     private readonly IAudioService _audioService;
     private readonly IOptionsService _optionsService;
     private RecordingDeviceItem[] _recordingDevices;
+    private PlaybackDeviceItem[] _playbackDevices;
     private readonly SampleRateItem[] _sampleRates;
     private readonly ChannelItem[] _channels;
     private readonly BitRateItem[] _bitRates;
@@ -50,6 +52,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
         _commandLineService = commandLineService;
 
         _recordingDevices = _audioService.GetRecordingDeviceList();
+        _playbackDevices = _audioService.GetPlaybackDeviceList();
         _sampleRates = optionsService.GetSupportedSampleRates();
         _channels = optionsService.GetSupportedChannels();
         _bitRates = optionsService.GetSupportedMp3BitRates();
@@ -310,6 +313,39 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
+    public IEnumerable<PlaybackDeviceItem> PlaybackDevices => _playbackDevices;
+
+    public string PlaybackDeviceId
+    {
+        get => _optionsService.Options.PlaybackDeviceId ?? string.Empty;
+        set
+        {
+            var newValue = string.IsNullOrWhiteSpace(value) ? null : value;
+            if (_optionsService.Options.PlaybackDeviceId != newValue)
+            {
+                _optionsService.Options.PlaybackDeviceId = newValue;
+            }
+        }
+    }
+
+    public PlaybackDeviceItem? SelectedPlaybackDevice
+    {
+        get
+        {
+            var savedId = PlaybackDeviceId;
+            return _playbackDevices.FirstOrDefault(
+                       device => string.Equals(device.DeviceId, savedId, StringComparison.OrdinalIgnoreCase))
+                   ?? _playbackDevices.FirstOrDefault();
+        }
+        set
+        {
+            if (value != null)
+            {
+                PlaybackDeviceId = value.DeviceId;
+            }
+        }
+    }
+
     public bool UseLoopbackCapture
     {
         get => _optionsService.Options.UseLoopbackCapture;
@@ -318,6 +354,7 @@ public class SettingsPageViewModel : ObservableObject, IPage
             if (_optionsService.Options.UseLoopbackCapture != value)
             {
                 _optionsService.Options.UseLoopbackCapture = value;
+                OnPropertyChanged();
             }
         }
     }
@@ -370,8 +407,12 @@ public class SettingsPageViewModel : ObservableObject, IPage
         // enabled or plugged in), so re-enumerate each time the page is shown. Re-raising
         // RecordingDeviceId lets the combo re-select the saved device if it's still present.
         _recordingDevices = _audioService.GetRecordingDeviceList();
+        _playbackDevices = _audioService.GetPlaybackDeviceList();
         OnPropertyChanged(nameof(RecordingDevices));
         OnPropertyChanged(nameof(RecordingDeviceId));
+        OnPropertyChanged(nameof(PlaybackDevices));
+        OnPropertyChanged(nameof(PlaybackDeviceId));
+        OnPropertyChanged(nameof(SelectedPlaybackDevice));
     }
 
     private static ThemeModeItem[] GenerateThemeModeItems() =>
