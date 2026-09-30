@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ACCESSIBILITY_ONLY_R" xml:space="preserve">
+    <value>Aplikacija OnlyR</value>
+    <comment>Application title (for accessibility)</comment>
+  </data>
+  <data name="ACCESSIBILITY_VOLUME_LEVEL_NAME" xml:space="preserve">
+    <value>Raven glasnosti vhoda</value>
+    <comment>Accessibility name for the volume meter on the recording page</comment>
+  </data>
+  <data name="ACCESSIBILITY_VOLUME_LEVEL_HELP" xml:space="preserve">
+    <value>Prikaže trenutno raven vhodnega snemalnega signala kot vrednost od 0 do 100</value>
+    <comment>Accessibility help text for the volume meter on the recording page</comment>
+  </data>
+  <data name="APP_VER" xml:space="preserve">
+    <value>Različica: {0}</value>
+  </data>
+  <data name="BACK_TO_MAIN_PAGE" xml:space="preserve">
+    <value>Nazaj na glavno stran</value>
+    <comment>Tooltip for the back button on the settings page</comment>
+  </data>
+  <data name="COPIED" xml:space="preserve">
+    <value>Datoteke so prekopirane</value>
+  </data>
+  <data name="CREATE_FOLDER_ERROR" xml:space="preserve">
+    <value>Ni možno ustvariti mape {0}</value>
+  </data>
+  <data name="ERROR_START" xml:space="preserve">
+    <value>Ni možno pričeti s snemanjem</value>
+  </data>
+  <data name="ERROR_STOP" xml:space="preserve">
+    <value>Ni možno ustaviti snemanja</value>
+  </data>
+  <data name="INSUFFICIENT_FREE_SPACE" xml:space="preserve">
+    <value>Ni dovolj prostora za snemanje</value>
+  </data>
+  <data name="LANGUAGE" xml:space="preserve">
+    <value>Jezik</value>
+    <comment>See Settings page</comment>
+  </data>
+  <data name="LIFE_0" xml:space="preserve">
+    <value>Brez omejitev</value>
+  </data>
+  <data name="LIFE_1_DAY" xml:space="preserve">
+    <value>1 dan</value>
+  </data>
+  <data name="LIFE_1_MONTH" xml:space="preserve">
+    <value>1 mesec</value>
+  </data>
+  <data name="LIFE_1_WEEK" xml:space="preserve">
+    <value>1 teden</value>
+  </data>
+  <data name="LIFE_1_YR" xml:space="preserve">
+    <value>1 leto</value>
+  </data>
+  <data name="LIFE_2_DAYS" xml:space="preserve">
+    <value>2 dni</value>
+  </data>
+  <data name="LIFE_2_MONTHS" xml:space="preserve">
+    <value>2 meseca</value>
+  </data>
+  <data name="LIFE_2_WEEKS" xml:space="preserve">
+    <value>2 tedna</value>
+  </data>
+  <data name="LIFE_2_YRS" xml:space="preserve">
+    <value>2 leti</value>
+  </data>
+  <data name="LIFE_6_MONTHS" xml:space="preserve">
+    <value>6 mesecev</value>
+  </data>
+  <data name="MONO" xml:space="preserve">
+    <value>Mono</value>
+  </data>
+  <data name="NOT_RECORDING" xml:space="preserve">
+    <value>Ne snema</value>
+  </data>
+  <data name="NO_LIMIT" xml:space="preserve">
+    <value>Brez omejitev</value>
+  </data>
+  <data name="NO_RECORDINGS" xml:space="preserve">
+    <value>Danes ni posnetkov!</value>
+  </data>
+  <data name="NO_SPACE" xml:space="preserve">
+    <value>Na {0} ni več prostora</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>V REDU</value>
+  </data>
+  <data name="ONE_HOUR" xml:space="preserve">
+    <value>1 uro</value>
+  </data>
+  <data name="ONE_MIN" xml:space="preserve">
+    <value>1 minuto</value>
+  </data>
+  <data name="PAUSED" xml:space="preserve">
+    <value>Pavzirano</value>
+  </data>
+  <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Pavziraj snemanje</value>
+  </data>
+  <data name="RECORDING" xml:space="preserve">
+    <value>Snemanje</value>
+  </data>
+  <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
+    <value>Odpri mapo posnetkov</value>
+    <comment>Tooltip for the button that opens the recordings folder</comment>
+  </data>
+  <data name="RECORDING_SALVAGED" xml:space="preserve">
+    <value>Posnetek je bil obnovljen iz prejšnje seje!</value>
+    <comment>Message displayed at app startup if a recording was found from the previous session that was not properly finalised.</comment>
+  </data>
+  <data name="RESTART_LANGUAGE" xml:space="preserve">
+    <value>Prosimo da ponovno zaženete OnlyR po spremembi jezika.</value>
+    <comment>See Settings page</comment>
+  </data>
+  <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Nadaljuj snemanje</value>
+  </data>
+  <data name="SAVE_TO_DRIVE" xml:space="preserve">
+    <value>Shranite današnje posnetke na pogon {0}</value>
+  </data>
+  <data name="SAVE_TO_DRIVES" xml:space="preserve">
+    <value>Shranite današnje posnetke na pogone {0}</value>
+  </data>
+  <data name="SELECT_DEST_FOLDER" xml:space="preserve">
+    <value>Izberite mapo posnetkov</value>
+  </data>
+  <data name="SETTINGS_ALLOW_CLOSE" xml:space="preserve">
+    <value>Dovolite zaprtje med snemanjem</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_ALWAYS_ON_TOP" xml:space="preserve">
+    <value>Vedno na vrhu</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_BIT_RATE" xml:space="preserve">
+    <value>Bitna hitrost</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_CHANNELS" xml:space="preserve">
+    <value>Kanali</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
+    <value>Prikaži gumb za premor</value>
+  </data>
+  <data name="SETTINGS_FADE_OUT" xml:space="preserve">
+    <value>Postopno pojemanje posnetkov</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_GENRE" xml:space="preserve">
+    <value>Žanr (v MP3 tagu)</value>
+    <comment>Settings page genre title</comment>
+  </data>
+  <data name="SETTINGS_LOOPBACK_CAPTURE" xml:space="preserve">
+    <value>Uporabi zajem povratnega zvoka</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
+    <value>Najdaljši čas snemanja</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
+    <value>Odpri posnetek...</value>
+    <comment>Settings page Recordings button caption</comment>
+  </data>
+  <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
+    <value>Mapa posnetkov</value>
+    <comment>Settings page "recordings folder" title</comment>
+  </data>
+  <data name="SETTINGS_RECORDING_DEVICE" xml:space="preserve">
+    <value>Snemalna naprava</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_RECORDING_LIFETIME" xml:space="preserve">
+    <value>Življenjska doba posnetkov</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SAMPLE_RATE" xml:space="preserve">
+    <value>Vzorčna frekvenca</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_SILENCE_AS_PERCENTAGE_VOLUME" xml:space="preserve">
+    <value>Zaznavanje tišine (% od polne glasnosti)</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_THEME" xml:space="preserve">
+    <value>Tema</value>
+    <comment>Settings page theme combobox title</comment>
+  </data>
+  <data name="THEME_LIGHT" xml:space="preserve">
+    <value>Svetla</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_DARK" xml:space="preserve">
+    <value>Temna</value>
+    <comment>Theme mode option</comment>
+  </data>
+  <data name="THEME_SYSTEM" xml:space="preserve">
+    <value>Sistemska (privzeto)</value>
+    <comment>Theme mode option - follows OS theme</comment>
+  </data>
+  <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
+    <value>Začni minimizirano</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_START_ON_LAUNCH" xml:space="preserve">
+    <value>Začni snemati ob zagonu</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
+  <data name="SETTINGS_STOP_RECORDING_ON_SILENCE" xml:space="preserve">
+    <value>Zaustavi ko nastopi obdobje tišine</value>
+    <comment>Settings page combobox title</comment>
+  </data>
+  <data name="SETTINGS_TOOLTIP" xml:space="preserve">
+    <value>Nastavitve</value>
+    <comment>Tooltip for the button that displays the Settings page</comment>
+  </data>
+  <data name="SPEECH" xml:space="preserve">
+    <value>Predavanje</value>
+  </data>
+  <data name="START_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Prični snemati</value>
+    <comment>Tooltip for the "Start Recording" button</comment>
+  </data>
+  <data name="STEREO" xml:space="preserve">
+    <value>Stereo</value>
+  </data>
+  <data name="STOPPING" xml:space="preserve">
+    <value>Zaustavljanje</value>
+  </data>
+  <data name="STOP_ON_SILENCE_DISABLED" xml:space="preserve">
+    <value>Onemogočeno</value>
+  </data>
+  <data name="STOP_RECORDING_TOOLTIP" xml:space="preserve">
+    <value>Zaustavi snemanje</value>
+    <comment>Tooltip for the "Stop Recording" button</comment>
+  </data>
+  <data name="UNKNOWN_COPY_ERROR" xml:space="preserve">
+    <value>Neznana napaka!</value>
+  </data>
+  <data name="VIEW" xml:space="preserve">
+    <value>POGLEJ</value>
+  </data>
+  <data name="X_HOURS" xml:space="preserve">
+    <value>{0} ur</value>
+  </data>
+  <data name="X_MINS" xml:space="preserve">
+    <value>{0} minut</value>
+  </data>
+  <data name="X_SECS" xml:space="preserve">
+    <value>{0} sekund</value>
+  </data>
+  <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
+    <value>Avdio format</value>
+  </data>
+  <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
+    <value>Ni ustvarjenega zvoka!</value>
+  </data>
+  <data name="RECORDING_DEVICE_NONE" xml:space="preserve">
+    <value>Brez</value>
+    <comment>First (no microphone) entry in the Settings =&gt; Recording device list</comment>
+  </data>
+  <data name="NO_AUDIO_SOURCE_HINT" xml:space="preserve">
+    <value>Izberi snemalno napravo ali omogoči zajem povratnega zvoka</value>
+    <comment>Tooltip shown when no audio source is selected and recording is disabled</comment>
+  </data>
+</root>
