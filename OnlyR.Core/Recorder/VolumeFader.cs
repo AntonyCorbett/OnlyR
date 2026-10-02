@@ -1,5 +1,5 @@
-﻿using NAudio.Wave;
-using System;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace OnlyR.Core.Recorder;
 
@@ -36,29 +36,26 @@ internal sealed class VolumeFader
     /// Modifies the audio buffer in accord with the current fading status.
     /// </summary>
     /// <param name="buffer">The audio samples.</param>
-    /// <param name="bytesInBuffer">The number of bytes in the audio buffer.</param>
     /// <param name="isFloatingPointAudio">If the audio is 32-bit.</param>
-    public void FadeBuffer(byte[] buffer, int bytesInBuffer, bool isFloatingPointAudio)
+    public void FadeBuffer(Span<byte> buffer, bool isFloatingPointAudio)
     {
-        _sampleCountModified += bytesInBuffer;
+        _sampleCountModified += buffer.Length;
         var volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
-
-        var buff = new WaveBuffer(buffer);
 
         if (isFloatingPointAudio)
         {
-            for (var index = 0; index < bytesInBuffer / 4; ++index)
+            var samples = MemoryMarshal.Cast<byte, float>(buffer);
+            for (var index = 0; index < samples.Length; ++index)
             {
-                var sample = buff.FloatBuffer[index];
-                buff.FloatBuffer[index] = sample * volumeAdjustmentFraction;
+                samples[index] *= volumeAdjustmentFraction;
             }
         }
         else
         {
-            for (var index = 0; index < bytesInBuffer / 2; ++index)
+            var samples = MemoryMarshal.Cast<byte, short>(buffer);
+            for (var index = 0; index < samples.Length; ++index)
             {
-                var sample = buff.ShortBuffer[index];
-                buff.ShortBuffer[index] = (short)(sample * volumeAdjustmentFraction);
+                samples[index] = (short)(samples[index] * volumeAdjustmentFraction);
             }
         }
 
@@ -73,13 +70,12 @@ internal sealed class VolumeFader
     /// Used by the mixed (mic + loopback) recording path.
     /// </summary>
     /// <param name="buffer">The interleaved float audio samples.</param>
-    /// <param name="sampleCount">The number of samples to modify.</param>
-    public void FadeBuffer(float[] buffer, int sampleCount)
+    public void FadeBuffer(Span<float> buffer)
     {
-        _sampleCountModified += sampleCount;
+        _sampleCountModified += buffer.Length;
         var volumeAdjustmentFraction = 1 - ((float)_sampleCountModified / _sampleCountToModify);
 
-        for (var index = 0; index < sampleCount; ++index)
+        for (var index = 0; index < buffer.Length; ++index)
         {
             buffer[index] *= volumeAdjustmentFraction;
         }

@@ -34,7 +34,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, buffer.Length, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer, isFloatingPointAudio: true);
 
         var reduced = false;
         for (var i = 0; i < sampleCount; i++)
@@ -62,7 +62,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer1, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer1, buffer1.Length, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer1, isFloatingPointAudio: true);
         var firstSample1 = BitConverter.ToSingle(buffer1, 0);
 
         var buffer2 = new byte[sampleCount * 4];
@@ -71,7 +71,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer2, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer2, buffer2.Length, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer2, isFloatingPointAudio: true);
         var firstSample2 = BitConverter.ToSingle(buffer2, 0);
 
         await Assert.That(firstSample2).IsLessThan(firstSample1);
@@ -93,7 +93,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, 400, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer.AsSpan(0, 400), isFloatingPointAudio: true);
 
         await Assert.That(eventFired).IsTrue();
     }
@@ -110,7 +110,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, 400, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer.AsSpan(0, 400), isFloatingPointAudio: true);
 
         await Assert.That(fader.Active).IsFalse();
     }
@@ -129,7 +129,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(originalValue), 0, buffer, i * 2, 2);
         }
 
-        fader.FadeBuffer(buffer, buffer.Length, isFloatingPointAudio: false);
+        fader.FadeBuffer(buffer, isFloatingPointAudio: false);
 
         var reduced = false;
         for (var i = 0; i < sampleCount; i++)
@@ -159,7 +159,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes((short)30000), 0, buffer, i * 2, 2);
         }
 
-        fader.FadeBuffer(buffer, 400, isFloatingPointAudio: false);
+        fader.FadeBuffer(buffer.AsSpan(0, 400), isFloatingPointAudio: false);
 
         await Assert.That(eventFired).IsTrue();
     }
@@ -179,7 +179,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, buffer.Length, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer, isFloatingPointAudio: true);
 
         await Assert.That(eventFired).IsFalse();
     }
@@ -199,7 +199,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, 800, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer.AsSpan(0, 800), isFloatingPointAudio: true);
 
         await Assert.That(eventCount).IsEqualTo(1);
     }
@@ -216,7 +216,7 @@ public sealed class TestVolumeFader
             Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, buffer, i * 4, 4);
         }
 
-        fader.FadeBuffer(buffer, 400, isFloatingPointAudio: true);
+        fader.FadeBuffer(buffer.AsSpan(0, 400), isFloatingPointAudio: true);
 
         await Assert.That(fader.Active).IsFalse();
     }

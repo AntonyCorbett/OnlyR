@@ -1,4 +1,5 @@
-﻿using NAudio.Lame;
+﻿using NAudio.CoreAudioApi;
+using NAudio.Lame;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using OnlyR.Core.Enums;
@@ -10,6 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace OnlyR.Core.Recorder;
 
@@ -29,9 +32,9 @@ public sealed class AudioRecorder : IDisposable
     // drift between the two independent capture clocks.
     private const int MixBufferSeconds = 5;
 
+    private readonly Lock _writerLock = new();
     private Stream? _audioWriter;
-    private IWaveIn? _waveSource;
-    private WaveOutEvent? _silenceWaveOut;
+    private WaveOut? _silenceWaveOut;
     private SampleAggregator? _sampleAggregator;
     private VolumeFader? _fader;
     private RecordingStatus _recordingStatus;
@@ -39,9 +42,12 @@ public sealed class AudioRecorder : IDisposable
     private string? _tempRecordingFilePath;
     private string? _finalRecordingFilePath;
 
+    private WaveIn? _micCapture;
+    private WasapiRecorder? _loopbackCapture;
+    private bool _singleSourceIsFloat;
+    private byte[]? _loopbackScratchBuffer;
+
     // Mixed (microphone + loopback) recording path. Only used when both sources are active.
-    private WaveInEvent? _micCapture;
-    private WasapiLoopbackCapture? _loopbackCapture;
     private BufferedWaveProvider? _micBuffer;
     private BufferedWaveProvider? _loopbackBuffer;
     private MixingSampleProvider? _mixer;
@@ -119,30 +125,44 @@ public sealed class AudioRecorder : IDisposable
     // Single-source recording (microphone-only or loopback-only) - the original, unchanged pipeline.
     private void StartSingleSourceRecording(RecordingConfig recordingConfig)
     {
+        WaveFormat sourceFormat;
+
         if (recordingConfig.UseLoopbackCapture)
         {
-            _waveSource = new WasapiLoopbackCapture();
-            ConfigureSilenceOut(_waveSource.WaveFormat);
+            _loopbackCapture = CreateLoopbackRecorder();
+            sourceFormat = _loopbackCapture.WaveFormat.AsStandardWaveFormat();
+
+            ConfigureSilenceOut(sourceFormat);
+
+            _loopbackCapture.DataAvailable += SingleSourceLoopbackDataAvailableHandler;
+            _loopbackCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;
         }
         else
         {
-            _waveSource = new WaveIn
+            _micCapture = new WaveIn
             {
                 WaveFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount),
                 DeviceNumber = recordingConfig.RecordingDevice,
             };
+            sourceFormat = _micCapture.WaveFormat;
+
+            _micCapture.DataAvailable += SingleSourceMicDataAvailableHandler;
+            _micCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;
         }
 
-        InitAggregator(_waveSource.WaveFormat.SampleRate);
-        InitFader(_waveSource.WaveFormat.SampleRate);
+        _singleSourceIsFloat = sourceFormat.BitsPerSample == 32;
 
-        _waveSource.DataAvailable += WaveSourceDataAvailableHandler;
-        _waveSource.RecordingStopped += WaveSourceRecordingStoppedHandler;
+        InitAggregator(sourceFormat.SampleRate);
+        InitFader(sourceFormat.SampleRate);
 
-        _audioWriter = CreateAudioWriter(recordingConfig, _waveSource.WaveFormat);
+        _audioWriter = CreateAudioWriter(recordingConfig, sourceFormat);
 
-        _waveSource.StartRecording();
+        _micCapture?.StartRecording();
+        _loopbackCapture?.StartRecording();
     }
+
+    private static WasapiRecorder CreateLoopbackRecorder() =>
+        new WasapiRecorderBuilder().WithLoopbackCapture().Build();
 
     // Mixed recording: microphone + system loopback combined into a single output stream.
     // Each capture fills its own buffer; reads are clocked off the loopback capture (kept ticking
@@ -155,23 +175,21 @@ public sealed class AudioRecorder : IDisposable
         // Output matches single-source recordings: 16-bit PCM at the configured rate/channels.
         var outputFormat = new WaveFormat(recordingConfig.SampleRate, recordingConfig.ChannelCount);
 
-        _micCapture = new WaveInEvent
+        _micCapture = new WaveIn
         {
             WaveFormat = outputFormat,
             DeviceNumber = recordingConfig.RecordingDevice,
         };
-        _micBuffer = new BufferedWaveProvider(_micCapture.WaveFormat)
+        _micBuffer = new BufferedWaveProvider(_micCapture.WaveFormat, TimeSpan.FromSeconds(MixBufferSeconds))
         {
             DiscardOnBufferOverflow = true,
-            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
         };
         _micCapture.DataAvailable += MicCaptureDataAvailableHandler;
 
-        _loopbackCapture = new WasapiLoopbackCapture();
-        _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat)
+        _loopbackCapture = CreateLoopbackRecorder();
+        _loopbackBuffer = new BufferedWaveProvider(_loopbackCapture.WaveFormat, TimeSpan.FromSeconds(MixBufferSeconds))
         {
             DiscardOnBufferOverflow = true,
-            BufferDuration = TimeSpan.FromSeconds(MixBufferSeconds),
         };
         _loopbackCapture.DataAvailable += LoopbackCaptureDataAvailableHandler;
         _loopbackCapture.RecordingStopped += WaveSourceRecordingStoppedHandler;
@@ -244,11 +262,11 @@ public sealed class AudioRecorder : IDisposable
 
     private void ConfigureSilenceOut(WaveFormat waveFormat)
     {
-        // WasapiLoopbackCapture doesn't record any audio when nothing is playing
+        // Loopback capture doesn't record any audio when nothing is playing
         // so we must play some silence!
 
         var silence = new SilenceProvider(waveFormat);
-        _silenceWaveOut = new WaveOutEvent();
+        _silenceWaveOut = new WaveOut();
         _silenceWaveOut.Init(silence);
         _silenceWaveOut.Play();
     }
@@ -317,7 +335,6 @@ public sealed class AudioRecorder : IDisposable
 
     private void StopCaptures()
     {
-        _waveSource?.StopRecording();
         _micCapture?.StopRecording();
         _loopbackCapture?.StopRecording();
         _silenceWaveOut?.Stop();
@@ -384,48 +401,71 @@ public sealed class AudioRecorder : IDisposable
         OnRecordingStatusChangeEvent(new RecordingStatusChangeEventArgs(RecordingStatus.NotRecording));
     }
 
-    private void WaveSourceDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
+    private void SingleSourceMicDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
     {
         if (_isPaused)
         {
             return;
         }
 
-        // as audio samples are provided by WaveIn, we hook in here
-        // and write them to disk, (encoding to MP3 on the fly if needed)
-        var buffer = waveInEventArgs.Buffer;
-        var bytesRecorded = waveInEventArgs.BytesRecorded;
+        ProcessSingleSourceBuffer(waveInEventArgs.Buffer.AsSpan(0, waveInEventArgs.BytesRecorded));
+    }
 
-        var isFloatingPointAudio = _waveSource?.WaveFormat.BitsPerSample == 32;
+    private void SingleSourceLoopbackDataAvailableHandler(
+        ReadOnlySpan<byte> buffer, AudioClientBufferFlags flags, long devicePosition, long qpcPosition)
+    {
+        if (_isPaused)
+        {
+            return;
+        }
 
+        // The WASAPI span is only valid for the duration of this callback, and the fader
+        // modifies samples in place, so take a copy before processing.
+        ProcessSingleSourceBuffer(CopyToScratchBuffer(buffer));
+    }
+
+    // we hook in here and write the samples to disk, (encoding to MP3 on the fly if needed)
+    private void ProcessSingleSourceBuffer(Span<byte> buffer)
+    {
         if (_fader?.Active == true)
         {
             // we're fading out...
-            _fader.FadeBuffer(buffer, bytesRecorded, isFloatingPointAudio);
+            _fader.FadeBuffer(buffer, _singleSourceIsFloat);
         }
 
-        AddToSampleAggregator(buffer, bytesRecorded, isFloatingPointAudio);
+        AddToSampleAggregator(buffer, _singleSourceIsFloat);
 
-        _audioWriter?.Write(buffer, 0, bytesRecorded);
+        lock (_writerLock)
+        {
+            _audioWriter?.Write(buffer);
+        }
     }
 
-    private void AddToSampleAggregator(byte[] buffer, int bytesRecorded, bool isFloatingPointAudio)
+    private Span<byte> CopyToScratchBuffer(ReadOnlySpan<byte> buffer)
     {
-        var buff = new WaveBuffer(buffer);
+        if (_loopbackScratchBuffer == null || _loopbackScratchBuffer.Length < buffer.Length)
+        {
+            _loopbackScratchBuffer = new byte[buffer.Length];
+        }
 
+        var scratch = _loopbackScratchBuffer.AsSpan(0, buffer.Length);
+        buffer.CopyTo(scratch);
+        return scratch;
+    }
+
+    private void AddToSampleAggregator(ReadOnlySpan<byte> buffer, bool isFloatingPointAudio)
+    {
         if (isFloatingPointAudio)
         {
-            for (var index = 0; index < bytesRecorded / 4; ++index)
+            foreach (var sample in MemoryMarshal.Cast<byte, float>(buffer))
             {
-                var sample = buff.FloatBuffer[index];
                 _sampleAggregator?.Add(sample);
             }
         }
         else
         {
-            for (var index = 0; index < bytesRecorded / 2; ++index)
+            foreach (var sample in MemoryMarshal.Cast<byte, short>(buffer))
             {
-                var sample = buff.ShortBuffer[index];
                 _sampleAggregator?.Add(sample / 32768F);
             }
         }
@@ -442,15 +482,16 @@ public sealed class AudioRecorder : IDisposable
         _micBuffer?.AddSamples(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
     }
 
-    private void LoopbackCaptureDataAvailableHandler(object? sender, WaveInEventArgs waveInEventArgs)
+    private void LoopbackCaptureDataAvailableHandler(
+        ReadOnlySpan<byte> buffer, AudioClientBufferFlags flags, long devicePosition, long qpcPosition)
     {
         if (_isPaused)
         {
             return;
         }
 
-        _loopbackBuffer?.AddSamples(waveInEventArgs.Buffer, 0, waveInEventArgs.BytesRecorded);
-        PumpMixedAudio(waveInEventArgs.BytesRecorded);
+        _loopbackBuffer?.AddSamples(buffer);
+        PumpMixedAudio(buffer.Length);
     }
 
     // Reads the amount of mixed audio that corresponds to the loopback data just received,
@@ -477,7 +518,7 @@ public sealed class AudioRecorder : IDisposable
             _mixSampleBuffer = new float[sampleCount];
         }
 
-        var samplesRead = _mixer.Read(_mixSampleBuffer, 0, sampleCount);
+        var samplesRead = _mixer.Read(_mixSampleBuffer.AsSpan(0, sampleCount));
         if (samplesRead <= 0)
         {
             return;
@@ -492,7 +533,7 @@ public sealed class AudioRecorder : IDisposable
 
         if (_fader?.Active == true)
         {
-            _fader.FadeBuffer(_mixSampleBuffer, samplesRead);
+            _fader.FadeBuffer(_mixSampleBuffer.AsSpan(0, samplesRead));
         }
 
         for (var index = 0; index < samplesRead; ++index)
@@ -519,7 +560,10 @@ public sealed class AudioRecorder : IDisposable
             _mixPcmBuffer[offset++] = (byte)((value >> 8) & 0xFF);
         }
 
-        _audioWriter?.Write(_mixPcmBuffer, 0, byteCount);
+        lock (_writerLock)
+        {
+            _audioWriter?.Write(_mixPcmBuffer, 0, byteCount);
+        }
     }
 
     private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
@@ -559,11 +603,8 @@ public sealed class AudioRecorder : IDisposable
     {
         _isPaused = false;
 
-        _audioWriter?.Flush();
-
-        _waveSource?.Dispose();
-        _waveSource = null;
-
+        // Captures are disposed outside the writer lock: disposal waits for the capture thread,
+        // which may be blocked on that lock mid-write.
         _micCapture?.Dispose();
         _micCapture = null;
 
@@ -577,8 +618,17 @@ public sealed class AudioRecorder : IDisposable
         _silenceWaveOut?.Dispose();
         _silenceWaveOut = null;
 
-        _audioWriter?.Dispose();
-        _audioWriter = null;
+        // Cleanup runs on both the capture thread (RecordingStopped) and the caller's thread (Dispose),
+        // so the writer is detached atomically and only the thread that claims it flushes and disposes it.
+        Stream? writer;
+        lock (_writerLock)
+        {
+            writer = _audioWriter;
+            _audioWriter = null;
+        }
+
+        writer?.Flush();
+        writer?.Dispose();
 
         if (_fader != null)
         {

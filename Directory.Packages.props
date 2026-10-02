@@ -6,23 +6,24 @@
   <ItemGroup>
     <!-- OnlyR.Core -->
     <PackageVersion Include="NAudio.Lame" Version="2.1.0" />
-    <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
-    <PackageVersion Include="NAudio.WinForms" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.10" />
+    <PackageVersion Include="NAudio.Wasapi" Version="3.1.0" />
+    <PackageVersion Include="NAudio.WinForms" Version="3.1.0" />
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="10.0.11" />
     <!-- OnlyR -->
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
     <PackageVersion Include="MaterialDesignThemes" Version="5.3.2" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+    <PackageVersion Include="NAudio.WinMM" Version="3.1.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <!-- OnlyR.Tests -->
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="Rocks" Version="10.3.0" />
-    <PackageVersion Include="TUnit" Version="1.63.0" />
-    <PackageVersion Include="TUnit.Mocks" Version="1.63.0" />
+    <PackageVersion Include="TUnit" Version="1.66.16" />
+    <PackageVersion Include="TUnit.Mocks" Version="1.66.16" />
     <!-- Shared -->
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="5.0.0" />
   </ItemGroup>
 </Project>
