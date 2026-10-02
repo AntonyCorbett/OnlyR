@@ -10,6 +10,7 @@
     <PackageReference Include="NAudio.Wasapi" />
     <PackageReference Include="NAudio.WinForms" />
     <PackageReference Include="Microsoft.Windows.Compatibility" />
+    <PackageReference Include="NAudio.WinMM" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
