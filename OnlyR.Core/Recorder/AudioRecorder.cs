@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace OnlyR.Core.Recorder;
 
@@ -31,6 +32,7 @@ public sealed class AudioRecorder : IDisposable
     // drift between the two independent capture clocks.
     private const int MixBufferSeconds = 5;
 
+    private readonly Lock _writerLock = new();
     private Stream? _audioWriter;
     private WaveOut? _silenceWaveOut;
     private SampleAggregator? _sampleAggregator;
@@ -433,7 +435,10 @@ public sealed class AudioRecorder : IDisposable
 
         AddToSampleAggregator(buffer, _singleSourceIsFloat);
 
-        _audioWriter?.Write(buffer);
+        lock (_writerLock)
+        {
+            _audioWriter?.Write(buffer);
+        }
     }
 
     private Span<byte> CopyToScratchBuffer(ReadOnlySpan<byte> buffer)
@@ -555,7 +560,10 @@ public sealed class AudioRecorder : IDisposable
             _mixPcmBuffer[offset++] = (byte)((value >> 8) & 0xFF);
         }
 
-        _audioWriter?.Write(_mixPcmBuffer, 0, byteCount);
+        lock (_writerLock)
+        {
+            _audioWriter?.Write(_mixPcmBuffer, 0, byteCount);
+        }
     }
 
     private void OnRecordingStatusChangeEvent(RecordingStatusChangeEventArgs e)
@@ -595,8 +603,8 @@ public sealed class AudioRecorder : IDisposable
     {
         _isPaused = false;
 
-        _audioWriter?.Flush();
-
+        // Captures are disposed outside the writer lock: disposal waits for the capture thread,
+        // which may be blocked on that lock mid-write.
         _micCapture?.Dispose();
         _micCapture = null;
 
@@ -610,8 +618,17 @@ public sealed class AudioRecorder : IDisposable
         _silenceWaveOut?.Dispose();
         _silenceWaveOut = null;
 
-        _audioWriter?.Dispose();
-        _audioWriter = null;
+        // Cleanup runs on both the capture thread (RecordingStopped) and the caller's thread (Dispose),
+        // so the writer is detached atomically and only the thread that claims it flushes and disposes it.
+        Stream? writer;
+        lock (_writerLock)
+        {
+            writer = _audioWriter;
+            _audioWriter = null;
+        }
+
+        writer?.Flush();
+        writer?.Dispose();
 
         if (_fader != null)
         {
