@@ -128,7 +128,7 @@ public sealed class AudioRecorder : IDisposable
         if (recordingConfig.UseLoopbackCapture)
         {
             _loopbackCapture = CreateLoopbackRecorder();
-            sourceFormat = _loopbackCapture.WaveFormat;
+            sourceFormat = _loopbackCapture.WaveFormat.AsStandardWaveFormat();
 
             ConfigureSilenceOut(sourceFormat);
 
