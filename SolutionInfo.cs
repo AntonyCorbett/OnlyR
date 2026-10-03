@@ -10,4 +10,4 @@ using System.Runtime.Versioning;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("2.3.0.3")]
+[assembly: AssemblyVersion("2.4.0.1")]
