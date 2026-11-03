@@ -37,6 +37,8 @@ internal sealed class MockAudioService : IAudioService
 
     public event EventHandler? StoppedEvent;
 
+    public event EventHandler? RecordingFinalisedEvent;
+
     public event EventHandler? StopRequested;
 
     public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
@@ -110,6 +112,7 @@ internal sealed class MockAudioService : IAudioService
     private void OnStoppedEvent()
     {
         StoppedEvent?.Invoke(this, EventArgs.Empty);
+        RecordingFinalisedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnRecordingProgressEvent(RecordingProgressEventArgs e)

@@ -14,7 +14,9 @@
     Closing="WindowClosing"
     DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
     Icon="iconmic.ico"
+    Loaded="WindowLoaded"
     ResizeMode="CanMinimize"
+    StateChanged="WindowStateChanged"
     Topmost="{Binding AlwaysOnTop, Mode=OneWay}"
     mc:Ignorable="d">
 

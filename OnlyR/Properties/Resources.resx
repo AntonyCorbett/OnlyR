@@ -277,6 +277,10 @@
     <value>Max recording time</value>
     <comment>Settings page combobox title</comment>
   </data>
+  <data name="SETTINGS_MINIMIZE_TO_TRAY" xml:space="preserve">
+    <value>Minimise to the notification area</value>
+    <comment>Settings page checkbox title</comment>
+  </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
     <value>Open recordings...</value>
     <comment>Settings page Recordings button caption</comment>
@@ -381,5 +385,29 @@
   <data name="NO_AUDIO_SOURCE_HINT" xml:space="preserve">
     <value>Select a recording device or enable loopback capture</value>
     <comment>Tooltip shown when no audio source is selected and recording is disabled</comment>
+  </data>
+  <data name="TRAY_EXIT" xml:space="preserve">
+    <value>Exit</value>
+    <comment>Notification area menu item</comment>
+  </data>
+  <data name="TRAY_OPEN_RECORDINGS" xml:space="preserve">
+    <value>Open recordings folder</value>
+    <comment>Notification area menu item</comment>
+  </data>
+  <data name="TRAY_SHOW_APP" xml:space="preserve">
+    <value>Show OnlyR</value>
+    <comment>Notification area menu item</comment>
+  </data>
+  <data name="TRAY_START_RECORDING" xml:space="preserve">
+    <value>Start recording</value>
+    <comment>Notification area menu item</comment>
+  </data>
+  <data name="TRAY_STOP_RECORDING" xml:space="preserve">
+    <value>Stop recording</value>
+    <comment>Notification area menu item</comment>
+  </data>
+  <data name="TRAY_TOOLTIP_RECORDING" xml:space="preserve">
+    <value>OnlyR (recording)</value>
+    <comment>Notification area icon tooltip while recording</comment>
   </data>
 </root>
