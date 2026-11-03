@@ -11,10 +11,12 @@ using OnlyR.Services.PurgeRecordings;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
+using OnlyR.Services.Tray;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
 using OnlyR.ViewModel.Messages;
 using Serilog;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -79,6 +81,7 @@ public partial class App
         serviceCollection.AddSingleton<IPurgeRecordingsService, PurgeRecordingsService>();
         serviceCollection.AddSingleton<ISilenceService, SilenceService>();
         serviceCollection.AddSingleton<MainViewModel>();
+        serviceCollection.AddSingleton<ITrayIconService, TrayIconService>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
@@ -87,6 +90,7 @@ public partial class App
     protected override void OnExit(ExitEventArgs e)
     {
         SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged;
+        (Ioc.Default.GetService<ITrayIconService>() as IDisposable)?.Dispose();
         _appMutex?.Dispose();
         Log.Logger.Information("==== Exit ====");
     }
