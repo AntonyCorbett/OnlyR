@@ -92,6 +92,13 @@ public class Options
 
     public bool StartMinimized { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the application should keep running in
+    /// the notification area (and stay out of the taskbar) when the window is minimized
+    /// or closed.
+    /// </summary>
+    public bool MinimizeToTray { get; set; }
+
     public bool DarkMode { get; set; }
 
     public AppTheme? AppTheme { get; set; }

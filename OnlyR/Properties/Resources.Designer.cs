@@ -520,6 +520,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimise to the notification area.
+        /// </summary>
+        public static string SETTINGS_MINIMIZE_TO_TRAY {
+            get {
+                return ResourceManager.GetString("SETTINGS_MINIMIZE_TO_TRAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recording device.
         /// </summary>
         public static string SETTINGS_RECORDING_DEVICE {
@@ -705,6 +714,60 @@ namespace OnlyR.Properties {
         public static string THEME_SYSTEM {
             get {
                 return ResourceManager.GetString("THEME_SYSTEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        public static string TRAY_EXIT {
+            get {
+                return ResourceManager.GetString("TRAY_EXIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open recordings folder.
+        /// </summary>
+        public static string TRAY_OPEN_RECORDINGS {
+            get {
+                return ResourceManager.GetString("TRAY_OPEN_RECORDINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show OnlyR.
+        /// </summary>
+        public static string TRAY_SHOW_APP {
+            get {
+                return ResourceManager.GetString("TRAY_SHOW_APP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start recording.
+        /// </summary>
+        public static string TRAY_START_RECORDING {
+            get {
+                return ResourceManager.GetString("TRAY_START_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop recording.
+        /// </summary>
+        public static string TRAY_STOP_RECORDING {
+            get {
+                return ResourceManager.GetString("TRAY_STOP_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OnlyR (recording).
+        /// </summary>
+        public static string TRAY_TOOLTIP_RECORDING {
+            get {
+                return ResourceManager.GetString("TRAY_TOOLTIP_RECORDING", resourceCulture);
             }
         }
         
