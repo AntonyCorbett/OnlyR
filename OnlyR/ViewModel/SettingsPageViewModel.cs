@@ -238,6 +238,20 @@ public class SettingsPageViewModel : ObservableObject, IPage
         }
     }
 
+    public bool MinimizeToTray
+    {
+        get => _optionsService.Options.MinimizeToTray;
+        set
+        {
+            if (_optionsService.Options.MinimizeToTray != value)
+            {
+                _optionsService.Options.MinimizeToTray = value;
+                OnPropertyChanged();
+                WeakReferenceMessenger.Default.Send(new MinimizeToTrayChanged());
+            }
+        }
+    }
+
     public IEnumerable<ThemeModeItem> ThemeModes => _themeModes;
 
     public AppTheme AppTheme
