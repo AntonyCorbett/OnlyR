@@ -11,6 +11,12 @@ public interface IAudioService
 
     event EventHandler StoppedEvent;
 
+    /// <summary>
+    /// Raised after the recording has stopped and the file has been moved to its
+    /// final destination (or the move has failed). May be raised on the audio capture thread.
+    /// </summary>
+    event EventHandler RecordingFinalisedEvent;
+
     event EventHandler StopRequested;
 
     event EventHandler<RecordingProgressEventArgs> RecordingProgressEvent;
