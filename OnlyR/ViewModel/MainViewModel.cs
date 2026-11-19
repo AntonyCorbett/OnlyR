@@ -131,7 +131,10 @@ public class MainViewModel : ObservableObject
             if (recordingPageModel.IsRecordingOrStopping)
             {
                 e.Cancel = true;
-                _audioService.StoppedEvent += RecordingStoppedDuringAppClose;
+                // wait until the file has been moved to its final destination before closing.
+                // Unsubscribe first so that repeated close attempts don't stack handlers.
+                _audioService.RecordingFinalisedEvent -= RecordingFinalisedDuringAppClose;
+                _audioService.RecordingFinalisedEvent += RecordingFinalisedDuringAppClose;
                 _audioService.StopRecording(_optionsService.Options.FadeOut);
             }
         }
@@ -139,16 +142,12 @@ public class MainViewModel : ObservableObject
         {
             // prevent window closing when recording...
             recordingPageModel.Closing(sender, e);
-
-            if (!e.Cancel)
-            {
-                WeakReferenceMessenger.Default.Send(new BeforeShutDownMessage(CurrentPageName));
-                (_audioService as IDisposable)?.Dispose();
-            }
         }
 
         if (!e.Cancel)
         {
+            WeakReferenceMessenger.Default.Send(new BeforeShutDownMessage(CurrentPageName));
+            (_audioService as IDisposable)?.Dispose();
             _purgeRecordingsService.Close();
         }
     }
@@ -176,9 +175,14 @@ public class MainViewModel : ObservableObject
         ((IPage)CurrentPage.DataContext).Activated(message.State);
     }
 
-    private void RecordingStoppedDuringAppClose(object? sender, EventArgs e)
+    private void RecordingFinalisedDuringAppClose(object? sender, EventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new ShutDownApplicationMessage());
+        _audioService.RecordingFinalisedEvent -= RecordingFinalisedDuringAppClose;
+
+        // the event may be raised on the audio capture thread, so close the window on the
+        // UI thread without blocking the thread that finalised the recording.
+        Application.Current?.Dispatcher.BeginInvoke(
+            () => WeakReferenceMessenger.Default.Send(new ShutDownApplicationMessage()));
     }
 
     private void GetVersionData()
