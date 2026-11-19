@@ -122,11 +122,11 @@
     <comment>Application title (for accessibility)</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_NAME" xml:space="preserve">
-    <value>Input volume level</value>
+    <value>Nível de volume de entrada</value>
     <comment>Accessibility name for the volume meter on the recording page</comment>
   </data>
   <data name="ACCESSIBILITY_VOLUME_LEVEL_HELP" xml:space="preserve">
-    <value>Displays the current recording input level as a value from 0 to 100</value>
+    <value>Exibe o nível de gravação atual como um valor de 0 a 100</value>
     <comment>Accessibility help text for the volume meter on the recording page</comment>
   </data>
   <data name="APP_VER" xml:space="preserve">
@@ -210,20 +210,20 @@
     <value>1 minuto</value>
   </data>
   <data name="PAUSED" xml:space="preserve">
-    <value>Paused</value>
+    <value>Pausado</value>
   </data>
   <data name="PAUSE_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Pause recording</value>
+    <value>Pausa gravação</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Gravando</value>
   </data>
   <data name="RECORDINGS_FOLDER_TOOLTIP" xml:space="preserve">
-    <value>Open recordings folder</value>
+    <value>Abrir pasta de gravações</value>
     <comment>Tooltip for the button that opens the recordings folder</comment>
   </data>
   <data name="RECORDING_SALVAGED" xml:space="preserve">
-    <value>Recording salvaged from last session!</value>
+    <value>Gravação recuperada da última sessão!</value>
     <comment>Message displayed at app startup if a recording was found from the previous session that was not properly finalised.</comment>
   </data>
   <data name="RESTART_LANGUAGE" xml:space="preserve">
@@ -231,7 +231,7 @@
     <comment>See Settings page</comment>
   </data>
   <data name="RESUME_RECORDING_TOOLTIP" xml:space="preserve">
-    <value>Resume recording</value>
+    <value>Retomar a gravação</value>
   </data>
   <data name="SAVE_TO_DRIVE" xml:space="preserve">
     <value>Salvar as gravações de hoje no disco {0}</value>
@@ -259,7 +259,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_SHOW_PAUSE_BUTTON" xml:space="preserve">
-    <value>Show pause control</value>
+    <value>Mostrar controle de pausa</value>
   </data>
   <data name="SETTINGS_FADE_OUT" xml:space="preserve">
     <value>Fade out gravações</value>
@@ -270,7 +270,7 @@
     <comment>Settings page genre title</comment>
   </data>
   <data name="SETTINGS_LOOPBACK_CAPTURE" xml:space="preserve">
-    <value>Use loopback capture</value>
+    <value>Usar captura loopback</value>
     <comment>Settings page checkbox title</comment>
   </data>
   <data name="SETTINGS_MAX_RECORDING_TIME" xml:space="preserve">
@@ -278,7 +278,7 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_BTN" xml:space="preserve">
-    <value>Open recordings...</value>
+    <value>Abrir gravações...</value>
     <comment>Settings page Recordings button caption</comment>
   </data>
   <data name="SETTINGS_RECORDINGS_FOLDER" xml:space="preserve">
@@ -302,19 +302,19 @@
     <comment>Settings page combobox title</comment>
   </data>
   <data name="SETTINGS_THEME" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
     <comment>Settings page theme combobox title</comment>
   </data>
   <data name="THEME_LIGHT" xml:space="preserve">
-    <value>Light</value>
+    <value>Claro</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_DARK" xml:space="preserve">
-    <value>Dark</value>
+    <value>Escuro</value>
     <comment>Theme mode option</comment>
   </data>
   <data name="THEME_SYSTEM" xml:space="preserve">
-    <value>System (default)</value>
+    <value>Sistema (Padrão)</value>
     <comment>Theme mode option - follows OS theme</comment>
   </data>
   <data name="SETTINGS_START_MINIMIZED" xml:space="preserve">
@@ -369,17 +369,17 @@
     <value>{0} segundos</value>
   </data>
   <data name="SETTINGS_AUDIO_FORMAT" xml:space="preserve">
-    <value>Audio format</value>
+    <value>Formato de áudio</value>
   </data>
   <data name="NO_AUDIO_PRODUCED" xml:space="preserve">
-    <value>No audio produced!</value>
+    <value>Nenhum áudio produzido!</value>
   </data>
   <data name="RECORDING_DEVICE_NONE" xml:space="preserve">
-    <value>None</value>
+    <value>Nenhum</value>
     <comment>First (no microphone) entry in the Settings =&gt; Recording device list</comment>
   </data>
   <data name="NO_AUDIO_SOURCE_HINT" xml:space="preserve">
-    <value>Select a recording device or enable loopback capture</value>
+    <value>Selecione um dispositivo de gravação ou habilite captura loopback</value>
     <comment>Tooltip shown when no audio source is selected and recording is disabled</comment>
   </data>
 </root>
