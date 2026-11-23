@@ -131,6 +131,11 @@ public partial class MainWindow
         Close();
     }
 
+    private void WindowClosed(object? sender, EventArgs e)
+    {
+        (_trayIconService as IDisposable)?.Dispose();
+    }
+
     private void WindowLoaded(object sender, RoutedEventArgs e)
     {
         if (_optionsService?.Options.StartMinimized == true &&

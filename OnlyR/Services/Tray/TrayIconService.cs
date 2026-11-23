@@ -55,15 +55,18 @@ public sealed class TrayIconService : ITrayIconService, IDisposable
 
     public void RequestExit()
     {
-        if (!_mainViewModel.RequestExit() && _notifyIcon != null)
+        var result = _mainViewModel.RequestExit();
+
+        if (result == ExitRequestResult.Requested || _notifyIcon == null)
         {
-            // closing is not allowed while recording (see the AllowCloseWhenRecording option)...
-            _notifyIcon.ShowBalloonTip(
-                4000,
-                "OnlyR",
-                Properties.Resources.TRAY_STOP_RECORDING_FIRST,
-                Forms.ToolTipIcon.Info);
+            return;
         }
+
+        var message = result == ExitRequestResult.StopFailed
+            ? Properties.Resources.ERROR_STOP
+            : Properties.Resources.TRAY_STOP_RECORDING_FIRST;
+
+        _notifyIcon.ShowBalloonTip(4000, "OnlyR", message, Forms.ToolTipIcon.Info);
     }
 
     public void Dispose()

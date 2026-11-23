@@ -100,7 +100,6 @@ public partial class App
     protected override void OnExit(ExitEventArgs e)
     {
         SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged;
-        (Ioc.Default.GetService<ITrayIconService>() as IDisposable)?.Dispose();
         _appMutex?.Dispose();
         Log.Logger.Information("==== Exit ====");
     }

@@ -90,6 +90,7 @@ public class MainViewModel : ObservableObject
             new SettingsPageViewModel(audioService, optionsService, commandLineService));
 
         RecordingPageModel.PropertyChanged += OnRecordingPagePropertyChanged;
+        _audioService.RecordingFinalisedEvent += OnRecordingFinalised;
 
         _unfinishedRecordingFileFoundOnStartup = GetUnfinishedRecordingPaths();
 
@@ -116,7 +117,10 @@ public class MainViewModel : ObservableObject
 
     public bool IsRecording => RecordingPageModel.IsRecordingOrStopping;
 
-    public bool CanRecord => RecordingPageModel.CanRecord;
+    public bool CanRecord =>
+        RecordingPageModel.CanRecord &&
+        !_audioService.HasPendingRecording &&
+        !_exitPending;
 
     private RecordingPageViewModel RecordingPageModel =>
         (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
@@ -165,7 +169,15 @@ public class MainViewModel : ObservableObject
         }
     }
 
-    public void StartRecording() => RecordingPageModel.StartRecordingCommand.Execute(null);
+    public void StartRecording()
+    {
+        if (!CanRecord)
+        {
+            return;
+        }
+
+        RecordingPageModel.StartRecordingCommand.Execute(null);
+    }
 
     public void StopRecording() => RecordingPageModel.StopRecordingCommand.Execute(null);
 
@@ -175,35 +187,32 @@ public class MainViewModel : ObservableObject
     /// Stops any recording in progress (so that the recording file is finalised)
     /// and then shuts the application down.
     /// </summary>
-    /// <returns>
-    /// true if the shutdown has been started or is pending; false if the exit is not
-    /// allowed because a recording is in progress and closing while recording is disabled.
-    /// </returns>
-    public bool RequestExit()
+    internal ExitRequestResult RequestExit()
     {
         if (App.IsShuttingDown)
         {
-            return true;
+            return ExitRequestResult.Requested;
         }
 
         if (!_optionsService.Options.AllowCloseWhenRecording &&
             (IsRecording || _audioService.HasPendingRecording))
         {
-            return false;
+            return ExitRequestResult.BlockedWhileRecording;
         }
 
         if (!_audioService.HasPendingRecording)
         {
             ShutDown();
-            return true;
+            return ExitRequestResult.Requested;
         }
 
         if (_exitPending)
         {
-            return true;
+            return ExitRequestResult.Requested;
         }
 
         _exitPending = true;
+        OnPropertyChanged(nameof(CanRecord));
         _ = Interlocked.Exchange(ref _exitFinalised, 0);
         _audioService.RecordingFinalisedEvent += OnRecordingFinalisedBeforeExit;
 
@@ -211,7 +220,8 @@ public class MainViewModel : ObservableObject
         {
             _audioService.RecordingFinalisedEvent -= OnRecordingFinalisedBeforeExit;
             _exitPending = false;
-            return false;
+            OnPropertyChanged(nameof(CanRecord));
+            return ExitRequestResult.StopFailed;
         }
 
         if (!_audioService.HasPendingRecording &&
@@ -221,7 +231,7 @@ public class MainViewModel : ObservableObject
             OnRecordingFinalisedBeforeExit(this, EventArgs.Empty);
         }
 
-        return true;
+        return ExitRequestResult.Requested;
     }
 
     private void OnAlwaysOnTopChanged(object recipient, AlwaysOnTopChanged obj)
@@ -244,6 +254,12 @@ public class MainViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(CanRecord));
         }
+    }
+
+    private void OnRecordingFinalised(object? sender, EventArgs e)
+    {
+        // once the file has reached its final destination a new recording can start...
+        OnPropertyChanged(nameof(CanRecord));
     }
 
     private void OnRecordingFinalisedBeforeExit(object? sender, EventArgs e)

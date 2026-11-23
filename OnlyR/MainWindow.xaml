@@ -12,6 +12,7 @@
     Background="{DynamicResource MaterialDesign.Brush.Background}"
     AutomationProperties.Name="{x:Static resx:Resources.ACCESSIBILITY_ONLY_R}"
     Closing="WindowClosing"
+    Closed="WindowClosed"
     DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
     Icon="iconmic.ico"
     Loaded="WindowLoaded"
