@@ -41,6 +41,15 @@ public partial class App
     private readonly string _appString = "OnlyRAudioRecording";
     private Mutex? _appMutex;
 
+    /// <summary>
+    /// Gets a value indicating whether the application is shutting down for a reason
+    /// other than the user closing the window, such as Windows shutdown, an unhandled
+    /// exception or Exit from the notification area menu.
+    /// </summary>
+    internal static bool IsShuttingDown { get; private set; }
+
+    internal static void BeginShutdown() => IsShuttingDown = true;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         if (AnotherInstanceRunning())
@@ -64,6 +73,7 @@ public partial class App
         // unhandled exceptions thrown from UI thread
         e.Handled = true;
         Log.Logger.Fatal(e.Exception, "Unhandled exception");
+        BeginShutdown();
         Current.Shutdown();
     }
 
@@ -97,8 +107,15 @@ public partial class App
 
     protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
     {
+        BeginShutdown();
         WeakReferenceMessenger.Default.Send(new SessionEndingMessage(e));
         base.OnSessionEnding(e);
+
+        if (e.Cancel)
+        {
+            // the session end was cancelled (e.g. still recording)...
+            IsShuttingDown = false;
+        }
     }
 
     private static void ConfigureLogger()

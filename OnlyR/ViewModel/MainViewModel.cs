@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -38,6 +39,7 @@ public class MainViewModel : ObservableObject
     private readonly (string TempPath, string FinalPath)? _unfinishedRecordingFileFoundOnStartup;
     private FrameworkElement? _currentPage;
     private bool _exitPending;
+    private int _exitFinalised;
 
     private static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
 
@@ -173,29 +175,53 @@ public class MainViewModel : ObservableObject
     /// Stops any recording in progress (so that the recording file is finalised)
     /// and then shuts the application down.
     /// </summary>
-    public void RequestExit()
+    /// <returns>
+    /// true if the shutdown has been started or is pending; false if the exit is not
+    /// allowed because a recording is in progress and closing while recording is disabled.
+    /// </returns>
+    public bool RequestExit()
     {
-        if (!IsRecording)
+        if (App.IsShuttingDown)
+        {
+            return true;
+        }
+
+        if (!_optionsService.Options.AllowCloseWhenRecording &&
+            (IsRecording || _audioService.HasPendingRecording))
+        {
+            return false;
+        }
+
+        if (!_audioService.HasPendingRecording)
         {
             ShutDown();
-            return;
+            return true;
         }
 
         if (_exitPending)
         {
-            return;
+            return true;
         }
 
         _exitPending = true;
+        _ = Interlocked.Exchange(ref _exitFinalised, 0);
         _audioService.RecordingFinalisedEvent += OnRecordingFinalisedBeforeExit;
-        StopRecording();
 
-        if (!IsRecording)
+        if (!RecordingPageModel.TryStopRecording())
         {
-            // recording stopped before the subscription (or synchronously)
             _audioService.RecordingFinalisedEvent -= OnRecordingFinalisedBeforeExit;
-            ShutDown();
+            _exitPending = false;
+            return false;
         }
+
+        if (!_audioService.HasPendingRecording &&
+            Volatile.Read(ref _exitFinalised) == 0)
+        {
+            // the recording was finalised before the event subscription (or synchronously)...
+            OnRecordingFinalisedBeforeExit(this, EventArgs.Empty);
+        }
+
+        return true;
     }
 
     private void OnAlwaysOnTopChanged(object recipient, AlwaysOnTopChanged obj)
@@ -222,6 +248,11 @@ public class MainViewModel : ObservableObject
 
     private void OnRecordingFinalisedBeforeExit(object? sender, EventArgs e)
     {
+        if (Interlocked.Exchange(ref _exitFinalised, 1) != 0)
+        {
+            return;
+        }
+
         _audioService.RecordingFinalisedEvent -= OnRecordingFinalisedBeforeExit;
 
         // the event may be raised on the audio capture thread, so hand the shutdown
@@ -231,6 +262,12 @@ public class MainViewModel : ObservableObject
 
     private static void ShutDown()
     {
+        if (App.IsShuttingDown)
+        {
+            return;
+        }
+
+        App.BeginShutdown();
         Application.Current.Shutdown();
     }
 

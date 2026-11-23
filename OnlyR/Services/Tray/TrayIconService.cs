@@ -38,10 +38,7 @@ public sealed class TrayIconService : ITrayIconService, IDisposable
 
         _mainViewModel.PropertyChanged += OnMainViewModelPropertyChanged;
         WeakReferenceMessenger.Default.Register<MinimizeToTrayChanged>(this, (_, _) => UpdateIconVisibility());
-        WeakReferenceMessenger.Default.Register<ShutDownApplicationMessage>(this, (_, _) => Dispose());
     }
-
-    public bool IsExiting { get; private set; }
 
     public void Initialize(Window mainWindow)
     {
@@ -58,8 +55,15 @@ public sealed class TrayIconService : ITrayIconService, IDisposable
 
     public void RequestExit()
     {
-        IsExiting = true;
-        _mainViewModel.RequestExit();
+        if (!_mainViewModel.RequestExit() && _notifyIcon != null)
+        {
+            // closing is not allowed while recording (see the AllowCloseWhenRecording option)...
+            _notifyIcon.ShowBalloonTip(
+                4000,
+                "OnlyR",
+                Properties.Resources.TRAY_STOP_RECORDING_FIRST,
+                Forms.ToolTipIcon.Info);
+        }
     }
 
     public void Dispose()

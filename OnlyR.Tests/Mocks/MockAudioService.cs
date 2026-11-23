@@ -23,6 +23,7 @@ internal sealed class MockAudioService : IAudioService
     ];
 
     private RecordingStatus _status;
+    private bool _hasPendingRecording;
 
     public MockAudioService()
     {
@@ -38,6 +39,8 @@ internal sealed class MockAudioService : IAudioService
     public event EventHandler? StoppedEvent;
 
     public event EventHandler? RecordingFinalisedEvent;
+
+    public bool HasPendingRecording => _hasPendingRecording;
 
     public event EventHandler? StopRequested;
 
@@ -64,6 +67,7 @@ internal sealed class MockAudioService : IAudioService
     {
         if (_status == RecordingStatus.NotRecording)
         {
+            _hasPendingRecording = true;
             _status = RecordingStatus.Recording;
             OnStartedEvent();
             _timer.Start();
@@ -112,6 +116,7 @@ internal sealed class MockAudioService : IAudioService
     private void OnStoppedEvent()
     {
         StoppedEvent?.Invoke(this, EventArgs.Empty);
+        _hasPendingRecording = false;
         RecordingFinalisedEvent?.Invoke(this, EventArgs.Empty);
     }
 

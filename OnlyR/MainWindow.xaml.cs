@@ -127,6 +127,7 @@ public partial class MainWindow
 
     private void OnShutDownApplication(object recipient, ShutDownApplicationMessage obj)
     {
+        App.BeginShutdown();
         Close();
     }
 
@@ -141,7 +142,10 @@ public partial class MainWindow
 
     private void WindowStateChanged(object sender, EventArgs e)
     {
-        if (WindowState == WindowState.Minimized && MinimizeToTrayEnabled)
+        if (IsLoaded &&
+            WindowState == WindowState.Minimized &&
+            MinimizeToTrayEnabled &&
+            !App.IsShuttingDown)
         {
             HideToTray();
         }
@@ -152,14 +156,25 @@ public partial class MainWindow
 
     private void HideToTray()
     {
+        SaveCurrentPageState();
         Hide();
         WindowState = WindowState.Normal;
         SaveWindowPos();
     }
 
+    private void SaveCurrentPageState()
+    {
+        if (DataContext is MainViewModel m &&
+            m.CurrentPageName != null &&
+            m.CurrentPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
+        {
+            SaveSettingsWindowSize();
+        }
+    }
+
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        if (MinimizeToTrayEnabled && _trayIconService?.IsExiting != true)
+        if (MinimizeToTrayEnabled && !App.IsShuttingDown)
         {
             // keep the application running in the notification area...
             e.Cancel = true;

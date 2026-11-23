@@ -406,6 +406,10 @@
     <value>Stop recording</value>
     <comment>Notification area menu item</comment>
   </data>
+  <data name="TRAY_STOP_RECORDING_FIRST" xml:space="preserve">
+    <value>Stop the recording before exiting</value>
+    <comment>Notification area balloon shown when Exit is blocked by the Allow close when recording option</comment>
+  </data>
   <data name="TRAY_TOOLTIP_RECORDING" xml:space="preserve">
     <value>OnlyR (recording)</value>
     <comment>Notification area icon tooltip while recording</comment>

@@ -763,6 +763,15 @@ namespace OnlyR.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop the recording before exiting.
+        /// </summary>
+        public static string TRAY_STOP_RECORDING_FIRST {
+            get {
+                return ResourceManager.GetString("TRAY_STOP_RECORDING_FIRST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OnlyR (recording).
         /// </summary>
         public static string TRAY_TOOLTIP_RECORDING {
