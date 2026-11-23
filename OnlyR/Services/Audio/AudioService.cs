@@ -37,6 +37,8 @@ public sealed class AudioService : IAudioService, IDisposable
 
     public event EventHandler? StoppedEvent;
 
+    public event EventHandler? RecordingFinalisedEvent;
+
     public event EventHandler? StopRequested;
 
     public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
@@ -47,6 +49,12 @@ public sealed class AudioService : IAudioService, IDisposable
 
     public void Dispose() =>
         _audioRecorder.Dispose();
+
+    /// <summary>
+    /// Gets a value indicating whether a recording is being started, is in progress,
+    /// or is being finalised (the file has not yet reached its final destination).
+    /// </summary>
+    public bool HasPendingRecording => _currentRecording != null;
 
     /// <summary>
     /// Gets a list of Windows audio recording devices
@@ -76,24 +84,33 @@ public sealed class AudioService : IAudioService, IDisposable
     {
         _currentRecording = candidateFile;
 
-        var recordingConfig = new RecordingConfig
+        try
         {
-            RecordingDevice = optionsService.Options.RecordingDevice,
-            UseLoopbackCapture = optionsService.Options.UseLoopbackCapture,
-            RecordingDate = candidateFile.RecordingDate,
-            TrackNumber = candidateFile.TrackNumber,
-            DestFilePath = candidateFile.TempPath,
-            FinalFilePath = candidateFile.FinalPath,
-            SampleRate = optionsService.Options.SampleRate,
-            ChannelCount = optionsService.Options.ChannelCount,
-            Mp3BitRate = optionsService.Options.Mp3BitRate,
-            Codec = optionsService.Options.Codec,
-            TrackTitle = GetTrackTitle(candidateFile),
-            AlbumName = GetAlbumName(candidateFile),
-            Genre = optionsService.Options.Genre,
-        };
+            var recordingConfig = new RecordingConfig
+            {
+                RecordingDevice = optionsService.Options.RecordingDevice,
+                UseLoopbackCapture = optionsService.Options.UseLoopbackCapture,
+                RecordingDate = candidateFile.RecordingDate,
+                TrackNumber = candidateFile.TrackNumber,
+                DestFilePath = candidateFile.TempPath,
+                FinalFilePath = candidateFile.FinalPath,
+                SampleRate = optionsService.Options.SampleRate,
+                ChannelCount = optionsService.Options.ChannelCount,
+                Mp3BitRate = optionsService.Options.Mp3BitRate,
+                Codec = optionsService.Options.Codec,
+                TrackTitle = GetTrackTitle(candidateFile),
+                AlbumName = GetAlbumName(candidateFile),
+                Genre = optionsService.Options.Genre,
+            };
 
-        _audioRecorder.Start(recordingConfig);
+            _audioRecorder.Start(recordingConfig);
+        }
+        catch
+        {
+            // nothing was captured, so there is nothing to finalise...
+            _currentRecording = null;
+            throw;
+        }
     }
 
     /// <summary>
@@ -196,9 +213,16 @@ public sealed class AudioService : IAudioService, IDisposable
 
     private void OnStoppedEvent()
     {
-        StoppedEvent?.Invoke(this, EventArgs.Empty);
-        CopyFileToFinalDestination();
-        _currentRecording = null;
+        try
+        {
+            StoppedEvent?.Invoke(this, EventArgs.Empty);
+            CopyFileToFinalDestination();
+        }
+        finally
+        {
+            _currentRecording = null;
+            RecordingFinalisedEvent?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void CopyFileToFinalDestination()

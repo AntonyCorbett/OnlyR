@@ -580,6 +580,15 @@ public class RecordingPageViewModel : ObservableObject, IPage
 
     private void StopRecording()
     {
+        _ = TryStopRecording();
+    }
+
+    /// <summary>
+    /// Stops the current recording.
+    /// </summary>
+    /// <returns>true if the stop was requested, false if the audio service failed.</returns>
+    public bool TryStopRecording()
+    {
         try
         {
             ClearErrorMsg();
@@ -588,11 +597,13 @@ public class RecordingPageViewModel : ObservableObject, IPage
             // actually produced any audio
             var fadeOut = _audioDataReceived && _optionsService.Options.FadeOut;
             _audioService.StopRecording(fadeOut);
+            return true;
         }
         catch (Exception ex)
         {
             ErrorMsg = Properties.Resources.ERROR_STOP;
             Log.Logger.Error(ex, "Failed to stop recording. Error message: {ErrorMessage}", ErrorMsg);
+            return false;
         }
     }
 

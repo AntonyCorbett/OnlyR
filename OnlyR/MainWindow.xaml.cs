@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using OnlyR.Services.Options;
+using OnlyR.Services.Tray;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
 using OnlyR.ViewModel.Messages;
@@ -26,12 +27,19 @@ public partial class MainWindow
     private const double SettingsWindowMaxWidth = 500;
     private const double SettingsWindowMaxHeight = 770;
 
+    private readonly IOptionsService? _optionsService;
+    private readonly ITrayIconService? _trayIconService;
+
     public MainWindow()
     {
         InitializeComponent();
 
         WeakReferenceMessenger.Default.Register<ShutDownApplicationMessage>(this, OnShutDownApplication);
         WeakReferenceMessenger.Default.Register<NavigateMessage>(this, OnNavigate);
+
+        _optionsService = Ioc.Default.GetService<IOptionsService>();
+        _trayIconService = Ioc.Default.GetService<ITrayIconService>();
+        _trayIconService?.Initialize(this);
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -119,11 +127,66 @@ public partial class MainWindow
 
     private void OnShutDownApplication(object recipient, ShutDownApplicationMessage obj)
     {
+        App.BeginShutdown();
         Close();
+    }
+
+    private void WindowClosed(object? sender, EventArgs e)
+    {
+        (_trayIconService as IDisposable)?.Dispose();
+    }
+
+    private void WindowLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_optionsService?.Options.StartMinimized == true &&
+            MinimizeToTrayEnabled)
+        {
+            HideToTray();
+        }
+    }
+
+    private void WindowStateChanged(object sender, EventArgs e)
+    {
+        if (IsLoaded &&
+            WindowState == WindowState.Minimized &&
+            MinimizeToTrayEnabled &&
+            !App.IsShuttingDown)
+        {
+            HideToTray();
+        }
+    }
+
+    private bool MinimizeToTrayEnabled =>
+        _trayIconService != null && _optionsService?.Options.MinimizeToTray == true;
+
+    private void HideToTray()
+    {
+        SaveCurrentPageState();
+        Hide();
+        WindowState = WindowState.Normal;
+        SaveWindowPos();
+    }
+
+    private void SaveCurrentPageState()
+    {
+        if (DataContext is MainViewModel m &&
+            m.CurrentPageName != null &&
+            m.CurrentPageName.Equals(SettingsPageViewModel.PageName, StringComparison.Ordinal))
+        {
+            SaveSettingsWindowSize();
+        }
     }
 
     private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
+        if (MinimizeToTrayEnabled && !App.IsShuttingDown)
+        {
+            // keep the application running in the notification area...
+            e.Cancel = true;
+            HideToTray();
+            return;
+        }
+
         SaveWindowPos();
 
         var m = (MainViewModel)DataContext;

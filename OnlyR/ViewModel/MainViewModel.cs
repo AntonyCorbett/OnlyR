@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -37,6 +38,8 @@ public class MainViewModel : ObservableObject
     private readonly IPurgeRecordingsService _purgeRecordingsService;
     private readonly (string TempPath, string FinalPath)? _unfinishedRecordingFileFoundOnStartup;
     private FrameworkElement? _currentPage;
+    private bool _exitPending;
+    private int _exitFinalised;
 
     private static string LatestReleaseUrl => "https://github.com/AntonyCorbett/OnlyR/releases/latest";
 
@@ -86,6 +89,9 @@ public class MainViewModel : ObservableObject
             new SettingsPage(),
             new SettingsPageViewModel(audioService, optionsService, commandLineService));
 
+        RecordingPageModel.PropertyChanged += OnRecordingPagePropertyChanged;
+        _audioService.RecordingFinalisedEvent += OnRecordingFinalised;
+
         _unfinishedRecordingFileFoundOnStartup = GetUnfinishedRecordingPaths();
 
         var state = new RecordingPageNavigationState
@@ -108,6 +114,16 @@ public class MainViewModel : ObservableObject
     public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
     public bool AlwaysOnTop => _optionsService.Options.AlwaysOnTop;
+
+    public bool IsRecording => RecordingPageModel.IsRecordingOrStopping;
+
+    public bool CanRecord =>
+        RecordingPageModel.CanRecord &&
+        !_audioService.HasPendingRecording &&
+        !_exitPending;
+
+    private RecordingPageViewModel RecordingPageModel =>
+        (RecordingPageViewModel)_pages[RecordingPageViewModel.PageName].DataContext;
 
     public FrameworkElement? CurrentPage
     {
@@ -153,6 +169,71 @@ public class MainViewModel : ObservableObject
         }
     }
 
+    public void StartRecording()
+    {
+        if (!CanRecord)
+        {
+            return;
+        }
+
+        RecordingPageModel.StartRecordingCommand.Execute(null);
+    }
+
+    public void StopRecording() => RecordingPageModel.StopRecordingCommand.Execute(null);
+
+    public void OpenRecordingsFolder() => RecordingPageModel.ShowRecordingsCommand.Execute(null);
+
+    /// <summary>
+    /// Stops any recording in progress (so that the recording file is finalised)
+    /// and then shuts the application down.
+    /// </summary>
+    internal ExitRequestResult RequestExit()
+    {
+        if (App.IsShuttingDown)
+        {
+            return ExitRequestResult.Requested;
+        }
+
+        if (!_optionsService.Options.AllowCloseWhenRecording &&
+            (IsRecording || _audioService.HasPendingRecording))
+        {
+            return ExitRequestResult.BlockedWhileRecording;
+        }
+
+        if (!_audioService.HasPendingRecording)
+        {
+            ShutDown();
+            return ExitRequestResult.Requested;
+        }
+
+        if (_exitPending)
+        {
+            return ExitRequestResult.Requested;
+        }
+
+        _exitPending = true;
+        OnPropertyChanged(nameof(CanRecord));
+        _ = Interlocked.Exchange(ref _exitFinalised, 0);
+        _audioService.RecordingFinalisedEvent += OnRecordingFinalisedBeforeExit;
+
+        if (!RecordingPageModel.TryStopRecording())
+        {
+            _audioService.RecordingFinalisedEvent -= OnRecordingFinalisedBeforeExit;
+            _exitPending = false;
+            OnPropertyChanged(nameof(CanRecord));
+            return ExitRequestResult.StopFailed;
+        }
+
+        if (!_audioService.HasPendingRecording &&
+            Volatile.Read(ref _exitFinalised) == 0)
+        {
+            // the recording was finalised before the event subscription (or synchronously)...
+            OnRecordingFinalisedBeforeExit(this, EventArgs.Empty);
+        }
+
+        return ExitRequestResult.Requested;
+    }
+
     private void OnAlwaysOnTopChanged(object recipient, AlwaysOnTopChanged obj)
     {
         OnPropertyChanged(nameof(AlwaysOnTop));
@@ -161,6 +242,49 @@ public class MainViewModel : ObservableObject
     private void OnThemeModeChanged(object recipient, ThemeModeChanged obj)
     {
         App.ApplyTheme(_optionsService.Options.AppTheme ?? AppTheme.System);
+    }
+
+    private void OnRecordingPagePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(RecordingPageViewModel.IsRecordingOrStopping))
+        {
+            OnPropertyChanged(nameof(IsRecording));
+        }
+        else if (e.PropertyName == nameof(RecordingPageViewModel.CanRecord))
+        {
+            OnPropertyChanged(nameof(CanRecord));
+        }
+    }
+
+    private void OnRecordingFinalised(object? sender, EventArgs e)
+    {
+        // once the file has reached its final destination a new recording can start...
+        OnPropertyChanged(nameof(CanRecord));
+    }
+
+    private void OnRecordingFinalisedBeforeExit(object? sender, EventArgs e)
+    {
+        if (Interlocked.Exchange(ref _exitFinalised, 1) != 0)
+        {
+            return;
+        }
+
+        _audioService.RecordingFinalisedEvent -= OnRecordingFinalisedBeforeExit;
+
+        // the event may be raised on the audio capture thread, so hand the shutdown
+        // to the UI thread without blocking the thread that finalised the recording
+        _ = Application.Current.Dispatcher.BeginInvoke(new Action(ShutDown));
+    }
+
+    private static void ShutDown()
+    {
+        if (App.IsShuttingDown)
+        {
+            return;
+        }
+
+        App.BeginShutdown();
+        Application.Current.Shutdown();
     }
 
     private void SetupPage(string pageName, FrameworkElement page, ObservableObject pageModel)

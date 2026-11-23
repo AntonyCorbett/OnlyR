@@ -22,6 +22,7 @@ namespace OnlyR.Utils;
 [ExcludeFromCodeCoverage]
 public static class WindowPlacement
 {
+    private const int SwShowHide = 0;
     private const int SwShowNormal = 1;
     private const int SwShowMinimized = 2;
 
@@ -109,6 +110,13 @@ public static class WindowPlacement
     private static string GetPlacement(IntPtr windowHandle)
     {
         NativeMethods.GetWindowPlacement(windowHandle, out var placement);
+
+        // a window hidden in the notification area has showCmd = SW_HIDE, which would
+        // otherwise be restored as a hidden window on the next launch
+        if (placement.showCmd == SwShowHide)
+        {
+            placement.showCmd = SwShowNormal;
+        }
 
         using var memoryStream = new MemoryStream();
 

@@ -11,10 +11,12 @@ using OnlyR.Services.PurgeRecordings;
 using OnlyR.Services.RecordingCopies;
 using OnlyR.Services.RecordingDestination;
 using OnlyR.Services.Snackbar;
+using OnlyR.Services.Tray;
 using OnlyR.Utils;
 using OnlyR.ViewModel;
 using OnlyR.ViewModel.Messages;
 using Serilog;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -39,6 +41,15 @@ public partial class App
     private readonly string _appString = "OnlyRAudioRecording";
     private Mutex? _appMutex;
 
+    /// <summary>
+    /// Gets a value indicating whether the application is shutting down for a reason
+    /// other than the user closing the window, such as Windows shutdown, an unhandled
+    /// exception or Exit from the notification area menu.
+    /// </summary>
+    internal static bool IsShuttingDown { get; private set; }
+
+    internal static void BeginShutdown() => IsShuttingDown = true;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         if (AnotherInstanceRunning())
@@ -62,6 +73,7 @@ public partial class App
         // unhandled exceptions thrown from UI thread
         e.Handled = true;
         Log.Logger.Fatal(e.Exception, "Unhandled exception");
+        BeginShutdown();
         Current.Shutdown();
     }
 
@@ -79,6 +91,7 @@ public partial class App
         serviceCollection.AddSingleton<IPurgeRecordingsService, PurgeRecordingsService>();
         serviceCollection.AddSingleton<ISilenceService, SilenceService>();
         serviceCollection.AddSingleton<MainViewModel>();
+        serviceCollection.AddSingleton<ITrayIconService, TrayIconService>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         Ioc.Default.ConfigureServices(serviceProvider);
@@ -93,8 +106,15 @@ public partial class App
 
     protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
     {
+        BeginShutdown();
         WeakReferenceMessenger.Default.Send(new SessionEndingMessage(e));
         base.OnSessionEnding(e);
+
+        if (e.Cancel)
+        {
+            // the session end was cancelled (e.g. still recording)...
+            IsShuttingDown = false;
+        }
     }
 
     private static void ConfigureLogger()
