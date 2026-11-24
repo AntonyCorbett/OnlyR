@@ -37,6 +37,8 @@ public sealed class AudioService : IAudioService, IDisposable
 
     public event EventHandler? StoppedEvent;
 
+    public event EventHandler? RecordingFinalisedEvent;
+
     public event EventHandler? StopRequested;
 
     public event EventHandler<RecordingProgressEventArgs>? RecordingProgressEvent;
@@ -196,9 +198,16 @@ public sealed class AudioService : IAudioService, IDisposable
 
     private void OnStoppedEvent()
     {
-        StoppedEvent?.Invoke(this, EventArgs.Empty);
-        CopyFileToFinalDestination();
-        _currentRecording = null;
+        try
+        {
+            StoppedEvent?.Invoke(this, EventArgs.Empty);
+            CopyFileToFinalDestination();
+        }
+        finally
+        {
+            _currentRecording = null;
+            RecordingFinalisedEvent?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void CopyFileToFinalDestination()
